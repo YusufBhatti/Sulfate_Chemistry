@@ -1,0 +1,188 @@
+*******************************************************************************
+******************************** Code Owners **********************************
+*******************************************************************************
+
+The purpose of this page is to list ownership of the major components of the
+UM. The definition of components is based on the structure of the FCM
+respository of the code - which corresponds to UM sections. Please note the
+following considerations:
+
+ * Ownership is not a commitment for the individual to undertake all work
+   requested or all reviewing for the owned section
+ * Any planned changes to a section should be discussed with the code owner to
+   ensure plans are appropriate
+ * Code owners should be given the option to be a science/technical reviewer for
+   any code that alters their sections
+ * Ownership of a component includes all section-option combinations
+ * The interface between components needs to be agreed by all affected parties.
+ * When passing on code ownership, owners should ensure that this page is
+   updated appropriately.
+ * Rose meta-data (in rose-meta) will be owned by the appropriate code owner of
+   that section.
+
+
+
+******************************* System & Processes ****************************
+
+
+Project management and processess                     Richard Gilham
+System staff resources (WS)                           Richard Gilham
+System staff resources (CR)                           Jean-Christophe Rioual
+Configuration Management (FCM)                        Dave Matthews
+Compile System (FCM)                                  Dave Matthews
+Documentation                                         Steve Wardle
+Suite Control (Rose)                                  Dave Matthews
+Mule utilities                                        Steve Wardle
+
+******************************* System Components *****************************
+
+STASHmasters                                          Jamie Kettleborough
+Small execs (except where explicitly owned below)     Richard Gilham
+Reconfiguration                                       Roddy Sharp (Owner)
+                                                      Joe Mancell (Deputy)
+Reconfiguration_NetCDF                                Alan Hewitt
+CreateBC                                              Stuart Whitehouse (Owner)
+                                                      Joe Mancell (Deputy)
+CRMstyle coarse grid                                  Rachel Stratton
+Ancillary Generation (pptoanc)                        Keir Bovis
+GCOM                                                  Andy Malcolm
+SSTPert Library                                       Steve Wardle (Technical)
+                                                      Warren Tennant (Science)
+WAFC CB Library                                       Steve Wardle (Technical)
+                                                      Piers Buchanan (Science)
+Dummy Libraries                                       Paul Cresswell
+Rose scripts (bin)                                    Paul Cresswell
+Rose build system (fcm-make)                          Paul Cresswell
+Rose test suite (rose-stem) inc. JULES                Steve Wardle
+Rose meta data
+  rose-meta.conf                                      Code owner of related
+                                                        section.
+  Rose macros (except where explicitly owned below)   Steve Wardle
+    stash_testmask                                    Irina Linova-Pavlova
+  archive and meaning app                             Erica Neininger
+  versions.py (upgrade macros)                        Stuart Whitehouse
+
+
+
+*******************************************************************************
+********************************* Model Code **********************************
+*******************************************************************************
+
+********************************** Control ************************************
+
+Ancillaries                       C82                 Joe Mancell
+C code                            C95                 Adam Voysey
+CICE sea ice model                                    Ann Keen
+Coupling (pre-UM 6.7)             C72                 Tim Johns
+Dump I/O                          C80                 Paul Selwood     (owner)
+                                                      Adam Voysey      (deputy)
+Grids                             C92                 Terry Davies
+                                                         & Ricky Wong
+NEMO ocean model                                      Richard Hill
+Misc                              C70                 Paul Selwood     (owner)
+                                                      Matthew Glover   (deputy)
+    science_fixes_mod                                 Stuart Whitehouse                                                      
+MPP                               C96                 Michele Guidolin (owner)
+                                                      Paul Selwood     (deputy)
+Coupling                                              Richard Hill
+OpenMP                            C98                 Paul Selwood     (owner)
+                                                      Matthew Glover   (deputy)
+Packing Tools                     C94                 Paul Selwood     (owner)
+                                                      Adam Voysey      (deputy)
+STASH                             C84                 Richard Barnes
+Timer                             C97                 Andy Malcolm     (owner)
+                                                      Paul Selwood     (deputy)
+Top Level
+  Atmosphere                                          Richard Gilham
+  Diagnostic and _ctl control interfaces,             Code owner of related
+    and SCM top-level routines                          section
+  tstmsk                                              Richard Barnes
+  D1 interface                                        Richard Barnes
+Constants                                             Joe Mancell
+NetCDF output                                         Jeff Cole
+
+
+Note that from UM release 7.1 onwards, coupling is done via OASIS to the NEMO
+ocean and CICE sea-ice models. The OASIS, NEMO and CICE codes are held in
+separate repositories and are owned by Richard Hill (OASIS & NEMO) and Ann
+Keen (CICE).
+
+
+******************************** Atmosphere ***********************************
+
+AC Assimilation                   A18                 Bruce Macpherson
+  IAU Code                                            Adam Clayton
+Aerosols                          A17                 Andy Jones
+Atmosphere Service                A71
+  qsat                                                Kwinten Van Weverberg
+  number_droplet, set_seasalt                         Andy Jones
+  visibility, fog                                     Ian Boutle
+  calc_wp                                             Jonathan Wilkinson
+Boundary Layer                    A03                 Ian Boutle
+Carbon                                                Spencer Liddicoat
+Climate Diagnostics               A30                 Enrico Olivier
+Convection                        A05                 Michael Whitall (5A, 6A)
+				  		      Ian Boutle (LLCS)
+Diffusion and Filtering           A13                 Kirsty Hanley
+Dynamics                          A12                 Tom Allen
+Dynamics Advection                A12                 Tom Allen
+Dynamics Diagnostics              A15                 Terry Davies
+Dynamics Solver                   A10                 Tom Allen
+Electric                          A21                 Jonathan Wilkinson
+Energy Correction                 A14                 Mohamed Zerroukat
+Free Tracers                      A33                 Richard Barnes
+GLOMAP_CLIM                       A54                 Alan Hewitt
+Gravity Wave Drag                 A06                 Annelize van Niekerk
+ (Orographic and 
+  non-orographic schemes)
+Land Surface                      A08                 Richard Gilham
+Large Scale Cloud                 A09                 Kwinten Van Weverberg
+Large Scale Precipitation         A04                 
+   ( 3D scheme and CASIM interface )                  Jonathan Wilkinson (owner)
+                                                      Adrian Hill (deputy)
+   ( CASIM code on MONC repository )                  Adrian Hill (owner)
+                                                      Jonathan Wilkinson (deputy)
+
+LBC Input                         A31                 Stuart Whitehouse
+Nudging                           A39                 Mohit Dalvi
+Physics Diagnostics               A16                 Terry Davies
+PWS_diagnostics                   A20                 Enrico Olivier
+Radiance Core and Service         A70                 James Manners
+Radiation Control                 A01,A02             James Manners
+Stochastic Physics                A35                 Warren Tennant
+Tracer Advection                  A11                 Mohamed Zerroukat
+Tracer LBCs                       A36                 Terry Davies
+UKCA                              A34                 Luke Abraham  (owner)
+                                                      Alan Hewitt (deputy)
+UKCA LBCs                         A37                 Terry Davies
+UKCA Diagnostics                  A38,A50             Luke Abraham  (owner)
+                                                      Alan Hewitt (deputy)
+Vegetation                        A19                 Spencer Liddicoat
+
+*********************************** Other *************************************
+
+SCM                               SCMA                Tom Dunstan
+DUST (spread throughout the UM code)                  Stephanie Woodward
+COSP                                                  Alejandro Bodas-Salcedo
+IO Services                                           Paul Selwood (owner)
+                                                      Adam Voysey  (deputy)
+Idealised                                             Rachel Stratton
+  (including Reconfiguration)
+
+
+The ocean and sea-ice model were removed at vn7.0. For any queries please
+contact Richard Hill.
+
+The slab model was removed at vn7.0. For any queries please contact Keith
+Williams.
+
+The following table lists further section names and IFDEFs employed in JULES
+which are related to the interface with the UM but not previously listed above.
+
+****************************** JULES repos IFDEFs *****************************
+
+River Routing                                         Peter Falloon
+UM interface (is this a UM run?)  UM_JULES            Richard Gilham
+JULES rose-stem                                       Steve Wardle
+
+
