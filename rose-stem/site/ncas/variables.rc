@@ -1,0 +1,28 @@
+{%- set UMDIR = '$UMDIR' %}
+{%- set XC30_CENTRAL_INSTALL_DIR='/work/y07/y07/umshared' %}
+{%- if HOST_XC30 is not defined %}
+{%- set HOST_XC30 = 'archer' %}
+{%- endif %}
+{%- set PREBUILD_XC30_ROOT_DIR = '/home/um1/cylc-run/vn11.1_prebuilds/share' %}
+{%- set KGO_XC30_ROOT_DIR = '/work/y07/y07/umshared/standard_jobs/kgo' %}
+
+{#  KGO file versions
+    For tests copied from the Met Office these should point to the equivalent
+    `meto` variable, as the `meto` variable gets updated when the output
+    changes.
+#}
+{%- import 'site/meto/variables.rc' as meto                              %}
+
+{%- set XC30_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO= meto.XC40_IFORT_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO %}
+{%- set XC30_GLOBAL_TO_LAM_EG_KGO= meto.XC40_GLOBAL_TO_LAM_EG_KGO %}
+{%- set XC30_N48_EG_DRHOOK_KGO= meto.XC40_N48_EG_DRHOOK_KGO %}
+{%- set XC30_N48_EG_KGO= meto.XC40_N48_EG_KGO %}
+{%- set XC30_N48_GA_AMIP_EXP_2DAY_KGO= meto.XC40_N48_GA_AMIP_EXP_2DAY_KGO %}
+{%- set XC30_N512_EG_KGO= meto.XC40_N512_EG_KGO %}
+{%- set XC30_UTILS_CCE_SSTPERT_KGO= meto.XC40_UTILS_CCE_SSTPERT_KGO %}
+{%- set XC30_UTILS_CCE_WAFCCB_KGO= meto.XC40_UTILS_CCE_WAFCCB_KGO %}
+{%- set XC30_UTILS_CONVPP_64B_LARGE_FF_KGO= meto.XC40_UTILS_CONVPP_64B_LARGE_FF_KGO %}
+{%- set XC30_UTILS_CRMSTYLE_COARSE_GRID_KGO=meto.XC40_UTILS_CRMSTYLE_COARSE_GRID_KGO %}
+{%- set XC30_UTILS_IFORT_SSTPERT_KGO= meto.XC40_UTILS_IFORT_SSTPERT_KGO %}
+{%- set XC30_UTILS_IFORT_WAFCCB_KGO= meto.XC40_UTILS_IFORT_WAFCCB_KGO %}
+{%- set XC30_UTILS_PPTOANC_BASIC_TEST_KGO= meto.XC40_UTILS_PPTOANC_BASIC_TEST_KGO %}

@@ -1,0 +1,7 @@
+    [[queues]]
+        [[[build_on_xc50]]] 
+            limit = 5 
+            members = NIWA_XC50_BUILD 
+        [[[rose_ana_on_xc50]]] 
+            limit = 5 
+            members = ROSE_ANA_COMPARISON

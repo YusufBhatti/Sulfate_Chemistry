@@ -1,0 +1,10 @@
+{%- set UMDIR = '$UMDIR' %}
+{%- set CENTRAL_INSTALL_DIR= UMDIR %}
+{%- if HOST_HPC is not defined %}
+{%- set HOST_HPC = 'hpc' %}
+{%- endif %}
+{% if HOST_LINUX is not defined %}
+{%- set HOST_LINUX='linux' %}
+{%- endif %}
+{%- set PREBUILD_MSS_ROOT_DIR = '' %}
+{%- set KGO_MSS_ROOT_DIR = '' %}

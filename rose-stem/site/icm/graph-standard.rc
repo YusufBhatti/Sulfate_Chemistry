@@ -1,0 +1,7 @@
+%include 'site/icm/graph-standard-pwr7.rc'
+%include 'site/icm/graph-standard-xc40.rc'
+%include 'site/icm/graph-standard-linux.rc'
+
+{%- set name_graphs = name_graphs_boreasz %}
+{%- do name_graphs.update(name_graphs_okeanos.items()) %}
+{%- do name_graphs.update(name_graphs_linux.items()) %}

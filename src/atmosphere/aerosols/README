@@ -1,0 +1,16 @@
+Readme file for aerosols
+
+Note that due to the need to use the non portable 
+function erf (the error function), 
+some of the parameters needed in the 
+subroutine pm10_pm2p5.F90 are calculated offline.
+This also reduces calculations needed to run 
+with PM diagnostics.
+
+The program calc_pm_params.f90 does these
+calculations. This program is not a part 
+of the UM as such and this calculation in unsupported. 
+
+While many Fortran compilers include the error
+function not all do and so this program 
+may not work with all compilers. 

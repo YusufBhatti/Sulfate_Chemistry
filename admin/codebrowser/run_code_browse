@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+# *****************************COPYRIGHT*******************************
+# (C) Crown copyright Met Office. All rights reserved. 
+# For further details please refer to the file COPYRIGHT.txt 
+# which you should have received as part of this distribution. 
+# *****************************COPYRIGHT******************************* 
+
+# Owner: UM System Development Team
+# Purpose: This is a simple front end to the UM html code browser 
+#          generator f90tohtml_procedure
+# Usage: Script has two mandatory arguments: full path to the output directory
+#        then at least one source URL. A URL should be provided for each project
+#        required to build the code or the resulting browser will be incomplete.
+#        When creating a browser for UM 10.0 or later it is recommended to
+#        include the directory containing the Fortran/C source files in the URL,
+#        e.g. fcm:um.xm/trunk/src for the UM.
+# Output: A new directory 'full_html' and a logfile, inside the specified
+#         directory (which will be created if necessary).
+#
+# Examples:
+# run_code_browse /home/h02/user/public_html/um_code_browse \
+#     fcm:um.xm_tr/src@vn10.1 fcm:jules.xm_tr/src@um10.1 \
+#     fcm:gcom.xm_tr/build@vn5.1
+#
+# run_code_browse /home/h02/user/public_html/um_code_browse \
+#     fcm:um.xm_tr/src@head fcm:jules.xm_tr/src@head        \
+#     fcm:socrates.xm_tr/src@head fcm:gcom.xm_tr/build@head
+#
+# run_code_browse /home/h02/user/public_html/um_code_browse \
+#     fcm:um_tr@vn8.6 fcm:jules_tr@um8.6
+#
+# All of the above create: 
+# - /home/h02/user/public_html/um_code_browse/full_html
+# - /home/h02/user/public_html/um_code_browse/logfile
+#
+function ereport
+{
+  echo "Error: $1" >&2
+  exit 1
+}
+
+if [[ $# -lt 2 ]] ; then
+    echo "Usage: "
+    echo "  The script has two mandatory arguments:"
+    echo "  $(basename $0) <OUTPUT_DIRECTORY> <SOURCE_URL> [<SOURCE_URL>...]"
+    echo ""
+    echo "  At least one SOURCE_URL should be provided.  If building a UM code"
+    echo "  browser additional sources should be supplied to avoid dead links to"
+    echo "  routines from other projects."
+    echo ""
+    echo "  When building a browser using code from UM 10.0 or later include the"
+    echo "  sub-directory containing the Fortran/C code to be compiled in the URL,"
+    echo "  e.g. fcm:um.xm/trunk/src."
+    echo ""
+    echo "  Output directory should be a full path. If the output directory does " 
+    echo "  not exist the script will attempt to create it."
+    echo ""
+    echo "EXAMPLES:"
+    echo "  run_code_browse /home/h02/user/public_html/um_code_browse \ "
+    echo "   fcm:um.xm_tr/src@vn10.3 fcm:jules.xm_tr/src@vn10.3 \ "
+    echo "   fcm:socrates.xm_tr/src@vn10.3 fcm:gcom.xm_tr/build@vn5.3 "
+    echo ""
+    echo "  run_code_browse /home/h02/user/public_html/code_browse_my_branch \ "
+    echo "   fcm:um_br/dev/user/vn8.2_my_um_branch fcm:jules_tr@um8.2 "
+    echo ""
+    exit 1
+fi
+
+# Get arguments
+OUTPUT_DIR=$1
+shift
+SOURCE_URL_ARGS=$@
+
+# Set fcm
+FCM=fcm
+for SOURCE_URL in $SOURCE_URL_ARGS;
+do
+$FCM info $SOURCE_URL 1>/dev/null 2>&1 || ereport "$SOURCE_URL is not a valid url"
+done
+
+# Set the place we want to run from
+LOCATION=`mktemp -d`
+test $? == 0 || ereport "Temporary directory not created."
+echo "Creating browser in temporary directory $LOCATION"
+cd $LOCATION
+
+# Do an export of the latest code browser software from the admin directory
+$FCM export --force fcm:um.xm_tr/admin/codebrowser codebrowser_scripts || ereport "FCM export error."
+# cd to correct directory
+cd $LOCATION/codebrowser_scripts || ereport "Repository has changed."
+# ...and run the code browser creation software
+./f90tohtml_procedure -w $LOCATION/work -t -l $LOCATION/logfile $SOURCE_URL_ARGS $LOCATION/full_html || ereport "Code generation failed."
+
+# Now lets copy the data across to output directory.
+echo "Copying HTML to $OUTPUT_DIR"
+test -d $OUTPUT_DIR || mkdir -p $OUTPUT_DIR
+rsync -aq --delete $LOCATION/full_html $OUTPUT_DIR/ || ereport "Rsync error."
+echo "Moving logfile to $OUTPUT_DIR"
+cp -f $LOCATION/logfile $OUTPUT_DIR || ereport "Copy error."
+echo "Removing $LOCATION"
+rm -fr $LOCATION

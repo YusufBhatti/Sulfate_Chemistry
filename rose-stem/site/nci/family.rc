@@ -1,0 +1,179 @@
+    [[NCI]]
+        pre-script = """
+           module use ~access/modules
+           module load intel-cc/15.0.1.133
+           module load intel-fc/15.0.1.133
+           module load openmpi/1.10.2
+           module load gcom/6.6_ompi.1.10.2
+           module unload netcdf
+           module load netcdf/4.3.0
+           module load grib-api/1.10.4
+           module load drhook
+           module load fcm
+           module load shumlib/2018.06.1
+           """
+        [[[job]]]
+            batch system = pbs
+            execution time limit = PT5M
+        [[[remote]]]
+            host = $(rose host-select {{ HOST_NCI }})
+        [[[environment]]]
+            UMDIR=~access/umdir
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{NCI_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{NCI_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{NCI_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+            ROSE_TASK_N_JOBS  = 1
+            ROSE_TASK_OPTIONS = -v -v -v -v
+        [[[directives]]]
+	   # Default single processor options
+	    -l ncpus = 1
+	    -l mem = 2GB
+	    -l jobfs = 1GB
+            -q = 'express'
+            -l other = gdata1
+
+    [[EXTRACT]]
+        inherit = EXTRACT_SOURCE
+        script = """
+rose task-run --verbose --define='args=$ARCHIVE_FCM_MAKE_CMD --ignore-lock'
+"""
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+        [[[job]]]
+            batch system = background
+        [[[environment]]]
+            PLATFORM=nci-x86-ifort
+	    OPENMP=true
+            DRHOOK=false
+
+# NCI class for serial jobs
+    [[NCI_SERIAL]]
+        inherit = NCI
+        [[[environment]]]
+            ROSE_TASK_N_JOBS     = 1
+        [[[directives]]]
+	    -l ncpus = 1
+	    -l mem = 2GB
+	    -l jobfs = 1GB
+            -q = 'express'
+        [[[job]]]
+            execution time limit = PT5M
+
+    [[NCI_HOUSEKEEPING]]
+        inherit = HOUSEKEEPING, NCI_SERIAL
+
+# NCI classes for rose-ana
+    [[NCI_ROSE_ANA_COMPARISON]]
+        inherit = ROSE_ANA_COMPARISON
+        pre-script = """
+           module use ~access/modules
+           # mule can't use the default python loaded by cylc
+           module unload python
+           module load pythonlib/mule
+           module load nccmp/1.8.2.0
+	   module load pythonlib/netCDF4
+           """
+
+    [[NCI_ROSE_ANA_WALLCLOCK_COMPARISON]]
+        inherit = ROSE_ANA_WALLCLOCK, ROSE_ANA_COMPARISON
+        pre-script = """
+           module use ~access/modules
+           # mule can't use the default python loaded by cylc
+           module unload python
+           module load pythonlib/mule
+           """
+
+    [[NCI_MULE_PYTHON]]
+        pre-script = """
+           module use ~access/modules
+           module load fcm
+           # mule can't use the default python loaded by cylc
+           module unload python
+           module load python/2.7.11
+           module load pythonlib/six
+           module load pythonlib/mock
+           """
+	
+# NCI class for UM Utils jobs
+    [[NCI_UTILS]]
+        inherit = NCI_CORES_1,  NCI_PARALLEL_THREADS_1
+        script = "rose task-run --verbose"
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[directives]]]
+	    -l ncpus = 1
+	    -l mem = 1GB
+        [[[job]]]
+            execution time limit = PT5M
+
+# NCI - single OpenMP thread
+    [[NCI_PARALLEL_THREADS_1]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 1
+
+# NCI - two OpenMP threads
+    [[NCI_PARALLEL_THREADS_2]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 2
+	    OMP_STACKSIZE     = 2g
+	    OMPI_MCA_hwloc_base_mem_alloc_policy = local_only
+
+    [[NCI_PARALLEL_THREADS_4]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 4
+	    OMP_STACKSIZE     = 2g
+	    OMPI_MCA_hwloc_base_mem_alloc_policy = local_only
+
+    [[NCI_PARALLEL_QUEUE]]
+        inherit = NCI
+        [[[environment]]]
+	    ROSE_LAUNCHER = mpirun
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s unlimited
+	    ROSE_LAUNCHER_PREOPTS = "-np ${TOTAL_MPI_TASKS:-1} --map-by slot:PE=$OMP_NUM_THREADS"
+        [[[directives]]]
+           -q = 'normal'
+        [[[job]]]
+            execution time limit = PT30M
+
+# Core count families
+{% for CORES in [1, 2, 4, 6, 8, 16, 32, 64, 128, 224, 256, 512] %}
+    [[NCI_CORES_{{CORES}}]]
+        inherit = NCI_PARALLEL_QUEUE
+        [[[directives]]]
+           -l ncpus = {{ CORES }}
+           -l mem = {{ [4,CORES*NCI_MEM_PER_CORE] | sort | last | int }}GB
+{% if CORES <= NCI_EXPRESS_LIMIT %} 
+           -q = "express" 
+{% else %} 
+           -q = "normal"  
+{% endif %}
+{% endfor %}
+
+    [[NCI_IOS_ON]]
+    [[NCI_IOS_OFF]]
+
+# NCI class for build jobs
+    [[NCI_BUILD]]
+        inherit = EXTRACT_SOURCE, NCI_CORES_4
+        script = """
+rose task-run --verbose --define='args=$ARCHIVE_FCM_MAKE_CMD --ignore-lock'
+"""
+        [[[environment]]]
+            ROSE_TASK_N_JOBS     = 4
+            PLATFORM=nci-x86-ifort
+	    OPENMP=true
+            DRHOOK=false
+        [[[directives]]]
+	    -l ncpus = 4
+	    -l mem = 8GB
+	    -l jobfs = 2GB
+	    -l software = 'intel-compiler'
+            -q = 'express'
+        [[[job]]]
+	    # Typically about 20 minutes for build but sometimes blows out
+            execution time limit = PT60M
+    
+    [[NCI_N48_GA_COMMON]]
+        [[[environment]]]
+            AINITIAL=$INPUT_DATA/n48_ga7/ab357a.da19810901_00

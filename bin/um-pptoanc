@@ -1,0 +1,319 @@
+#!/usr/bin/env bash
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+#
+#  Script: um-pptoanc
+#
+#  Purpose: Script to run PPTOANC utility to create ancilliary files
+#          from pp files.
+#
+#  Interface: See "usage" function below and "usf_Print_Common_Args"
+#             function from UM script functions file for arguments
+#             and UMDP-F5 for full descriptions
+#
+#  Code Owner: Please refer to the UM file CodeOwners.txt
+#  This file belongs in section: Rose scripts
+#
+# End of header -------------------------------------------------------
+#
+set -eu
+
+# Source common UM script functions from file
+um_scripts=$(dirname "$0")/um_script_functions
+if [ -f "$um_scripts" ] ; then
+    . $um_scripts
+else
+    echo "[FAIL] UM script functions file not found: $um_scripts " 1>&2
+    echo "[FAIL] Ensure the UM file above is located in the same " 1>&2
+    echo "[FAIL] directory as this script                        " 1>&2
+    exit 1
+fi
+
+########################################################################
+# Setup Error traps and cleanup routine to perfom on exit
+#
+usf_Set_Err_Traps
+
+function cleanup {
+  if [ ${ERR_STATE:-0} != 0 ]; then
+    usf_EReport "Problem with pptoanc program"
+  else
+    echo '[ OK ] pptoanc successful'
+  fi
+
+  exit ${ERR_STATE:-0}
+}
+
+#######################################################################
+
+# Print usage message for use on error
+function usage
+{
+usf_Print "Usage:                                                        " 1>&2
+usf_Print "  um-pptoanc [common-args] [[-cf][-hpf]] [[-lcf][-lhpf]]      " 1>&2
+usf_Print "  -n namelist [-o]                                            " 1>&2
+usf_Print "    [-l levels_file] pp_file1 [[pp_file2][pp_file3]...]       " 1>&2
+usf_Print "           ancilliary_file                                    " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "Arguments:                                                    " 1>&2
+usf_Print "  -cf    :specifies that the pp files                         " 1>&2
+usf_Print "         :contain Cray block control words.                   " 1>&2
+usf_Print "         :e.g                                                 " 1>&2
+usf_Print "         :(1) pp files that were                              " 1>&2
+usf_Print "         :VBS formatted on the IBM and                        " 1>&2
+usf_Print "         :transfered onto the T3E using                       " 1>&2
+usf_Print "         :getibm /df=tb where the IBM BCW's are               " 1>&2
+usf_Print "         :are replaced with Cray BCW's.                       " 1>&2
+usf_Print "         :(2) pp files that were created                      " 1>&2
+usf_Print "         :using FORTRAN WRITE statement.                      " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "  -hpf   :specifies that the pp files were                    " 1>&2
+usf_Print "         :directly copied from HP using e.g                   " 1>&2
+usf_Print "         :ftp,rcp and that these are 32bit                    " 1>&2
+usf_Print "         :datafiles with HP BCWs.                             " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "         :if the -cf option is NOT used the                   " 1>&2
+usf_Print "         :pp files are assumed not to                         " 1>&2
+usf_Print "         :contain BCW's.                                      " 1>&2
+usf_Print "         :e.g files which are transfered                      " 1>&2
+usf_Print "         :from IBM to T3E using getibm /df=tr                 " 1>&2
+usf_Print "  -lcf   :                                                    " 1>&2
+usf_Print "         :As above but refers to the optional                 " 1>&2
+usf_Print "         :levels data file.                                   " 1>&2
+usf_Print "  -lhpf  :                                                    " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "  -n <namelist>   pathname of file containing namelist        " 1>&2
+usf_Print "         :specifing details of ancilliary file                " 1>&2
+usf_Print "  -l levels_file :pathname of levels file                     " 1>&2
+usf_Print "         :used to create ocean dump                           " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "  -o     :overwrite already existing ancilliary               " 1>&2
+usf_Print "         :file                                                " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "  pp_file1 :pathname of input pp file used in                 " 1>&2
+usf_Print "           :the ancilliary file                               " 1>&2
+usf_Print "  pp_file  :pathname of n input pp files used in              " 1>&2
+usf_Print "           :addition to pp_file1 to make the                  " 1>&2
+usf_Print "           :ancilliary file                                   " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "  ancillary_file  :pathname of ancilliary file                " 1>&2
+usf_Print_Common_Args
+}
+
+#######################################################################
+# Handling of command line arguments
+
+function process_cmd_args
+{
+    # There are 4 mandatory arguments
+    if [ $# -lt 4 ] ; then
+        usf_EReport "Incorrect number of arguments" usage
+    fi
+
+    # Process the optional arguments
+
+    # Step 1 -  Read filenames specified in argument list and check syntax.
+    #
+    filenum=29
+    namelist_set=false
+    pplev_cray_fmt=false
+    pplev_hp_fmt=false
+    pp_cray_fmt=false
+    pp_hp_fmt=false
+    overwrite=false
+
+    export BIT32=0
+
+    while [ $# -gt 0 ]   ; do       # Loop over all command line arguments
+      case "$1" in
+
+          -cf)
+              pp_cray_fmt=true
+              usf_Print "pp files contain Cray block words"
+              if [ $pp_hp_fmt = true ]
+              then
+                usf_EReport "Invalid combination of options" usage
+              fi
+              if [ $namelist_set = true ]
+              then
+                usf_EReport "Invalid combination of options" usage
+              fi ;;
+
+          -hpf)
+              pp_hp_fmt=true
+              usf_Print "pp files desktop origin"
+              if [ $pp_cray_fmt = true ]
+              then
+                usf_EReport "Invalid combination of options" usage
+              fi
+              if [ $namelist_set = true ]
+              then
+                usf_EReport "Invalid combination of options" usage
+              fi ;;
+ 
+          -lcf)
+              pplev_cray_fmt=true
+              usf_Print "optional levels files contain Cray block words"
+              if [ $pplev_hp_fmt = true ]
+              then
+                usf_EReport "Invalid combination of options" usage
+              fi
+              if [ $namelist_set = true ]
+              then
+                usf_EReport "Invalid combination of options" usage
+              fi ;;
+ 
+          -lhpf)
+              pplev_hp_fmt=true
+              usf_Print "optional levels files desktop origin"
+              if [ $pplev_cray_fmt = true ]
+              then
+                usf_EReport "Invalid combination of options" usage
+              fi
+              if [ $namelist_set = true ]
+              then
+                usf_EReport "Invalid combination of options" usage
+              fi ;;
+
+           -n)
+              shift
+              namelist_file=${1:?$(usf_EReport "namelist not provided" usage)}
+              if [ ! -f $namelist_file ]            # Check input files exist.
+              then
+                usf_EReport "namelist $namelist_file does not exist" usage
+              fi
+              export UNIT05=$1
+              namelist_set=true
+              ;;
+
+           -l)
+              shift
+              levels_file=${1:?$(usf_EReport "levels file not provided" usage)}
+              if [ ! -f  $levels_file ]            # Check input files exist.
+              then
+                usf_EReport "levels file $1 does not exist"
+              fi
+              export UNIT11=$1
+              export FILE2=$1
+              ;;
+
+           -o)
+              overwrite=true
+              usf_Print "overwrite mode is true"
+              ;;
+           *)
+              if [ $namelist_set = true ]
+              then
+
+                if [ $# -gt 1 ]
+                then
+                  filenum=`expr $filenum + 1`
+
+                  if [ ! -f  $1 ]            # Check input files exist.
+                  then
+                    rm fort.*
+                    usf_EReport "pp file $1 does not exist" usage
+                  fi
+                  
+                  export PPF1=$1
+                  export `eval echo UNIT${filenum}`=$PPF1
+                  if [ $pp_hp_fmt = true ]
+                  then
+                    export BIT32=1
+                  fi
+                elif [ $# -eq 1 ]
+                  then
+                    if [ ! -f  $1 ]
+                    then
+                      export UNIT10=$1
+                    else
+
+                      if [ $overwrite = true ] # overwrite existing ancilliary
+                      then                   # file (for operational use)
+                        usf_Print "Overwriting file $1"
+                        export UNIT10=$1
+                      else
+
+                        usf_Print "WARNING: file $1 already exists"
+                        usf_Print "Do you want to overwrite this file (y or n)?"
+                        read option
+
+                        case "$option" in
+
+                           y)
+                             export UNIT10=$1
+                             ;;
+                           n)
+                             rm fort.*
+                             exit 0
+                             ;;
+                           *)
+                            rm fort.*
+                            usf_EReport "Invalid answer"
+                             ;;
+                        esac
+
+                      fi
+
+                    fi
+                 else
+                    rm fort.*
+                   usf_EReport "" usage
+
+                 fi
+               else
+                 usf_EReport "" usage
+               fi
+               ;;
+       esac
+       shift
+
+    done
+}
+
+#######################################################################
+# Start of script
+process_cmd_args $@
+
+#Set default Print Status
+usf_set_print_status
+
+# Set environment variable $VN to the current UM version
+usf_set_um_vn
+
+# Directory for intermediate files
+usf_Set_Out_Dir "" "pptoanc_out" "${PPTOANC_OUT_DIR:-}"
+
+# Set the default STASHmaster path if not provided
+usf_Set_STASHmaster
+
+# Set the number of OpenMP threads to 1 if not provided
+usf_set_omp_threads
+
+# Export environment variables
+export STASHMASTER
+
+usf_print_script_path
+
+# Run the executable
+pptoanc_exec=$(dirname "$0")/${PPTOANC_EXEC:-um-pptoanc.exe}
+if [ -x $pptoanc_exec ] ; then
+
+# If $UM_UTIL_LAUNCHER is set, use the contents of that variable as the 
+# launcher; if it's unset or null, invoke the exec directly (as null will
+# be substituted in the if condition).
+if [ ${UM_UTIL_LAUNCHER+1} ]; then
+    usf_Print "$UM_UTIL_LAUNCHER $pptoanc_exec"
+    $UM_UTIL_LAUNCHER $pptoanc_exec 
+else
+    $pptoanc_exec 
+fi
+else
+    usf_EReport "PPTOANC Executable not found: $pptoanc_exec"
+fi
+
+exit 0
+

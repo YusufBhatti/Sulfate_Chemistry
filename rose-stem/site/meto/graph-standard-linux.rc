@@ -1,0 +1,514 @@
+{%- set name_graphs_linux = {
+
+    "meto_linux_n48_glomap_clim_12hr" : 
+                          "fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_n48_glomap_clim_12hr => \
+                           atmos_meto_linux_n48_glomap_clim_12hr => rose_ana_meto_linux_n48_glomap_clim_12hr_atmos_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => \
+                           recon_meto_linux_n48_glomap_clim_12hr => rose_ana_meto_linux_n48_glomap_clim_12hr_recon_kgo
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_glomap_clim_12hr_comp_check" : 
+                          "fcm_make_meto_linux_ifort_um_rigorous_noomp => \
+                           recon_meto_linux_n48_glomap_clim_12hr_comp_check_2x4 => \
+                           atmos_meto_linux_n48_glomap_clim_12hr_comp_check_2x4 => \
+                           rose_ana_meto_linux_n48_glomap_clim_12hr_comp_check_atmos_kgo
+                           fcm_make_meto_linux_ifort_um_rigorous_noomp => \
+                           recon_meto_linux_n48_glomap_clim_12hr_comp_check_4x2 => \
+                           atmos_meto_linux_n48_glomap_clim_12hr_comp_check_4x2
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => \
+                           recon_meto_linux_n48_glomap_clim_12hr_comp_check_2x4 & \
+                           recon_meto_linux_n48_glomap_clim_12hr_comp_check_4x2 => \
+                           rose_ana_meto_linux_n48_glomap_clim_12hr_comp_check_recon_proc
+                           recon_meto_linux_n48_glomap_clim_12hr_comp_check_2x4 => \
+                           rose_ana_meto_linux_n48_glomap_clim_12hr_comp_check_recon_kgo
+                           atmos_meto_linux_n48_glomap_clim_12hr_comp_check_2x4 & \
+                           atmos_meto_linux_n48_glomap_clim_12hr_comp_check_4x2 => \
+                           rose_ana_meto_linux_n48_glomap_clim_12hr_comp_check_atmos_proc
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_ga7_amip_12hr" : 
+                          "fcm_make_meto_linux_ifort_um_high_omp => \
+                           recon_meto_linux_n48_ga7_amip_12hr_4x2 => atmos_meto_linux_n48_ga7_amip_12hr_4x2 => \
+                           rose_ana_meto_linux_n48_ga7_amip_12hr_atmos_kgo
+                           recon_meto_linux_n48_ga7_amip_12hr_4x2 => atmos_meto_linux_n48_ga7_amip_12hr_nc3_4x2 => \
+                           rose_ana_meto_linux_n48_ga7_amip_12hr_nc3_atmos_kgo
+                           recon_meto_linux_n48_ga7_amip_12hr_4x2 => atmos_meto_linux_n48_ga7_amip_12hr_nc4_4x2 => \
+                           rose_ana_meto_linux_n48_ga7_amip_12hr_nc4_atmos_kgo
+                           recon_meto_linux_n48_ga7_amip_12hr_4x2 => atmos_meto_linux_n48_ga7_amip_12hr_nc4_32_4x2 => \
+                           rose_ana_meto_linux_n48_ga7_amip_12hr_nc4_32_atmos_kgo
+                           fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_n48_ga7_amip_12hr_4x2 & recon_meto_linux_n48_ga7_amip_12hr_2x4 => \
+                           rose_ana_meto_linux_n48_ga7_amip_12hr_recon_proc
+                           recon_meto_linux_n48_ga7_amip_12hr_4x2 => rose_ana_meto_linux_n48_ga7_amip_12hr_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_ga7_amip_12hr_2x4 & recon_meto_linux_n48_ga7_amip_12hr_4x2
+                           recon_meto_linux_n48_ga7_amip_12hr_4x2 => atmos_meto_linux_n48_ga7_amip_12hr_4x2_1thread
+                           atmos_meto_linux_n48_ga7_amip_12hr_4x2 & atmos_meto_linux_n48_ga7_amip_12hr_4x2_1thread => rose_ana_meto_linux_n48_ga7_amip_12hr_atmos_thread
+                           recon_meto_linux_n48_ga7_amip_12hr_4x2 & fcm_make_meto_linux_ifort_um_high_noomp => atmos_meto_linux_n48_ga7_amip_12hr_4x2_noomp
+                           atmos_meto_linux_n48_ga7_amip_12hr_4x2 & atmos_meto_linux_n48_ga7_amip_12hr_4x2_noomp => rose_ana_meto_linux_n48_ga7_amip_12hr_atmos_omp
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_ga7_amip_naming": 
+                          "fcm_make_meto_linux_ifort_um_high_omp => \
+                           recon_meto_linux_n48_ga7_amip_naming_2x4 => atmos_meto_linux_n48_ga7_amip_naming_2x4 => rose_ana_meto_linux_n48_ga7_amip_naming_atmos_kgo
+                           recon_meto_linux_n48_ga7_amip_naming_2x4 => rose_ana_meto_linux_n48_ga7_amip_naming_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_ga7_amip_naming_2x4
+                           recon_meto_linux_n48_ga7_amip_naming_2x4  => atmos_meto_linux_n48_ga7_amip_naming_crun_2x4_0 => meto_linux_ga7_amip_naming_crun_install_1 => meto_linux_ga7_amip_naming_crun_archive_0
+                           meto_linux_ga7_amip_naming_crun_install_1 => atmos_meto_linux_n48_ga7_amip_naming_crun_2x4_1 => meto_linux_ga7_amip_naming_crun_install_2 => meto_linux_ga7_amip_naming_crun_archive_1
+                           meto_linux_ga7_amip_naming_crun_install_2 => atmos_meto_linux_n48_ga7_amip_naming_crun_2x4_2 => meto_linux_ga7_amip_naming_crun_install_3 => meto_linux_ga7_amip_naming_crun_archive_2
+                           meto_linux_ga7_amip_naming_crun_install_3 => atmos_meto_linux_n48_ga7_amip_naming_crun_2x4_3 =>                                                     meto_linux_ga7_amip_naming_crun_archive_3
+                           atmos_meto_linux_n48_ga7_amip_naming_2x4 => rose_ana_meto_linux_n48_ga7_amip_naming_lrun_crun_atmos
+                           meto_linux_ga7_amip_naming_crun_archive_0 & meto_linux_ga7_amip_naming_crun_archive_1 & meto_linux_ga7_amip_naming_crun_archive_2 & meto_linux_ga7_amip_naming_crun_archive_3 => rose_ana_meto_linux_n48_ga7_amip_naming_lrun_crun_atmos
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_ga7_amip_12hr_comp_check" : 
+                          "fcm_make_meto_linux_ifort_um_rigorous_noomp => \
+                           recon_meto_linux_n48_ga7_amip_12hr_comp_check_2x4 => atmos_meto_linux_n48_ga7_amip_12hr_comp_check_2x4
+                           fcm_make_meto_linux_ifort_um_rigorous_noomp => recon_meto_linux_n48_ga7_amip_12hr_comp_check_4x2 => \
+                           atmos_meto_linux_n48_ga7_amip_12hr_comp_check_4x2
+                           atmos_meto_linux_n48_ga7_amip_12hr_comp_check_2x4 & atmos_meto_linux_n48_ga7_amip_12hr_comp_check_4x2 => rose_ana_meto_linux_n48_ga7_amip_12hr_comp_check_atmos_proc
+                           atmos_meto_linux_n48_ga7_amip_12hr_comp_check_4x2 => rose_ana_meto_linux_n48_ga7_amip_12hr_comp_check_atmos_kgo
+                           recon_meto_linux_n48_ga7_amip_12hr_comp_check_2x4 & recon_meto_linux_n48_ga7_amip_12hr_comp_check_4x2 => rose_ana_meto_linux_n48_ga7_amip_12hr_comp_check_recon_proc
+                           recon_meto_linux_n48_ga7_amip_12hr_comp_check_4x2 => rose_ana_meto_linux_n48_ga7_amip_12hr_comp_check_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_ga7_amip_12hr_comp_check_2x4 & recon_meto_linux_n48_ga7_amip_12hr_comp_check_4x2
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_ga_amip_exp_12hr" : 
+                          "fcm_make_meto_linux_ifort_um_high_omp => \
+                           recon_meto_linux_n48_ga_amip_exp_12hr_4x2 => atmos_meto_linux_n48_ga_amip_exp_12hr_4x2 => \
+                           rose_ana_meto_linux_n48_ga_amip_exp_12hr_atmos_kgo
+                           recon_meto_linux_n48_ga_amip_exp_12hr_4x2 => atmos_meto_linux_n48_ga_amip_exp_12hr_nc3_4x2 => \
+                           rose_ana_meto_linux_n48_ga_amip_exp_12hr_nc3_atmos_kgo
+                           recon_meto_linux_n48_ga_amip_exp_12hr_4x2 => atmos_meto_linux_n48_ga_amip_exp_12hr_nc4_4x2 => \
+                           rose_ana_meto_linux_n48_ga_amip_exp_12hr_nc4_atmos_kgo
+                           recon_meto_linux_n48_ga_amip_exp_12hr_4x2 => atmos_meto_linux_n48_ga_amip_exp_12hr_nc4_32_4x2 => \
+                           rose_ana_meto_linux_n48_ga_amip_exp_12hr_nc4_32_atmos_kgo
+                           fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_n48_ga_amip_exp_12hr_4x2 & recon_meto_linux_n48_ga_amip_exp_12hr_2x4 => \
+                           rose_ana_meto_linux_n48_ga_amip_exp_12hr_recon_proc
+                           recon_meto_linux_n48_ga_amip_exp_12hr_4x2 => rose_ana_meto_linux_n48_ga_amip_exp_12hr_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_ga_amip_exp_12hr_2x4 & recon_meto_linux_n48_ga_amip_exp_12hr_4x2
+                           recon_meto_linux_n48_ga_amip_exp_12hr_4x2 => atmos_meto_linux_n48_ga_amip_exp_12hr_4x2_1thread
+                           atmos_meto_linux_n48_ga_amip_exp_12hr_4x2 & atmos_meto_linux_n48_ga_amip_exp_12hr_4x2_1thread => rose_ana_meto_linux_n48_ga_amip_exp_12hr_atmos_thread
+                           recon_meto_linux_n48_ga_amip_exp_12hr_4x2 & fcm_make_meto_linux_ifort_um_high_noomp => atmos_meto_linux_n48_ga_amip_exp_12hr_4x2_noomp
+                           atmos_meto_linux_n48_ga_amip_exp_12hr_4x2 & atmos_meto_linux_n48_ga_amip_exp_12hr_4x2_noomp => rose_ana_meto_linux_n48_ga_amip_exp_12hr_atmos_omp
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_ga_amip_exp_naming": 
+                          "fcm_make_meto_linux_ifort_um_high_omp => \
+                           recon_meto_linux_n48_ga_amip_exp_naming_2x4 => atmos_meto_linux_n48_ga_amip_exp_naming_2x4 => rose_ana_meto_linux_n48_ga_amip_exp_naming_atmos_kgo
+                           recon_meto_linux_n48_ga_amip_exp_naming_2x4 => rose_ana_meto_linux_n48_ga_amip_exp_naming_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_ga_amip_exp_naming_2x4
+                           recon_meto_linux_n48_ga_amip_exp_naming_2x4  => atmos_meto_linux_n48_ga_amip_exp_naming_crun_2x4_0 => meto_linux_ga_amip_exp_naming_crun_install_1 => meto_linux_ga_amip_exp_naming_crun_archive_0
+                           meto_linux_ga_amip_exp_naming_crun_install_1 => atmos_meto_linux_n48_ga_amip_exp_naming_crun_2x4_1 => meto_linux_ga_amip_exp_naming_crun_install_2 => meto_linux_ga_amip_exp_naming_crun_archive_1
+                           meto_linux_ga_amip_exp_naming_crun_install_2 => atmos_meto_linux_n48_ga_amip_exp_naming_crun_2x4_2 => meto_linux_ga_amip_exp_naming_crun_install_3 => meto_linux_ga_amip_exp_naming_crun_archive_2
+                           meto_linux_ga_amip_exp_naming_crun_install_3 => atmos_meto_linux_n48_ga_amip_exp_naming_crun_2x4_3 =>                                                     meto_linux_ga_amip_exp_naming_crun_archive_3
+                           atmos_meto_linux_n48_ga_amip_exp_naming_2x4 => rose_ana_meto_linux_n48_ga_amip_exp_naming_lrun_crun_atmos
+                           meto_linux_ga_amip_exp_naming_crun_archive_0 & meto_linux_ga_amip_exp_naming_crun_archive_1 & meto_linux_ga_amip_exp_naming_crun_archive_2 & meto_linux_ga_amip_exp_naming_crun_archive_3 => rose_ana_meto_linux_n48_ga_amip_exp_naming_lrun_crun_atmos
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_ga_amip_exp_12hr_comp_check" : 
+                          "fcm_make_meto_linux_ifort_um_rigorous_noomp => \
+                           recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4 => atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4
+                           fcm_make_meto_linux_ifort_um_rigorous_noomp => recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2 => \
+                           atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2
+                           atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4 & atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2 => rose_ana_meto_linux_n48_ga_amip_exp_12hr_comp_check_atmos_proc
+                           atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2 => rose_ana_meto_linux_n48_ga_amip_exp_12hr_comp_check_atmos_kgo
+                           recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4 & recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2 => rose_ana_meto_linux_n48_ga_amip_exp_12hr_comp_check_recon_proc
+                           recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2 => rose_ana_meto_linux_n48_ga_amip_exp_12hr_comp_check_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4 & recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_eg_omp_ios" :
+                          "fcm_make_meto_linux_ifort_um_high_omp => \
+                           recon_meto_linux_n48_eg_omp_ios_1x4 => atmos_meto_linux_n48_eg_omp_ios_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_atmos_kgo
+                           recon_meto_linux_n48_eg_omp_ios_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_recon_kgo
+                           fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_n48_eg_omp_ios_4x1
+                           recon_meto_linux_n48_eg_omp_ios_1x4 => atmos_meto_linux_n48_eg_omp_ios_1x4_lrun => rose_ana_meto_linux_n48_eg_norms => rose_ana_meto_linux_n48_eg_omp_ios_nrun_nrun_atmos
+                           recon_meto_linux_n48_eg_omp_ios_1x4 => atmos_meto_linux_n48_eg_omp_ios_1x4_nrun1 => atmos_meto_linux_n48_eg_omp_ios_1x4_nrun2 => rose_ana_meto_linux_n48_eg_norms => rose_ana_meto_linux_n48_eg_omp_ios_nrun_nrun_atmos
+                           recon_meto_linux_n48_eg_omp_ios_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_recon_proc
+                           recon_meto_linux_n48_eg_omp_ios_4x1 => rose_ana_meto_linux_n48_eg_omp_ios_recon_proc
+                           recon_meto_linux_n48_eg_omp_ios_4x1 => atmos_meto_linux_n48_eg_omp_ios_4x1
+                           atmos_meto_linux_n48_eg_omp_ios_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_atmos_proc
+                           atmos_meto_linux_n48_eg_omp_ios_4x1 => rose_ana_meto_linux_n48_eg_omp_ios_atmos_proc
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_eg_omp_ios_1x4 & recon_meto_linux_n48_eg_omp_ios_4x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_high_omp => \
+                           recon_meto_linux_n48_eg_omp_ios_1x4 => \
+                               atmos_meto_linux_n48_eg_omp_ios_1x4 => \
+                               rose_ana_meto_linux_n48_eg_omp_ios_atmos_kgo
+                           atmos_meto_linux_n48_eg_omp_ios_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_lrun_crun_atmos
+                           recon_meto_linux_n48_eg_omp_ios_1x4 => \
+                               atmos_meto_linux_n48_eg_omp_ios_1x4_nrun => \
+                               atmos_meto_linux_n48_eg_omp_ios_1x4_crun => \
+                               rose_ana_meto_linux_n48_eg_omp_ios_lrun_crun_atmos
+                           recon_meto_linux_n48_eg_omp_ios_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_eg_omp_ios_1x4 
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_eg_omp_noios_drhook" :
+                          "fcm_make_meto_linux_ifort_um_high_omp_drhook => \
+                           recon_meto_linux_n48_eg_omp_noios_drhook => atmos_meto_linux_n48_eg_omp_noios_drhook_1x4 => rose_ana_meto_linux_n48_eg_omp_noios_drhook_atmos_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_eg_omp_noios_drhook
+                           recon_meto_linux_n48_eg_omp_noios_drhook => rose_ana_meto_linux_n48_eg_omp_noios_drhook_recon_kgo
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_eg_omp_noios":
+                          "fcm_make_meto_linux_ifort_um_high_omp => \
+                           recon_meto_linux_n48_eg_omp_noios_1x4 => atmos_meto_linux_n48_eg_omp_noios_1x4 => rose_ana_meto_linux_n48_eg_omp_noios_atmos_kgo
+                           recon_meto_linux_n48_eg_omp_noios_1x4 => rose_ana_meto_linux_n48_eg_omp_noios_recon_kgo
+                           fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_n48_eg_omp_noios_4x1
+                           recon_meto_linux_n48_eg_omp_noios_1x4 => rose_ana_meto_linux_n48_eg_omp_noios_recon_proc
+                           recon_meto_linux_n48_eg_omp_noios_4x1 => rose_ana_meto_linux_n48_eg_omp_noios_recon_proc
+                           recon_meto_linux_n48_eg_omp_noios_4x1 => atmos_meto_linux_n48_eg_omp_noios_4x1
+                           atmos_meto_linux_n48_eg_omp_noios_1x4 => rose_ana_meto_linux_n48_eg_omp_noios_atmos_proc
+                           atmos_meto_linux_n48_eg_omp_noios_4x1 => rose_ana_meto_linux_n48_eg_omp_noios_atmos_proc
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_eg_omp_noios_1x4 & recon_meto_linux_n48_eg_omp_noios_4x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_eg_noomp" :
+                          "fcm_make_meto_linux_ifort_um_high_noomp => recon_meto_linux_n48_eg_noomp_1x1
+                           recon_meto_linux_n48_eg_noomp_1x1 => atmos_meto_linux_n48_eg_noomp_1x4 => rose_ana_meto_linux_n48_eg_noomp_atmos_kgo
+                           recon_meto_linux_n48_eg_noomp_1x1 => rose_ana_meto_linux_n48_eg_noomp_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_eg_noomp_1x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_aqum_eg" :
+                          "fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_aqum_eg_1x2
+                           recon_meto_linux_aqum_eg_1x2 => atmos_meto_linux_aqum_eg_1x4 => rose_ana_meto_linux_aqum_eg_atmos_kgo
+                           recon_meto_linux_aqum_eg_1x2 => rose_ana_meto_linux_aqum_eg_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_aqum_eg_1x2
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_aqum_eg_glomap" :
+                          "fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_aqum_eg_glomap_1x2
+                           recon_meto_linux_aqum_eg_glomap_1x2 => atmos_meto_linux_aqum_eg_glomap_1x4 => rose_ana_meto_linux_aqum_eg_glomap_atmos_kgo
+                           recon_meto_linux_aqum_eg_glomap_1x2 => rose_ana_meto_linux_aqum_eg_glomap_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_aqum_eg_glomap_1x2
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_aqum_eg_bit_comp" :
+                          "fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_aqum_eg_1x2
+                           recon_meto_linux_aqum_eg_1x2 => atmos_meto_linux_aqum_eg_1x4 => rose_ana_meto_linux_aqum_eg_atmos_kgo
+                           recon_meto_linux_aqum_eg_1x2 => rose_ana_meto_linux_aqum_eg_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_aqum_eg_1x2
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_aqum_eg_glomap_bit_comp" :
+                          "fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_aqum_eg_glomap_1x2
+                           recon_meto_linux_aqum_eg_glomap_1x2 => atmos_meto_linux_aqum_eg_glomap_1x4 => rose_ana_meto_linux_aqum_eg_glomap_atmos_kgo
+                           recon_meto_linux_aqum_eg_glomap_1x2 => rose_ana_meto_linux_aqum_eg_glomap_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_aqum_eg_glomap_1x2
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_aqum_eg_noomp" :
+                          "fcm_make_meto_linux_ifort_um_high_noomp => recon_meto_linux_aqum_eg_noomp_1x2
+                           recon_meto_linux_aqum_eg_noomp_1x2 => atmos_meto_linux_aqum_eg_noomp_1x4 => rose_ana_meto_linux_aqum_eg_noomp_atmos_kgo
+                           recon_meto_linux_aqum_eg_noomp_1x2 => rose_ana_meto_linux_aqum_eg_noomp_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_aqum_eg_noomp_1x2",
+
+    "meto_linux_aqum_eg_glomap_noomp" :
+                          "fcm_make_meto_linux_ifort_um_high_noomp => recon_meto_linux_aqum_eg_glomap_noomp_1x2
+                           recon_meto_linux_aqum_eg_glomap_noomp_1x2 => atmos_meto_linux_aqum_eg_glomap_noomp_1x4 => rose_ana_meto_linux_aqum_eg_glomap_noomp_atmos_kgo
+                           recon_meto_linux_aqum_eg_glomap_noomp_1x2 => rose_ana_meto_linux_aqum_eg_glomap_noomp_recon_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_aqum_eg_glomap_noomp_1x2",
+
+    "meto_linux_seukv_eg" :
+                          "fcm_make_meto_linux_ifort_um_high_noomp => recon_meto_linux_seukv_eg_noomp_2x2 => atmos_meto_linux_seukv_eg_noomp_4x6 => rose_ana_meto_linux_seukv_eg_atmos_kgo
+                           recon_meto_linux_seukv_eg_noomp_2x2 => rose_ana_meto_linux_seukv_eg_recon_kgo
+                           fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_seukv_eg_omp_2x2 => atmos_meto_linux_seukv_eg_omp_4x6
+                           recon_meto_linux_seukv_eg_noomp_2x2 & recon_meto_linux_seukv_eg_omp_2x2 => rose_ana_meto_linux_seukv_eg_recon_omp
+                           atmos_meto_linux_seukv_eg_noomp_4x6 & atmos_meto_linux_seukv_eg_omp_4x6 => rose_ana_meto_linux_seukv_eg_atmos_omp
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_seukv_eg_omp_2x2 & recon_meto_linux_seukv_eg_noomp_2x2
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_idealised_bicyclic_lam_rce" :
+                          "fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_idealised_bicyclic_lam_rce_1x4
+                           fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_idealised_bicyclic_lam_rce_4x1
+                           recon_meto_linux_idealised_bicyclic_lam_rce_1x4 => atmos_meto_linux_idealised_bicyclic_lam_rce_2x8
+                           recon_meto_linux_idealised_bicyclic_lam_rce_1x4 => atmos_meto_linux_idealised_bicyclic_lam_rce_4x4
+                           recon_meto_linux_idealised_bicyclic_lam_rce_1x4 => rose_ana_meto_linux_idealised_bicyclic_lam_rce_recon_kgo
+                           recon_meto_linux_idealised_bicyclic_lam_rce_1x4 => rose_ana_meto_linux_idealised_bicyclic_lam_rce_recon_proc
+                           recon_meto_linux_idealised_bicyclic_lam_rce_4x1 => rose_ana_meto_linux_idealised_bicyclic_lam_rce_recon_proc
+                           atmos_meto_linux_idealised_bicyclic_lam_rce_2x8 => rose_ana_meto_linux_idealised_bicyclic_lam_rce_atmos_kgo
+                           atmos_meto_linux_idealised_bicyclic_lam_rce_2x8 => rose_ana_meto_linux_idealised_bicyclic_lam_rce_atmos_proc
+                           atmos_meto_linux_idealised_bicyclic_lam_rce_4x4 => rose_ana_meto_linux_idealised_bicyclic_lam_rce_atmos_proc
+                           recon_meto_linux_idealised_bicyclic_lam_rce_1x4 => atmos_meto_linux_idealised_bicyclic_lam_rce_nrun_2x8
+                           atmos_meto_linux_idealised_bicyclic_lam_rce_nrun_2x8 => atmos_meto_linux_idealised_bicyclic_lam_rce_crun_2x8
+                           atmos_meto_linux_idealised_bicyclic_lam_rce_crun_2x8 => rose_ana_meto_linux_idealised_bicyclic_lam_rce_atmos_nruncrun
+                           atmos_meto_linux_idealised_bicyclic_lam_rce_2x8 => rose_ana_meto_linux_idealised_bicyclic_lam_rce_atmos_nruncrun
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_idealised_bicyclic_lam_rce_1x4
+                           meto_linux_install_ctldata => recon_meto_linux_idealised_bicyclic_lam_rce_4x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_idealised_bicyclic_lam_bomex" :
+                          "fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_idealised_bicyclic_lam_bomex_1x4
+                           fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_idealised_bicyclic_lam_bomex_4x1
+                           recon_meto_linux_idealised_bicyclic_lam_bomex_1x4 => atmos_meto_linux_idealised_bicyclic_lam_bomex_2x8
+                           recon_meto_linux_idealised_bicyclic_lam_bomex_1x4 => atmos_meto_linux_idealised_bicyclic_lam_bomex_4x4
+                           recon_meto_linux_idealised_bicyclic_lam_bomex_1x4 => rose_ana_meto_linux_idealised_bicyclic_lam_bomex_recon_kgo
+                           recon_meto_linux_idealised_bicyclic_lam_bomex_1x4 => rose_ana_meto_linux_idealised_bicyclic_lam_bomex_recon_proc
+                           recon_meto_linux_idealised_bicyclic_lam_bomex_4x1 => rose_ana_meto_linux_idealised_bicyclic_lam_bomex_recon_proc
+                           atmos_meto_linux_idealised_bicyclic_lam_bomex_2x8 => rose_ana_meto_linux_idealised_bicyclic_lam_bomex_atmos_kgo
+                           atmos_meto_linux_idealised_bicyclic_lam_bomex_2x8 => rose_ana_meto_linux_idealised_bicyclic_lam_bomex_atmos_proc
+                           atmos_meto_linux_idealised_bicyclic_lam_bomex_4x4 => rose_ana_meto_linux_idealised_bicyclic_lam_bomex_atmos_proc
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_idealised_bicyclic_lam_bomex_1x4
+                           meto_linux_install_ctldata => recon_meto_linux_idealised_bicyclic_lam_bomex_4x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_idealised_bicyclic_lam_dry2dpl" :
+                          "fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1
+                           fcm_make_meto_linux_ifort_um_high_omp => recon_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1
+                           recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1 => atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1
+                           recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1 => atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1
+                           recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1 => rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_recon_kgo
+                           recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1 => rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_recon_proc
+                           recon_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1 => rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_recon_proc
+                           atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1 => rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_atmos_kgo
+                           atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1 => rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_atmos_proc
+                           atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1 => rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_atmos_proc
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1
+                           meto_linux_install_ctldata => recon_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_n108_nd_interp_all_fields" :
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n108_nd_interp_all_fields_1x1 => \
+                           rose_ana_meto_linux_recon_n108_nd_interp_all_fields_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n108_nd_interp_all_fields_1x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_n216_eg_interp_all_fields_basic" :
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n216_eg_interp_all_fields_basic_1x4 => \
+                           rose_ana_meto_linux_recon_n216_eg_interp_all_fields_basic_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n216_eg_interp_all_fields_basic_1x4
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib" :
+                          "fcm_make_meto_linux_ifort_recon_high_omp_nogrib => \
+                           recon_meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib_1x4 => \
+                           rose_ana_meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib_1x4
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+   "meto_linux_recon_n216_eg_select_fields_from_namelist" :
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n216_eg_select_fields_from_namelist_1x4 => \
+                           rose_ana_meto_linux_recon_n216_eg_select_fields_from_namelist_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n216_eg_select_fields_from_namelist_1x4
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_n108_nd_var_area_weight" :
+                          "fcm_make_meto_linux_ifort_recon_serial_high_omp => \
+                           recon_meto_linux_recon_n108_nd_var_area_weight_1x1 => \
+                           rose_ana_meto_linux_recon_n108_nd_var_area_weight_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n108_nd_var_area_weight_1x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_n48_nd_grib1":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_n48_nd_grib1_1x1
+                           recon_meto_linux_recon_n48_nd_grib1_1x1 => rose_ana_meto_linux_recon_n48_nd_grib1_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n48_nd_grib1_1x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_n48_nd_grib2":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_n48_nd_grib2_1x1
+                           recon_meto_linux_recon_n48_nd_grib2_1x1 => rose_ana_meto_linux_recon_n48_nd_grib2_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n48_nd_grib2_1x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_n48_eg_grib1":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_n48_eg_grib1_1x1
+                           recon_meto_linux_recon_n48_eg_grib1_1x1 => rose_ana_meto_linux_recon_n48_eg_grib1_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n48_eg_grib1_1x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_n48_eg_grib2":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_n48_eg_grib2_1x1
+                           recon_meto_linux_recon_n48_eg_grib2_1x1 => rose_ana_meto_linux_recon_n48_eg_grib2_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n48_eg_grib2_1x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+                
+
+    "meto_linux_recon_n96_nd_init_prog_ancil":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_n96_nd_init_prog_ancil_2x1
+                           recon_meto_linux_recon_n96_nd_init_prog_ancil_2x1 => rose_ana_meto_linux_recon_n96_nd_init_prog_ancil_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n96_nd_init_prog_ancil_2x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_LAM_fix_to_var_res":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_LAM_fix_to_var_res_4x1
+                           recon_meto_linux_recon_LAM_fix_to_var_res_4x1 => rose_ana_meto_linux_recon_LAM_fix_to_var_res_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_LAM_fix_to_var_res_4x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_LAM_fix_to_fix_res":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_LAM_fix_to_fix_res_4x1
+                           recon_meto_linux_recon_LAM_fix_to_fix_res_4x1 => rose_ana_meto_linux_recon_LAM_fix_to_fix_res_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_LAM_fix_to_fix_res_4x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_LAM_var_to_fix_res":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_LAM_var_to_fix_res_4x1
+                           recon_meto_linux_recon_LAM_var_to_fix_res_4x1 => rose_ana_meto_linux_recon_LAM_var_to_fix_res_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_LAM_var_to_fix_res_4x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_LAM_var_to_var_res":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_LAM_var_to_var_res_4x1
+                           recon_meto_linux_recon_LAM_var_to_var_res_4x1 => rose_ana_meto_linux_recon_LAM_var_to_var_res_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_LAM_var_to_var_res_4x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_n48_nd_2D_CCA_trans_bilinear":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x1
+                           recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x1 => rose_ana_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x1
+                           fcm_make_meto_linux_ifort_recon_high_omp & meto_linux_install_ctldata => \
+                           recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_specify_nl_1x1
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_recon_nearest_neighbour_nz":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => recon_meto_linux_recon_nearest_neighbour_nz_1x4
+                           recon_meto_linux_recon_nearest_neighbour_nz_1x4 => rose_ana_meto_linux_recon_nearest_neighbour_nz_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_recon_nearest_neighbour_nz_1x4
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_scm_togacoare_ga6_omp" :
+                          "fcm_make_meto_linux_ifort_scm_debug_omp => scm_meto_linux_scm_togacoare_ga6_omp_1_thread 
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => scm_meto_linux_scm_togacoare_ga6_omp_1_thread => \
+                           housekeep_meto_linux",
+
+    "meto_linux_scm_togacoare_ga6_noomp" :
+                          "fcm_make_meto_linux_ifort_scm_debug_noomp => scm_meto_linux_scm_togacoare_ga6_noomp => \
+                           rose_ana_meto_linux_scm_togacoare_ga6_noomp_atmos_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => scm_meto_linux_scm_togacoare_ga6_noomp
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_scm_gabls3_ga6_omp" :
+                          "fcm_make_meto_linux_ifort_scm_debug_omp => scm_meto_linux_scm_gabls3_ga6_omp_1_thread
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => scm_meto_linux_scm_gabls3_ga6_omp_1_thread => \
+                           housekeep_meto_linux",
+
+    "meto_linux_scm_gabls3_ga6_noomp" :
+                          "fcm_make_meto_linux_ifort_scm_debug_noomp => scm_meto_linux_scm_gabls3_ga6_noomp => \
+                           rose_ana_meto_linux_scm_gabls3_ga6_noomp_atmos_kgo
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => scm_meto_linux_scm_gabls3_ga6_noomp
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_ifort_createbc_calcs" :
+                          "
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata
+
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_global_eg_fixed_nd_0dust0 => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_global_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_global_eg_varres_nd_0dust0 => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_global_eg_varres_nd_0dust0_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_fixed_eg_varres_nd_0dust0 => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_fixed_eg_varres_nd_0dust0_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_fixed_eg_fixed_nd_0dust0 => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_fixed_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_fixed_eg_fixed_eg_0dust0 => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_fixed_eg_fixed_eg_0dust0_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_varres_eg_frame_eg_0dust0 => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_varres_eg_frame_eg_0dust0_kgo
+                           createbc_meto_linux_ifort_createbc_calcs_varres_eg_frame_eg_0dust0 & fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => \
+                           createbc_meto_linux_ifort_createbc_calcs_frame_eg_fixed_eg_0dust0 => rose_ana_meto_linux_ifort_createbc_calcs_frame_eg_fixed_eg_0dust0_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_rigorous_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_rigorous_noomp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_noomp => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp
+                           createbc_meto_linux_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp => rose_ana_meto_linux_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp
+                         
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_global_eg_varres_eg_2dust6 => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_global_eg_varres_eg_2dust6_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_global_eg_fixed_eg_2dust6 => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_global_eg_fixed_eg_2dust6_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_global_eg_frame_eg_2dust2 => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_global_eg_frame_eg_2dust2_kgo
+                           createbc_meto_linux_ifort_createbc_calcs_global_eg_frame_eg_2dust2 & fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => \
+                           createbc_meto_linux_ifort_createbc_calcs_frame_eg_varres_eg_2dust6 => rose_ana_meto_linux_ifort_createbc_calcs_frame_eg_varres_eg_2dust6_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_high_omp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_kgo
+
+                           fcm_make_meto_linux_ifort_createbc_high_noomp & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_noomp => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp
+                           createbc_meto_linux_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp => rose_ana_meto_linux_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp
+
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+                         
+
+    "meto_linux_ifort_createbc_calcs_drhook" :
+                          "
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata
+                           fcm_make_meto_linux_ifort_createbc_high_omp_drhook & meto_linux_install_ctldata => createbc_meto_linux_ifort_createbc_calcs_global_eg_varres_eg_2dust6_drhook => \
+                           rose_ana_meto_linux_ifort_createbc_calcs_global_eg_varres_eg_2dust6_drhook_kgo
+                         
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_pptoanc_calcs" :
+                          "
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata
+
+                           fcm_make_meto_linux_ifort_utils_serial_high_noomp => utils_meto_linux_pptoanc_calcs_basic_test
+                           meto_linux_install_ctldata => utils_meto_linux_pptoanc_calcs_basic_test
+                           utils_meto_linux_pptoanc_calcs_basic_test => rose_ana_meto_linux_utils_pptoanc_calcs_basic_test_kgo
+                           rose_ana_meto_linux_utils_pptoanc_calcs_basic_test_kgo
+
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_crmstyle_coarse_grid" :
+                          "
+                           fcm_make_meto_linux_ifort_utils_mpp_high_omp => utils_meto_linux_crmstyle_coarse_grid_whole 
+                           fcm_make_meto_linux_ifort_utils_mpp_high_omp => utils_meto_linux_crmstyle_coarse_grid_part_1x2 
+                           fcm_make_meto_linux_ifort_utils_mpp_high_omp => utils_meto_linux_crmstyle_coarse_grid_part_2x1
+
+                           utils_meto_linux_crmstyle_coarse_grid_whole => rose_ana_meto_linux_utils_crmstyle_coarse_grid_whole_kgo
+                           rose_ana_meto_linux_utils_crmstyle_coarse_grid_whole_kgo
+
+                           utils_meto_linux_crmstyle_coarse_grid_part_2x1 => rose_ana_meto_linux_utils_crmstyle_coarse_grid_part_kgo
+                           rose_ana_meto_linux_utils_crmstyle_coarse_grid_part_kgo
+
+                           utils_meto_linux_crmstyle_coarse_grid_part_1x2 & \
+                           utils_meto_linux_crmstyle_coarse_grid_part_2x1 => rose_ana_meto_linux_utils_crmstyle_coarse_grid_part_proc
+
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_pws_diag_test" : 
+                          "fcm_make_meto_linux_ifort_um_high_omp => \
+                           recon_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4 => atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4 
+                           recon_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4 => atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_4x1
+                           atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_pws_diag_test_atmos_proc
+                           atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_4x1 => rose_ana_meto_linux_n48_eg_omp_ios_pws_diag_test_atmos_proc
+                           recon_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4 => atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_no_dependencies_1x4
+                           atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_no_dependencies_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_pws_diag_test_atmos_dependencies
+                           fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata => recon_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4
+                           atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_pws_diag_test_atmos_kgo
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+
+    "meto_linux_n48_eg_omp_ios_clang_ifort" :
+                          "fcm_make_meto_linux_install_ctldata => meto_linux_install_ctldata
+                           fcm_make_meto_linux_clang_ifort_um_high_omp & meto_linux_install_ctldata => \
+                                recon_meto_linux_n48_eg_omp_ios_clang_ifort_1x4 & recon_meto_linux_n48_eg_omp_ios_clang_ifort_4x1
+
+                           recon_meto_linux_n48_eg_omp_ios_clang_ifort_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_clang_ifort_recon_kgo
+                           recon_meto_linux_n48_eg_omp_ios_clang_ifort_1x4 & recon_meto_linux_n48_eg_omp_ios_clang_ifort_4x1 => \
+                                rose_ana_meto_linux_n48_eg_omp_ios_clang_ifort_recon_proc
+                           recon_meto_linux_n48_eg_omp_ios_clang_ifort_1x4 => atmos_meto_linux_n48_eg_omp_ios_clang_ifort_1x4
+                           recon_meto_linux_n48_eg_omp_ios_clang_ifort_4x1 => atmos_meto_linux_n48_eg_omp_ios_clang_ifort_4x1
+
+                           atmos_meto_linux_n48_eg_omp_ios_clang_ifort_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_clang_ifort_atmos_kgo
+                           atmos_meto_linux_n48_eg_omp_ios_clang_ifort_1x4 & atmos_meto_linux_n48_eg_omp_ios_clang_ifort_4x1 => \
+                                rose_ana_meto_linux_n48_eg_omp_ios_clang_ifort_atmos_proc
+
+                           METO_LINUX_ROSE_ANA:succeed-all => housekeep_meto_linux",
+    }
+-%}

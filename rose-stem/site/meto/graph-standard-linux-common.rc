@@ -1,0 +1,35 @@
+{%- if TRUSTZONE == 'collaboration' %}
+{%- set SCRIPT_MACHINE='xc40' %}
+{%- else %}
+{%- set SCRIPT_MACHINE='linux' %}
+{%- endif %}
+
+{%- set name_graphs_linux_common = {
+
+    "metadata_check"   :
+                          "script_source => metadata_check_upgrade => housekeep_script_source => housekeep_meto_"~SCRIPT_MACHINE~"
+                           script_source => metadata_check_missing_macro => housekeep_script_source => housekeep_meto_"~SCRIPT_MACHINE~"
+                           script_source => metadata_check_validate => housekeep_script_source => housekeep_meto_"~SCRIPT_MACHINE,
+
+
+    "umdp3_check"      :
+                          "umdp3_checker => housekeep_meto_"~SCRIPT_MACHINE,
+
+    "ifdef_check"      :
+                          "ifdef_checker => housekeep_meto_"~SCRIPT_MACHINE,
+
+    "nl_bcast_check"   :
+                          "script_source => nl_bcast_checker => \
+                           housekeep_script_source => housekeep_meto_"~SCRIPT_MACHINE,
+
+    "drhook_check"     :
+                          "script_source => drhook_checker => \
+                           housekeep_script_source => housekeep_meto_"~SCRIPT_MACHINE,
+
+    "site_validate"    :  "site_validator => housekeep_meto_"~SCRIPT_MACHINE,
+    
+    "monitor_linux_tasks" :
+                          "monitor_linux_tasks => housekeep_meto_"~SCRIPT_MACHINE,
+
+      }
+%}

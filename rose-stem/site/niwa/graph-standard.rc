@@ -1,0 +1,3 @@
+%include 'site/niwa/graph-standard-xc50.rc'
+
+{%- set name_graphs = name_graphs_xc50 %}

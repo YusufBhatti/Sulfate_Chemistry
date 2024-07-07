@@ -1,0 +1,110 @@
+# Machine specific class for Boreasz
+    [[ICM_BOREASZ]]
+        [[[remote]]]
+            host = boreasz
+	    owner = um
+        [[[environment]]]
+	    UMDIR = {{BOREASZ_UMDIR}}
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{BOREASZ_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{BOREASZ_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{BOREASZ_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+# Submission setup - background
+    [[ICM_BOREASZ_AT]]
+        [[[job submission]]]
+            method = background
+
+# Submission setup - LoadLeveler
+    [[ICM_BOREASZ_LL]]
+        [[[job submission]]]
+            method = loadleveler
+        [[[directives]]]
+	    account_no       = icm-meteo
+            job_name         = um-rose-stem
+            class            = meteo
+            job_type         = parallel
+            notification     = error
+            notify_user      = rose_stem
+            wall_clock_limit = "02:00:00"
+            network.MPI      = "sn_all, shared, US"
+            shell            = /usr/bin/env bash
+
+# Boreasz node setup
+# Single OpenMP thread
+    [[ICM_BOREASZ_PARALLEL_THREADS_1]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 1
+	    OMP_STACKSIZE = 1g
+
+# Two OpenMP threads
+    [[ICM_BOREASZ_PARALLEL_THREADS_2]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 2
+	    OMP_STACKSIZE = 1g
+
+# Single task
+    [[ICM_BOREASZ_PARALLEL_TASKS_1]]
+        [[[directives]]]
+            node             = 1
+            total_tasks      = 1
+            node_usage       = shared
+
+# Two tasks
+    [[ICM_BOREASZ_PARALLEL_TASKS_2]]
+        [[[directives]]]
+            node             = 1
+            total_tasks      = 2
+            node_usage       = shared
+
+# Four tasks
+    [[ICM_BOREASZ_PARALLEL_TASKS_4]]
+        [[[directives]]]
+            node             = 1
+            total_tasks      = 4
+            node_usage       = shared
+
+# Eight tasks
+    [[ICM_BOREASZ_PARALLEL_TASKS_8]]
+        [[[directives]]]
+            node             = 1
+            total_tasks      = 8
+            node_usage       = shared
+
+# 32 tasks
+    [[ICM_BOREASZ_PARALLEL_TASKS_32]]
+        [[[directives]]]
+            node             = 1
+            total_tasks      = 32
+            node_usage       = not_shared
+
+# 64 tasks
+    [[ICM_BOREASZ_PARALLEL_TASKS_64]]
+        [[[directives]]]
+            node             = 2
+            total_tasks      = 64
+            node_usage       = not_shared
+
+# 256 tasks
+    [[ICM_BOREASZ_PARALLEL_TASKS_256]]
+        [[[directives]]]
+            node             = 8
+            total_tasks      = 256
+            node_usage       = not_shared
+
+# Build task for building on Boreasz
+# Currently runs on the login node
+# Note that the ICM_BOREASZ_EXTRACT family can be found in file
+# family-linux.rc, as the extract step is run on a Linux 
+    [[ICM_BOREASZ_BUILD]]
+        inherit = ICM_BOREASZ, ICM_BOREASZ_AT, EXTRACT_SOURCE
+        [[[environment]]]
+            grib_api_path = {{GRIB_API_BOREASZ_ROOT_DIR}}
+            DRHOOK=false
+            PLATFORM=icm-pwr7-xlf
+
+    [[ICM_BOREASZ_HOUSEKEEPING]]
+	inherit=HOUSEKEEPING
+        [[[environment]]]
+	    PATH=/opt/freeware/bin:$PATH

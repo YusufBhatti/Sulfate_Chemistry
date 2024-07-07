@@ -1,0 +1,164 @@
+{%- set integ_graphs_linux = {
+
+    "meto_linux_n48_ga7_amip_12hr" :   "",
+    
+    "meto_linux_n48_ga7_amip_naming" :   "",
+
+    "meto_linux_n48_ga7_amip_12hr_comp_check" :   "",
+
+    "meto_linux_n48_ga_amip_exp_12hr" :   "",
+    
+    "meto_linux_n48_ga_amip_exp_naming" :   "",
+
+    "meto_linux_n48_ga_amip_exp_12hr_comp_check" :   "",
+
+    "meto_linux_n48_glomap_clim_12hr" :   "",
+
+    "meto_linux_n48_glomap_clim_12hr_comp_check" :   "",
+
+    "meto_linux_n48_eg_omp_ios" :
+                          "recon_meto_linux_n48_eg_omp_ios_1x4 => atmos_meto_linux_n48_eg_omp_ios_2x4 => rose_ana_meto_linux_n48_eg_omp_ios_atmos_proc_2x4
+                           atmos_meto_linux_n48_eg_omp_ios_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_atmos_proc_2x4
+                           recon_meto_linux_n48_eg_omp_ios_1x4 => atmos_meto_linux_n48_eg_omp_ios_4x2 => rose_ana_meto_linux_n48_eg_omp_ios_atmos_proc_4x2
+                           atmos_meto_linux_n48_eg_omp_ios_1x4 => rose_ana_meto_linux_n48_eg_omp_ios_atmos_proc_4x2",
+
+    "meto_linux_n48_eg_omp_noios": "",
+
+    "meto_linux_n48_eg_omp_noios_drhook" : "",
+
+    "meto_linux_n48_eg_noomp" :
+                          "recon_meto_linux_n48_eg_noomp_1x1 => atmos_meto_linux_n48_eg_noomp_4x1 => rose_ana_meto_linux_n48_eg_noomp_atmos_proc
+                           atmos_meto_linux_n48_eg_noomp_1x4 => rose_ana_meto_linux_n48_eg_noomp_atmos_proc",
+
+    "meto_linux_aqum_eg" : "",
+ 
+    "meto_linux_aqum_eg_glomap" : "",
+ 
+    "meto_linux_aqum_eg_bit_comp" :
+                          "atmos_meto_linux_aqum_eg_1x4 => rose_ana_meto_linux_aqum_eg_atmos_proc
+                           recon_meto_linux_aqum_eg_1x2 => atmos_meto_linux_aqum_eg_2x2 => \
+                           rose_ana_meto_linux_aqum_eg_atmos_proc",
+
+    "meto_linux_aqum_eg_glomap_bit_comp" :
+                          "atmos_meto_linux_aqum_eg_glomap_1x4 => rose_ana_meto_linux_aqum_eg_glomap_atmos_proc
+                           recon_meto_linux_aqum_eg_glomap_1x2 => atmos_meto_linux_aqum_eg_glomap_2x2 => \
+                           rose_ana_meto_linux_aqum_eg_glomap_atmos_proc",
+
+    "meto_linux_aqum_eg_noomp" :  "",
+
+    "meto_linux_aqum_eg_glomap_noomp" :  "",
+
+    "meto_linux_seukv_eg" : "",
+
+    "meto_linux_idealised_bicyclic_lam_rce" : "",
+
+    "meto_linux_idealised_bicyclic_lam_bomex" : "",
+
+    "meto_linux_idealised_bicyclic_lam_dry2dpl" : "",
+
+    "meto_linux_recon_n108_nd_var_area_weight" : "",
+
+    "meto_linux_recon_n108_nd_interp_all_fields" : "",
+
+    "meto_linux_recon_n216_eg_interp_all_fields_basic" :
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n216_eg_interp_all_fields_basic_2x2 & recon_meto_linux_recon_n216_eg_interp_all_fields_basic_1x4 => \
+                           rose_ana_meto_linux_recon_n216_eg_interp_all_fields_basic_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_n216_eg_interp_all_fields_basic_2x2",
+
+    "meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib" : "",
+
+    "meto_linux_recon_n216_eg_select_fields_from_namelist" :
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n216_eg_select_fields_from_namelist_2x2 & recon_meto_linux_recon_n216_eg_select_fields_from_namelist_1x4 => \
+                           rose_ana_meto_linux_recon_n216_eg_select_fields_from_namelist_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_n216_eg_select_fields_from_namelist_2x2",
+
+    "meto_linux_recon_n48_nd_grib1":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n48_nd_grib1_1x2 & recon_meto_linux_recon_n48_nd_grib1_1x1 => \
+                           rose_ana_meto_linux_recon_n48_nd_grib1_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_n48_nd_grib1_1x2",
+
+    "meto_linux_recon_n48_nd_grib2":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n48_nd_grib2_1x2 & recon_meto_linux_recon_n48_nd_grib2_1x1 => \
+                           rose_ana_meto_linux_recon_n48_nd_grib2_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_n48_nd_grib2_1x2",
+
+    "meto_linux_recon_n48_eg_grib1":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n48_eg_grib1_1x2 & recon_meto_linux_recon_n48_eg_grib1_1x1 => \
+                           rose_ana_meto_linux_recon_n48_eg_grib1_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_n48_eg_grib1_1x2",
+
+    "meto_linux_recon_n48_eg_grib2":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n48_eg_grib2_1x2 & recon_meto_linux_recon_n48_eg_grib2_1x1 => \
+                           rose_ana_meto_linux_recon_n48_eg_grib2_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_n48_eg_grib2_1x2",
+
+    "meto_linux_recon_n96_nd_init_prog_ancil":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n96_nd_init_prog_ancil_1x2 & recon_meto_linux_recon_n96_nd_init_prog_ancil_2x1 => \
+                           rose_ana_meto_linux_recon_n96_nd_init_prog_ancil_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_n96_nd_init_prog_ancil_1x2",
+
+    "meto_linux_recon_LAM_fix_to_var_res":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_LAM_fix_to_var_res_1x4 & recon_meto_linux_recon_LAM_fix_to_var_res_4x1 => \
+                           rose_ana_meto_linux_recon_LAM_fix_to_var_res_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_LAM_fix_to_var_res_1x4",
+
+    "meto_linux_recon_LAM_fix_to_fix_res":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_LAM_fix_to_fix_res_1x4 & recon_meto_linux_recon_LAM_fix_to_fix_res_4x1 => \
+                           rose_ana_meto_linux_recon_LAM_fix_to_fix_res_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_LAM_fix_to_fix_res_1x4",
+
+    "meto_linux_recon_LAM_var_to_fix_res":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_LAM_var_to_fix_res_1x4 & recon_meto_linux_recon_LAM_var_to_fix_res_4x1 => \
+                           rose_ana_meto_linux_recon_LAM_var_to_fix_res_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_LAM_var_to_fix_res_1x4",
+
+    "meto_linux_recon_LAM_var_to_var_res":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_LAM_var_to_var_res_1x4 & recon_meto_linux_recon_LAM_var_to_var_res_4x1 => \
+                           rose_ana_meto_linux_recon_LAM_var_to_var_res_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_LAM_var_to_var_res_1x4",
+
+    "meto_linux_recon_n48_nd_2D_CCA_trans_bilinear":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x2 & recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x1 => \
+                           rose_ana_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x2",
+
+    "meto_linux_recon_nearest_neighbour_nz":
+                          "fcm_make_meto_linux_ifort_recon_high_omp => \
+                           recon_meto_linux_recon_nearest_neighbour_nz_4x1 & recon_meto_linux_recon_nearest_neighbour_nz_1x4 => \
+                           rose_ana_meto_linux_recon_nearest_neighbour_nz_proc
+                           meto_linux_install_ctldata => recon_meto_linux_recon_nearest_neighbour_nz_4x1",
+
+    "meto_linux_scm_togacoare_ga6_omp" :  "",
+
+    "meto_linux_scm_togacoare_ga6_noomp" :  "",
+
+    "meto_linux_scm_gabls3_ga6_omp" :  "",
+
+    "meto_linux_scm_gabls3_ga6_noomp" :  "",
+
+    "meto_linux_ifort_createbc_calcs" :  "",
+
+    "meto_linux_ifort_createbc_calcs_drhook" :  "",
+
+    "meto_linux_pptoanc_calcs" : "",
+
+    "meto_linux_crmstyle_coarse_grid" : "",
+
+    "meto_linux_pws_diag_test" : "",
+
+    "meto_linux_n48_eg_omp_ios_clang_ifort" : "",
+
+    }
+-%}

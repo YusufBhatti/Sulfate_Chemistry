@@ -1,0 +1,58 @@
+{%- set integ_graphs = {
+
+    "nci_n96_amip_eg"   : "",
+
+    "nci_n96_amip_eg_drhook" : "",
+
+    "nci_ukca_eg_strattrop"  : "",
+
+    "nci_n48_eg_omp_noios"        : "",
+
+    "nci_n48_eg_omp_ios"        : "",
+
+    "nci_n48_eg_omp_ios_comp_check" : "",
+    
+    "nci_n48_eg_noomp"  :    "",
+
+    "nci_n48_eg_noomp_comp_check" : "",
+			  
+    "nci_n48_ga7_amip_2day" : "",
+
+    "nci_n48_ga7_amip_12hr_comp_check" : "",
+
+    "nci_n48_ga7_amip_10day" : "",
+
+    "nci_n48_ga7_amip_30day" : "",
+
+    "nci_n48_ga_amip_exp_2day" : "",
+
+    "nci_n48_ga_amip_exp_12hr_comp_check" : "",
+
+    "nci_n512_eg"  : "",
+
+    "nci_scm_togacoare_ga6"  : "",
+
+    "nci_scm_gabls3_ga6"  : "",
+
+    "nci_scm_gabls3_ga6_comp_check"  : "",
+
+    "nci_createbc_calcs" : "",
+
+    "nci_global_to_lam_eg" : "",
+
+    "nci_install"    :    "",
+
+    "nci_install_libs" : "",
+
+    "nci_test_mule" : "",
+
+    "umdp3_check"       : "",
+
+    "ifdef_check"       : "",
+
+    "nl_bcast_check"    : "",
+
+    }
+-%}
+
+

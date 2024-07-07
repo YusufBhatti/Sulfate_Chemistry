@@ -1,0 +1,14 @@
+{%- set UMDIR = '$UMDIR' %}
+{%- set CENTRAL_INSTALL_DIR= UMDIR %}
+{%- set GRIB_API_INTEL_ROOT_DIR='/h/3P' %}
+{%- if HOST_HPC is not defined %}
+{%- set HOST_HPC = 'hpc' %}
+{%- endif %}
+{% if HOST_LINUX is not defined %}
+{%- set HOST_LINUX='linux' %}
+{%- endif %}
+{% if LOCAL_RUN is not defined %}
+{%- set LOCAL_RUN=true %}
+{% endif %}
+{%- set PREBUILD_AFW_ROOT_DIR = '' %}
+{%- set KGO_AFW_ROOT_DIR = '' %}

@@ -1,0 +1,12 @@
+NCI Rose-Stem Tests
+===================
+
+Tests to ensure the UM is working properly at the NCI (Australian research)
+site.
+
+To test the model, run (from a checked-out branch)
+
+    $ rose stem --define=[jinja2:suite.rc]PREBUILDS=false --group=developer
+
+See https://code.metoffice.gov.uk/trac/um/wiki/StandardJobs for details of
+tests

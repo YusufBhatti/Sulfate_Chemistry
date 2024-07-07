@@ -1,0 +1,16 @@
+{%- set name_graphs_emps = {
+
+    "uoe_emps_install"   : " fcm_make_uoe_emps_ifort_utils_serial_high_noomp => uoe_emps_install_utils
+                             fcm_make_uoe_emps_install_ctldata => uoe_emps_install_ctldata",
+
+    "uoe_emps_fcm_make"  : " fcm_make_uoe_emps_ifort_um_safe_noomp",
+
+    "uoe_emps_n48_noomp" : " fcm_make_uoe_emps_ifort_um_safe_noomp => recon_uoe_emps_n48_noomp
+                             recon_uoe_emps_n48_noomp => rose_ana_uoe_emps_n48_noomp_recon_kgo
+                             recon_uoe_emps_n48_noomp => atmos_uoe_emps_n48_noomp_1x4
+                             atmos_uoe_emps_n48_noomp_1x4 => rose_ana_uoe_emps_n48_noomp_atmos_kgo
+                             rose_ana_uoe_emps_n48_noomp_atmos_kgo => housekeep_atmos_uoe_emps_n48_noomp_1x4
+                             fcm_make_uoe_emps_install_ctldata => uoe_emps_install_ctldata => recon_uoe_emps_n48_noomp",
+
+    }
+-%}

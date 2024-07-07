@@ -1,0 +1,13 @@
+# ------------------------------------------------------
+# Linux build jobs
+# ------------------------------------------------------
+
+# ------------------------------------------------------
+# Linux test jobs
+# ------------------------------------------------------
+
+    # Housekeeping task for umdp3 checker
+    [[housekeep_icm_linux]]
+        inherit = HOUSEKEEPING, ICM_LINUX_AT
+        [[[environment]]]
+            RUNDIR=$CYLC_SUITE_WORK_DIR/

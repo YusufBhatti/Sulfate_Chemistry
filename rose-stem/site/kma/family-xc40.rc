@@ -1,0 +1,221 @@
+# Machine-specific classes for the XC40.
+
+    [[KMA_XC40]]
+        pre-script = """
+                                module load PrgEnv-cray
+                                module load cray-netcdf
+                                module load grib_api/1.13.0 jasper
+                                module load libpng
+                                module list 2>&1
+                                """
+        [[[job submission]]]
+            method = pbs
+        [[[remote]]]
+            host = $(rose host-select {{ HOST_XC40 }})
+        [[[directives]]]
+            -l walltime = 00:20:00
+            -S = /bin/bash
+            -q = normal_m@{{APRUN_HOST}}
+            -W umask = 0022
+        [[[environment]]]
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{XC40_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{XC40_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{XC40_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+    [[KMA_XC40_INTEL]]
+       pre-script = """
+                            module swap PrgEnv-cray PrgEnv-intel
+                            module load cray-netcdf
+                            module load grib_api/1.13.0 jasper
+                            module load libpng
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            KMP_AFFINITY=disabled
+
+    [[KMA_XC40_INTEL_IVYBRIDGE]]
+       pre-script = """
+                            module swap PrgEnv-cray PrgEnv-intel
+                            module swap craype-haswell craype-ivybridge
+                            module load cray-netcdf
+                            module load grib_api/1.13.0 jasper
+                            module load libpng
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            KMP_AFFINITY=disabled
+
+
+# For building executables which are more likely to be run on CDL nodes:
+    [[KMA_XC40_BUILD]]
+        inherit = EXTRACT_SOURCE, KMA_XC40_CORES_6
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 6
+            DRHOOK=false
+            OPENMP=true
+            PLATFORM=kma-xc40-cce
+        [[[directives]]]
+            -l walltime = 00:30:00
+
+    [[KMA_XC40_HOUSEKEEPING]]
+        inherit = HOUSEKEEPING, KMA_XC40
+        [[[directives]]]
+            -l walltime = 00:10:00
+
+    [[KMA_XC40_UTILS]]
+        inherit = KMA_XC40_CORES_1, KMA_XC40_PARALLEL_THREADS_1
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[directives]]]
+            -l walltime = 00:14:00
+        [[[environment]]]
+            ULIMIT = ulimit -s 2000000 -c unlimited
+
+# Use mpiexec for the shared queue (the default). Order of inheritance: this
+# must come after all other atmos/recon/IOS/MPI families.
+    [[KMA_XC40_NORMAL_M_QUEUE]]
+        [[[environment]]]
+            ROSE_LAUNCHER = mpiexec
+            ROSE_LAUNCHER_PREOPTS = -n ${TOTAL_MPI_TASKS:-1}
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s unlimited -c unlimited
+
+# Use aprun (the default) for the normal queue. Order of inheritance: this 
+# must come after all other atmos/recon/IOS/MPI/OpenMP families.
+# The distribution of MPI tasks per node is not even across nodes if a task does
+# not use all available cores on those nodes. An even distribution would be:
+# (CORES_PER_NODE * TOT_MPI_TASKS * HYPERTHREADS) / 
+#   ( (TOT_MPI_TASKS * OMP_NUM_THREADS) + (CORES_PER_NODE * HYPERTHREADS) - 1 )
+    [[KMA_XC40_NORMAL_QUEUE]]
+        [[[directives]]]
+            -q = normal@{{APRUN_HOST}}
+        [[[environment]]]
+            CORES_PER_NODE = 24
+            NUMA_REGIONS_PER_NODE = 2
+            HYPERTHREADS = 1
+            MPI_TASKS_PER_NODE = $((CORES_PER_NODE*HYPERTHREADS/OMP_NUM_THREADS))
+            ROSE_LAUNCHER_PREOPTS=-n $TOTAL_MPI_TASKS -ss -N $MPI_TASKS_PER_NODE -S $((MPI_TASKS_PER_NODE/NUMA_REGIONS_PER_NODE)) -d $OMP_NUM_THREADS -j $HYPERTHREADS
+
+# Core count families: all UM runtime tasks should inherit 1 of these.
+    [[KMA_XC40_CORES_1]]
+        inherit = KMA_XC40_NORMAL_M_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l ncpus = 1
+
+    [[KMA_XC40_CORES_2]]
+        inherit = KMA_XC40_NORMAL_M_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l ncpus = 2
+
+    [[KMA_XC40_CORES_4]]
+        inherit = KMA_XC40_NORMAL_M_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l ncpus = 4
+
+    [[KMA_XC40_CORES_6]]
+        inherit = KMA_XC40_NORMAL_M_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l ncpus = 6
+
+    [[KMA_XC40_CORES_8]]
+        inherit = KMA_XC40_NORMAL_M_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l ncpus = 8
+
+    [[KMA_XC40_CORES_12]]
+        inherit = KMA_XC40_NORMAL_M_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l ncpus = 12
+
+    [[KMA_XC40_CORES_16]]
+        inherit = KMA_XC40_NORMAL_M_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l ncpus = 16
+
+    [[KMA_XC40_CORES_24]]
+        inherit = KMA_XC40_NORMAL_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l select = 1
+
+    [[KMA_XC40_CORES_48]]
+        inherit = KMA_XC40_NORMAL_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l select = 2
+
+    [[KMA_XC40_CORES_72]]
+        inherit = KMA_XC40_NORMAL_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l select = 3
+
+    [[KMA_XC40_CORES_96]]
+        inherit = KMA_XC40_NORMAL_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l select = 4
+
+    [[KMA_XC40_CORES_120]]
+        inherit = KMA_XC40_NORMAL_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l select = 5
+
+    [[KMA_XC40_CORES_192]]
+        inherit = KMA_XC40_NORMAL_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l select = 8
+
+    [[KMA_XC40_CORES_288]]
+        inherit = KMA_XC40_NORMAL_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l select = 12
+
+    [[KMA_XC40_CORES_384]]
+        inherit = KMA_XC40_NORMAL_QUEUE, KMA_XC40
+        [[[directives]]]
+            -l select = 16
+
+# Cannot run two different executables on the same node in MPMD mode,
+# so use these families for coupled models to signify capacity requirements.
+    [[KMA_XC40_NODES_3]]
+        inherit = KMA_XC40
+        [[[directives]]]
+            -l select = 3
+
+    [[KMA_XC40_NODES_5]]
+        inherit = KMA_XC40
+        [[[directives]]]
+            -l select = 5
+
+    [[KMA_XC40_NODES_11]]
+        inherit = KMA_XC40
+        [[[directives]]]
+            -l select = 11
+
+# OpenMP families: all UM runtime tasks should inherit 1 of these.
+    [[KMA_XC40_PARALLEL_THREADS_1]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 1
+            OMP_STACKSIZE = 1g
+
+    [[KMA_XC40_PARALLEL_THREADS_2]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 2
+            OMP_STACKSIZE = 2g
+
+    [[KMA_XC40_PARALLEL_THREADS_4]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 4
+            OMP_STACKSIZE = 2g
+
+    [[KMA_XC40_PARALLEL_THREADS_8]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 8
+            OMP_STACKSIZE = 2g
+
+# IOS families: All atmos tasks should inherit 1 of these.
+    [[KMA_XC40_IOS_OFF]]
+
+# Tasks using the I/O Server have MPICH_MAX_THREAD_SAFETY set to raise
+# the MPI thread level. This is necessary to fully implement the I/O Server,
+# at the cost of adding additional locks elsewhere.
+    [[KMA_XC40_IOS_ON]]
+        [[[environment]]]
+            MPICH_MAX_THREAD_SAFETY=multiple

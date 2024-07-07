@@ -1,0 +1,461 @@
+# HPC Jobs: Compilations
+
+# UM high OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_um_high_omp]]
+        inherit = NCMHPC,NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+            OPENMP=true
+            DRHOOK=false
+            PLATFORM=ncm-ibm-ifort
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_um_high_omp]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+            OPENMP=true
+            PLATFORM=ncm-ibm-ifort
+            DRHOOK=false
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+# UM high OpenMP, single precision solver
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_um_high_omp_single_precis]]
+        inherit = NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_high_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_um_high_omp_single_precis]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_high_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high no OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_um_high_noomp]]
+        inherit = NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            DRHOOK=false
+            PLATFORM=ncm-ibm-ifort
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_um_high_noomp]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            DRHOOK=false
+            PLATFORM=ncm-ibm-ifort
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_um_safe_omp]]
+        inherit = NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_safe_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_um_safe_omp]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_safe_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe no OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_um_safe_noomp]]
+        inherit = NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=safe
+	    PREBUILD =
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_um_safe_noomp]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=safe
+	    PREBUILD =
+
+# UM debug OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_um_debug_omp]]
+        inherit = NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=debug
+	    PREBUILD =
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_um_debug_omp]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=debug
+	    PREBUILD =
+
+# UM rigorous OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_um_rigorous_omp]]
+        inherit = NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_rigorous_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_um_rigorous_omp]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_HPC_ROOT_DIR }}/fcm_make_ncmhpc_um_rigorous_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM rigorous no OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_um_rigorous_noomp]]
+        inherit = NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=rigorous
+	    PREBUILD =
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_um_rigorous_noomp]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=rigorous
+	    PREBUILD =
+
+# UM Utils build
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_utils_serial_high_omp]]
+        inherit = NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            OPENMP=true
+            PLATFORM=ncm-ibm-ifort
+            DRHOOK=false
+            PREBUILD =
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_utils_serial_high_omp]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            OPENMP=true
+            PLATFORM=ncm-ibm-ifort
+            DRHOOK=false
+            PREBUILD =
+
+# UM Utils Serial recon build
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_recon_serial_high_omp]]
+        inherit = NCMHPC_EXTRACT, MAKE_RECON_SERIAL
+	[[[environment]]]
+            OPTIMISATION=high
+	    PREBUILD =
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_recon_serial_high_omp]]
+        inherit = NCMHPC_BUILD, MAKE_RECON_SERIAL
+	[[[environment]]]
+            OPTIMISATION=high
+	    PREBUILD =
+
+# UM Utils mpp build
+    # Extract, Mirror
+    [[fcm_make_ncmhpc_utils_mpp_high_omp]]
+        inherit = NCMHPC_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            PREBUILD=
+
+    # Pre-process, Build
+    [[fcm_make2_ncmhpc_utils_mpp_high_omp]]
+        inherit = NCMHPC_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            PREBUILD=        
+        [[[directives]]]
+            resources        = ConsumableMemory(800mb)
+            wall_clock_limit = "00:08:00,00:07:00"
+
+
+# HPC Jobs: Endgame: Global Configurations
+{% if "ncmhpc_n512_eg" in name_graphs_out or "ncmhpc_global_to_lam_eg" in name_graphs_out -%}
+# N512 Endgame HPC
+    [[NCMHPC_N512_EG]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_ncmhpc_um_high_omp_single_precis/build-*/bin'"
+
+    # Reconfiguration
+    [[recon_ncmhpc_n512_eg]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncmhpc_um_high_omp_single_precis/build-*/bin'"
+        inherit = NCMHPC_N512_EG, NCMHPC_SMT_OFF, NCMHPC_PARALLEL_TASKS_16, UM_N512_EG, RECON_4x4
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n512_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc_omp
+        [[[directives]]]
+            wall_clock_limit = "00:13:45,00:12:30"
+            resources        = ConsumableMemory(2Gb)
+
+    # Atmosphere Model Run 4x62 + (2*4) io servers
+    [[atmos_ncmhpc_n512_eg_4x62]]
+        inherit = NCMHPC_N512_EG, NCMHPC_PARALLEL_THREADS_2, NCMHPC_PARALLEL_TASKS_256, UM_N512_EG, ATMOS_4x62, IOS_8
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n512_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc_omp
+        [[[directives]]]
+            wall_clock_limit = "00:28:00,00:27:00"
+{%- endif %}
+
+
+{% if "ncmhpc_n48_eg_omp_ios" in name_graphs_out 
+   or "ncmhpc_n48_eg_omp_noios" in name_graphs_out -%}
+# Same family and make task used by both OpenMP IOS and OpenMP no-IOS jobs
+
+    [[NCMHPC_N48_EG_OMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_ncmhpc_um_high_omp/build-*/bin'"
+
+{%- endif %}
+
+{% if "ncmhpc_n48_eg_omp_ios" in name_graphs_out -%}
+# N48 EG job
+
+    # Reconfiguration 1x2
+    [[recon_ncmhpc_n48_eg_omp_ios_1x2]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncmhpc_um_high_omp/build-*/bin'"
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_SMT_OFF, NCMHPC_PARALLEL_TASKS_2, UM_N48_EG, RECON_1x2
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc
+        [[[directives]]]
+            wall_clock_limit = "00:06:52,00:05:37"
+
+    # Reconfiguration 2x1
+    [[recon_ncmhpc_n48_eg_omp_ios_2x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncmhpc_um_high_omp/build-*/bin'"
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_SMT_OFF, NCMHPC_PARALLEL_TASKS_2, UM_N48_EG, RECON_2x1
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_ios_2x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc
+        [[[directives]]]
+            wall_clock_limit = "00:06:52,00:05:37"
+
+    # Atmosphere Model Run 1x2
+    [[atmos_ncmhpc_n48_eg_omp_ios_1x2]]
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_PARALLEL_THREADS_2, NCMHPC_PARALLEL_TASKS_4, UM_N48_EG, ATMOS_1x2, IOS_2
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc_omp
+        [[[directives]]]
+            wall_clock_limit = "00:11:00,00:10:00"
+
+    # Atmosphere Model Run 2x1
+    [[atmos_ncmhpc_n48_eg_omp_ios_2x1]]
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_PARALLEL_THREADS_2, NCMHPC_PARALLEL_TASKS_4, UM_N48_EG, ATMOS_2x1, IOS_2
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_ios_2x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc_omp
+        [[[directives]]]
+            wall_clock_limit = "00:11:00,00:10:00"
+
+    # Atmosphere EG Model Run 1x2 nrun
+    [[atmos_ncmhpc_n48_eg_omp_ios_1x2_nrun]]
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_PARALLEL_TASKS_4, NCMHPC_PARALLEL_THREADS_2, UM_N48_EG, ATMOS_1x2, IOS_2
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=nrun ncmhpc_omp
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCMHPC_N48_EG_OMP_IOS
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCMHPC_N48_EG_OMP_IOS
+        [[[directives]]]
+            wall_clock_limit = "00:10:00,00:09:00"
+
+    # Atmosphere EG Model Run 1x2 crun
+    [[atmos_ncmhpc_n48_eg_omp_ios_1x2_crun]]
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_PARALLEL_TASKS_4, NCMHPC_PARALLEL_THREADS_2, UM_N48_EG, ATMOS_1x2, IOS_2
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=crun ncmhpc_omp
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCMHPC_N48_EG_OMP_IOS
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCMHPC_N48_EG_OMP_IOS
+        [[[directives]]]
+            wall_clock_limit = "00:10:00,00:09:00"
+            
+    [[rose_ana_ncmhpc_n48_eg_omp_ios_lrun_crun_atmos]]
+        inherit = NCMHPC_ROSE_ANA_COMPARISON, NCMHPC_N48_EG_OMP, NCMHPC, ROSE_ANA_N48_EG_CRUN
+        [[[environment]]]
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/NCMHPC_N48_EG_OMP_IOS
+            DIR1=../atmos_ncmhpc_n48_eg_omp_ios_1x2
+            KGO=
+
+    # Atmosphere EG Model Run 1x2 nrun - shortstep version
+    [[atmos_ncmhpc_n48_eg_omp_ios_1x2_nrun_shortstep]]
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_PARALLEL_TASKS_4, NCMHPC_PARALLEL_THREADS_2, UM_N48_EG, ATMOS_1x2, IOS_2
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=nrun ncmhpc
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCMHPC_N48_EG_OMP_IOS_SHORTSTEP
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCMHPC_N48_EG_OMP_IOS_SHORTSTEP
+        [[[directives]]]
+            wall_clock_limit = "00:10:00,00:09:00"
+
+    # Atmosphere EG Model Run 1x2 crun - shortstep version
+    [[atmos_ncmhpc_n48_eg_omp_ios_1x2_crun_shortstep]]
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_PARALLEL_TASKS_4, NCMHPC_PARALLEL_THREADS_2, UM_N48_EG, ATMOS_1x2, IOS_2
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=crun shortstep ncmhpc
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCMHPC_N48_EG_OMP_IOS_SHORTSTEP
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCMHPC_N48_EG_OMP_IOS_SHORTSTEP
+        [[[directives]]]
+            wall_clock_limit = "00:10:00,00:09:00"
+
+{%- endif %}
+
+
+{% if "ncmhpc_n48_eg_omp_noios" in name_graphs_out -%}
+# N48 EG job
+
+    # Reconfiguration 1x2
+    [[recon_ncmhpc_n48_eg_omp_noios_1x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncmhpc_um_high_omp/build-*/bin'"
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_SMT_OFF, NCMHPC_PARALLEL_TASKS_2, UM_N48_EG, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_noios_1x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc
+        [[[directives]]]
+            wall_clock_limit = "00:04:22,00:03:07"
+
+    # Reconfiguration 2x1
+    [[recon_ncmhpc_n48_eg_omp_noios_2x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncmhpc_um_high_omp/build-*/bin'"
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_SMT_OFF, NCMHPC_PARALLEL_TASKS_2, UM_N48_EG, RECON_2x1
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_noios_2x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc
+        [[[directives]]]
+            wall_clock_limit = "00:04:22,00:03:07"
+
+    # Atmosphere Model Run 1x2
+    [[atmos_ncmhpc_n48_eg_omp_noios_1x2]]
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_PARALLEL_THREADS_2, NCMHPC_PARALLEL_TASKS_2, UM_N48_EG, ATMOS_1x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_noios_1x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc_omp
+        [[[directives]]]
+            wall_clock_limit = "02:11:00,02:10:00"
+
+    # Atmosphere Model Run 2x1
+    [[atmos_ncmhpc_n48_eg_omp_noios_2x1]]
+        inherit = NCMHPC_N48_EG_OMP, NCMHPC_PARALLEL_THREADS_2, NCMHPC_PARALLEL_TASKS_2, UM_N48_EG, ATMOS_2x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_omp_noios_2x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc_omp
+        [[[directives]]]
+            wall_clock_limit = "00:11:00,00:10:00"
+
+{%- endif %}
+
+
+
+{% if "ncmhpc_n48_eg_noomp" in name_graphs_out -%}
+# N48 EG job
+
+    [[NCMHPC_N48_EG_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_ncmhpc_um_high_noomp/build-*/bin'"
+
+    # Reconfiguration 1x2
+    [[recon_ncmhpc_n48_eg_noomp_1x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncmhpc_um_high_noomp/build-*/bin'"
+        inherit = NCMHPC_N48_EG_NOOMP, NCMHPC_SMT_OFF, NCMHPC_PARALLEL_TASKS_2, UM_N48_EG, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_noomp_1x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc
+        [[[directives]]]
+            wall_clock_limit = "00:05:37,00:04:22"
+
+    # Atmosphere Model Run 1x2
+    [[atmos_ncmhpc_n48_eg_noomp_1x2]]
+        inherit = NCMHPC_N48_EG_NOOMP, NCMHPC_PARALLEL_THREADS_2, NCMHPC_PARALLEL_TASKS_2, UM_N48_EG, ATMOS_1x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_ncmhpc_n48_eg_noomp_1x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ncmhpc
+        [[[directives]]]
+            wall_clock_limit = "01:11:00,00:10:00"
+
+{%- endif %}

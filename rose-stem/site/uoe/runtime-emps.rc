@@ -1,0 +1,68 @@
+# EMPS Jobs
+
+#
+# Utils builds
+#
+
+# UM Utils build
+    # Extract, Pre-process, Build
+    [[fcm_make_uoe_emps_ifort_utils_serial_high_noomp]]
+        inherit = UOE_EMPS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            PREBUILD =
+
+#
+# UM builds
+#
+
+# UM safe no OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_uoe_emps_ifort_um_safe_noomp]]
+        inherit = UOE_EMPS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_EMPS_ROOT_DIR }}/fcm_make_uoe_emps_ifort_um_safe_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# N48 no OpenMP
+
+    # Reconfiguration
+    [[recon_uoe_emps_n48_noomp]]
+        inherit = UOE_EMPS_RECON, UM_N48_EG, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_emps_n48_noomp/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=uoeemps
+
+    # Atmosphere Model Run 1x4
+    [[atmos_uoe_emps_n48_noomp_1x4]]
+        inherit = UOE_EMPS_ATMOS, UM_N48_EG, ATMOS_1x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_uoe_emps_n48_noomp/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=uoeemps
+
+    # Comparison tasks
+    [[rose_ana_uoe_emps_n48_noomp_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, UOE_EMPS, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0={{KGO_EMPS_ROOT_DIR}}/uoe_emps_n48/{{EMPS_N48_EG_KGO}}
+            DIR1=../atmos_uoe_emps_n48_noomp_1x4
+            KGO=0
+
+    [[rose_ana_uoe_emps_n48_noomp_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, UOE_EMPS, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_EMPS_ROOT_DIR}}/uoe_emps_n48/{{EMPS_N48_EG_KGO}}
+            DIR1=../recon_uoe_emps_n48_noomp
+            KGO=0
+
+    # Housekeeping
+    [[housekeep_atmos_uoe_emps_n48_noomp_1x4]]
+        inherit = HOUSEKEEPING, UOE_EMPS
+        [[[environment]]]
+            RUNDIR=../atmos_uoe_emps_n48_noomp_1x4

@@ -1,0 +1,170 @@
+{% if "meto_xc40_n96_orca1_mct_ukesm" in name_graphs_out -%}
+# Coupled N96, ORCA1 using MCT (UKESM)
+
+    [[METO_XC40_COUPLED_N96_ORCA1_MCT_UKESM]]
+        [[[environment]]]
+            KGO_XC40_COUPLED_UKESM_DIR={{KGO_XC40_ROOT_DIR}}/xc40_coupled_ukesm/{{XC40_COUPLED_UKESM_KGO}}
+            ROSE_LAUNCHER=aprun
+            MODELBASIS=1850,1,1,0,0,0
+            TASKLENGTH=0,0,1,0,0,0
+            TASKSTART=$MODELBASIS
+  
+    [[recon_meto_xc40_n96_orca1_mct_ukesm]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+        inherit = METO_XC40_COUPLED_N96_ORCA1_MCT_UKESM, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x9, COUPLED_N96_ORCA1_MCT_UKESM
+        pre-script = "module load GC3-PrgEnv/2.0/24708"
+        script = "{{TASK_RUN_RECON}} {{ COUPLED_XC40_CCE_UKESM_SAFE_OMP }}"
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_n96_orca1_mct_ukesm/atmos.astart
+            ATMOS_EXEC=$CYLC_SUITE_SHARE_DIR/fcm_make_meto_xc40_cce_ukesm_coupled_um_safe_n96_mct/build-atmos/bin/um-atmos.exe
+            OCEAN_EXEC=$CYLC_SUITE_SHARE_DIR/fcm_make_meto_xc40_cce_coupled_ocean_ukesm/build-ocean/bin/nemo-cice.exe
+            OCEAN_BUILD_DIR=$CYLC_SUITE_SHARE_DIR/fcm_make_meto_xc40_cce_coupled_ocean_ukesm/build-ocean
+            NEMO_NPROC=36
+        [[[job]]]
+            execution time limit = PT5M
+{% endif %}
+
+    [[COUPLED_METO_XC40_N96_ORCA1_MCT_UKESM_ROOT]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+        inherit = METO_XC40_COUPLED_N96_ORCA1_MCT_UKESM, COUPLED_N96_ORCA1_MCT_UKESM, METO_XC40_IOS_OFF, METO_XC40_NODES_5, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, IOS_0
+        env-script = "module load GC3-PrgEnv/2.0/24708"
+        pre-script = ""
+        script = "{{TASK_RUN}} {{ COUPLED_XC40_DRIVERS }}"
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_n96_orca1_mct_ukesm/atmos.astart
+            ATMOS_EXEC=$CYLC_SUITE_SHARE_DIR/fcm_make_meto_xc40_cce_ukesm_coupled_um_safe_n96_mct/build-atmos/bin/um-atmos.exe
+            CALENDAR='360day'
+            COUPLED_PLATFORM=XC40
+            OCEAN_BUILD_DIR=$CYLC_SUITE_SHARE_DIR/fcm_make_meto_xc40_cce_coupled_ocean_ukesm/build-ocean
+            OCEAN_EXEC=$CYLC_SUITE_SHARE_DIR/fcm_make_meto_xc40_cce_coupled_ocean_ukesm/build-ocean/bin/nemo-cice.exe
+            XIOS_NPROC=8
+            XIOS_NODES=1
+            NEMO_IPROC=9
+            NEMO_JPROC=4
+            NEMO_NPROC=36
+            NEMO_LAND_SUPPRESS=true
+            CICE_NPROC = 36
+            ROSE_LAUNCHER_PREOPTS_UM = $ROSE_LAUNCHER_PREOPTS
+            ROSE_LAUNCHER_PREOPTS_NEMO = -n $NEMO_NPROC -ss -d 1 -j 1
+            ROSE_LAUNCHER_PREOPTS_XIOS = -n $XIOS_NPROC -ss -d 1 -j 1 env OMP_NUM_THREADS=1 env HYPERTHREADS=1
+            ATMOS_LAUNCHER=aprun
+#         Environment variables specific to coupled model drivers
+            COUPLING_COMPONENTS=um nemo
+            models=um nemo cice xios mct
+            DRIVERS_VERIFY_RST=false
+        [[[job]]]
+            execution time limit = PT66M
+{% endif %}
+
+    [[coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_12x9]]
+        inherit = COUPLED_METO_XC40_N96_ORCA1_MCT_UKESM_ROOT, ATMOS_12x9
+  
+    [[coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_18x6]]
+        inherit = COUPLED_METO_XC40_N96_ORCA1_MCT_UKESM_ROOT, ATMOS_18x6
+
+    [[rose_ana_meto_xc40_n96_orca1_mct_ukesm_kgo]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE, METO_XC40_ROSE_ANA_COMPARISON
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_COUPLED_N96_ORCA1_MCT_UKESM, METO_XC40, ROSE_ANA_COUPLED_N96_ORCA1_UKESM
+              [[[environment]]]
+                  DIR0=$KGO_XC40_COUPLED_UKESM_DIR
+                  DIR1=../coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_12x9
+                  KGO=0
+{% endif %}
+
+   [[rose_ana_meto_xc40_n96_orca1_mct_ukesm_proc]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE, METO_XC40_ROSE_ANA_COMPARISON
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_COUPLED_N96_ORCA1_MCT_UKESM, METO_XC40, ROSE_ANA_COUPLED_N96_ORCA1_UKESM
+              [[[environment]]]
+                  DIR0=../coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_12x9
+                  DIR1=../coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_18x6
+                  KGO=
+{% endif %}
+
+
+{% endif %}
+
+{% if "meto_xc40_n96_orca025_mct_technical_gc3" in name_graphs_out -%}
+# Coupled N96, ORCA025 using MCT
+
+  [[METO_XC40_COUPLED_N96_ORCA025_MCT_GC3_TECHNICAL]]
+        [[[environment]]]
+            MODELBASIS=1978,9,1,0,0,0
+            TASKLENGTH=0,0,0,12,0,0
+            TASKSTART=$MODELBASIS
+            KGO_XC40_COUPLED_GC3_DIR={{KGO_XC40_ROOT_DIR}}/xc40_coupled_gc3/{{XC40_COUPLED_GC3_KGO}}
+            ROSE_LAUNCHER=aprun
+
+  [[recon_meto_xc40_n96_orca025_mct_technical_gc3]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+      inherit = METO_XC40_COUPLED_N96_ORCA025_MCT_GC3_TECHNICAL, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x9, COUPLED_N96_ORCA025_MCT_GC3_TECHNICAL
+      pre-script = "module load GC3-PrgEnv/1.0/24791"
+      script = "{{TASK_RUN_RECON}} {{ COUPLED_XC40_CCE_SAFE_OMP }}"
+      [[[environment]]]
+          ASTART=../recon_meto_xc40_n96_orca025_mct_technical_gc3/atmos.astart
+          OCEAN_EXEC=$CYLC_SUITE_SHARE_DIR/fcm_make_meto_xc40_cce_coupled_ocean_orca025_mct_technical_gc3/build-ocean/bin/nemo-cice.exe
+          ROSE_TASK_APP=coupled_n96_orca025_mct_technical_gc3
+          NEMO_NPROC=120
+        [[[job]]]
+            execution time limit = PT5M
+{% endif %}
+
+  [[coupled_meto_xc40_n96_orca025_mct_technical_gc3]]
+{% if TRUSTZONE == 'collaboration' %}  
+        inherit = UNAVAILABLE
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+      inherit = METO_XC40_COUPLED_N96_ORCA025_MCT_GC3_TECHNICAL, COUPLED_N96_ORCA025_MCT_GC3, METO_XC40_IOS_OFF, METO_XC40_NODES_7, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_8x9, IOS_0
+      env-script = "module load GC3-PrgEnv/1.0/24791"
+      pre-script = ""
+      script = "{{TASK_RUN}} {{ COUPLED_XC40_DRIVERS }}"
+      [[[environment]]]
+          ASTART=../recon_meto_xc40_n96_orca025_mct_technical_gc3/atmos.astart
+          ATMOS_EXEC=$CYLC_SUITE_SHARE_DIR/fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct/build-atmos/bin/um-atmos.exe
+          CALENDAR='360day'
+          COUPLED_PLATFORM=XC40
+          OCEAN_EXEC=$CYLC_SUITE_SHARE_DIR/fcm_make_meto_xc40_cce_coupled_ocean_orca025_mct_technical_gc3/build-ocean/bin/nemo-cice.exe
+          XIOS_NPROC=8
+          XIOS_NODES=1
+          NEMO_IPROC=10
+          NEMO_JPROC=12
+          NEMO_NPROC=120
+          NEMO_LAND_SUPPRESS=true
+          CICE_NPROC = 120
+          ROSE_LAUNCHER_PREOPTS_UM=$ROSE_LAUNCHER_PREOPTS
+          ROSE_LAUNCHER_PREOPTS_NEMO= -n $NEMO_NPROC -ss -d 1 -j 1
+          ROSE_LAUNCHER_PREOPTS_XIOS= -n $XIOS_NPROC -ss -d 1 -j 1 env OMP_NUM_THREADS=1 env HYPERTHREADS=1
+          ATMOS_LAUNCHER=aprun
+#         Environment variables specific to coupled model drivers
+          COUPLING_COMPONENTS=um nemo
+          models=um nemo cice xios mct
+      [[[job]]]
+          execution time limit = PT49M
+{% endif %}
+
+  [[rose_ana_meto_xc40_n96_orca025_mct_technical_gc3_kgo]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE, METO_XC40_ROSE_ANA_COMPARISON
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+      inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_COUPLED_N96_ORCA025_MCT_GC3_TECHNICAL, METO_XC40, ROSE_ANA_COUPLED_N96_ORCA025_MCT_GC3
+      [[[environment]]]
+          DIR0=$KGO_XC40_COUPLED_GC3_DIR
+          DIR1=../coupled_meto_xc40_n96_orca025_mct_technical_gc3
+          KGO=0
+{% endif %}
+{% endif %}

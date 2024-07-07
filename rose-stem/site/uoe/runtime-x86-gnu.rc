@@ -1,0 +1,160 @@
+# x86 GNU Jobs
+
+# Packing library
+    [[fcm_make_uoe_x86_gnu_libs]]
+        inherit = UOE_X86_GNU_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+# UM safe no OpenMP
+    [[fcm_make_uoe_x86_gfortran_um_safe_noomp]]
+        inherit = UOE_X86_GNU_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+
+#
+# Idealised Endgame: Earthlike Exoplanet: Isothermal
+#
+    [[recon_uoe_x86_gfortran_exo_iso]]
+        script = "{{TASK_RUN_RECON}} --path= --path=share/fcm_make_uoe_x86_gfortran_um_safe_noomp/build-*/bin"
+        inherit = UOE_X86_GNU, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_iso/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=isothermal uoezen
+
+    [[atmos_uoe_x86_gfortran_exo_iso_1x12]]
+        inherit = UOE_X86_GNU, ATMOS_1x12, IOS_0
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_iso/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=isothermal uoezen
+
+#
+# Idealised Endgame: Earthlike Exoplanet + Raditaive Transfer
+#
+    [[recon_uoe_x86_gfortran_exo_el_rt]]
+        script = "{{TASK_RUN_RECON}} --path= --path=share/fcm_make_uoe_x86_gfortran_um_safe_noomp/build-*/bin"
+        inherit = UOE_X86_GNU, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_el_rt/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=uoezen
+
+    [[atmos_uoe_x86_gfortran_exo_el_rt_1x12]]
+        inherit = UOE_X86_GNU, ATMOS_1x12, IOS_0
+	[[[environment]]]
+            ASTART=../recon_uoe_zen_exo_el_rt/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=uoezen
+
+#
+# Idealised Endgame: Earthlike Exoplanet: HS
+#
+    [[recon_uoe_x86_gfortran_exo_hs]]
+        script = "{{TASK_RUN_RECON}} --path= --path=share/fcm_make_uoe_x86_gfortran_um_safe_noomp/build-*/bin"
+        inherit = UOE_X86_GNU, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_hs/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=held-suarez uoezen
+
+    [[atmos_uoe_x86_gfortran_exo_hs_1x12]]
+        inherit = UOE_X86_GNU, ATMOS_1x12, IOS_0
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_hs/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=held-suarez uoezen
+
+
+#
+# Idealised Endgame: Earthlike Exoplanet: Tidally locked
+#
+    [[recon_uoe_x86_gfortran_exo_tle]]
+        script = "{{TASK_RUN_RECON}} --path= --path=share/fcm_make_uoe_x86_gfortran_um_safe_noomp/build-*/bin"
+        inherit = UOE_X86_GNU, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_tle/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=tidally-locked-forcing uoezen
+
+    [[atmos_uoe_x86_gfortran_exo_tle_1x12]]
+        inherit = UOE_X86_GNU, ATMOS_1x12, IOS_0
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_tle/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=tidally-locked-forcing uoezen
+
+#
+# Idealised Endgame: Earthlike Exoplanet
+#
+    [[recon_uoe_x86_gfortran_exo_el]]
+        script = "{{TASK_RUN_RECON}} --path= --path=share/fcm_make_uoe_x86_gfortran_um_safe_noomp/build-*/bin"
+        inherit = UOE_X86_GNU, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_el/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=earth-like-forcing uoezen
+
+   [[atmos_uoe_x86_gfortran_exo_el_1x12]]
+        inherit = UOE_X86_GNU, ATMOS_1x12, IOS_0
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_el/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+            ROSE_APP_OPT_CONF_KEYS=earth-like-forcing uoezen
+
+#
+# Idealised Endgame: Shallow Hot Jupiter
+#
+    [[recon_uoe_x86_gfortran_exo_shj]]
+        script = "{{TASK_RUN_RECON}} --path= --path=share/fcm_make_uoe_x86_gfortran_um_safe_noomp/build-*/bin"
+        inherit = UOE_X86_GNU, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_shj/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_shj_eg
+            ROSE_APP_OPT_CONF_KEYS=uoezen
+
+   [[atmos_uoe_x86_gfortran_exo_shj_1x12]]
+        inherit = UOE_X86_GNU, ATMOS_1x12, IOS_0
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_shj/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_shj_eg
+            ROSE_APP_OPT_CONF_KEYS=uoezen
+
+#
+# Idealised Endgame: Hot Jupiter HD209458b: Isothermal
+#
+    [[recon_uoe_x86_gfortran_exo_iso_hd209]]
+        script = "{{TASK_RUN_RECON}} --path= --path=share/fcm_make_uoe_x86_gfortran_um_safe_noomp/build-*/bin"
+        inherit = UOE_X86_GNU, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_iso_hd209/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_hd209_eg
+            ROSE_APP_OPT_CONF_KEYS=isothermal uoezen
+
+    [[atmos_uoe_x86_gfortran_exo_iso_hd209_1x12]]
+        inherit = UOE_X86_GNU, ATMOS_1x12, IOS_0
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_iso_hd209/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_hd209_eg
+            ROSE_APP_OPT_CONF_KEYS=isothermal uoezen
+
+#
+# Idealised Endgame: Hot Jupiter HD209458b
+#
+    [[recon_uoe_x86_gfortran_exo_hd209]]
+        script = "{{TASK_RUN_RECON}} --path= --path=share/fcm_make_uoe_x86_gfortran_um_safe_noomp/build-*/bin"
+        inherit = UOE_X86_GNU, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_hd209/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_hd209_eg
+            ROSE_APP_OPT_CONF_KEYS=uoezen
+
+   [[atmos_uoe_x86_gfortran_exo_hd209_1x12]]
+        inherit = UOE_X86_GNU, ATMOS_1x12, IOS_0
+        [[[environment]]]
+            ASTART=../recon_uoe_zen_exo_hd209/atmos.astart
+            ROSE_TASK_APP=um_idealised_exo_hd209_eg
+            ROSE_APP_OPT_CONF_KEYS=uoezen
+

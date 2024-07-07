@@ -1,0 +1,15 @@
+{%- set SCRIPTDIR = '$UMDIR/bin' %}
+{%- set SCRIPTDATA = '' %}
+{%- set GRIB_API_HPC_ROOT_DIR='/gpfs1/home/Libs/INTEL/GRIB_API' %}
+{%- if HOST_HPC is not defined %}
+{%- set HOST_HPC='ibm' %}
+{%- endif %}
+{%- set HPC_AQUM_KGO='vn11.1' %}
+##{%- set HPC_CENTRAL_INSTALL_DIR='$UMDIR/vn10.2' %}
+{%- set HPC_CENTRAL_INSTALL_DIR='$UMDIR' %}
+{%- set HPC_UTILS_CRMSTYLE_COARSE_GRID_KGO='vn11.1' %}
+{%- set HPC_UTILS_VOMEXT_KGO='vn11.1' %}
+{%- set HPC_UTILS_VOMEXT_EG_KGO='vn11.1' %}
+{%- set PREBUILD_HPC_ROOT_DIR='$UMDIR/cylc-run/vn11.1_prebuilds/share' %}
+{%- set HPC_N48_EG_KGO='vn11.1' %}
+{%- set HPC_N512_EG_KGO='vn11.1' %}

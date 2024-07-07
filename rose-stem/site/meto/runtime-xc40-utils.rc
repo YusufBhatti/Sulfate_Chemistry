@@ -1,0 +1,576 @@
+# UM Utilities
+
+{%- if "meto_xc40_global_to_lam_eg" in name_graphs_out or "meto_xc40_ifort_createbc_calcs" in name_graphs_out 
+    or "meto_xc40_cce_createbc_calcs" in name_graphs_out or "meto_xc40_cce_createbc_calcs_drhook" in name_graphs_out %}
+
+    [[METO_XC40_CREATEBC]]
+        inherit = CREATEBC, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_4
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[environment]]]
+            ULIMIT = ulimit -s unlimited -c unlimited
+        [[[directives]]]
+            -l mem = 256MB
+        [[[job]]]
+            execution time limit = PT15M
+
+    [[METO_XC40_CREATEBC_INTEL]]
+        inherit = METO_XC40_CREATEBC, METO_XC40_INTEL_IVYBRIDGE
+
+    [[METO_XC40_CREATEBC_CCE]]
+        inherit = METO_XC40_CREATEBC, METO_XC40_CCE_IVYBRIDGE
+
+{%- endif %}
+
+{%- if "meto_xc40_ifort_createbc_calcs" in name_graphs_out %}
+    # CreateBC calculation tests
+    
+    # Note the "global_eg_varres_eg_2dust6" test should use a rigorous optimisation build!
+    
+    {%- set createbc_calcs_map_xc40_ifort = {
+            "global_nd_fixed_nd_2dust2"        : [XC40_IFORT_CREATEBC_GLOBAL_ND_FIXED_ND_2DUST2_KGO,     "6Gb", "PT12M"],
+            "global_nd_fixed_eg_0dust0"        : [XC40_IFORT_CREATEBC_GLOBAL_ND_FIXED_EG_0DUST0_KGO,     "6Gb", "PT16M"],
+            "global_eg_fixed_nd_0dust0"        : [XC40_IFORT_CREATEBC_GLOBAL_EG_FIXED_ND_0DUST0_KGO,     "6Gb", "PT12M"],
+            "global_eg_fixed_eg_2dust6"        : [XC40_IFORT_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO,    "17Gb", "PT12M"],
+            "global_eg_varres_nd_0dust0"       : [XC40_IFORT_CREATEBC_GLOBAL_EG_VARRES_ND_0DUST0_KGO,    "6Gb", "PT12M"],
+            "global_eg_varres_eg_2dust6"       : [XC40_IFORT_CREATEBC_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "16Gb", "PT12M"],
+            "fixed_eg_varres_nd_0dust0"        : [XC40_IFORT_CREATEBC_FIXED_EG_VARRES_ND_0DUST0_KGO,     "8Gb", "PT12M"],
+            "fixed_eg_fixed_nd_0dust0"         : [XC40_IFORT_CREATEBC_FIXED_EG_FIXED_ND_0DUST0_KGO,     "10Gb", "PT12M"],
+            "fixed_eg_fixed_eg_0dust0"         : [XC40_IFORT_CREATEBC_FIXED_EG_FIXED_EG_0DUST0_KGO,      "8Gb", "PT12M"],
+            "varres_eg_fixed_eg_0dust0"        : [XC40_IFORT_CREATEBC_VARRES_EG_FIXED_EG_0DUST0_KGO,     "5Gb", "PT12M"],
+            "varres_eg_fixed_nd_0dust0"        : [XC40_IFORT_CREATEBC_VARRES_EG_FIXED_ND_0DUST0_KGO,     "5Gb", "PT12M"],
+            "global_eg_frame_eg_2dust2"        : [XC40_IFORT_CREATEBC_GLOBAL_EG_FRAME_EG_2DUST2_KGO,    "10Gb", "PT26M"],
+            "frame_eg_varres_eg_2dust6"        : [XC40_IFORT_CREATEBC_FRAME_EG_VARRES_EG_2DUST6_KGO,     "1Gb", "PT26M"],
+            "global_nd_fixed_eg_freetracer"    : [XC40_IFORT_CREATEBC_GLOBAL_ND_FIXED_EG_FREETRACER_KGO, "1Gb", "PT26M"],
+            "global_eg_fixed_nd_aqumtracer"    : [XC40_IFORT_CREATEBC_GLOBAL_EG_FIXED_ND_AQUMTRACER_KGO,"12Gb", "PT26M"],
+            "global_eg_fixed_eg_aqumtracer"    : [XC40_IFORT_CREATEBC_GLOBAL_EG_FIXED_EG_AQUMTRACER_KGO,"12Gb", "PT26M"],
+            "varres_eg_frame_eg_0dust0"        : [XC40_IFORT_CREATEBC_VARRES_EG_FRAME_EG_0DUST0_KGO,     "5Gb", "PT26M"],
+            "frame_eg_fixed_eg_0dust0"         : [XC40_IFORT_CREATEBC_FRAME_EG_FIXED_EG_0DUST0_KGO,      "1Gb", "PT26M"],
+            "global_eg_fixed_eg_timecontrol"   : [XC40_IFORT_CREATEBC_GLOBAL_EG_FIXED_EG_TIMECONTROL_KGO,"17Gb","PT26M"],
+            "global_eg_frame_eg_ps39ukv"       : [XC40_IFORT_CREATEBC_GLOBAL_EG_FRAME_EG_PS39UKV_KGO,    "10Gb","PT30M"],
+            "frame_eg_varres_eg_ps39ukv"       : [XC40_IFORT_CREATEBC_FRAME_EG_VARRES_EG_PS39UKV_KGO,    "1Gb", "PT30M"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc40_ifort.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_meto_xc40_ifort_createbc_calcs_{{test_type}}]]
+            inherit = METO_XC40_CREATEBC_INTEL
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_IFORT_HIGH_OMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_TASK_APP=createbc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                FRAME_DIR=../createbc_meto_xc40_ifort_createbc_calcs_global_eg_frame_eg_2dust2
+                FRAME_DIR2=../createbc_meto_xc40_ifort_createbc_calcs_varres_eg_frame_eg_0dust0
+                FRAME_DIR3=../createbc_meto_xc40_ifort_createbc_calcs_global_eg_frame_eg_ps39ukv
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_ifort_createbc_calcs_{{test_type}}_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_createbc_ifort/{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_meto_xc40_ifort_createbc_calcs_{{test_type}}
+                 KGO=0
+
+        {%- endfor %}
+
+
+    {%- set createbc_calcs_map_xc40_ifort_compcheck = {
+            "global_eg_varres_eg_2dust6"       : [XC40_IFORT_CREATEBC_COMP_CHECK_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "20Gb", "PT58M"],
+            "varres_eg_fixed_eg_rowcol"        : [XC40_IFORT_CREATEBC_COMP_CHECK_VARRES_EG_FIXED_EG_ROWCOL_KGO,"12Gb", "PT26M"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc40_ifort_compcheck.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_meto_xc40_ifort_createbc_calcs_comp_check_{{test_type}}_noomp]]
+            inherit = METO_XC40_CREATEBC_INTEL
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_IFORT_RIGOROUS_NOOMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[createbc_meto_xc40_ifort_createbc_calcs_comp_check_{{test_type}}_omp]]
+            inherit = METO_XC40_CREATEBC_INTEL
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_IFORT_RIGOROUS_OMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_ifort_createbc_calcs_comp_check_{{test_type}}_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_createbc_ifort/comp_check_{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_meto_xc40_ifort_createbc_calcs_comp_check_{{test_type}}_noomp
+                 KGO=0
+
+        [[rose_ana_meto_xc40_ifort_createbc_calcs_comp_check_{{test_type}}_omp]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0=../createbc_meto_xc40_ifort_createbc_calcs_comp_check_{{test_type}}_omp
+                 DIR1=../createbc_meto_xc40_ifort_createbc_calcs_comp_check_{{test_type}}_noomp
+                 KGO=
+
+        {%- endfor %}
+
+    {%- set createbc_calcs_map_xc40_ifort_ompcheck = {
+            "global_eg_varres_eg_2dust6"       : [XC40_IFORT_CREATEBC_THREAD_CHECK_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "20Gb", "PT58M"],
+            "varres_eg_fixed_eg_rowcol"        : [XC40_IFORT_CREATEBC_THREAD_CHECK_VARRES_EG_FIXED_EG_ROWCOL_KGO,"12Gb", "PT26M"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc40_ifort_ompcheck.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_meto_xc40_ifort_createbc_calcs_omp_check_{{test_type}}_noomp]]
+            inherit = METO_XC40_CREATEBC_INTEL
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_IFORT_HIGH_NOOMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[createbc_meto_xc40_ifort_createbc_calcs_omp_check_{{test_type}}_omp]]
+            inherit = METO_XC40_CREATEBC_INTEL
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_IFORT_HIGH_OMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_ifort_createbc_calcs_omp_check_{{test_type}}_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_createbc_ifort/omp_check_{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_meto_xc40_ifort_createbc_calcs_omp_check_{{test_type}}_noomp
+                 KGO=0
+
+        [[rose_ana_meto_xc40_ifort_createbc_calcs_omp_check_{{test_type}}_omp]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0=../createbc_meto_xc40_ifort_createbc_calcs_omp_check_{{test_type}}_omp
+                 DIR1=../createbc_meto_xc40_ifort_createbc_calcs_omp_check_{{test_type}}_noomp
+                 KGO=
+
+        {%- endfor %}
+{%- endif %}
+
+
+{%- if "meto_xc40_cce_createbc_calcs" in name_graphs_out %}
+    # CreateBC calculation tests
+    
+    # Note the "global_eg_varres_eg_2dust6" test should use a rigorous optimisation build!
+    
+    {%- set createbc_calcs_map_xc40_cce = {
+            "global_nd_fixed_nd_2dust2"        : [XC40_CCE_CREATEBC_GLOBAL_ND_FIXED_ND_2DUST2_KGO,     "6Gb", "PT12M"],
+            "global_nd_fixed_eg_0dust0"        : [XC40_CCE_CREATEBC_GLOBAL_ND_FIXED_EG_0DUST0_KGO,    "6Gb", "PT16M"],
+            "global_eg_fixed_nd_0dust0"        : [XC40_CCE_CREATEBC_GLOBAL_EG_FIXED_ND_0DUST0_KGO,     "6Gb", "PT12M"],
+            "global_eg_fixed_eg_2dust6"        : [XC40_CCE_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO,    "17Gb", "PT12M"],
+            "global_eg_varres_nd_0dust0"       : [XC40_CCE_CREATEBC_GLOBAL_EG_VARRES_ND_0DUST0_KGO,    "6Gb", "PT12M"],
+            "global_eg_varres_eg_2dust6"       : [XC40_CCE_CREATEBC_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "16Gb", "PT12M"],
+            "fixed_eg_varres_nd_0dust0"        : [XC40_CCE_CREATEBC_FIXED_EG_VARRES_ND_0DUST0_KGO,     "7Gb", "PT12M"],
+            "fixed_eg_fixed_nd_0dust0"         : [XC40_CCE_CREATEBC_FIXED_EG_FIXED_ND_0DUST0_KGO,     "10Gb", "PT12M"],
+            "fixed_eg_fixed_eg_0dust0"         : [XC40_CCE_CREATEBC_FIXED_EG_FIXED_EG_0DUST0_KGO,      "7Gb", "PT12M"],
+            "varres_eg_fixed_eg_0dust0"        : [XC40_CCE_CREATEBC_VARRES_EG_FIXED_EG_0DUST0_KGO,     "5Gb", "PT12M"],
+            "varres_eg_fixed_nd_0dust0"        : [XC40_CCE_CREATEBC_VARRES_EG_FIXED_ND_0DUST0_KGO,     "5Gb", "PT12M"],
+            "global_eg_frame_eg_2dust2"        : [XC40_CCE_CREATEBC_GLOBAL_EG_FRAME_EG_2DUST2_KGO,    "45Gb", "PT26M"],
+            "frame_eg_varres_eg_2dust6"        : [XC40_CCE_CREATEBC_FRAME_EG_VARRES_EG_2DUST6_KGO,     "1Gb", "PT26M"],
+            "global_nd_fixed_eg_freetracer"    : [XC40_CCE_CREATEBC_GLOBAL_ND_FIXED_EG_FREETRACER_KGO, "1Gb", "PT26M"],
+            "global_eg_fixed_nd_aqumtracer"    : [XC40_CCE_CREATEBC_GLOBAL_EG_FIXED_ND_AQUMTRACER_KGO,"12Gb", "PT26M"],
+            "global_eg_fixed_eg_aqumtracer"    : [XC40_CCE_CREATEBC_GLOBAL_EG_FIXED_EG_AQUMTRACER_KGO,"12Gb", "PT26M"],
+            "varres_eg_frame_eg_0dust0"        : [XC40_CCE_CREATEBC_VARRES_EG_FRAME_EG_0DUST0_KGO,     "5Gb", "PT26M"],
+            "frame_eg_fixed_eg_0dust0"         : [XC40_CCE_CREATEBC_FRAME_EG_FIXED_EG_0DUST0_KGO,      "1Gb", "PT26M"],
+            "global_eg_fixed_eg_timecontrol"   : [XC40_CCE_CREATEBC_GLOBAL_EG_FIXED_EG_TIMECONTROL_KGO,"17Gb","PT26M"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc40_cce.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_meto_xc40_cce_createbc_calcs_{{test_type}}]]
+            inherit = METO_XC40_CREATEBC_CCE
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_CCE_HIGH_OMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                FRAME_DIR=../createbc_meto_xc40_cce_createbc_calcs_global_eg_frame_eg_2dust2
+                FRAME_DIR2=../createbc_meto_xc40_cce_createbc_calcs_varres_eg_frame_eg_0dust0
+            [[[directives]]]
+                -l mem = {{memory_allow}}               
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_cce_createbc_calcs_{{test_type}}_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_createbc_cce/{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_meto_xc40_cce_createbc_calcs_{{test_type}}
+                 KGO=0
+
+        {%- endfor %}
+
+
+    {%- set createbc_calcs_map_xc40_cce_compcheck = {
+            "global_eg_varres_eg_2dust6"       : [XC40_CCE_CREATEBC_COMP_CHECK_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "20Gb", "PT53M"],
+            "varres_eg_fixed_eg_rowcol"        : [XC40_CCE_CREATEBC_COMP_CHECK_VARRES_EG_FIXED_EG_ROWCOL_KGO,"12Gb", "PT24M"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc40_cce_compcheck.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_meto_xc40_cce_createbc_calcs_comp_check_{{test_type}}_noomp]]
+            inherit = METO_XC40_CREATEBC_CCE
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_CCE_RIGOROUS_NOOMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[createbc_meto_xc40_cce_createbc_calcs_comp_check_{{test_type}}_omp]]
+            inherit = METO_XC40_CREATEBC_CCE
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_CCE_RIGOROUS_OMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_cce_createbc_calcs_comp_check_{{test_type}}_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_createbc_cce/comp_check_{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_meto_xc40_cce_createbc_calcs_comp_check_{{test_type}}_noomp
+                 KGO=0
+
+        [[rose_ana_meto_xc40_cce_createbc_calcs_comp_check_{{test_type}}_omp]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0=../createbc_meto_xc40_cce_createbc_calcs_comp_check_{{test_type}}_omp
+                 DIR1=../createbc_meto_xc40_cce_createbc_calcs_comp_check_{{test_type}}_noomp
+                 KGO=
+
+        {%- endfor %}
+
+    {%- set createbc_calcs_map_xc40_cce_ompcheck = {
+            "global_eg_varres_eg_2dust6"       : [XC40_CCE_CREATEBC_THREAD_CHECK_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "20Gb", "PT58M"],
+            "varres_eg_fixed_eg_rowcol"        : [XC40_CCE_CREATEBC_THREAD_CHECK_VARRES_EG_FIXED_EG_ROWCOL_KGO,"12Gb", "PT26M"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc40_cce_ompcheck.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_meto_xc40_cce_createbc_calcs_omp_check_{{test_type}}_noomp]]
+            inherit = METO_XC40_CREATEBC_CCE
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_CCE_HIGH_NOOMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[createbc_meto_xc40_cce_createbc_calcs_omp_check_{{test_type}}_omp]]
+            inherit = METO_XC40_CREATEBC_CCE
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_CCE_HIGH_OMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_cce_createbc_calcs_omp_check_{{test_type}}_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_createbc_cce/omp_check_{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_meto_xc40_cce_createbc_calcs_omp_check_{{test_type}}_noomp
+                 KGO=0
+
+        [[rose_ana_meto_xc40_cce_createbc_calcs_omp_check_{{test_type}}_omp]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0=../createbc_meto_xc40_cce_createbc_calcs_omp_check_{{test_type}}_omp
+                 DIR1=../createbc_meto_xc40_cce_createbc_calcs_omp_check_{{test_type}}_noomp
+                 KGO=
+
+        {%- endfor %}
+
+{%- endif %}
+
+
+{%- if "meto_xc40_cce_createbc_calcs_drhook" in name_graphs_out %}
+    # CreateBC calculation tests with DrHook
+    {%- set createbc_calcs_map_xc40_cce_drhook = {
+            "global_eg_varres_eg_2dust6"       : [XC40_CCE_CREATEBC_DR_HOOK_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "20Gb", "PT58M"],
+                                                 }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc40_cce_drhook.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_meto_xc40_cce_createbc_calcs_{{test_type}}_drhook]]
+            inherit = METO_XC40_CREATEBC_CCE
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_CCE_HIGH_OMP_DRHOOK }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}} drhook
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_cce_createbc_calcs_{{test_type}}_drhook_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_DRHOOK
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_createbc_cce/{{test_type}}_drhook/{{kgo_var}}
+                 DIR1=../createbc_meto_xc40_cce_createbc_calcs_{{test_type}}_drhook
+                 KGO=0
+        {%- endfor %}
+{%- endif %}
+
+
+{%- if "meto_xc40_vomext_calcs" in name_graphs_out %}
+    # Vomext calculation tests
+    {%- set vomext_calcs_map_xc40 = {
+            "default_nd" : [XC40_UTILS_VOMEXT_DEFAULT_ND_KGO, "1GB", "PT23M"],
+            "default_eg" : [XC40_UTILS_VOMEXT_DEFAULT_EG_KGO, "10GB",  "PT23M"],
+            }
+    %}
+
+    {%- for test_type, params in vomext_calcs_map_xc40.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[utils_meto_xc40_vomext_calcs_{{test_type}}]]
+            inherit = METO_XC40_UTILS
+            script = $ULIMIT; {{TASK_RUN}} --command-key={{test_type}} {{ UTILS_SERIAL_XC40_CCE_HIGH_OMP }}
+            [[[environment]]]
+                INPUT_FILE=$INPUT_DATA/vomext/{{test_type}}_input.ff
+                ROSE_TASK_APP=utils_vomext_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                VOMEXT_OUT_DIR=$CYLC_TASK_WORK_PATH
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_utils_vomext_calcs_{{test_type}}_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_vomext/{{test_type}}/{{kgo_var}}
+                 DIR1=../utils_meto_xc40_vomext_calcs_{{test_type}}
+                 ROSE_TASK_APP=rose_ana_vomext_calcs
+                 KGO=0
+
+        {%- endfor %}
+{%- endif %}
+
+{%- if "meto_xc40_convpp_calcs" in name_graphs_out %}
+    # Convpp calculation tests
+    {%- set convpp_calcs_map_xc40 = {
+            "64B_large_ff"        : [XC40_UTILS_CONVPP_64B_LARGE_FF_KGO,        "12GB",  "PT23M", UTILS_SERIAL_XC40_CCE_HIGH_OMP],
+            "64B_small_ff"        : [XC40_UTILS_CONVPP_64B_SMALL_FF_KGO,        "256MB", "PT23M", UTILS_SERIAL_XC40_CCE_HIGH_OMP],
+            "ibm_number_mdl_lvls" : [XC40_UTILS_CONVPP_IBM_NUMBER_MDL_LVLS_KGO, "1536MB", "PT10M", UTILS_SERIAL_XC40_CCE_HIGH_OMP],
+            "ibm_number_std_lvls" : [XC40_UTILS_CONVPP_IBM_NUMBER_STD_LVLS_KGO, "256MB", "PT10M", UTILS_SERIAL_XC40_CCE_HIGH_OMP],
+            }
+    %}
+
+    {%- for test_type, params in convpp_calcs_map_xc40.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+        {%- set exec_path    = params[3] %}
+
+        [[utils_meto_xc40_convpp_calcs_{{test_type}}]]
+            inherit = METO_XC40_UTILS
+            script = $ULIMIT; {{TASK_RUN}} --command-key={{test_type}} {{exec_path}}
+            [[[environment]]]
+                INPUT_FILE=$INPUT_DATA/convpp/{{test_type}}_input.ff
+                ROSE_TASK_APP=utils_convpp_calcs
+                CONVPP_OUT_DIR=$CYLC_TASK_WORK_PATH
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_utils_convpp_calcs_{{test_type}}_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_convpp/{{test_type}}/{{kgo_var}}
+                 DIR1=../utils_meto_xc40_convpp_calcs_{{test_type}}
+                 ROSE_TASK_APP=rose_ana_convpp_calcs
+                 KGO=0
+
+
+        {%- endfor %}
+{%- endif %}
+
+{%- if "meto_xc40_pptoanc_calcs" in name_graphs_out %}
+     # pptoanc calculation tests
+    {%- set pptoanc_calcs_map_xc40 = {
+            "basic_test"      : [XC40_UTILS_PPTOANC_BASIC_TEST_KGO, "256MB", "PT21M"],
+            }
+    %}
+
+    {%- for test_type, params in pptoanc_calcs_map_xc40.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[utils_meto_xc40_pptoanc_calcs_{{test_type}}]]
+            inherit = METO_XC40_UTILS
+            script = $ULIMIT; {{TASK_RUN}} --command-key={{test_type}} {{ UTILS_SERIAL_XC40_CCE_HIGH_OMP }}
+            [[[environment]]]
+                INPUT_FILE=$INPUT_DATA/pptoanc/{{test_type}}_input.pp
+                ROSE_TASK_APP=utils_pptoanc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                PPTOANC_OUT_DIR=$CYLC_TASK_WORK_PATH
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_meto_xc40_utils_pptoanc_calcs_{{test_type}}_kgo]]
+            inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_pptoanc/{{test_type}}/{{kgo_var}}
+                 DIR1=../utils_meto_xc40_pptoanc_calcs_{{test_type}}
+                 ROSE_TASK_APP=rose_ana_pptoanc_calcs
+                 KGO=0
+
+        {%- endfor %}
+{%- endif %}
+
+{%- if "meto_xc40_crmstyle_coarse_grid" in name_graphs_out %}
+# crmstyle_coarse_grid checking
+# This utility uses 8 threads to gain maximum parallelism from OpenMP
+    [[METO_XC40_CRMSTYLE_COARSE_GRID]]
+        inherit = METO_XC40_PARALLEL_THREADS_8, METO_XC40
+        [[[directives]]]
+            -l mem = 5GB
+            [[[job]]]
+                execution time limit = PT3M          
+        [[[environment]]]
+            ROSE_TASK_APP=utils_crmstyle_coarse_grid
+            ULIMIT = ulimit -s unlimited -c unlimited
+            
+    [[utils_meto_xc40_crmstyle_coarse_grid_whole]]
+        inherit = METO_XC40_CRMSTYLE_COARSE_GRID, METO_XC40_CORES_8
+        script = "$ULIMIT ; {{TASK_RUN}} {{ UTILS_MPP_XC40_CCE_HIGH_OMP }}"
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_whole
+            NPROCX  =1
+            NPROCY  =1
+            NEWRES  =100
+
+    [[UTILS_METO_XC40_CRMSTYLE_COARSE_GRID_PART]]
+        inherit = METO_XC40_CRMSTYLE_COARSE_GRID, METO_XC40_CORES_16
+        script = "$ULIMIT ; {{TASK_RUN}} {{ UTILS_MPP_XC40_CCE_HIGH_OMP }}"
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_part
+            ROSE_LAUNCHER_PREOPTS=-n 2
+            NEWRES  =40
+
+    [[utils_meto_xc40_crmstyle_coarse_grid_part_1x2]]
+        inherit = UTILS_METO_XC40_CRMSTYLE_COARSE_GRID_PART
+        [[[environment]]]
+            NPROCX           =1
+            NPROCY           =2
+
+    [[utils_meto_xc40_crmstyle_coarse_grid_part_2x1]]
+        inherit = UTILS_METO_XC40_CRMSTYLE_COARSE_GRID_PART
+        [[[environment]]]
+            NPROCX           =2
+            NPROCY           =1
+
+    [[rose_ana_meto_xc40_utils_crmstyle_coarse_grid_whole_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_single
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_crmstyle_coarse_grid/{{XC40_UTILS_CRMSTYLE_COARSE_GRID_KGO}}
+            DIR1=../utils_meto_xc40_crmstyle_coarse_grid_whole
+            NEWRES  =100
+            KGO=0
+
+    [[rose_ana_meto_xc40_utils_crmstyle_coarse_grid_part_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            DIR0=../utils_meto_xc40_crmstyle_coarse_grid_part_1x2
+            DIR1=../utils_meto_xc40_crmstyle_coarse_grid_part_2x1
+            KGO=
+            NEWRES  =40
+
+    [[rose_ana_meto_xc40_utils_crmstyle_coarse_grid_part_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_crmstyle_coarse_grid/{{XC40_UTILS_CRMSTYLE_COARSE_GRID_KGO}}
+            DIR1=../utils_meto_xc40_crmstyle_coarse_grid_part_2x1
+            KGO=0
+            NEWRES  =40
+
+{%- endif %}
+
+
+# Monitoring app (xc40)
+{% if "monitor_xc40_tasks"  in name_graphs_out -%}
+    [[monitor_xc40_tasks]]
+       [[[environment]]]
+           ROSE_TASK_APP = monitor
+       [[[remote]]]
+           host = $(rose host-select {{ HOST_XC40 }})
+{% endif %}
+
+
+# Housekeeping - the / is important as $CYLC_SUITE_WORK_DIR may be a symlink!
+    [[housekeep_meto_xc40]]
+        inherit = METO_XC40_HOUSEKEEPING
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=xc40
+            RUNDIR=$CYLC_SUITE_WORK_DIR/
+

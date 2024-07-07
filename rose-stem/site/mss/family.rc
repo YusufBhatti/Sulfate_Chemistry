@@ -1,0 +1,94 @@
+# Machine-specific classes for the MSS HPC
+
+# Extract and build on HPC, no mirror
+    [[EXTRACT]]
+        inherit = EXTRACT_SOURCE
+        [[[job submission]]]
+            method = pbs
+        [[[environment]]]
+            PLATFORM=mss-xc30-cce
+            OPENMP=true
+            DRHOOK=false
+
+    [[MSS]] 
+        retry delays = 2*PT1M
+        pre-script = """  
+            module load PrgEnv-cray 
+            module list 2>&1
+        """  
+        [[[job submission]]]
+            method = pbs
+        [[[remote]]]
+            host = $(rose host-select {{ HOST_HPC }} )
+        [[[directives]]] 
+            -W = umask=0022     
+            -l = ncpus=1,walltime=3600
+        [[[environment]]]
+            #PATH = /opt/cray/mpt/6.1.1/gni/mpich2-cray/81:$PATH
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+{% else %}
+            UM_INSTALL_DIR=$CYLC_SUITE_SHARE_DIR
+            STASHMASTER=$CYLC_SUITE_SHARE_DIR/vn{{VN}}/ctldata/STASHmaster
+{% endif %}
+
+# Serial jobs
+    [[MSS_SERIAL]]
+        inherit = MSS
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 1
+        [[[directives]]]
+            -l = ncpus=1,walltime=3600
+
+# Parallel jobs
+    [[MSS_PARALLEL]]
+        inherit = MSS
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+        [[[directives]]]
+            -l = ncpus=1,walltime=3600
+
+# Cray compiler build jobs
+    [[MSS_CRAY_BUILD]]
+        inherit = EXTRACT_SOURCE, MSS_PARALLEL
+        pre-script = """
+                              module load grib_api cray-netcdf
+                              module list 2>&1
+                              """
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+            PLATFORM=mss-xc30-cce
+            OPENMP=true
+            DRHOOK=false
+
+# Intel compiler build jobs
+    [[MSS_INTEL_BUILD]]
+        inherit = EXTRACT_SOURCE, MSS_PARALLEL
+        pre-script = """
+                             module unload grib_api
+                             module swap PrgEnv-cray PrgEnv-intel
+                             module load grib_api cray-netcdf
+                             module list 2>&1
+                             """
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+            PLATFORM=mss-xc30-ifort
+            OPENMP=true
+            DRHOOK=false
+
+# GNU compiler build jobs
+    [[MSS_GNU_BUILD]]
+        inherit = EXTRACT_SOURCE, MSS_PARALLEL
+        pre-command scripting = """
+                             module unload grib_api
+                             module swap PrgEnv-cray PrgEnv-gnu
+                             module load grib_api cray-netcdf
+                             module list 2>&1
+                             """
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+            PLATFORM=mss-xc30-gnu
+            OPENMP=true
+            DRHOOK=false
+

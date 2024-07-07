@@ -1,0 +1,413 @@
+#!/usr/bin/perl -w  
+#
+# *****************************COPYRIGHT*******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT*******************************
+
+=pod
+
+=head1 UM_prepare
+
+Prepares the UMPL for processing by f90tohtml
+
+=head1 SYNOPSIS
+
+UM_prepare $WORKDIR
+
+=head1 DESCRIPTION
+
+The UMPL must be copied into a directory $WORKDIR/UMPL. This
+script then checks for any subroutines with identical names, 
+and renames, within the source, them uniquely (using the nupdate line tag as an
+identifier). A list of renamed subroutines is output into
+$WORKDIR/dup_subs. A series of dummy files are also created,
+one for each duplicated subroutine, containing a dummy 
+subroutine of that name, which does nothing but call the
+renamed subroutines.
+
+Also a separate dummy fortran interface file is created for 
+PORTIO2A (currently the only C file used in the UMPL.
+
+Note that this overwrites the original files.
+
+=head1 BUGS
+
+* Does not preserve case in the duplicated subroutine names.
+* Does not attempt to find duplicate functions.
+* Does not attempt to find duplicate modules
+
+=head1 AUTHORS
+
+Original script was by J.-C. Thil. This version is heavily
+modified by T. White and subsequently by Paul Selwood.
+
+=cut
+
+
+use strict;
+
+# Some helpful checking.
+
+my($usage) = "UM_prepare working_dir";
+
+if (scalar @ARGV == 0 )
+{
+  print "No directory given.\n";
+  die;
+}
+elsif (scalar @ARGV > 1)
+{
+  print "Confused - too many arguments.\n";
+  die;
+}
+
+# Takes an argument where the working dir is.
+
+my($the_path) = "$ARGV[0]/";
+
+-e $the_path || die ("$the_path not set right");
+
+# List of directories to check for code.
+my(@the_dirs)=(  
+              "UMPL/" 
+          );
+
+my ($dir);
+foreach $dir (@the_dirs){
+  
+  my($ls_dir)=$the_path.$dir;
+  # put all source files names in array @all_f
+  opendir(ls_dir_handle,$ls_dir) || die "no $ls_dir" ;
+  #print readdir(ls_dir_handle);
+  my(@all_f) = grep /\.[Ff](90)?$/, readdir(ls_dir_handle) ;
+  close(ls_dir_handle) ;
+
+  # Browse once through all the files of @all_f to find subroutine
+  # declarations, and find out which ones are declared several times :
+  # NB Don't bother checking for duplicate functions - there shouldn't
+  # be any, and it's bloody hard to do right.
+
+  # Generate the hash %files_to_subs which is keyed by filename
+  # and has values of arrays of strings, which are the subroutine
+  # names in each file.
+  my(%files_to_subs) = &scan_file($ls_dir, @all_f) ;
+  my(%subs_to_files);
+  my(%files_to_dup_subs);
+  
+  # Try creating calls to non-existent routines
+  my(%calls) = &scan_calls($ls_dir, @all_f) ;
+
+  my($newname);
+  my($file_name);
+  my($subroutine);
+  my($function);
+
+  # Loop through each file.
+  foreach $file_name (keys %files_to_subs) 
+  {
+    # Loop through each new file name if needed for duplicate
+    foreach $newname (keys %{$files_to_subs{$file_name}})
+    {
+      # Loop through each subroutine in the file.
+      foreach $subroutine (@{$files_to_subs{$file_name}{$newname}})
+      {
+        # Delete key for called subroutine - we want uncalled subroutines.
+        delete($calls{$subroutine}) if exists($calls{$subroutine});
+
+        # Now reorder hash so subroutine points to filename.
+        if (exists $subs_to_files{$subroutine})
+        {
+          $subs_to_files{$subroutine}{$newname} = $file_name;
+        }
+        else 
+        {
+          $subs_to_files{$subroutine} = { $newname => $file_name };
+        }
+      }
+    }
+  }
+
+  # Now remove non duplicates.
+  foreach $subroutine (keys %subs_to_files)
+  {
+    if (scalar keys %{$subs_to_files{$subroutine}} < 2)
+    { 
+      delete $subs_to_files{$subroutine};
+    }
+  }
+
+  # generate dummy subroutines which will interface between the tagged subroutines
+  # and the unique untagged ones. Ie each dummy subroutine should look like this :
+  #  subroutine generic ()
+  #    call generic__tag1()
+  #    call generic__tag2()
+  #      ....
+  #    call generic__tagn()
+  #
+  # print out the duplicate subroutines to stdout:
+  print " The following subroutines are defined several times:\n";
+  # keep a track of duplicate routines in a separate file.
+  open DUPFILE, ">dup_subs";
+  # Loop over each subroutine in a file.
+  foreach $subroutine (keys %subs_to_files)
+  {
+    # What to prepend to duplicate (call or use).
+    my $prepend_text = "";
+    # Type of duplicate (module or subroutine)
+    my $type_dup = "";
+    # What to append to duplicate
+    my $append_text = "";
+    # Actual subroutine name has __sub and __mod taken off end if present.
+    my $sub_name = $subroutine;
+    $sub_name =~ s/__(sub|mod|fun)$//;
+    # Initialise the number of duplicates to 1.
+    my $dup_ext = 1;
+    # Get hash of files which have duplicates.
+    my(%duplicates) = %{$subs_to_files{$subroutine}};
+    # Create dummy filename with unique name (so use key).
+    my($dummy_file) = $ls_dir ."dummy_interface_" . $subroutine . ".F90";
+    
+    # Initialise dummy file.
+    open FILEDUM, ">$dummy_file";
+    print FILEDUM '
+ !                              ** W A R N I N G **
+ !
+ !        This routine is not part of the Unified Model source code.
+ !        It merely acts as a dummy interface for alternative definitions
+ !        of the same routine.';
+    print FILEDUM "\n\n";
+    if ( $subroutine =~ /__sub$/ )
+    {
+      $type_dup = "SUBROUTINE";
+      $prepend_text = "CALL";
+    }
+    elsif ( $subroutine =~ /__mod$/ )
+    {
+      $type_dup = "MODULE";
+      $prepend_text = "USE";
+    }
+    elsif ( $subroutine =~ /__fun$/ )
+    {
+      $type_dup = "FUNCTION";
+      $prepend_text = "";
+      $append_text = "()";
+    }
+    else
+    {
+      warn "Unknown type for duplicate $sub_name using $subroutine\n";
+      # Assume subroutine for now but do not call to it and place as comment.
+      $type_dup = "SUBROUTINE";
+      $prepend_text = "! ";
+    }
+    print FILEDUM "$type_dup $sub_name\n\n";
+
+    # Print some info to duplicate log file.
+    print DUPFILE $subroutine, scalar keys %duplicates, "\n";
+
+    # Loop over the sorted keys so we get consistent output.
+    foreach my $duplicate (sort keys %duplicates)
+    {
+      # First create the new routine.
+      $file_name = $subs_to_files{$subroutine}{$duplicate};
+      # Print file name and the duplicate.
+      print "$file_name: $duplicate\n";
+  
+      my($full_file) = $ls_dir . $file_name;
+      my($temp_file) = $full_file . ".tmp";
+      open FILE, "<$full_file" or warn "Could not open $full_file.\n";
+      open FILENEW, ">$temp_file" or warn "Could not open $temp_file.\n";
+      seek FILE, 0, 0;
+      seek FILENEW, 0, 0;
+      my($sub_dup_name) = uc $sub_name . "__" . "DUP$dup_ext";
+      $dup_ext = $dup_ext + 1;
+  #    $sub_dup_name =~ s/\./_/; # Since no periods allowed in identifiers.
+  #    $sub_dup_name =~ s/@/at_/; # ... or at signs.
+  #    print "$file_name $subroutine $newname $sub_dup_name\n";
+      # Loop through the file which has definition of duplicate filename.
+      while (<FILE>)
+      {
+        # Check only lines which could be declarations.
+        if (/^ *(elemental|recursive|integer|real|logical|pure)? *(interface|subroutine|function|module) +(\w+).*/i) 
+        {
+          # Printing out filename to stdout.
+          print $_;
+          # Check which routine we are seeing since we might have a multiple of
+          # routines defined in a file (e.g. a module).
+          if((uc $3) eq (uc $sub_name)) {
+            print "\treplacing $sub_name by\n $sub_dup_name\n";
+            s/$sub_name/$sub_dup_name/i;
+            # Need to remove space if possible.
+            my $space_rem = length($sub_dup_name) - length($sub_name);
+            s/ {1,$space_rem}(&?) *$/$1/;
+          }
+        }
+        print FILENEW $_;
+      }
+      close FILE;
+      close FILENEW;
+      rename $temp_file, $full_file;
+      #
+      # Now create the dummy interface.
+      #
+    #  $sub_dup_name =~ s/\./_/;
+    #  $sub_dup_name =~ s/@/at_/; # ... or at signs.
+    #  Print duplicate information to file for info only.
+      print DUPFILE "$duplicate $file_name\n";
+    # This adds the filename rather than the old fashioned deckname.
+      print FILEDUM "$prepend_text $sub_dup_name $append_text ! $file_name\n";
+ 
+    }
+    print DUPFILE "\n";
+    print FILEDUM "\n\n";
+    print FILEDUM "END $type_dup $sub_name\n";
+    close FILEDUM;
+  }
+  close DUPFILE;
+
+  foreach $subroutine (keys %calls)
+  {
+    # Actual subroutine name has __sub and __mod taken off end if present.
+    my $sub_name = $subroutine;
+    $sub_name =~ s/__(sub|mod)$//;
+    
+    my($dummy_file) = $ls_dir ."dummy_extlib_" . $subroutine . ".F90";
+    open FILE, ">$dummy_file";
+    print FILE '
+ !                              ** W A R N I N G **
+ !
+ !        This file is not part of the Unified Model source code.
+ !        It merely acts as a dummy interface for an external library.';
+
+    print FILE "\n\n";
+    if ($calls{$subroutine} =~ /call/i)
+    {
+      print FILE "SUBROUTINE $sub_name\n\n";
+      print FILE "END SUBROUTINE $sub_name\n\n";
+    }
+    elsif ($calls{$subroutine} =~ /use/i)
+    {
+      print FILE "MODULE $sub_name\n\n";
+      print FILE "END MODULE $sub_name\n\n";
+    }
+    close FILE;
+  }
+}
+
+sub scan_file
+{
+   my($ls_dir_loc); 
+   my(@all_f_loc); 
+   ($ls_dir_loc,@all_f_loc) = @_;
+
+   my($file); 
+   my($full_file); 
+   my(%files_to_subs);
+
+   foreach $file (@all_f_loc)
+   {
+     $full_file = $ls_dir_loc.$file;
+     open(FILE, $full_file);
+     
+     my($newname)=uc $file;
+     $newname=~s/\..*$//g;  # remove suffixes
+     $newname=~s/\-/_/g;    # replace - by _
+     my(%subroutines);
+     my(@subnames); 
+     # Flag to specify if within interface block.
+     my($interface_flag) = 0;
+     while (<FILE>) 
+     { 
+       # Have to treat interfaces specially since it can be incorrectly 
+       # identified as location for subroutines/functions.
+       if (/^ *interface/i)
+       {
+         $interface_flag = 1;
+       }
+       elsif (/^ *end *interface/i)
+       {
+         $interface_flag = 0;
+       }
+       
+       if (/^ *(elemental|recursive|integer|real|logical|pure)? *(interface|subroutine|function|module) +(\w+).*/i) 
+       {
+         my($subname)=$3;
+         my($type)=$2;
+         # Append a string to uniquely identify if module and subroutine have 
+         # same name.
+         if ( $type =~ /subroutine|interface/i )
+         {
+           $subname = $subname . "__sub";
+         }
+         elsif ( $type =~ /module/i )
+         {
+           $subname = $subname . "__mod";
+         }
+         elsif ( $type =~ /function/i )
+         {
+           $subname = $subname . "__fun";
+         }
+
+         push @subnames, lc $subname;
+       }
+
+       # We want to delete any subroutine/function declarations in interfaces
+       # since it isnt really a location we want to link to.
+       if ( $interface_flag == 1) 
+       { 
+         if (/^ *(elemental|recursive|integer|real|logical|pure)? *(subroutine|function|module) +(\w+).*/i) 
+         {
+           pop @subnames;
+         }
+       }
+     }
+     $subroutines{$newname} = \@subnames;
+     $files_to_subs{$file} = \%subroutines;
+     close (FILE);
+   }
+   return %files_to_subs;
+}
+
+sub scan_calls
+{
+   my($ls_dir_loc); 
+   my(@all_f_loc); 
+   ($ls_dir_loc,@all_f_loc) = @_;
+
+   my(%calls);
+   my($file); 
+   my($full_file); 
+
+   foreach $file (@all_f_loc)
+   {
+     $full_file = $ls_dir_loc.$file;
+     open(FILE, $full_file);
+     
+     # Loop over file.
+     while (<FILE>) 
+     { 
+       # Only search for simple calls and uses. Had to deal with one line IFs.
+       # Also handle !$ OMP sentinel.
+       if (/^\s*(\!\$)?\s*(\bif\b\(.*?\))?\s*(call|use)\s+(\w+)/i) 
+       {
+         my($subname)=lc $4;
+         my($type)=lc $3;
+         # Append a string to uniquely identify if module and subroutine have 
+         # same name.
+         if ( $type =~ /call/i )
+         {
+           $subname = $subname . "__sub";
+         }
+         elsif ( $type =~ /use/i )
+         {
+           $subname = $subname . "__mod";
+         }
+
+         $calls{$subname} = lc $type;
+       }
+     }
+     close (FILE);
+   }
+   return %calls;
+}

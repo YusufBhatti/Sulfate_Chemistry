@@ -1,0 +1,11 @@
+{%- set integ_graphs_okeanos = {
+    "okeanos_n48_omp_noios" : "",
+    "okeanos_n48_omp_ios" : "",
+    "okeanos_seukv_eg_omp_noios" : "",
+    "okeanos_createbc_calcs" : "",
+    "okeanos_install" : "",
+    "okeanos_fcm_make" : "" ,
+    "okeanos_fcm_make_um_debug" : "" ,
+    "okeanos_fcm_make_um_debug_omp" : "" ,
+    }
+-%}

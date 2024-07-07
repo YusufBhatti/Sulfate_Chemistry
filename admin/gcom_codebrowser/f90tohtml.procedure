@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# Simple script to build GCOM code browser from head of trunk
+# Uses static scripts - needs manual updating from repository
+# if updated.
+
+HERE=/home/h05/umbuild/public_html/fcm_dailybuild/gcom_browser
+HTML=$HERE/GCOM_browser
+WORK=$HERE/work
+
+# Create work and html/cgi directories
+if [[ -d $WORK ]]; then
+  rm -r $WORK
+fi
+
+if [[ -d $HTML ]]; then
+ rm -r $HTML
+fi
+ 
+mkdir $WORK
+mkdir $HTML
+mkdir $HTML/cgi-bin
+
+# In work directory export head of GCOM (mirror) repository
+fcm export fcm:gcom.xm_tr $WORK/gcom
+
+# Create listings files in work directory
+for i in $WORK/gcom/build/gc/*; do
+  echo $i >> $WORK/gc.ls
+done
+
+for i in $WORK/gcom/build/gcg/*; do
+  echo $i >> $WORK/gcg.ls
+done
+
+for i in $WORK/gcom/build/mpl/*; do
+  echo $i >> $WORK/mpl.ls
+done
+
+for i in $WORK/gcom/build/include/*; do
+  echo $i >> $WORK/include.ls
+done
+
+# Run the main code generator
+$HERE/f90tohtml $HERE/GCOM.f2h
+
+# Create cgi searching correctly 
+cp $HERE/grepper.cgi $HTML/cgi-bin/
+
+cat > $HTML/cgi-bin/.htaccess <<EOF
+AddHandler cgi-script .cgi
+Options +ExecCGI
+EOF

@@ -1,0 +1,69 @@
+{%- set name_graphs_okeanos = {
+     "okeanos_n48_omp_noios" : "fcm_make_icm_okeanos_cce_um_high_omp => fcm_make2_icm_okeanos_cce_um_high_omp => \
+                                recon_icm_okeanos_n48_eg_omp_noios_1x2 => atmos_icm_okeanos_n48_eg_omp_noios_1x2 => \
+                                rose_ana_icm_okeanos_n48_eg_omp_noios_atmos_kgo => housekeep_atmos_icm_okeanos_n48_eg_omp_noios_1x2
+                                recon_icm_okeanos_n48_eg_omp_noios_1x2 => rose_ana_icm_okeanos_n48_eg_omp_noios_recon_kgo
+                                fcm_make_icm_okeanos_install_ctldata => icm_okeanos_install_ctldata => \
+                                recon_icm_okeanos_n48_eg_omp_noios_1x2 & atmos_icm_okeanos_n48_eg_omp_noios_1x2",
+     "okeanos_n48_omp_ios" : "fcm_make_icm_okeanos_cce_um_high_omp => fcm_make2_icm_okeanos_cce_um_high_omp => \
+                              recon_icm_okeanos_n48_eg_omp_ios_2x1 => atmos_icm_okeanos_n48_eg_omp_ios_2x1 => \
+                              rose_ana_icm_okeanos_n48_eg_omp_ios_atmos_kgo => housekeep_atmos_icm_okeanos_n48_eg_omp_ios_2x1
+                              recon_icm_okeanos_n48_eg_omp_ios_2x1 => rose_ana_icm_okeanos_n48_eg_omp_ios_recon_kgo
+                              fcm_make_icm_okeanos_install_ctldata => icm_okeanos_install_ctldata => \
+                              recon_icm_okeanos_n48_eg_omp_ios_2x1 & atmos_icm_okeanos_n48_eg_omp_ios_2x1",
+     "okeanos_seukv_eg_omp_noios" : "fcm_make_icm_okeanos_cce_um_high_omp => fcm_make2_icm_okeanos_cce_um_high_omp => \
+                                     recon_icm_okeanos_seukv_eg_omp_noios_2x2 => atmos_icm_okeanos_seukv_eg_omp_noios_4x8 => \
+                                     rose_ana_icm_okeanos_seukv_eg_omp_noios_atmos_kgo => housekeep_atmos_icm_okeanos_seukv_eg_omp_noios_4x8
+                                     recon_icm_okeanos_seukv_eg_omp_noios_2x2 => rose_ana_icm_okeanos_seukv_eg_omp_noios_recon_kgo
+                                     fcm_make_icm_okeanos_install_ctldata => icm_okeanos_install_ctldata => \
+                                     recon_icm_okeanos_seukv_eg_omp_noios_2x2 & atmos_icm_okeanos_seukv_eg_omp_noios_4x8",
+    "okeanos_createbc_calcs" : "fcm_make_icm_okeanos_cce_createbc_high_omp => fcm_make2_icm_okeanos_cce_createbc_high_omp
+                                fcm_make_icm_okeanos_install_ctldata => icm_okeanos_install_ctldata
+
+                                fcm_make2_icm_okeanos_cce_createbc_high_omp & icm_okeanos_install_ctldata => createbc_icm_okeanos_createbc_calcs_global_eg_fixed_eg_2dust6 => \
+                                rose_ana_icm_okeanos_createbc_calcs_global_eg_fixed_eg_2dust6_kgo => housekeep_createbc_icm_okeanos_createbc_calcs_global_eg_fixed_eg_2dust6
+
+                                fcm_make2_icm_okeanos_cce_createbc_high_omp & icm_okeanos_install_ctldata => createbc_icm_okeanos_createbc_calcs_global_eg_varres_eg_2dust6 => \
+                                rose_ana_icm_okeanos_createbc_calcs_global_eg_varres_eg_2dust6_kgo => housekeep_createbc_icm_okeanos_createbc_calcs_global_eg_varres_eg_2dust6
+
+                                fcm_make2_icm_okeanos_cce_createbc_high_omp & icm_okeanos_install_ctldata => createbc_icm_okeanos_createbc_calcs_fixed_eg_fixed_eg_0dust0 => \
+                                rose_ana_icm_okeanos_createbc_calcs_fixed_eg_fixed_eg_0dust0_kgo => housekeep_createbc_icm_okeanos_createbc_calcs_fixed_eg_fixed_eg_0dust0
+
+                                fcm_make2_icm_okeanos_cce_createbc_high_omp & icm_okeanos_install_ctldata => createbc_icm_okeanos_createbc_calcs_varres_eg_fixed_eg_0dust0 => \
+                                rose_ana_icm_okeanos_createbc_calcs_varres_eg_fixed_eg_0dust0_kgo => housekeep_createbc_icm_okeanos_createbc_calcs_varres_eg_fixed_eg_0dust0
+
+                                fcm_make2_icm_okeanos_cce_createbc_high_omp & icm_okeanos_install_ctldata => createbc_icm_okeanos_createbc_calcs_global_eg_frame_eg_2dust2 => \
+                                rose_ana_icm_okeanos_createbc_calcs_global_eg_frame_eg_2dust2_kgo => housekeep_createbc_icm_okeanos_createbc_calcs_global_eg_frame_eg_2dust2
+                                createbc_icm_okeanos_createbc_calcs_global_eg_frame_eg_2dust2 & fcm_make2_icm_okeanos_cce_createbc_high_omp & icm_okeanos_install_ctldata => \
+                                createbc_icm_okeanos_createbc_calcs_frame_eg_varres_eg_2dust6 => rose_ana_icm_okeanos_createbc_calcs_frame_eg_varres_eg_2dust6_kgo => \
+                                housekeep_createbc_icm_okeanos_createbc_calcs_frame_eg_varres_eg_2dust6 => housekeep_createbc_icm_okeanos_createbc_calcs_global_eg_frame_eg_2dust2
+
+                                fcm_make2_icm_okeanos_cce_createbc_high_omp & icm_okeanos_install_ctldata => createbc_icm_okeanos_createbc_calcs_varres_eg_frame_eg_0dust0 => \
+                                rose_ana_icm_okeanos_createbc_calcs_varres_eg_frame_eg_0dust0_kgo => housekeep_createbc_icm_okeanos_createbc_calcs_varres_eg_frame_eg_0dust0
+                                createbc_icm_okeanos_createbc_calcs_varres_eg_frame_eg_0dust0 & fcm_make2_icm_okeanos_cce_createbc_high_omp & icm_okeanos_install_ctldata => \
+                                createbc_icm_okeanos_createbc_calcs_frame_eg_fixed_eg_0dust0 => rose_ana_icm_okeanos_createbc_calcs_frame_eg_fixed_eg_0dust0_kgo => \
+                                housekeep_createbc_icm_okeanos_createbc_calcs_frame_eg_fixed_eg_0dust0 => housekeep_createbc_icm_okeanos_createbc_calcs_varres_eg_frame_eg_0dust0
+
+                                fcm_make2_icm_okeanos_cce_createbc_high_omp & icm_okeanos_install_ctldata => createbc_icm_okeanos_createbc_calcs_global_eg_fixed_eg_timecontrol => \
+                                rose_ana_icm_okeanos_createbc_calcs_global_eg_fixed_eg_timecontrol_kgo => housekeep_createbc_icm_okeanos_createbc_calcs_global_eg_fixed_eg_timecontrol",
+
+     "okeanos_install" : "fcm_make_icm_okeanos_cce_utils_serial_high_noomp => fcm_make2_icm_okeanos_cce_utils_serial_high_noomp => \
+                          icm_okeanos_install_utils
+                          fcm_make_icm_okeanos_cce_recon_serial_high_omp => fcm_make2_icm_okeanos_cce_recon_serial_high_omp => \
+                          icm_okeanos_install_utils
+                          fcm_make_icm_okeanos_cce_utils_mpp_high_omp => fcm_make2_icm_okeanos_cce_utils_mpp_high_omp => \
+                          icm_okeanos_install_utils
+                          fcm_make_icm_okeanos_cce_createbc_high_omp => fcm_make2_icm_okeanos_cce_createbc_high_omp => \
+                          icm_okeanos_install_utils
+                          fcm_make_icm_okeanos_install_ctldata => icm_okeanos_install_ctldata",
+    "okeanos_fcm_make" : "fcm_make_icm_okeanos_cce_um_high_omp => fcm_make2_icm_okeanos_cce_um_high_omp
+                          fcm_make_icm_okeanos_cce_um_high_noomp => fcm_make2_icm_okeanos_cce_um_high_noomp
+                          fcm_make_icm_okeanos_cce_utils_serial_high_noomp => fcm_make2_icm_okeanos_cce_utils_serial_high_noomp
+                          fcm_make_icm_okeanos_cce_utils_mpp_high_omp => fcm_make2_icm_okeanos_cce_utils_mpp_high_omp
+                          fcm_make_icm_okeanos_cce_recon_serial_high_omp => fcm_make2_icm_okeanos_cce_recon_serial_high_omp
+                          fcm_make_icm_okeanos_cce_createbc_high_omp => fcm_make2_icm_okeanos_cce_createbc_high_omp
+                          fcm_make_icm_okeanos_cce_scm_debug_noomp => fcm_make2_icm_okeanos_cce_scm_debug_noomp",
+    "okeanos_fcm_make_um_debug" : "fcm_make_icm_okeanos_cce_um_debug_noomp => fcm_make2_icm_okeanos_cce_um_debug_noomp",
+    "okeanos_fcm_make_um_debug_omp" : "fcm_make_icm_okeanos_cce_um_debug_omp => fcm_make2_icm_okeanos_cce_um_debug_omp",
+    }
+-%}

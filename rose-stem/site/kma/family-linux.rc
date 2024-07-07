@@ -1,0 +1,61 @@
+# Machine specific classes for Linux
+# Linux tasks should use one of:
+#  * LINUX       - for simple Linux tasks such as rose-ana
+#  * EXTRACT     - for tasks which mirror to the HPC
+#  * LINUX_BUILD - for tasks which compile on Linux
+#  * LINUX_RECON - for Linux reconfiguration tasks
+#  * LINUX_ATMOS - for Linux atmosphere run tasks
+#  * LINUX_SCM   - for Linux Single Column Model tasks
+#  * LINUX_UTILS - for Linux utils tasks
+# Tasks which link in OpenMP, either for the exec build or for a parallel GCOM
+# library, should also inherit one of the following classes:
+#  * LINUX_1_THREAD  - single thread
+#  * LINUX_2_THREADS - two threads
+
+    [[KMALINUX]]
+        pre-script = """
+                                module load PrgEnv-cray
+                                module load cray-netcdf
+                                module load grib_api/1.13.0
+                                module load jasper
+                                module load libpng
+                                module list 2>&1
+                                """
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+        [[[job submission]]]
+            method = background
+        [[[environment]]]
+            PATH = $PATH
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{XC40_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{XC40_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{XC40_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+# Extract & mirror tasks should use one of these two classes directly. 
+# Extract & build tasks should use LINUX_BUILD below instead. Note that this 
+# does NOT inherit the LINUX base class.
+    [[EXTRACT]]
+        inherit = EXTRACT_SOURCE, KMALINUX
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+        [[[job submission]]]
+            method = background
+
+    [[KMA_XC40_EXTRACT]]
+        inherit = EXTRACT
+        [[[environment]]]
+            grib_api_path = {{GRIB_API_XC40_CCE_ROOT_DIR}}
+            DRHOOK=false
+            OPENMP=true
+            PLATFORM=kma-xc40-cce
+
+# Linux class for UTILS run jobs
+    [[KMALINUX_UTILS]]
+        inherit = KMALINUX
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[environment]]]
+            ULIMIT= ulimit -s 2000000 -c unlimited
+            decfort_dump_flag = y
+

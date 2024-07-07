@@ -1,0 +1,10 @@
+{%- set integ_graphs = {
+
+    "ncm_n48_noomp"  :    "",
+
+    "ncm_install"          :  "",
+
+    }
+-%}
+
+

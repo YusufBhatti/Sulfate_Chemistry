@@ -1,0 +1,52 @@
+# Machine specific classes for Linux
+    [[ICM_LINUX]]
+        [[[environment]]]
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+# Submission setup - at
+    [[ICM_LINUX_AT]]
+        [[[job submission]]]
+            method = background
+
+# Linux parallel setup
+# Single OpenMP thread
+    [[ICM_LINUX_PARALLEL_THREADS_1]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 1
+	    OMP_STACKSIZE = 1g
+
+# Two OpenMP threads
+    [[ICM_LINUX_PARALLEL_THREADS_2]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 2
+	    OMP_STACKSIZE = 1g
+
+# Single task
+    [[ICM_LINUX_PARALLEL_TASKS_1]]
+        [[[environment]]]
+	    NPROC = 1
+
+# Generic extract family, used for UM builds and umdp3 checker
+    [[EXTRACT]]
+        inherit = ICM_LINUX, ICM_LINUX_AT, EXTRACT_SOURCE
+
+# This extract families are used for Boreasz and Okeanos build jobs, where
+# source files are first extracted from the repository on a
+# Linux and then built on servers
+    [[ICM_BOREASZ_EXTRACT]]
+        inherit = EXTRACT
+        [[[environment]]]
+            grib_api_path = {{GRIB_API_BOREASZ_ROOT_DIR}}
+            DRHOOK=false
+            PLATFORM=icm-pwr7-xlf
+#	    PATH=/oper/admin/um_fcm/fcm/latest/bin:$PATH
+    [[ICM_OKEANOS_EXTRACT]]
+        inherit = EXTRACT
+        [[[environment]]]
+            grib_api_path = {{GRIB_API_OKEANOS_ROOT_DIR}}
+            DRHOOK=false
+            PLATFORM=icm-xc40-cce

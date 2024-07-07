@@ -1,0 +1,736 @@
+{#
+# Okeanos Jobs:
+# Task definitions for building the UM and a variety of
+# tools with different optimisation levels and with/
+# without OpenMP.
+#
+# FCM Make jobs are split into two parts:
+# 1. Extract + Mirror steps (fcm_make_* tasks) are
+#    executed on Linux
+# 2. Preprocess + Build steps (fcm_make2_* tasks) are
+#    executed on Okeanos.
+#
+# The Rose app for FCM Make is automatically launched
+# for all tasks whose names begin with fcm_make_* and
+# fcm_make2_*.
+#}
+
+# ---------------------------------------------------------------------------------------------
+# UM variants
+# ---------------------------------------------------------------------------------------------
+
+    # Debug, no OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_um_debug_noomp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_um_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_um_debug_noomp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_um_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Debug, OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_um_debug_omp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+	    OPENMP=true
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_um_debug_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_um_debug_omp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+	    OPENMP=true
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_um_debug_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # High, no OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_um_high_noomp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+	    OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_um_high_noomp]]
+        inherit = ICM_OKEANOS_BUILD
+	[[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+	    OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # High, OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_um_high_omp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+	    OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_um_high_omp]]
+        inherit = ICM_OKEANOS_BUILD
+	[[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+	    OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# SCM variants
+# ---------------------------------------------------------------------------------------------
+
+    # Debug, no OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_scm_debug_noomp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_scm_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_scm_debug_noomp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_scm_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# CreateBC variants
+# ---------------------------------------------------------------------------------------------
+
+    # Debug, no OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_createbc_debug_noomp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_createbc_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_createbc_debug_noomp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_createbc_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # High, OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_createbc_high_omp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+	    OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_createbc_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_createbc_high_omp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+	    OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_createbc_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+# ---------------------------------------------------------------------------------------------
+# UM utils variants
+# ---------------------------------------------------------------------------------------------
+
+    # Serial, debug, no OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_utils_serial_debug_noomp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_utils_serial_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_utils_serial_debug_noomp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_utils_serial_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Serial, high, no OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_utils_serial_high_noomp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+	    OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_utils_serial_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_utils_serial_high_noomp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+	    OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make2_icm_okeanos_cce_utils_serial_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # MPP, debug, no OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_utils_mpp_debug_noomp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_utils_mpp_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_utils_mpp_debug_noomp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_utils_mpp_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # MPP, high, OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_utils_mpp_high_omp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+	    OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_utils_mpp_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_utils_mpp_high_omp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+	    OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_utils_mpp_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# UM utils recon variants
+# ---------------------------------------------------------------------------------------------
+
+    # Serial, debug, no OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_recon_serial_debug_noomp]]
+        inherit = ICM_OKEANOS_EXTRACT, MAKE_RECON_SERIAL
+        [[[environment]]]
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_recon_serial_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_recon_serial_debug_noomp]]
+        inherit = ICM_OKEANOS_BUILD, MAKE_RECON_SERIAL
+        [[[environment]]]
+	    OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_recon_serial_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Serial, high, OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_recon_serial_high_omp]]
+        inherit = ICM_OKEANOS_EXTRACT, MAKE_RECON_SERIAL
+        [[[environment]]]
+	    OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_recon_serial_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_recon_serial_high_omp]]
+        inherit = ICM_OKEANOS_BUILD, MAKE_RECON_SERIAL
+        [[[environment]]]
+	    OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_cce_recon_serial_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Parallel, high, OpenMP
+    # Extract, Mirror
+    [[fcm_make_icm_okeanos_cce_recon_high_omp]]
+        inherit = ICM_OKEANOS_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_icm_okeanos_cce_recon_high_omp]]
+        inherit = ICM_OKEANOS_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_OKEANOS_ROOT_DIR }}/fcm_make_icm_okeanos_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# N48 EG global model
+# ---------------------------------------------------------------------------------------------
+
+{% if "okeanos_n48_omp_noios" in name_graphs_out or "okeanos_n48_omp_ios" in name_graphs_out -%}
+
+    # N48 EndGame with OpenMP
+    [[ICM_OKEANOS_N48_EG_OMP]]
+        inherit = ICM_OKEANOS
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_icm_okeanos_cce_um_high_omp/build-*/bin')"
+        script = "{{TASK_RUN}}"
+
+{%- endif %}
+
+{# N48 EG no IO server #}
+{% if "okeanos_n48_omp_noios" in name_graphs_out -%}
+
+    {#
+     # Notes:
+     # * ASTART sets namelist variable "astart", which contains
+     #   the path to an atmosphere start dump
+     # * "--path=" resets PATH to default values
+    #}
+
+    # Reconfiguration
+    [[recon_icm_okeanos_n48_eg_omp_noios_1x2]]
+        script = "{{TASK_RUN_RECON}}"
+        inherit = ICM_OKEANOS_N48_EG_OMP, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2, ICM_OKEANOS_PARALLEL_TASKS_2, UM_N48_EG, RECON_1x2
+        [[[environment]]]
+            ASTART=../recon_icm_okeanos_n48_eg_omp_noios_1x2/atmos.astart
+
+    # Atmosphere Model Run 1x2, OpenMP, no IOS
+    [[atmos_icm_okeanos_n48_eg_omp_noios_1x2]]
+        inherit = ICM_OKEANOS_N48_EG_OMP, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2, ICM_OKEANOS_PARALLEL_TASKS_2, UM_N48_EG, ATMOS_1x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_icm_okeanos_n48_eg_omp_noios_1x2/atmos.astart
+#            ROSE_APP_OPT_CONF_KEYS=icm_okeanos
+
+    # Comparison of recon output
+    [[rose_ana_icm_okeanos_n48_eg_omp_noios_recon_kgo]]
+        inherit =  ROSE_ANA_COMPARISON, ICM_OKEANOS_N48_EG_OMP, ICM_OKEANOS_AT, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_OKEANOS_ROOT_DIR}}/okeanos_n48_eg/{{OKEANOS_N48_EG_KGO}}
+            DIR1 = ../recon_icm_okeanos_n48_eg_omp_noios_1x2
+            KGO=0
+
+    # Comparison of atmosphere output
+    [[rose_ana_icm_okeanos_n48_eg_omp_noios_atmos_kgo]]
+        inherit =  ROSE_ANA_COMPARISON, ICM_OKEANOS_N48_EG_OMP, ICM_OKEANOS_AT, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0 = {{KGO_OKEANOS_ROOT_DIR}}/okeanos_n48_eg/{{OKEANOS_N48_EG_KGO}}
+            DIR1 = ../atmos_icm_okeanos_n48_eg_omp_noios_1x2
+            KGO=0
+
+    # Housekeeping task
+    [[housekeep_atmos_icm_okeanos_n48_eg_omp_noios_1x2]]
+        inherit = HOUSEKEEPING, ICM_OKEANOS, ICM_OKEANOS_AT
+        [[[environment]]]
+            RUNDIR=../atmos_icm_okeanos_n48_eg_omp_noios_1x2
+
+{%- endif %}
+
+{# N48 EG with IO server #}
+{% if "okeanos_n48_omp_ios" in name_graphs_out -%}
+
+    # Reconfiguration
+    [[recon_icm_okeanos_n48_eg_omp_ios_2x1]]
+        script = "{{TASK_RUN_RECON}}"
+        inherit = ICM_OKEANOS_N48_EG_OMP, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2, ICM_OKEANOS_PARALLEL_TASKS_2, UM_N48_EG, RECON_2x1
+        [[[environment]]]
+            ASTART=../recon_icm_okeanos_n48_eg_omp_ios_2x1/atmos.astart
+
+    # Atmosphere Model Run 2x1, OpenMP, with IOS
+    [[atmos_icm_okeanos_n48_eg_omp_ios_2x1]]
+        inherit = ICM_OKEANOS_N48_EG_OMP, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2, ICM_OKEANOS_PARALLEL_TASKS_4, UM_N48_EG, ATMOS_2x1, IOS_2
+        [[[environment]]]
+            ASTART=../recon_icm_okeanos_n48_eg_omp_ios_2x1/atmos.astart
+#            ROSE_APP_OPT_CONF_KEYS=icm_okeanos
+
+    # Comparison of recon output
+    [[rose_ana_icm_okeanos_n48_eg_omp_ios_recon_kgo]]
+        inherit =  ROSE_ANA_COMPARISON, ICM_OKEANOS_N48_EG_OMP, ICM_OKEANOS_AT, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_OKEANOS_ROOT_DIR}}/okeanos_n48_eg/{{OKEANOS_N48_EG_KGO}}
+            DIR1 = ../recon_icm_okeanos_n48_eg_omp_ios_2x1
+            KGO=0
+
+    # Comparison of atmosphere output
+    [[rose_ana_icm_okeanos_n48_eg_omp_ios_atmos_kgo]]
+        inherit =  ROSE_ANA_COMPARISON, ICM_OKEANOS_N48_EG_OMP, ICM_OKEANOS_AT, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0 = {{KGO_OKEANOS_ROOT_DIR}}/okeanos_n48_eg/{{OKEANOS_N48_EG_KGO}}
+            DIR1 = ../atmos_icm_okeanos_n48_eg_omp_ios_2x1
+            KGO=0
+
+    # Housekeeping task
+    [[housekeep_atmos_icm_okeanos_n48_eg_omp_ios_2x1]]
+        inherit = HOUSEKEEPING, ICM_OKEANOS, ICM_OKEANOS_AT
+        [[[environment]]]
+            RUNDIR=../atmos_icm_okeanos_n48_eg_omp_ios_2x1
+
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# N512 EG global model
+# ---------------------------------------------------------------------------------------------
+
+{% if "okeanos_n512_eg" in name_graphs_out -%}
+
+    [[ICM_OKEANOS_N512_EG_OMP]]
+        inherit = ICM_OKEANOS
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_icm_okeanos_cce_um_high_omp/build-*/bin')"
+        script = "{{TASK_RUN}}"
+
+    # Reconfiguration
+    [[recon_icm_okeanos_n512_eg]]
+        script = "{{TASK_RUN_RECON}}"
+        inherit = ICM_OKEANOS_N512_EG_OMP, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2, ICM_OKEANOS_PARALLEL_TASKS_8, UM_N512_EG, RECON_2x4
+        [[[environment]]]
+            ASTART=../recon_icm_okeanos_n512_eg/atmos.astart
+
+    # Atmosphere Model Run 8*31 + (2*4) io servers
+    [[atmos_icm_okeanos_n512_eg]]
+        inherit = ICM_OKEANOS_N512_EG_OMP, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2, ICM_OKEANOS_PARALLEL_TASKS_256, UM_N512_EG, ATMOS_8x31, IOS_8
+        [[[environment]]]
+            ASTART=../recon_icm_okeanos_n512_eg/atmos.astart
+#            ROSE_APP_OPT_CONF_KEYS=icm_okeanos
+
+    # Comparison of recon output
+    [[rose_ana_icm_okeanos_n512_eg_recon_kgo]]
+        inherit =  ROSE_ANA_COMPARISON, ICM_OKEANOS_N512_EG_OMP, ICM_OKEANOS_AT, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_OKEANOS_ROOT_DIR}}/okeanos_n512_eg/{{OKEANOS_N512_EG_KGO}}
+            DIR1 = ../recon_icm_okeanos_n512_eg
+            KGO=0
+
+    # Comparison of atmosphere output
+    [[rose_ana_icm_okeanos_n512_eg_atmos_kgo]]
+        inherit =  ROSE_ANA_COMPARISON, ICM_OKEANOS_N512_EG_OMP, ICM_OKEANOS_AT, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0 = {{KGO_OKEANOS_ROOT_DIR}}/okeanos_n512_eg/{{OKEANOS_N512_EG_KGO}}
+            DIR1 = ../atmos_icm_okeanos_n512_eg
+            KGO=0
+
+    # Housekeeping task
+    [[housekeep_atmos_icm_okeanos_n512_eg]]
+        inherit = HOUSEKEEPING,ICM_OKEANOS,  ICM_OKEANOS_AT
+        [[[environment]]]
+            RUNDIR=../atmos_icm_okeanos_n512_eg
+
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# SEUKV EG LAM
+# ---------------------------------------------------------------------------------------------
+
+{% if "okeanos_seukv_eg_omp_noios" in name_graphs_out -%}
+
+    [[ICM_OKEANOS_SEUKV_EG]]
+        inherit = ICM_OKEANOS
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_icm_okeanos_cce_um_high_omp/build-*/bin')"
+        script = "{{TASK_RUN}}"
+
+    # Reconfiguration
+    [[recon_icm_okeanos_seukv_eg_omp_noios_2x2]]
+        script = "{{TASK_RUN_RECON}}"
+        inherit = ICM_OKEANOS_SEUKV_EG, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2, ICM_OKEANOS_PARALLEL_TASKS_4, UM_SEUKV_EG, RECON_2x2
+        [[[environment]]]
+            ASTART=../recon_icm_okeanos_seukv_eg_omp_noios_2x2/atmos.astart
+
+    # Atmosphere Model Run 4x8, OpenMP, no IOS
+    [[atmos_icm_okeanos_seukv_eg_omp_noios_4x8]]
+        inherit = ICM_OKEANOS_SEUKV_EG, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2, ICM_OKEANOS_PARALLEL_TASKS_32, UM_SEUKV_EG, ATMOS_4x8, IOS_0
+        [[[environment]]]
+            ASTART=../recon_icm_okeanos_seukv_eg_omp_noios_2x2/atmos.astart
+#            ROSE_APP_OPT_CONF_KEYS=icm_okeanos
+
+    # Comparison of recon output - this requires a workaround for a segmentation fault that occurs with Python 2.6.2 on AIX
+    [[rose_ana_icm_okeanos_seukv_eg_omp_noios_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, ICM_OKEANOS_SEUKV_EG, ICM_OKEANOS_AT, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_OKEANOS_ROOT_DIR}}/okeanos_seukv_eg/{{OKEANOS_SEUKV_EG_KGO}}
+            DIR1=../recon_icm_okeanos_seukv_eg_omp_noios_2x2
+            KGO=0
+
+    # Comparison of atmosphere output
+    [[rose_ana_icm_okeanos_seukv_eg_omp_noios_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, ICM_OKEANOS_SEUKV_EG, ICM_OKEANOS_AT, ROSE_ANA_SEUKV_EG
+        [[[environment]]]
+            DIR0={{KGO_OKEANOS_ROOT_DIR}}/okeanos_seukv_eg/{{OKEANOS_SEUKV_EG_KGO}}
+            DIR1=../atmos_icm_okeanos_seukv_eg_omp_noios_4x8
+            KGO=0
+
+    # Housekeeping task
+    [[housekeep_atmos_icm_okeanos_seukv_eg_omp_noios_4x8]]
+        inherit = HOUSEKEEPING, ICM_OKEANOS, ICM_OKEANOS_AT
+        [[[environment]]]
+            RUNDIR=../atmos_icm_okeanos_seukv_eg_omp_noios_4x8
+
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# Recon from GRIB1 and GRIB2
+# ---------------------------------------------------------------------------------------------
+
+{% if "okeanos_recon_n512_eg_grib1" in name_graphs_out or "okeanos_recon_n512_eg_grib2" in name_graphs_out -%}
+
+    [[ICM_OKEANOS_RECON_STANDALONE]]
+        inherit = ICM_OKEANOS
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_icm_okeanos_cce_recon_high_omp/build-*/bin')"
+        script = "{{TASK_RUN_RECON}}"
+
+{%- endif %}
+
+# RECON GRIB1 N512 Endgame
+{% if "okeanos_recon_n512_eg_grib1" in name_graphs_out -%}
+
+    # Reconfiguration
+    [[recon_icm_okeanos_recon_n512_eg_grib1_4x2]]
+        inherit = ICM_OKEANOS_RECON_STANDALONE, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2, ICM_OKEANOS_PARALLEL_TASKS_8, RECON_MPI, RECON_4x2, RECON_N512_EG_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib1
+
+    # Comparison tasks
+    [[rose_ana_icm_okeanos_recon_n512_eg_grib1_kgo]]
+        inherit = ROSE_ANA_COMPARISON, ICM_OKEANOS_RECON_STANDALONE, ICM_OKEANOS_AT, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_OKEANOS_ROOT_DIR}}/okeanos_recon_n512_eg_grib1/{{OKEANOS_RECON_N512_EG_GRIB1_KGO}}
+            DIR1 = ../recon_icm_okeanos_recon_n512_eg_grib1_4x2
+            KGO=0
+
+    [[housekeep_icm_okeanos_recon_n512_eg_grib1_4x2]]
+        inherit = HOUSEKEEPING, ICM_OKEANOS, ICM_OKEANOS_AT
+        [[[environment]]]
+            RUNDIR=../recon_icm_okeanos_recon_n512_eg_grib1_4x2
+
+{%- endif %}
+
+# RECON GRIB2 N512 Endgame
+{% if "okeanos_recon_n512_eg_grib2" in name_graphs_out -%}
+
+    # Reconfiguration
+    [[recon_icm_okeanos_recon_n512_eg_grib2_4x2]]
+        inherit = ICM_OKEANOS_RECON_STANDALONE, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_THREADS_2 , ICM_OKEANOS_PARALLEL_TASKS_8, RECON_MPI, RECON_4x2, RECON_N512_EG_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib2
+
+    # Comparison tasks
+    [[rose_ana_icm_okeanos_recon_n512_eg_grib2_kgo]]
+        inherit = ROSE_ANA_COMPARISON, ICM_OKEANOS_RECON_STANDALONE, ICM_OKEANOS_AT, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_OKEANOS_ROOT_DIR}}/okeanos_recon_n512_eg_grib2/{{OKEANOS_RECON_N512_EG_GRIB2_KGO}}
+            DIR1 = ../recon_icm_okeanos_recon_n512_eg_grib2_4x2
+            KGO=0
+
+    [[housekeep_icm_okeanos_recon_n512_eg_grib2_4x2]]
+        inherit = HOUSEKEEPING, ICM_OKEANOS, ICM_OKEANOS_AT
+        [[[environment]]]
+            RUNDIR=../recon_icm_okeanos_recon_n512_eg_grib2_4x2
+
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# CreateBC calculation tests
+# ---------------------------------------------------------------------------------------------
+
+{%- if "okeanos_createbc_calcs" in name_graphs_out %}
+
+    [[ICM_OKEANOS_CREATEBC]]
+        inherit = ICM_OKEANOS
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_icm_okeanos_cce_createbc_high_omp/build-*/bin')"
+        script = "{{TASK_RUN}}"
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[directives]]]
+            --time = "00:30:00"
+
+    {%- set createbc_calcs_map_okeanos = {
+            "global_eg_fixed_eg_2dust6" : [OKEANOS_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO, "15Gb"],
+            "global_eg_varres_eg_2dust6" : [OKEANOS_CREATEBC_GLOBAL_EG_VARRES_EG_2DUST6_KGO, "15Gb"],
+            "fixed_eg_fixed_eg_0dust0" : [OKEANOS_CREATEBC_FIXED_EG_FIXED_EG_0DUST0_KGO, "5Gb"],
+            "varres_eg_fixed_eg_0dust0" : [OKEANOS_CREATEBC_VARRES_EG_FIXED_EG_0DUST0_KGO, "5Gb"],
+            "global_eg_frame_eg_2dust2" : [OKEANOS_CREATEBC_GLOBAL_EG_FRAME_EG_2DUST2_KGO, "10Gb"],
+            "frame_eg_varres_eg_2dust6" : [OKEANOS_CREATEBC_FRAME_EG_VARRES_EG_2DUST6_KGO, "15Gb"],
+            "global_eg_fixed_eg_aqumtracer" : [OKEANOS_CREATEBC_GLOBAL_EG_FIXED_EG_AQUMTRACER_KGO, "10Gb"],
+            "varres_eg_frame_eg_0dust0" : [OKEANOS_CREATEBC_VARRES_EG_FRAME_EG_0DUST0_KGO, "5Gb"],
+            "frame_eg_fixed_eg_0dust0" : [OKEANOS_CREATEBC_FRAME_EG_FIXED_EG_0DUST0_KGO, "5Gb"],
+            "global_eg_fixed_eg_timecontrol" : [OKEANOS_CREATEBC_GLOBAL_EG_FIXED_EG_TIMECONTROL_KGO, "15Gb"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_okeanos.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+
+        [[createbc_icm_okeanos_createbc_calcs_{{test_type}}]]
+            inherit = ICM_OKEANOS_CREATEBC, ICM_OKEANOS_SLURM, ICM_OKEANOS_PARALLEL_TASKS_1, ICM_OKEANOS_PARALLEL_THREADS_2
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_TASK_APP=createbc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                FRAME_DIR=../createbc_icm_okeanos_createbc_calcs_global_eg_frame_eg_2dust2
+                FRAME_DIR2=../createbc_icm_okeanos_createbc_calcs_varres_eg_frame_eg_0dust0
+	    [[[directives]]]
+		--mem = {{memory_allow}}
+
+        [[rose_ana_icm_okeanos_createbc_calcs_{{test_type}}_kgo]]
+             inherit = ROSE_ANA_COMPARISON, ICM_OKEANOS_CREATEBC, ICM_OKEANOS_AT
+             [[[environment]]]
+                 DIR0={{KGO_OKEANOS_ROOT_DIR}}/okeanos_createbc/{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_icm_okeanos_createbc_calcs_{{test_type}}
+                 KGO=0
+                 ROSE_TASK_APP=rose_ana_createbc_calcs
+
+        [[housekeep_createbc_icm_okeanos_createbc_calcs_{{test_type}}]]
+            inherit = HOUSEKEEPING, ICM_OKEANOS, ICM_OKEANOS_AT
+            [[[environment]]]
+                RUNDIR=../createbc_icm_okeanos_createbc_calcs_{{test_type}}
+
+        {%- endfor %}
+
+{%- endif %}
+
+

@@ -1,0 +1,14 @@
+# Groups named below must match those named in graph-standard.rc
+{%- set integ_graphs = {
+
+    "saws_install"  :  "",
+
+    "saws_fcm_make" :  "",
+
+    "saws_utils"    :  "",
+
+    "saws_utils_ifort" :  "",
+
+    "saws_fcm_make_createbc" :  "",
+    }
+-%}

@@ -1,0 +1,934 @@
+# Suite variables detailing the details of the extract and config locations
+# that all fcm_make and fcm_make2 tasks need access to.
+    [[EXTRACT_SOURCE]]
+        [[[environment]]]
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=
+{% endif %}
+            BASE_UM_REV = {{ BASE_UM_REV }}
+            BASE_JULES_REV = {{ BASE_JULES_REV }}
+            BASE_SOCRATES_REV = {{ BASE_SOCRATES_REV }}
+            BASE_CASIM_REV = {{ BASE_CASIM_REV }}
+            SOURCE_UM = {{ SOURCE_UM }}
+            SOURCE_UM_BASE = {{ SOURCE_UM_BASE }}
+            HOST_SOURCE_UM = {{ HOST_SOURCE_UM }}
+            HOST_SOURCE_UM_BASE = {{ HOST_SOURCE_UM_BASE }}
+            SOURCE_UM_REV = {{ SOURCE_UM_REV }}
+            SOURCE_UM_MIRROR = {{ SOURCE_UM_MIRROR }}
+            HOST_SOURCE_CASIM = {{ HOST_SOURCE_CASIM }}
+            HOST_SOURCE_JULES = {{ HOST_SOURCE_JULES }}
+            HOST_SOURCE_MULE = {{ HOST_SOURCE_MULE }}
+            HOST_SOURCE_SOCRATES = {{ HOST_SOURCE_SOCRATES }}
+            HOST_SOURCE_UM_AUX = {{ HOST_SOURCE_UM_AUX }}
+            HOST_SOURCE_UM_AUX_BASE = {{ HOST_SOURCE_UM_AUX_BASE }}
+            SOURCE_UM_AUX_REV = {{ SOURCE_UM_AUX_REV }}
+{% if HOST_SOURCE_MOCI is defined %}
+            HOST_SOURCE_MOCI = {{ HOST_SOURCE_MOCI }}
+{%- endif %}
+{% if HOST_SOURCE_MOCI_BASE is defined %}
+            HOST_SOURCE_MOCI_BASE = {{ HOST_SOURCE_MOCI_BASE }}
+{%- endif %}
+{% if SOURCE_MOCI_REV is defined %}
+            SOURCE_MOCI_REV = {{ SOURCE_MOCI_REV }}
+{%- endif %}
+{%- if SITE == 'vm' or (TRUSTZONE is defined and TRUSTZONE == 'collaboration') %}
+            HOST_SOURCE_UM = {{ HOST_SOURCE_UM|replace(ROSE_ORIG_HOST+":","",1) }}
+            HOST_SOURCE_UM_BASE = {{ HOST_SOURCE_UM_BASE|replace(ROSE_ORIG_HOST+":","",1) }}
+            HOST_SOURCE_JULES = {{ HOST_SOURCE_JULES|replace(ROSE_ORIG_HOST+":","",1) }}
+            HOST_SOURCE_MULE = {{ HOST_SOURCE_MULE|replace(ROSE_ORIG_HOST+":","",1) }}
+            HOST_SOURCE_SOCRATES = {{ HOST_SOURCE_SOCRATES|replace(ROSE_ORIG_HOST+":","",1) }}
+            HOST_SOURCE_CASIM = {{ HOST_SOURCE_CASIM|replace(ROSE_ORIG_HOST+":","",1) }}
+            HOST_SOURCE_UM_AUX = {{ HOST_SOURCE_UM_AUX|replace(ROSE_ORIG_HOST+":","",1) }}
+            HOST_SOURCE_UM_AUX_BASE = {{ HOST_SOURCE_UM_AUX_BASE|replace(ROSE_ORIG_HOST+":","",1) }}
+{%- endif %}
+    [[INSTALL]]
+        [[[environment]]]
+            INSTALL_META_VERSION ={{INSTALL_META_VERSION}}
+
+# Housekeeping tasks
+    [[HOUSEKEEPING]]
+{%- if HOUSEKEEPING == true %}
+        script = "rose task-run --verbose"
+{%- else %}
+        script = "echo Not deleting $RUNDIR"
+{%- endif %}
+        [[[environment]]]
+            ROSE_TASK_APP    = housekeeping
+
+# Rose_ana comparison tasks
+    [[ROSE_ANA_COMPARISON]]
+{%- if COMPARE_OUTPUT == false %}
+        script = "echo No rose_ana comparisons run"
+{%- else %}
+        env-script = "eval $(rose task-env) ; $CYLC_SUITE_DEF_PATH/bin/rose_cylc_version_test.py"
+{%- endif %}
+
+# Dummy family for unavailable tasks, with a default message.
+    [[UNAVAILABLE]]
+        script = "echo Task unavailable due to suite or site settings"
+
+    [[MAKE_RECON_SERIAL]]
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            ROSE_APP_OPT_CONF_KEYS=serial
+
+    [[ATMOS_MPI]]
+        [[[environment]]]
+            TOTAL_MPI_TASKS=$((UM_ATM_NPROCX*UM_ATM_NPROCY + FLUME_IOS_NPROC))
+
+    [[RECON_MPI]]
+        [[[environment]]]
+            TOTAL_MPI_TASKS=$((RCF_NPROCX*RCF_NPROCY))
+
+    [[ATMOS_1x2]]
+        [[[environment]]]
+            UM_ATM_NPROCX=1
+            UM_ATM_NPROCY=2
+
+    [[ATMOS_1x4]]
+        [[[environment]]]
+            UM_ATM_NPROCX=1
+            UM_ATM_NPROCY=4
+
+    [[ATMOS_1x6]]
+        [[[environment]]]
+            UM_ATM_NPROCX=1
+            UM_ATM_NPROCY=6
+
+    [[ATMOS_1x8]]
+        [[[environment]]]
+            UM_ATM_NPROCX=1
+            UM_ATM_NPROCY=8
+
+    [[ATMOS_1x12]]
+        [[[environment]]]
+            UM_ATM_NPROCX=1
+            UM_ATM_NPROCY=12
+
+    [[ATMOS_2x1]]
+        [[[environment]]]
+            UM_ATM_NPROCX=2
+            UM_ATM_NPROCY=1
+
+    [[ATMOS_2x2]]
+        [[[environment]]]
+            UM_ATM_NPROCX=2
+            UM_ATM_NPROCY=2
+
+    [[ATMOS_2x3]]
+        [[[environment]]]
+            UM_ATM_NPROCX=2
+            UM_ATM_NPROCY=3
+
+    [[ATMOS_2x4]]
+        [[[environment]]]
+            UM_ATM_NPROCX=2
+            UM_ATM_NPROCY=4
+
+    [[ATMOS_2x5]]
+        [[[environment]]]
+            UM_ATM_NPROCX=2
+            UM_ATM_NPROCY=5
+
+    [[ATMOS_2x6]]
+        [[[environment]]]
+            UM_ATM_NPROCX=2
+            UM_ATM_NPROCY=6
+
+    [[ATMOS_2x8]]
+        [[[environment]]]
+            UM_ATM_NPROCX=2
+            UM_ATM_NPROCY=8
+
+    [[ATMOS_4x1]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=1
+
+    [[ATMOS_4x2]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=2
+
+    [[ATMOS_4x4]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=4
+
+    [[ATMOS_4x6]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=6
+
+    [[ATMOS_4x8]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=8
+
+    [[ATMOS_4x9]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=9
+
+    [[ATMOS_4x10]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=10
+
+    [[ATMOS_4x23]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=23
+
+    [[ATMOS_4x34]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=34
+
+    [[ATMOS_4x62]]
+        [[[environment]]]
+            UM_ATM_NPROCX=4
+            UM_ATM_NPROCY=62
+
+    [[ATMOS_6x4]]
+        [[[environment]]]
+            UM_ATM_NPROCX=6
+            UM_ATM_NPROCY=4
+
+    [[ATMOS_6x5]]
+        [[[environment]]]
+            UM_ATM_NPROCX=6
+            UM_ATM_NPROCY=5
+
+    [[ATMOS_6x6]]
+        [[[environment]]]
+            UM_ATM_NPROCX=6
+            UM_ATM_NPROCY=6
+
+    [[ATMOS_6x32]]
+        [[[environment]]]
+            UM_ATM_NPROCX=6
+            UM_ATM_NPROCY=32
+
+    [[ATMOS_6x35]]
+        [[[environment]]]
+            UM_ATM_NPROCX=6
+            UM_ATM_NPROCY=35
+
+    [[ATMOS_6x36]]
+        [[[environment]]]
+            UM_ATM_NPROCX=6
+            UM_ATM_NPROCY=36
+
+    [[ATMOS_6x39]]
+        [[[environment]]]
+            UM_ATM_NPROCX=6
+            UM_ATM_NPROCY=39
+
+    [[ATMOS_6x41]]
+        [[[environment]]]
+            UM_ATM_NPROCX=6
+            UM_ATM_NPROCY=41
+
+    [[ATMOS_8x1]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=1
+
+    [[ATMOS_8x2]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=2
+
+    [[ATMOS_8x4]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=4
+
+    [[ATMOS_8x9]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=9
+
+    [[ATMOS_8x13]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=13 
+
+    [[ATMOS_8x14]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=14 
+
+    [[ATMOS_8x15]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=15 
+
+    [[ATMOS_8x16]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=16
+
+     [[ATMOS_8x26]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=26
+
+     [[ATMOS_8x30]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=30
+
+     [[ATMOS_8x31]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=31
+
+    [[ATMOS_8x32]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=32
+
+    [[ATMOS_8x33]]
+        [[[environment]]]
+            UM_ATM_NPROCX=8
+            UM_ATM_NPROCY=33
+
+    [[ATMOS_10x23]]
+        [[[environment]]]
+            UM_ATM_NPROCX=10
+            UM_ATM_NPROCY=23
+
+    [[ATMOS_10x24]]
+        [[[environment]]]
+            UM_ATM_NPROCX=10
+            UM_ATM_NPROCY=24
+
+    [[ATMOS_12x9]]
+        [[[environment]]]
+            UM_ATM_NPROCX=12
+            UM_ATM_NPROCY=9
+
+    [[ATMOS_12x12]]
+        [[[environment]]]
+            UM_ATM_NPROCX=12
+            UM_ATM_NPROCY=12
+
+    [[ATMOS_12x16]]
+        [[[environment]]]
+            UM_ATM_NPROCX=12
+            UM_ATM_NPROCY=16
+
+    [[ATMOS_12x18]]
+        [[[environment]]]
+            UM_ATM_NPROCX=12
+            UM_ATM_NPROCY=18
+
+    [[ATMOS_12x22]]
+        [[[environment]]]
+            UM_ATM_NPROCX=12
+            UM_ATM_NPROCY=22
+
+    [[ATMOS_14x16]]
+        [[[environment]]]
+            UM_ATM_NPROCX=14
+            UM_ATM_NPROCY=16
+
+    [[ATMOS_14x20]]
+        [[[environment]]]
+            UM_ATM_NPROCX=14
+            UM_ATM_NPROCY=20
+
+    [[ATMOS_16x8]]
+        [[[environment]]]
+            UM_ATM_NPROCX=16
+            UM_ATM_NPROCY=8
+
+    [[ATMOS_16x9]]
+        [[[environment]]]
+            UM_ATM_NPROCX=16
+            UM_ATM_NPROCY=9
+
+    [[ATMOS_16x14]]
+        [[[environment]]]
+            UM_ATM_NPROCX=16
+            UM_ATM_NPROCY=14
+
+    [[ATMOS_16x15]]
+        [[[environment]]]
+            UM_ATM_NPROCX=16
+            UM_ATM_NPROCY=15
+
+    [[ATMOS_18x1]]
+        [[[environment]]]
+            UM_ATM_NPROCX=18
+            UM_ATM_NPROCY=1
+
+    [[ATMOS_18x6]]
+        [[[environment]]]
+            UM_ATM_NPROCX=18
+            UM_ATM_NPROCY=6
+
+    [[ATMOS_18x12]]
+        [[[environment]]]
+            UM_ATM_NPROCX=18
+            UM_ATM_NPROCY=12
+
+    [[ATMOS_34x4]]
+        [[[environment]]]
+            UM_ATM_NPROCX=34
+            UM_ATM_NPROCY=4
+
+    [[IOS_0]]
+        [[[environment]]]
+            FLUME_IOS_NPROC=0
+
+    [[IOS_2]]
+        [[[environment]]]
+            FLUME_IOS_NPROC=2
+
+    [[IOS_4]]
+        [[[environment]]]
+            FLUME_IOS_NPROC=4
+
+    [[IOS_6]]
+        [[[environment]]]
+            FLUME_IOS_NPROC=6
+
+    [[IOS_8]]
+        [[[environment]]]
+            FLUME_IOS_NPROC=8
+
+    [[RECON_1x1]]
+        [[[environment]]]
+            RCF_NPROCX=1
+            RCF_NPROCY=1
+
+    [[RECON_1x2]]
+        [[[environment]]]
+            RCF_NPROCX=1
+            RCF_NPROCY=2
+
+    [[RECON_1x4]]
+        [[[environment]]]
+            RCF_NPROCX=1
+            RCF_NPROCY=4
+
+    [[RECON_1x8]]
+        [[[environment]]]
+            RCF_NPROCX=1
+            RCF_NPROCY=8
+
+    [[RECON_2x1]]
+        [[[environment]]]
+            RCF_NPROCX=2
+            RCF_NPROCY=1
+
+    [[RECON_2x2]]
+        [[[environment]]]
+            RCF_NPROCX=2
+            RCF_NPROCY=2
+
+    [[RECON_2x4]]
+        [[[environment]]]
+            RCF_NPROCX=2
+            RCF_NPROCY=4
+
+    [[RECON_4x1]]
+        [[[environment]]]
+            RCF_NPROCX=4
+            RCF_NPROCY=1
+
+    [[RECON_4x2]]
+        [[[environment]]]
+            RCF_NPROCX=4
+            RCF_NPROCY=2
+
+    [[RECON_4x4]]
+        [[[environment]]]
+            RCF_NPROCX=4
+            RCF_NPROCY=4
+
+    [[RECON_4x6]]
+        [[[environment]]]
+            RCF_NPROCX=4
+            RCF_NPROCY=6
+
+    [[RECON_4x8]]
+        [[[environment]]]
+            RCF_NPROCX=4
+            RCF_NPROCY=8
+
+    [[RECON_4x9]]
+        [[[environment]]]
+            RCF_NPROCX=4
+            RCF_NPROCY=9
+
+    [[RECON_6x4]]
+        [[[environment]]]
+            RCF_NPROCX=6
+            RCF_NPROCY=4
+
+    [[RECON_6x6]]
+        [[[environment]]]
+            RCF_NPROCX=6
+            RCF_NPROCY=6
+
+    [[RECON_8x1]]
+        [[[environment]]]
+            RCF_NPROCX=8
+            RCF_NPROCY=1
+
+    [[RECON_8x4]]
+        [[[environment]]]
+            RCF_NPROCX=8
+            RCF_NPROCY=4
+
+    [[ROSE_ANA_RECON]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_recon
+
+    [[RECON_N108_ND_VAR_AREA_WEIGHT]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_n108_nd_var_area_weight
+
+    [[RECON_N48_ND_2D_CCA_TRANS_BILINEAR]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_n48_nd_2D_CCA_trans_bilinear
+
+    [[RECON_N512_EG_GRIB]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_n512_eg_grib
+
+    [[RECON_N512_ND_GRIB]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_n512_nd_grib
+
+    [[RECON_N48_EG_GRIB]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_n48_eg_grib
+
+    [[RECON_N48_ND_GRIB]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_n48_nd_grib
+
+    [[RECON_N96_ND_INIT_PROG_ANCIL]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_n96_nd_init_prog_ancil
+
+    [[RECON_N108_ND_INTERP_ALL_FIELDS]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_n108_nd_interp_all_fields
+
+    [[RECON_N216_EG_INTERP_ALL_FIELDS_BASIC]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_n216_eg_interp_all_fields_basic
+
+    [[RECON_NEAREST_NEIGHBOUR]]
+        [[[environment]]]
+            ROSE_TASK_APP=recon_nearest_neighbour
+
+    [[RECON_N216_EG_INIT_MLSNOW]]
+        [[[environment]]]
+           ROSE_TASK_APP=recon_n216_eg_init_mlsnow
+
+    [[RECON_N320_N320_MLSNOW]]
+        [[[environment]]]
+           ROSE_TASK_APP=recon_n320_n320_mlsnow
+
+    [[RECON_N320_N320FRC_MLSNOW]]
+        [[[environment]]]
+           ROSE_TASK_APP=recon_n320_n320frc_mlsnow
+
+    [[RECON_N320_N3201T_MLSNOW]]
+        [[[environment]]]
+           ROSE_TASK_APP=recon_n320_n3201t_mlsnow
+
+    [[RECON_N320_N216_MLSNOW]]
+        [[[environment]]]
+           ROSE_TASK_APP=recon_n320_n216_mlsnow
+
+    [[RECON_N320_N512_MLSNOW]]
+        [[[environment]]]
+           ROSE_TASK_APP=recon_n320_n512_mlsnow
+
+    [[RECON_N320_N216ZSL_MLSNOW]]
+        [[[environment]]]
+           ROSE_TASK_APP=recon_n320_n216zsl_mlsnow
+
+    [[RECON_N320_N320SL7_MLSNOW]]
+        [[[environment]]]
+           ROSE_TASK_APP=recon_n320_n320sl7_mlsnow
+
+    [[RECON_LAM_FROM_GRIB_CUTOUT]]
+        [[[environment]]]
+           ROSE_TASK_APP=recon_lam_from_grib_cutout
+
+    [[ROSE_ANA_WALLCLOCK]]
+{%- if COMPARE_WALLCLOCK == false %}
+        script = "echo rose_ana wallclock comparisons not run"
+{%- endif %}    
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_wallclock
+
+    [[ROSE_ANA_EG_NORMS]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_eg_norms
+
+    [[UM_GA7_AMIP]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_ga7_amip
+
+    [[ROSE_ANA_N48_GA7_AMIP]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_ga7_amip
+
+    [[UM_GA_AMIP_EXP]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_ga_amip_exp
+
+    [[ROSE_ANA_N48_GA_AMIP_EXP]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_ga_amip_exp
+
+    [[UM_TRIFFID_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_triffid_eg
+
+    [[ROSE_ANA_TRIFFID_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_triffid_eg
+
+    [[UM_TRIFFID_ESM_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_triffid_esm_eg
+
+    [[ROSE_ANA_TRIFFID_ESM_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_triffid_esm_eg
+
+    [[ROSE_ANA_N48_GA7_AMIP_NAMING]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_ga7_amip_naming
+
+    [[ROSE_ANA_N48_GA_AMIP_EXP_NAMING]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_ga7_amip_naming
+            
+    [[ROSE_ANA_N48_EG_NRUN_NRUN]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_eg_nrun_nrun
+
+    [[ROSE_ANA_N48_GA7_AMIP_NRUN_NRUN]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_ga_amip_nrun_nrun
+
+    [[ROSE_ANA_N48_GA_AMIP_EXP_NRUN_NRUN]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_ga_amip_nrun_nrun
+            
+
+    [[UM_UKV1P5_EG_DA]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_ukv1p5_eg_da
+
+    [[ROSE_ANA_UKV1P5_EG_DA]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_ukv1p5_eg_da
+
+    [[UM_UKV1P5_EG_NODA]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_ukv1p5_eg_noda
+
+    [[ROSE_ANA_UKV1P5_EG_NODA]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_ukv1p5_eg_noda
+
+    [[UM_UKV1P5_EXP]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_ukv1p5_exp
+
+    [[ROSE_ANA_UKV1P5_EXP]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_ukv1p5_exp
+
+    [[UM_N96_AMIP_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_n96_amip_eg
+
+    [[ROSE_ANA_N96_AMIP_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n96_amip_eg
+
+    [[UM_N96_AMIP_EG_FVTRACK]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_n96_amip_eg_fvtrack
+
+    [[UM_N96_EG_DYNTRACERS]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_n96_eg_dyntracers
+
+    [[ROSE_ANA_N96_EG_DYNTRACERS]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n96_eg_dyntracers
+
+    [[COUPLED_N96_ORCA1_MCT_UKESM]]
+        [[[environment]]]
+            ROSE_TASK_APP=coupled_n96_orca1_mct_ukesm
+
+    [[ROSE_ANA_COUPLED_N96_ORCA1_UKESM]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n96_orca1_mct_ukesm
+
+    [[ROSE_ANA_N96_AMIP_EG_FVTRACK]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n96_amip_eg_fvtrack
+
+    [[COUPLED_N96_ORCA025_MCT_GC3]]
+        [[[environment]]]
+            ROSE_TASK_APP=coupled_n96_orca025_mct_technical_gc3
+
+    [[ROSE_ANA_COUPLED_N96_ORCA025_MCT_GC3]]
+        [[[environment]]]
+            ROSE_TASK_APP = rose_ana_n96_orca025_mct_technical_gc3
+
+    [[UM_IDEALISED_EXO_HD209]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_idealised_exo_hd209_eg
+
+    [[UM_IDEALISED_EXO_SHJ]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_idealised_exo_shj_eg
+
+    [[UM_IDEALISED_EXO_EL]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_idealised_exo_el_eg
+
+    [[ROSE_ANA_IDEALISED_EXO]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_idealised_exo
+
+    [[UM_EURO4]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_euro4
+
+    [[ROSE_ANA_EURO4]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_euro4
+
+    [[UM_N512_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_n512_eg
+
+    [[ROSE_ANA_N512_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n512_eg
+
+    [[UM_MOGREPS_UK]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_mogreps_uk_eg
+
+    [[ROSE_ANA_MOGREPS_UK]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mogreps_uk
+
+    [[UM_MOGREPS_UK_EXP]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_mogreps_uk_exp_eg
+
+    [[ROSE_ANA_MOGREPS_UK_EXP]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mogreps_uk_exp
+
+    [[UM_N216_GA6P1_GLU]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_n216_ga6p1_glu
+
+    [[ROSE_ANA_N216_GA6P1_GLU]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n216_ga6p1_glu
+
+    [[UM_SEUKV_EG_NODA]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_seukv_eg_noda
+
+    [[ROSE_ANA_SEUKV_EG_NODA]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_seukv_eg_noda
+
+    [[UM_SEUKF_TKEBL]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_seukf_tkebl
+
+    [[ROSE_ANA_SEUKF_TKEBL]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_seukf_tkebl
+
+    [[UM_AQUM_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_aqum_eg
+
+    [[ROSE_ANA_AQUM_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_aqum_eg
+
+    [[ROSE_ANA_AQUM_EG_SHORTRUN]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_aqum_eg_shortrun
+
+    [[UM_MOGREPS_G_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_mogreps_g_eg
+
+    [[ROSE_ANA_MOGREPS_G_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mogreps_g_eg
+
+    [[UM_MOGREPS_G_EXP_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_mogreps_g_exp_eg
+
+    [[ROSE_ANA_MOGREPS_G_EXP_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mogreps_g_exp_eg
+
+    [[UM_N48_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_n48_eg
+
+    [[ROSE_ANA_N48_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_eg
+
+    [[ROSE_ANA_N48_EG_CRUN]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_eg_crun
+
+    [[ROSE_ANA_N48_UKCA_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_ukca_eg
+
+    [[UM_SEUKV_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_seukv_eg
+
+    [[ROSE_ANA_SEUKV_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_seukv_eg
+
+    [[UM_UKCA_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_ukca_eg
+
+    [[UM_UKCA_EG_OFFLINE]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_ukca_eg_offline
+
+    [[ROSE_ANA_UKCA_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_ukca_eg
+
+    [[UM_UKCA_NUDGED]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_ukca_nudged
+
+    [[ROSE_ANA_UKCA_NUDGED]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_ukca_nudged
+
+    [[SCM_TOGACOARE_GA6]]
+        [[[environment]]]
+            ROSE_TASK_APP=scm_togacoare_ga6
+
+    [[ROSE_ANA_SCM_TOGACOARE_GA6]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_scm_togacoare_ga6
+
+    [[SCM_GABLS3_GA6]]
+        [[[environment]]]
+            ROSE_TASK_APP=scm_gabls3_ga6
+
+    [[ROSE_ANA_SCM_GABLS3_GA6]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_scm_gabls3_ga6
+
+    [[COUPLED_N96_ORCA025_MCT_GC3_TECHNICAL]]
+        [[[environment]]]
+            ROSE_TASK_APP=coupled_n96_orca025_mct_techncial
+
+    [[ROSE_ANA_DRHOOK]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_drhook
+
+    [[UM_N48_UKCA_EG]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_n48_ukca_eg
+
+    [[UM_N96_GLOMAP_CLIM]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_n96_glomap_clim
+
+    [[ROSE_ANA_N96_GLOMAP_CLIM]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n96_glomap_clim
+
+    [[UM_N48_GLOMAP_CLIM]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_n48_glomap_clim
+
+    [[ROSE_ANA_N48_GLOMAP_CLIM]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_n48_glomap_clim
+
+    [[UM_IDEALISED_BICYCLIC_LAM_RCE]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_idealised_bicyclic_lam_rce
+
+    [[ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_idealised_bicyclic_lam_rce
+
+    [[UM_IDEALISED_BICYCLIC_LAM_BOMEX]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_idealised_bicyclic_lam_bomex
+
+    [[ROSE_ANA_IDEALISED_BICYCLIC_LAM_BOMEX]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_idealised_bicyclic_lam_bomex
+
+    [[UM_IDEALISED_BICYCLIC_LAM_DRY2DPL]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_idealised_bicyclic_lam_dry2dpl
+
+    [[ROSE_ANA_IDEALISED_BICYCLIC_LAM_DRY2DPL]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_idealised_bicyclic_lam_dry2dpl
+
+    [[CREATEBC]]
+        [[[environment]]]
+            ROSE_TASK_APP=createbc_calcs
+    
+    [[ROSE_ANA_CREATEBC]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_createbc_calcs
+
+    [[UM_SEUKV_EG_CASIM_2HR]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_seukv_eg_casim
+            ROSE_APP_OPT_CONF_KEYS=2hr
+
+    [[UM_SEUKV_EG_CASIM_1HR]]
+        [[[environment]]]
+            ROSE_TASK_APP=um_seukv_eg_casim
+            ROSE_APP_OPT_CONF_KEYS=1hr
+
+    [[ROSE_ANA_SEUKV_EG_CASIM]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_seukv_eg_casim
+
+    [[ROSE_ANA_NZCSM]]
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_nzcsm

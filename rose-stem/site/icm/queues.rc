@@ -1,0 +1,13 @@
+    [[queues]]
+        [[[linux_extract]]]
+            limit = 5
+            members = EXTRACT
+        [[[hpc_build]]]
+            limit = 6
+            members = ICM_BOREASZ_BUILD, ICM_OKEANOS_BUILD
+        [[[hpc_rose-ana]]]
+            limit = 5
+            members = ROSE_ANA_COMPARISON
+        [[[hpc_housekeeping]]]
+            limit = 5
+            members = HOUSEKEEPING

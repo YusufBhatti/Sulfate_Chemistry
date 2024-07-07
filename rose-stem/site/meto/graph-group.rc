@@ -1,0 +1,868 @@
+{%- set groups = {
+
+    "developer"  : ["xc40_developer", "linux_developer", ],
+
+    "xc40_developer" : [
+                   "meto_xc40_n48_eg_omp_ios",
+                   "meto_xc40_n48_eg_omp_ios_comp_check",
+                   "meto_xc40_n48_eg_noomp",
+                   "meto_xc40_scm_togacoare_ga6_omp",
+                   "meto_xc40_scm_gabls3_ga6_omp",
+                   "meto_xc40_mogreps_uk_exp_eg", 
+                   "scripts",  
+                   "monitor_xc40_tasks",
+                   "meto_xc40_seukv_eg",
+                   "meto_xc40_seukv_eg_noda",
+                   "meto_xc40_n48_eg_omp_ios_ifort",
+                   "meto_xc40_n48_eg_omp_ios_gnu_comp_check",
+                   "meto_xc40_n48_ga7_amip_2day",
+                   "meto_xc40_n48_ga_amip_exp_2day",
+                   "meto_xc40_n48_glomap_clim",
+                   "meto_xc40_n96_orca025_mct_technical_gc3",
+                   "meto_xc40_idealised_bicyclic_lam_rce",
+                   "meto_xc40_n48_ukca_eg_omp_noios_gnu",
+                   "meto_xc40_gnu_um_standards",
+                   "meto_xc40_gnu_um_single_standards",
+                       ],
+
+    "linux_developer" : [
+                   "meto_linux_n48_eg_omp_ios",  
+                   "meto_linux_n48_eg_noomp",
+                   "scripts",  
+                   "meto_linux_scm_togacoare_ga6_omp",
+                   "meto_linux_scm_gabls3_ga6_omp",
+                   "monitor_linux_tasks", 
+                   "meto_linux_n48_ga7_amip_12hr",
+                   "meto_linux_n48_ga_amip_exp_12hr",
+                   "meto_linux_n48_ga7_amip_12hr_comp_check",
+                   "meto_linux_n48_glomap_clim_12hr",
+                   "meto_linux_idealised_bicyclic_lam_rce",
+                        ],
+
+
+    "nightly"  : [ 
+                   "xc40_nightly", 
+                   "linux_nightly", 
+                   "fcm_make",
+                   "prebuilds",
+                   "mule",
+                 ],
+
+    "xc40_nightly"   : [
+                   "xc40_developer",
+                   "meto_xc40_aqum_eg",        
+                   "meto_xc40_seukf_tkebl",
+                   "meto_xc40_n96_amip_eg", 
+                   "meto_xc40_ukv1p5_eg_noda",
+                   "meto_xc40_ukv1p5_eg_da",
+                   "meto_xc40_ukv1p5_exp",
+                   "meto_xc40_seukv_eg",
+                   "meto_xc40_seukv_eg_casim",
+                   "meto_xc40_seukv_eg_casim_comp_check",
+                   "meto_xc40_seukv_eg_urban1t",
+                   "xc40_fcm_make",
+                   "xc40_recon",
+                   "xc40_scm",
+                   "xc40_test_mule",
+                   "xc40_utils",
+                   "meto_xc40_n48_eg_omp_noios", 
+                   "meto_xc40_n48_eg_noomp", 
+                   "meto_xc40_n48_eg_omp_ios_moruses",
+                   "meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread",
+                   "meto_xc40_pws_diag_test",
+                   "meto_xc40_n48_ga7_amip_2day_comp_check",
+                   "meto_xc40_n48_ga_amip_exp_2day_comp_check",
+                   "meto_xc40_n48_ga7_amip_10day",
+                   "meto_xc40_n48_ga_amip_exp_10day",
+                   "meto_xc40_n48_glomap_clim_comp_check",
+                   "xc40_install",
+                   "meto_xc40_n96_orca025_mct_technical_gc3",
+                   "meto_xc40_n96_orca1_mct_ukesm",
+                   "meto_xc40_n96_triffid_eg_2day",
+                   "meto_xc40_n96_glomap_clim",
+                   "meto_xc40_n48_eg_free_tracers",
+                   "meto_xc40_n48_eg_screen_dch",
+                   "meto_xc40_recon_n320_n320_mlsnow_mirror",
+                   "meto_xc40_n48_ga7_amip_2day_nrchem",
+                   "meto_xc40_n48_ga7_amip_naming",
+                   "meto_xc40_n48_ga_amip_exp_2day_nrchem",
+                   "meto_xc40_n48_ga_amip_exp_naming",
+                   "meto_xc40_n48_eg_omp_ios_gnu",
+                   "meto_xc40_idealised_exo_iso_hd209",
+                   "meto_xc40_global_to_lam_eg",  
+                   "meto_xc40_idealised_bicyclic_lam_dry2dpl",
+                   "meto_xc40_idealised_bicyclic_lam_bomex",
+                   "meto_xc40_idealised_bicyclic_lam_rce_gnu",
+                   "xc40_gnu_standards",
+                      ],
+
+    "linux_nightly" : [
+                   "linux_developer", 
+                   "meto_linux_n48_eg_omp_noios", 
+                   "meto_linux_pws_diag_test",
+                   "linux_fcm_make",
+                   "linux_utils",
+                   "linux_recon",
+                   "linux_scm",
+                   "linux_install",
+                   "linux_test_mule",
+                   "meto_linux_n48_eg_omp_ios_clang_ifort",
+                   "meto_linux_n48_ga_amip_exp_12hr_comp_check",
+                   "meto_linux_n48_ga7_amip_naming",
+                   "meto_linux_n48_ga_amip_exp_naming",
+                   "meto_linux_n48_glomap_clim_12hr_comp_check",
+                   "clang",
+                   "meto_linux_idealised_bicyclic_lam_dry2dpl",
+                   "meto_linux_idealised_bicyclic_lam_bomex",
+                      ],
+
+    "weekly" : [
+                   "xc40_weekly", 
+                   "linux_weekly", 
+               ],
+
+    "xc40_weekly"  : [
+                   "xc40_nightly",        
+                   "meto_xc40_n512_eg",     
+                   "meto_xc40_mogreps_g_eg",  
+                   "meto_xc40_mogreps_g_exp_eg",  
+                   "meto_xc40_euro4_eg",
+                   "meto_xc40_seukv_eg_casim",
+                   "meto_xc40_seukv_eg_noda",
+                   "meto_xc40_seukv_eg_noda_urban1t",
+                   "xc40_anc_upd",
+                   "xc40_coupled",
+                   "xc40_drhook",
+                   "xc40_ga7_amip",
+                   "xc40_ga_amip_exp",
+                   "xc40_jules",
+                   "xc40_mogreps",
+                   "xc40_ga6p1_glu",  
+                   "xc40_ukca",
+                   "xc40_glomap_clim",
+                   "xc40_uk_lams",
+                   "xc40_ukv_exp",
+                   "meto_xc40_ukca_eg_strattrop",
+                   "meto_xc40_ukca_nudged",
+                   "meto_xc40_n96_amip_eg_fvtrack",
+                   "meto_xc40_n96_eg_dyntracers",            
+                   "meto_xc40_seukv_eg_comp_check",
+                   "xc40_idealised_exo",
+                   "meto_xc40_n48_ga7_amip_30day",
+                   "meto_xc40_n48_ga_amip_exp_30day",
+                   "meto_xc40_aqum_eg_glomap",
+                   "meto_xc40_aqum_eg_iau",
+                   "meto_xc40_aqum_eg_comp_check",
+                   "meto_xc40_aqum_eg_glomap_comp_check",
+                   "meto_xc40_n96_triffid_eg",
+                   "meto_xc40_n96_triffid_esm_eg",
+                    ],
+
+    "linux_weekly" : [ 
+                   "linux_nightly",  
+                   "linux_anc_upd",
+                   "linux_ga7_amip",
+                   "linux_ga_amip_exp",
+                   "linux_uk_lams",
+                   "linux_ukca",
+                   "linux_glomap_clim",
+                   "meto_linux_aqum_eg",
+                   "meto_linux_aqum_eg_glomap",
+                   "meto_linux_aqum_eg_noomp",
+                   "meto_linux_aqum_eg_glomap_noomp",
+                   "linux_drhook",
+                     ],
+
+    "all"       : [
+                   "weekly", 
+                  ],
+
+    "scripts"   : [
+                   "umdp3_check",
+                   "ifdef_check",
+                   "nl_bcast_check",
+                   "drhook_check",
+                   "site_validate",
+                   "metadata_check",
+                  ],
+
+    "mule"     : [
+                   "linux_test_mule",
+                   "xc40_test_mule",
+                 ],
+
+    "drhook"   : [
+                   "xc40_drhook",
+                   "linux_drhook",
+                 ],
+
+    "xc40_drhook"  : [
+                   "meto_xc40_n96_amip_eg_drhook", 
+                   "meto_xc40_n48_eg_omp_noios_drhook",  
+                   "meto_xc40_seukv_eg_drhook",
+                   "xc40_createbc_drhook",
+                    ],
+
+    "linux_drhook"    : [
+                   "meto_linux_n48_eg_omp_noios_drhook", 
+                   "linux_createbc_drhook",
+                        ],
+
+    "ga7_amip" : [
+              "xc40_ga7_amip",
+              "linux_ga7_amip",
+            ],
+
+    "xc40_ga7_amip" : [
+                   "meto_xc40_n48_ga7_amip_2day",
+                   "meto_xc40_n48_ga7_amip_naming",
+                   "meto_xc40_n48_ga7_amip_2day_comp_check",
+                   "meto_xc40_n48_ga7_amip_2day_nrchem",
+                   "meto_xc40_n48_ga7_amip_10day",
+                   "meto_xc40_n48_ga7_amip_30day",
+                 ],
+
+    "linux_ga7_amip" : [
+                   "meto_linux_n48_ga7_amip_12hr",
+                   "meto_linux_n48_ga7_amip_12hr_comp_check",
+                   "meto_linux_n48_ga7_amip_naming",
+                 ],
+
+    "ga_amip_exp" : [
+               "xc40_ga_amip_exp",
+               "linux_ga_amip_exp",
+               ],
+
+    "xc40_ga_amip_exp" : [
+                   "meto_xc40_n48_ga_amip_exp_2day",
+                   "meto_xc40_n48_ga_amip_exp_naming",
+                   "meto_xc40_n48_ga_amip_exp_2day_comp_check",
+                   "meto_xc40_n48_ga_amip_exp_2day_nrchem",
+                   "meto_xc40_n48_ga_amip_exp_10day",
+                   "meto_xc40_n48_ga_amip_exp_30day",
+                 ],
+
+    "linux_ga_amip_exp" : [
+                   "meto_linux_n48_ga_amip_exp_12hr",
+                   "meto_linux_n48_ga_amip_exp_12hr_comp_check",
+                   "meto_linux_n48_ga_amip_exp_naming",
+                 ],
+
+    "ukv_exp" : [
+               "xc40_ukv_exp",
+               ],
+
+
+    "xc40_ukv_exp" : [
+                   "meto_xc40_ukv1p5_exp",
+                 ],
+
+    "mogreps"   : [ 
+                   "xc40_mogreps",
+                  ],
+
+    "xc40_mogreps"   : [
+                   "meto_xc40_mogreps_g_eg",
+                   "meto_xc40_mogreps_g_exp_eg",
+                   "meto_xc40_mogreps_uk_eg", 
+                   "meto_xc40_mogreps_uk_exp_eg", 
+                  ],
+
+    "ga6p1_glu" : [
+                   "xc40_ga6p1_glu",
+                  ],
+
+    "xc40_ga6p1_glu" : [
+                   "meto_xc40_n216_ga6p1_glu",
+                   "meto_xc40_n216_ga6p1_glu_4diau",
+                  ],
+
+    "high_compile" : [
+                   "linux_high_compile", 
+                   "xc40_high_compile",     
+                  ],
+
+    "debug_compile" : [
+                   "linux_debug_compile", 
+                   "xc40_debug_compile",     
+                  ],
+
+    "xc40_cce_um_fast" : [
+                   "meto_xc40_mogreps_uk_eg",
+                   "meto_xc40_mogreps_uk_exp_eg",
+                   "meto_xc40_n216_ga6p1_glu",
+                   "meto_xc40_n216_ga6p1_glu_4diau",
+                   "meto_xc40_euro4_eg",
+                   "meto_xc40_ukv1p5_eg_noda",
+                   "meto_xc40_ukv1p5_eg_da",
+                   "meto_xc40_ukv1p5_exp",
+                   "meto_xc40_n512_eg",
+                   "meto_xc40_seukv_eg",
+                   "meto_xc40_seukv_eg_urban1t",
+                   "meto_xc40_global_to_lam_eg",
+                  ],
+
+    "xc40_cce_um_high" : [
+                   "meto_xc40_ukca_eg_strattrop",
+                   "meto_xc40_ukca_eg_strattrop_columns",
+                   "meto_xc40_n96_glomap_clim",
+                   "meto_xc40_n48_glomap_clim",
+                   "meto_xc40_n48_ga7_amip_2day",
+                   "meto_xc40_n48_ga7_amip_2day_nrchem",
+                   "meto_xc40_n48_ga7_amip_naming",
+                   "meto_xc40_n48_ga7_amip_10day",
+                   "meto_xc40_n48_ga7_amip_30day",
+                   "meto_xc40_n48_ga_amip_exp_2day",
+                   "meto_xc40_n48_ga_amip_exp_2day_nrchem",
+                   "meto_xc40_n48_ga_amip_exp_naming",
+                   "meto_xc40_n48_ga_amip_exp_10day",
+                   "meto_xc40_n48_ga_amip_exp_30day",
+                   "meto_xc40_n96_amip_eg",
+                   "meto_xc40_n96_amip_eg_fvtrack",
+                  ],
+
+    "ukca"      : [
+                   "xc40_ukca",
+                   "xc40_ga7_amip",
+                   "linux_ukca",
+                   "linux_ga7_amip",
+                   "scripts",
+                  ],
+
+    "xc40_ukca" : [
+                   "meto_xc40_aqum_eg", 
+                   "meto_xc40_aqum_eg_glomap",
+                   "meto_xc40_aqum_eg_iau", 
+                   "meto_xc40_aqum_eg_comp_check",
+                   "meto_xc40_aqum_eg_glomap_comp_check",
+                   "meto_xc40_ukca_eg_strattrop",
+                   "meto_xc40_ukca_eg_strattrop_safe",
+		   "meto_xc40_ukca_eg_strattrop_columns",
+		   "meto_xc40_ukca_eg_strattrop_columns_safe",
+                   "meto_xc40_ukca_eg_strattrop_columns_safe_noomp",
+                   "meto_xc40_ukca_nudged", 
+                   "meto_xc40_n96_orca1_mct_ukesm",
+                   "meto_xc40_n48_ukca_eg_omp_noios_gnu",
+                   "meto_xc40_n48_ukca_eg_omp_noios_gnu_comp_check",
+                   "meto_xc40_n48_ukca_eg_noomp_gnu",
+		   "meto_xc40_n48_ga7_amip_2day_nrchem",
+		   "meto_xc40_n48_ga_amip_exp_2day_nrchem",
+                  ],
+
+    "xc40_ukca_high_reprod" : [
+                               "meto_xc40_ukca_eg_strattrop",
+                               "meto_xc40_ukca_eg_strattrop_columns",
+                               "xc40_ga7_amip",
+                               "xc40_ga_amip_exp",
+                              ],
+
+    "linux_ukca" : [
+                   "meto_linux_aqum_eg",
+                   "meto_linux_aqum_eg_glomap",
+                   "meto_linux_aqum_eg_noomp",
+                   "meto_linux_aqum_eg_glomap_noomp",
+                  ],
+
+    "glomap_clim" : [
+                   "xc40_glomap_clim",
+                   "xc40_ga7_amip",
+                   "linux_glomap_clim",
+                   "linux_ga7_amip",
+                  ],
+
+    "xc40_glomap_clim" : [
+                   "meto_xc40_n48_glomap_clim",
+                   "meto_xc40_n48_glomap_clim_comp_check",
+                   "meto_xc40_n96_glomap_clim",
+                  ],
+
+    "linux_glomap_clim" : [
+                   "meto_linux_n48_glomap_clim_12hr",
+                   "meto_linux_n48_glomap_clim_12hr_comp_check",
+                  ],
+
+    "pws_diags" : [
+                  "meto_linux_pws_diag_test",
+                  "meto_xc40_pws_diag_test",
+                  "meto_xc40_seukv_eg_noda",
+                  ],
+
+    "iau"       : [
+                   "xc40_iau",
+                  ],
+
+    "xc40_iau"  : [
+                   "meto_xc40_mogreps_g_eg",
+                   "meto_xc40_mogreps_g_exp_eg",
+                   "meto_xc40_mogreps_uk_eg",
+                   "meto_xc40_mogreps_uk_exp_eg",
+                   "meto_xc40_seukv_eg",
+                   "meto_xc40_seukv_eg_comp_check",
+                   "meto_xc40_seukv_eg_drhook",
+                   "meto_xc40_seukv_eg_urban1t",
+                   "meto_xc40_ukv1p5_exp",
+                   "meto_xc40_ukv1p5_eg_da",
+                   "xc40_ga6p1_glu",
+		   "meto_xc40_aqum_eg_iau",
+		   ],
+
+    "scm"       : [
+                   "linux_scm",
+                   "xc40_scm",
+                  ],
+
+    "xc40_scm"  : [
+                   "meto_xc40_scm_togacoare_ga6_noomp",
+                   "meto_xc40_scm_togacoare_ga6_omp",
+                   "meto_xc40_scm_togacoare_ga6_gnu_noomp",
+                   "meto_xc40_scm_togacoare_ga6_gnu_omp",
+                   "meto_xc40_scm_gabls3_ga6_noomp",
+                   "meto_xc40_scm_gabls3_ga6_omp",
+                   "meto_xc40_scm_gabls3_ga6_gnu_noomp",
+                   "meto_xc40_scm_gabls3_ga6_gnu_omp",
+                   "meto_xc40_gnu_scm_standards",
+                  ],
+
+    "linux_scm" : [
+                   "meto_linux_scm_togacoare_ga6_noomp",
+                   "meto_linux_scm_togacoare_ga6_omp",
+                   "meto_linux_scm_gabls3_ga6_noomp",
+                   "meto_linux_scm_gabls3_ga6_omp",
+                    ],
+
+    "coupled"   : [
+                   "xc40_coupled",   
+                  ],
+
+
+    "xc40_coupled"   : [
+                   "meto_xc40_n96_orca025_mct_technical_gc3",
+                   "meto_xc40_n96_orca1_mct_ukesm",
+                       ],
+
+    "classic_aerosols" : [
+                   "linux_classic_aerosols",
+                   "xc40_classic_aerosols",
+                         ],
+
+    "linux_classic_aerosols" : [
+                   "meto_linux_aqum_eg",
+                   "meto_linux_aqum_eg_glomap",
+                   "meto_linux_aqum_eg_noomp",
+                   "meto_linux_aqum_eg_glomap_noomp",
+                   "meto_linux_recon_n96_nd_init_prog_ancil",
+                               ],
+
+    "xc40_classic_aerosols" : [
+                   "meto_xc40_recon_lam_from_grib_cutout",
+                   "meto_xc40_recon_n96_nd_init_prog_ancil",
+                   "meto_xc40_aqum_eg",        
+                   "meto_xc40_aqum_eg_glomap",
+                   "meto_xc40_aqum_eg_iau",
+                   "meto_xc40_aqum_eg_comp_check",
+                   "meto_xc40_aqum_eg_glomap_comp_check",
+                   "meto_xc40_n96_eg_dyntracers",            
+                   "meto_xc40_n96_amip_eg_drhook", 
+                   "meto_xc40_n96_amip_eg", 
+                   "meto_xc40_n96_amip_eg_fvtrack",
+                   "meto_xc40_n96_orca025_mct_technical_gc3",
+                   "meto_xc40_n96_orca1_mct_ukesm",
+                              ],
+
+    "utils"     : [
+                   "linux_utils",
+                   "xc40_utils",
+                  ],
+
+    "linux_utils" : [
+                   "linux_pptoanc",
+                   "linux_crmstyle_coarse_grid", 
+                   "linux_createbc",
+                   "linux_createbc_drhook",
+                    ],
+
+    "xc40_utils" : [
+                   "xc40_vomext",
+                   "xc40_convpp",        
+                   "xc40_pptoanc",   
+                   "xc40_crmstyle_coarse_grid", 
+                   "xc40_createbc",
+                   "xc40_createbc_drhook",
+                   "meto_xc40_gnu_utils_serial_standards",
+                   "meto_xc40_gnu_utils_mpp_standards",
+                   ],
+
+    "xc40_idealised_exo" : [
+                   "meto_xc40_idealised_exo_iso_hd209",
+                   "meto_xc40_idealised_exo_shj",
+                   "meto_xc40_idealised_exo_el_rt",
+                           ],
+
+    "idealised_exo" : ["xc40_idealised_exo"],
+
+    "xc40_idealised_lam" : [
+                   "meto_xc40_idealised_bicyclic_lam_rce",
+                   "meto_xc40_idealised_bicyclic_lam_dry2dpl",
+                   "meto_xc40_idealised_bicyclic_lam_rce_gnu",
+                   "meto_xc40_idealised_bicyclic_lam_bomex",
+                   ],
+
+    "linux_idealised_lam" : [
+                   "meto_linux_idealised_bicyclic_lam_rce",
+                   "meto_linux_idealised_bicyclic_lam_dry2dpl",
+                   "meto_linux_idealised_bicyclic_lam_bomex",
+                   ],
+
+    "idealised_lam" : ["xc40_idealised_lam", "linux_idealised_lam"],
+
+    "idealised" : ["idealised_exo", "idealised_lam"],
+
+    "xc40_vomext" : ["meto_xc40_vomext_calcs"],
+
+    "xc40_convpp" : ["meto_xc40_convpp_calcs"],
+
+    "linux_pptoanc" : ["meto_linux_pptoanc_calcs"],
+
+    "xc40_pptoanc" : ["meto_xc40_pptoanc_calcs"],
+
+    "linux_crmstyle_coarse_grid" : ["meto_linux_crmstyle_coarse_grid"],
+
+    "xc40_crmstyle_coarse_grid" : ["meto_xc40_crmstyle_coarse_grid"],
+
+    "createbc"  : ["linux_createbc", "xc40_createbc",
+                   "linux_createbc_drhook", "xc40_createbc_drhook"],
+
+    "linux_createbc" : ["meto_linux_ifort_createbc_calcs"],
+
+    "linux_createbc_drhook" : ["meto_linux_ifort_createbc_calcs_drhook"],
+
+    "xc40_createbc" : ["meto_xc40_ifort_createbc_calcs", "meto_xc40_cce_createbc_calcs",
+                       "meto_xc40_global_to_lam_eg",
+                       "meto_xc40_gnu_createbc_standards"],
+
+    "xc40_createbc_drhook" : ["meto_xc40_cce_createbc_calcs_drhook"],
+
+    "recon"       : ["xc40_recon", "linux_recon", ],
+
+    "anc_upd"     : ["xc40_anc_upd", "linux_anc_upd", ],
+ 
+    "convpp"      : ["xc40_convpp", ],
+
+    "xc40_anc_upd" : [ 
+                   "meto_xc40_aqum_eg",  
+                   "meto_xc40_n96_amip_eg", 
+                     ],
+
+    "linux_anc_upd" : [
+                   "meto_linux_aqum_eg",
+                        ],
+    "xc40_jules" :   [
+                   "meto_xc40_mogreps_g_eg",  
+                   "meto_xc40_mogreps_g_exp_eg",  
+                   "meto_xc40_n96_triffid_eg",
+                   "meto_xc40_n96_triffid_eg_2day",
+                   "meto_xc40_n96_triffid_esm_eg",
+                   "meto_xc40_ukv1p5_eg_noda",
+                   "meto_xc40_ukv1p5_eg_da",
+                   "meto_xc40_ukv1p5_exp",
+                   "meto_xc40_n48_eg_omp_ios_moruses",
+                   "meto_xc40_n96_orca1_mct_ukesm",
+                   "meto_xc40_n48_eg_screen_dch",
+                     ],
+
+    "jules" :  [
+            "linux_scm",
+            "xc40_jules",
+            "xc40_scm",
+            "scripts",
+               ],
+
+    "casim" :  [
+            "meto_xc40_seukv_eg_casim",
+            "meto_xc40_seukv_eg_casim_comp_check",
+               ],
+
+    "uk_lams" : [ "xc40_uk_lams", "linux_uk_lams"],
+
+    "xc40_uk_lams" : [ 
+                   "meto_xc40_euro4_eg",
+                   "meto_xc40_seukf_tkebl", 
+                   "meto_xc40_seukv_eg",
+                   "meto_xc40_seukv_eg_urban1t",
+                   "meto_xc40_seukv_eg_noda",
+                   "meto_xc40_seukv_eg_noda_urban1t",
+                   "meto_xc40_seukv_eg_casim",
+                   "meto_xc40_seukv_eg_casim_comp_check",
+                   "meto_xc40_ukv1p5_eg_noda",
+                   "meto_xc40_ukv1p5_eg_da",
+                   "meto_xc40_ukv1p5_exp",
+                   "meto_xc40_seukv_eg_comp_check",
+                   "meto_xc40_seukv_eg_drhook",
+                   "meto_xc40_recon_LAM_fix_to_fix_res",
+                   "meto_xc40_recon_LAM_fix_to_var_res",
+                   "meto_xc40_recon_LAM_var_to_fix_res",
+                   "meto_xc40_recon_LAM_var_to_var_res",
+                   "meto_xc40_global_to_lam_eg",
+                   "meto_xc40_mogreps_uk_eg", 
+                   "meto_xc40_mogreps_uk_exp_eg", 
+                   "meto_xc40_aqum_eg", 
+                   "meto_xc40_aqum_eg_glomap",
+                   "meto_xc40_aqum_eg_iau", 
+                   "meto_xc40_aqum_eg_comp_check",
+                   "meto_xc40_aqum_eg_glomap_comp_check",
+                   "meto_xc40_recon_lam_from_grib_cutout",
+                    ],
+
+    "linux_uk_lams" : [
+                   "meto_linux_aqum_eg",
+                   "meto_linux_aqum_eg_glomap",
+                   "meto_linux_aqum_eg_noomp",
+                   "meto_linux_aqum_eg_glomap_noomp",
+                   "meto_linux_recon_LAM_fix_to_fix_res",
+                   "meto_linux_recon_LAM_fix_to_var_res",
+                   "meto_linux_recon_LAM_var_to_fix_res",
+                   "meto_linux_recon_LAM_var_to_var_res",
+                   "meto_linux_seukv_eg",
+                    ],
+
+    "netcdf" : [ "xc40_netcdf", "linux_netcdf" ],
+
+    "xc40_netcdf" : [
+                  "meto_xc40_n48_ga7_amip_2day",
+                  "meto_xc40_n48_ga_amip_exp_2day",
+                  "meto_xc40_seukv_eg",
+                  "meto_xc40_ukca_eg_strattrop",
+                  "meto_xc40_ukca_eg_strattrop_safe",
+                  "meto_xc40_ukca_eg_strattrop_columns",
+                  "meto_xc40_ukca_eg_strattrop_columns_safe",
+                  "meto_xc40_ukca_eg_strattrop_columns_safe_noomp",
+                  "meto_xc40_ukca_nudged",
+                  "meto_xc40_aqum_eg_glomap",
+                  "meto_xc40_aqum_eg",
+                  ],
+
+    "linux_netcdf": [
+                  "meto_linux_n48_ga7_amip_12hr",
+                  "meto_linux_n48_ga_amip_exp_12hr",
+                  "meto_linux_aqum_eg",
+                  "meto_linux_aqum_eg_glomap",
+                  ],
+
+    "monitor"     : [ "monitor_linux_tasks", "monitor_xc40_tasks"],
+
+    "check_all_groups" : [
+                          "all",
+                          "anc_upd",
+                          "casim",
+                          "clang",
+                          "classic_aerosols",
+                          "convpp",
+                          "coupled",
+                          "createbc",
+                          "developer",
+                          "drhook",
+                          "debug_compile",
+                          "fcm_make",
+                          "ga6p1_glu",
+                          "ga7_amip",
+                          "ga_amip_exp",
+                          "glomap_clim",
+                          "high_compile",
+                          "iau",
+                          "idealised",
+                          "idealised_exo",
+                          "idealised_lam",
+                          "install",
+                          "jules",
+                          "linux_anc_upd",
+                          "linux_classic_aerosols",
+                          "linux_createbc",
+                          "linux_createbc_drhook",
+                          "linux_crmstyle_coarse_grid",
+                          "linux_developer",
+                          "linux_drhook",
+                          "linux_fcm_make",
+                          "linux_ga7_amip",
+                          "linux_ga_amip_exp",
+                          "linux_glomap_clim",
+                          "linux_idealised_lam",
+                          "linux_netcdf",
+                          "linux_nightly",
+                          "linux_pptoanc",
+                          "linux_recon",
+                          "linux_scm",
+                          "linux_uk_lams",
+                          "linux_ukca",
+                          "linux_utils",
+                          "linux_weekly",
+                          "mogreps",
+                          "monitor",
+                          "mule",
+                          "netcdf",
+                          "nightly",
+                          "prebuilds",
+                          "pws_diags",
+                          "recon",
+                          "scm",
+                          "scripts",
+                          "standards",
+                          "uk_lams",
+                          "ukca",
+                          "ukv_exp",
+                          "utils",
+                          "weekly",
+                          "xc40_anc_upd",
+                          "xc40_cce_um_fast",
+                          "xc40_cce_um_high",
+                          "xc40_classic_aerosols",
+                          "xc40_convpp",
+                          "xc40_coupled",
+                          "xc40_createbc",
+                          "xc40_createbc_drhook",
+                          "xc40_crmstyle_coarse_grid",
+                          "xc40_developer",
+                          "xc40_drhook",
+                          "xc40_fcm_make",
+                          "xc40_flexitiles",
+                          "xc40_ga6p1_glu",
+                          "xc40_ga7_amip",
+                          "xc40_ga_amip_exp",
+                          "xc40_glomap_clim",
+                          "xc40_gnu_standards",
+                          "xc40_iau",
+                          "xc40_idealised_exo",
+                          "xc40_idealised_lam",
+                          "xc40_jules",
+                          "xc40_mogreps",
+                          "xc40_netcdf",
+                          "xc40_nightly",
+                          "xc40_pptoanc",
+                          "xc40_recon",
+                          "xc40_recon_snow",
+                          "xc40_scm",
+                          "xc40_uk_lams",
+                          "xc40_ukca",
+                          "xc40_ukv_exp",
+                          "xc40_utils",
+                          "xc40_vomext",
+                          "xc40_weekly",
+                         ],
+
+    "xc40_fcm_make" : [
+                       "xc40_fcm_make_noprebuilds",
+                       "xc40_fcm_make_prebuilds",
+                      ],
+
+    "linux_fcm_make" : [
+                        "linux_fcm_make_noprebuilds",
+                        "linux_fcm_make_prebuilds",
+                       ],
+
+    "fcm_make" : [
+                   "linux_fcm_make",
+                   "xc40_fcm_make",
+                 ],
+
+    "prebuilds" : [
+                   "linux_fcm_make_prebuilds",
+                   "xc40_fcm_make_prebuilds",
+                  ],
+
+    "clang"   : [
+                 "linux_fcm_make_clang_ifort",
+                 "meto_linux_n48_eg_omp_ios_clang_ifort",
+                ],
+
+    "install" : [
+                   "xc40_install",
+                   "linux_install",
+                ],
+
+
+    "xc40_recon" : [
+                   "meto_xc40_recon_n108_nd_interp_all_fields",
+                   "meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear",
+                   "meto_xc40_recon_LAM_var_to_fix_res",
+                   "meto_xc40_recon_LAM_fix_to_var_res",
+                   "meto_xc40_recon_n512_eg_grib1",
+                   "meto_xc40_recon_n216_eg_interp_all_fields_basic",
+                   "meto_xc40_recon_n216_eg_interp_all_fields_basic_nogrib",
+                   "meto_xc40_recon_n216_eg_select_fields_from_namelist",
+                   "meto_xc40_recon_n512_nd_grib1",
+                   "meto_xc40_recon_n512_nd_grib2",
+                   "meto_xc40_recon_n108_nd_var_area_weight",
+                   "meto_xc40_recon_LAM_var_to_var_res",
+                   "meto_xc40_recon_n96_nd_init_prog_ancil",
+                   "meto_xc40_recon_nearest_neighbour_nz",
+                   "meto_xc40_recon_LAM_fix_to_fix_res",
+                   "meto_xc40_recon_lam_from_grib_cutout",
+                   "meto_xc40_recon_n512_eg_grib2",
+                   "xc40_recon_snow",
+                   "meto_xc40_gnu_recon_serial_standards",
+           ],
+
+    "xc40_recon_snow" : [
+                   "meto_xc40_recon_n216_eg_init_mlsnow",
+                   "meto_xc40_recon_n320_n320_mlsnow",
+                   "meto_xc40_recon_n320_n320frc_mlsnow",
+                   "meto_xc40_recon_n320_n216_mlsnow",
+                   "meto_xc40_recon_n320_n512_mlsnow",
+                   "meto_xc40_recon_n320_n3201t_mlsnow",
+                   "meto_xc40_recon_n320_n216zsl_mlsnow",
+                   "meto_xc40_recon_n320_n320sl7_mlsnow",
+           ],
+
+    "linux_recon" : [
+                   "meto_linux_recon_LAM_fix_to_fix_res",
+                   "meto_linux_recon_n96_nd_init_prog_ancil",
+                   "meto_linux_recon_n216_eg_interp_all_fields_basic",
+                   "meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib",
+                   "meto_linux_recon_n216_eg_select_fields_from_namelist",
+                   "meto_linux_recon_LAM_var_to_fix_res",
+                   "meto_linux_recon_n48_nd_grib1",
+                   "meto_linux_recon_n48_nd_grib2",
+                   "meto_linux_recon_n48_eg_grib2",
+                   "meto_linux_recon_n48_eg_grib1",
+                   "meto_linux_recon_LAM_var_to_var_res",
+                   "meto_linux_recon_n48_nd_2D_CCA_trans_bilinear",
+                   "meto_linux_recon_n108_nd_interp_all_fields",
+                   "meto_linux_recon_LAM_fix_to_var_res",
+                   "meto_linux_recon_nearest_neighbour_nz",
+                   "meto_linux_recon_n108_nd_var_area_weight",
+           ],
+
+    "xc40_flexitiles" : [
+                   "meto_xc40_global_to_lam_eg",
+                   "xc40_recon_snow",
+                   "meto_xc40_recon_LAM_fix_to_var_res",
+                   "meto_xc40_recon_LAM_fix_to_fix_res",
+                   "meto_xc40_recon_LAM_var_to_fix_res",
+                   "meto_xc40_recon_LAM_var_to_var_res",
+                   "meto_xc40_ukv1p5_eg_da",
+                   "meto_xc40_ukv1p5_eg_noda",
+                   "meto_xc40_seukf_tkebl",
+                   "meto_xc40_n96_triffid_esm_eg",
+		   "meto_xc40_n48_eg_omp_ios_moruses",
+                   "meto_xc40_n96_orca1_mct_ukesm",
+		   "meto_xc40_mogreps_uk_eg",
+		   "meto_xc40_mogreps_uk_exp_eg",
+		   "meto_xc40_ukv1p5_exp",
+           ],
+
+    "xc40_gnu_standards" : [
+                   "meto_xc40_gnu_um_standards",
+                   "meto_xc40_gnu_um_single_standards",
+                   "meto_xc40_gnu_recon_serial_standards",
+                   "meto_xc40_gnu_scm_standards",
+                   "meto_xc40_gnu_createbc_standards",
+                   "meto_xc40_gnu_utils_serial_standards",
+                   "meto_xc40_gnu_utils_mpp_standards",
+                   "meto_xc40_gnu_libs_standards",
+           ],
+
+    "standards" : [
+                   "xc40_gnu_standards"
+           ],
+
+    }
+%}

@@ -1,0 +1,9 @@
+%include 'site/vm/graph-standard-vm.rc'
+%include 'site/vm/graph-standard-kgo.rc'
+
+{%- set name_graphs = name_graphs_vm %}
+
+{#- update graphs to remove OMP versions for KGO generation #}
+{%- if GENERATE_KGO == true %}
+  {%- do name_graphs.update(update_graphs_kgo.items()) %}   
+{%- endif %}

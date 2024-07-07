@@ -1,0 +1,36 @@
+# Groups in graph-integ.rc must match those named below
+{%- set name_graphs = {
+
+    "saws_install"    : "fcm_make_saws_utils_serial_high_noomp => saws_install_utils
+                        fcm_make_saws_utils_mpp_high_omp => saws_install_utils
+                        fcm_make_saws_recon_serial_high_omp => saws_install_utils
+                        fcm_make_saws_recon_high_omp => saws_install_utils
+                        fcm_make_saws_ifort_createbc_high_omp => saws_install_utils
+                        fcm_make_saws_libs => \
+                        saws_install_libs
+                        fcm_make_saws_install_ctldata => \
+                        saws_install_ctldata",
+
+    "saws_fcm_make"   : "fcm_make_saws_utils_serial_high_noomp
+                        fcm_make_saws_utils_mpp_high_omp 
+                        fcm_make_saws_recon_high_omp
+                        fcm_make_saws_recon_serial_high_omp
+                        fcm_make_saws_recon_serial_high_noomp
+                        fcm_make_saws_ifort_createbc_high_omp
+                        fcm_make_saws_ifort_createbc_high_noomp
+                        fcm_make_saws_um_high_omp
+                        fcm_make_saws_um_high_noomp
+                        fcm_make_saws_libs",
+
+    "saws_utils"      : "fcm_make_saws_utils_serial_high_noomp => saws_install_utils
+                        fcm_make_saws_utils_mpp_high_omp => saws_install_utils
+                        fcm_make_saws_ifort_createbc_high_omp => saws_install_utils",
+
+    "saws_utils_ifort" : "fcm_make_saws_ifort_utils_serial_high_noomp
+                         fcm_make_saws_ifort_utils_mpp_high_omp",
+
+    "saws_fcm_make_createbc" : "fcm_make_saws_ifort_createbc_high_omp => saws_install_utils
+                               fcm_make_saws_ifort_createbc_rigorous_noomp",
+
+    }
+-%}

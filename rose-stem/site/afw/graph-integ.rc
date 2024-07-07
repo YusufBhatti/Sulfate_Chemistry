@@ -1,0 +1,11 @@
+# Groups named below must match those named in graph-standard.rc
+{%- set integ_graphs = {
+
+    "afw_install"  :  "",
+
+    "afw_fcm_make" :  "",
+
+    "afw_utils"    :  "",
+
+    }
+-%}

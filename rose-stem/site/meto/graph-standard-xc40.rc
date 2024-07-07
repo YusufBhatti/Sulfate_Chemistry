@@ -1,0 +1,1611 @@
+{%- set name_graphs_xc40 = {
+
+    "meto_xc40_ukca_eg_strattrop"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_ukca_eg_strattrop => atmos_meto_xc40_ukca_eg_strattrop_16x9 => \
+                           rose_ana_meto_xc40_ukca_eg_strattrop_atmos_kgo
+                           recon_meto_xc40_ukca_eg_strattrop => rose_ana_meto_xc40_ukca_eg_strattrop_recon_kgo
+                           recon_meto_xc40_ukca_eg_strattrop => atmos_meto_xc40_ukca_strattrop_16x9_2omp 
+                           atmos_meto_xc40_ukca_eg_strattrop_16x9 & atmos_meto_xc40_ukca_strattrop_16x9_2omp => rose_ana_meto_xc40_ukca_strattrop_atmos_thread
+                           recon_meto_xc40_ukca_eg_strattrop => atmos_meto_xc40_ukca_strattrop_nrun_16x9 => atmos_meto_xc40_ukca_strattrop_crun_16x9
+                           atmos_meto_xc40_ukca_strattrop_crun_16x9 & atmos_meto_xc40_ukca_eg_strattrop_16x9 => rose_ana_meto_xc40_ukca_strattrop_atmos_nruncrun
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukca_eg_strattrop
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_ukca_eg_strattrop_safe"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_ukca_eg_strattrop_safe_2x4 => atmos_meto_xc40_ukca_eg_strattrop_safe_16x9 => \
+                           rose_ana_meto_xc40_ukca_eg_strattrop_safe_atmos_kgo
+                           recon_meto_xc40_ukca_eg_strattrop_safe_2x4 => rose_ana_meto_xc40_ukca_eg_strattrop_safe_recon_kgo
+                           recon_meto_xc40_ukca_eg_strattrop_safe_2x4 => atmos_meto_xc40_ukca_eg_strattrop_safe_16x9_2omp 
+                           atmos_meto_xc40_ukca_eg_strattrop_safe_16x9 & atmos_meto_xc40_ukca_eg_strattrop_safe_16x9_2omp => rose_ana_meto_xc40_ukca_eg_strattrop_safe_atmos_thread
+                           recon_meto_xc40_ukca_eg_strattrop_safe_2x4 => atmos_meto_xc40_ukca_eg_strattrop_safe_nrun_16x9 => atmos_meto_xc40_ukca_eg_strattrop_safe_crun_16x9
+                           atmos_meto_xc40_ukca_eg_strattrop_safe_crun_16x9 & atmos_meto_xc40_ukca_eg_strattrop_safe_16x9 => rose_ana_meto_xc40_ukca_eg_strattrop_safe_atmos_nruncrun
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukca_eg_strattrop_safe_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_ukca_eg_strattrop_columns"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_ukca_eg_strattrop_columns_2x4 => atmos_meto_xc40_ukca_eg_strattrop_columns_16x9 => \
+                           rose_ana_meto_xc40_ukca_eg_strattrop_columns_atmos_kgo
+                           recon_meto_xc40_ukca_eg_strattrop_columns_2x4 => rose_ana_meto_xc40_ukca_eg_strattrop_columns_recon_kgo
+                           recon_meto_xc40_ukca_eg_strattrop_columns_2x4 => atmos_meto_xc40_ukca_strattrop_columns_16x9_2omp 
+                           atmos_meto_xc40_ukca_eg_strattrop_columns_16x9 & atmos_meto_xc40_ukca_strattrop_columns_16x9_2omp => \
+                           rose_ana_meto_xc40_ukca_strattrop_columns_atmos_thread
+                           recon_meto_xc40_ukca_eg_strattrop_columns_2x4 => atmos_meto_xc40_ukca_eg_strattrop_columns_12x12
+                           atmos_meto_xc40_ukca_eg_strattrop_columns_12x12 & atmos_meto_xc40_ukca_eg_strattrop_columns_16x9 => \
+                           rose_ana_meto_xc40_ukca_strattrop_columns_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukca_eg_strattrop_columns_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_ukca_eg_strattrop_columns_safe"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_ukca_eg_strattrop_columns_safe_2x4 => atmos_meto_xc40_ukca_eg_strattrop_columns_safe_16x9 => \
+                           rose_ana_meto_xc40_ukca_eg_strattrop_columns_safe_atmos_kgo
+                           recon_meto_xc40_ukca_eg_strattrop_columns_safe_2x4 => rose_ana_meto_xc40_ukca_eg_strattrop_columns_safe_recon_kgo
+                           recon_meto_xc40_ukca_eg_strattrop_columns_safe_2x4 => atmos_meto_xc40_ukca_eg_strattrop_columns_safe_16x9_2omp 
+                           atmos_meto_xc40_ukca_eg_strattrop_columns_safe_16x9 & atmos_meto_xc40_ukca_eg_strattrop_columns_safe_16x9_2omp => \
+                           rose_ana_meto_xc40_ukca_eg_strattrop_columns_safe_atmos_thread
+			   fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_ukca_eg_strattrop_columns_safe_4x2 => atmos_meto_xc40_ukca_eg_strattrop_columns_safe_12x12
+			   recon_meto_xc40_ukca_eg_strattrop_columns_safe_2x4 & recon_meto_xc40_ukca_eg_strattrop_columns_safe_4x2 => \
+			   rose_ana_meto_xc40_ukca_eg_strattrop_columns_safe_recon_proc
+                           atmos_meto_xc40_ukca_eg_strattrop_columns_safe_12x12 & atmos_meto_xc40_ukca_eg_strattrop_columns_safe_16x9 => \
+                           rose_ana_meto_xc40_ukca_eg_strattrop_columns_safe_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukca_eg_strattrop_columns_safe_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_ukca_eg_strattrop_columns_safe_noomp"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_noomp => fcm_make_meto_xc40_cce_um_safe_noomp => \
+                           recon_meto_xc40_ukca_eg_strattrop_columns_safe_noomp_2x4 => atmos_meto_xc40_ukca_eg_strattrop_columns_safe_noomp_16x9 => \
+                           rose_ana_meto_xc40_ukca_eg_strattrop_columns_safe_noomp_atmos_kgo
+                           recon_meto_xc40_ukca_eg_strattrop_columns_safe_noomp_2x4 => rose_ana_meto_xc40_ukca_eg_strattrop_columns_safe_noomp_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukca_eg_strattrop_columns_safe_noomp_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n96_glomap_clim"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n96_glomap_clim_2x4 => atmos_meto_xc40_n96_glomap_clim_16x9 => \
+                           rose_ana_meto_xc40_n96_glomap_clim_atmos_kgo
+                           recon_meto_xc40_n96_glomap_clim_2x4 => recon_meto_xc40_n96_glomap_clim_4x2
+                           recon_meto_xc40_n96_glomap_clim_2x4 => rose_ana_meto_xc40_n96_glomap_clim_recon_kgo
+                           recon_meto_xc40_n96_glomap_clim_2x4 => atmos_meto_xc40_n96_glomap_clim_nrun_16x9 => \
+                           atmos_meto_xc40_n96_glomap_clim_crun_16x9
+                           atmos_meto_xc40_n96_glomap_clim_crun_16x9 & atmos_meto_xc40_n96_glomap_clim_16x9 => \
+                           rose_ana_meto_xc40_n96_glomap_clim_atmos_nruncrun
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n96_glomap_clim_2x4 & \
+                           recon_meto_xc40_n96_glomap_clim_4x2 => rose_ana_meto_xc40_n96_glomap_clim_recon_proc
+                           recon_meto_xc40_n96_glomap_clim_2x4 => atmos_meto_xc40_n96_glomap_clim_16x9 & \
+                           atmos_meto_xc40_n96_glomap_clim_12x12 => rose_ana_meto_xc40_n96_glomap_clim_atmos_proc
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_glomap_clim"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_glomap_clim_2x4 => atmos_meto_xc40_n48_glomap_clim_16x9 => \
+                           rose_ana_meto_xc40_n48_glomap_clim_atmos_kgo
+                           recon_meto_xc40_n48_glomap_clim_2x4 => recon_meto_xc40_n48_glomap_clim_4x2
+                           recon_meto_xc40_n48_glomap_clim_2x4 => rose_ana_meto_xc40_n48_glomap_clim_recon_kgo
+                           recon_meto_xc40_n48_glomap_clim_2x4 => atmos_meto_xc40_n48_glomap_clim_nrun_16x9 => \
+                           atmos_meto_xc40_n48_glomap_clim_crun_16x9
+                           atmos_meto_xc40_n48_glomap_clim_crun_16x9 & atmos_meto_xc40_n48_glomap_clim_16x9 => \
+                           rose_ana_meto_xc40_n48_glomap_clim_atmos_nruncrun
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_glomap_clim_2x4 & \
+                           recon_meto_xc40_n48_glomap_clim_4x2 => rose_ana_meto_xc40_n48_glomap_clim_recon_proc
+                           recon_meto_xc40_n48_glomap_clim_2x4 => atmos_meto_xc40_n48_glomap_clim_16x9 & \
+                           atmos_meto_xc40_n48_glomap_clim_12x12 => rose_ana_meto_xc40_n48_glomap_clim_atmos_proc
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_glomap_clim_comp_check"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp => \
+                           fcm_make_meto_xc40_cce_um_rigorous_omp => \
+                           recon_meto_xc40_n48_glomap_clim_comp_check_2x4 => \
+                           atmos_meto_xc40_n48_glomap_clim_comp_check_16x9 => \
+                           rose_ana_meto_xc40_n48_glomap_clim_comp_check_atmos_kgo
+                           recon_meto_xc40_n48_glomap_clim_comp_check_2x4 => \
+                           recon_meto_xc40_n48_glomap_clim_comp_check_4x2
+                           recon_meto_xc40_n48_glomap_clim_comp_check_2x4 => \
+                           rose_ana_meto_xc40_n48_glomap_clim_comp_check_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => \
+                           fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => \
+                           recon_meto_xc40_n48_glomap_clim_comp_check_2x4 & \
+                           recon_meto_xc40_n48_glomap_clim_comp_check_4x2 => \
+                           rose_ana_meto_xc40_n48_glomap_clim_comp_check_recon_proc
+                           recon_meto_xc40_n48_glomap_clim_comp_check_2x4 => \
+                           atmos_meto_xc40_n48_glomap_clim_comp_check_16x9 & \
+                           atmos_meto_xc40_n48_glomap_clim_comp_check_12x12 => \
+                           rose_ana_meto_xc40_n48_glomap_clim_comp_check_atmos_proc
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => \
+                           housekeep_meto_xc40",
+
+    "meto_xc40_ukca_nudged"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_ukca_nudged => atmos_meto_xc40_ukca_nudged_16x9 => \
+                           rose_ana_meto_xc40_ukca_nudged_atmos_kgo
+                           recon_meto_xc40_ukca_nudged => rose_ana_meto_xc40_ukca_nudged_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukca_nudged
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_mogreps_uk_eg"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_mogreps_uk_eg_interp & recon_meto_xc40_mogreps_uk_eg_pert => atmos_meto_xc40_mogreps_uk_eg_6x39 => rose_ana_meto_xc40_mogreps_uk_eg_atmos_kgo & rose_ana_meto_xc40_mogreps_uk_eg_wallclock_kgo
+                           recon_meto_xc40_mogreps_uk_eg_interp => rose_ana_meto_xc40_mogreps_uk_eg_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_mogreps_uk_eg_interp & recon_meto_xc40_mogreps_uk_eg_pert
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_mogreps_uk_exp_eg"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_mogreps_uk_exp_eg_interp & recon_meto_xc40_mogreps_uk_exp_eg_pert => atmos_meto_xc40_mogreps_uk_exp_eg_6x39 => rose_ana_meto_xc40_mogreps_uk_exp_eg_atmos_kgo & rose_ana_meto_xc40_mogreps_uk_exp_eg_wallclock_kgo
+                           recon_meto_xc40_mogreps_uk_exp_eg_interp => rose_ana_meto_xc40_mogreps_uk_exp_eg_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_mogreps_uk_exp_eg_interp & recon_meto_xc40_mogreps_uk_exp_eg_pert
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n216_ga6p1_glu"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_n216_ga6p1_glu => atmos_meto_xc40_n216_ga6p1_glu_6x35 => \
+                           rose_ana_meto_xc40_n216_ga6p1_glu_atmos_kgo & rose_ana_meto_xc40_n216_ga6p1_glu_wallclock_kgo
+                           recon_meto_xc40_n216_ga6p1_glu => rose_ana_meto_xc40_n216_ga6p1_glu_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n216_ga6p1_glu
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n216_ga6p1_glu_4diau"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_n216_ga6p1_glu_4diau => atmos_meto_xc40_n216_ga6p1_glu_4diau_6x35 => \
+                           rose_ana_meto_xc40_n216_ga6p1_glu_4diau_atmos_kgo & rose_ana_meto_xc40_n216_ga6p1_glu_4diau_wallclock_kgo
+                           recon_meto_xc40_n216_ga6p1_glu_4diau => rose_ana_meto_xc40_n216_ga6p1_glu_4diau_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n216_ga6p1_glu_4diau
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_euro4_eg" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_euro4_eg => atmos_meto_xc40_euro4_eg_8x13 => \
+                           rose_ana_meto_xc40_euro4_eg_atmos_kgo & rose_ana_meto_xc40_euro4_eg_wallclock_kgo
+                           recon_meto_xc40_euro4_eg => rose_ana_meto_xc40_euro4_eg_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_euro4_eg
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_aqum_eg"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_aqum_eg => atmos_meto_xc40_aqum_eg_4x9 => rose_ana_meto_xc40_aqum_eg_atmos_kgo & rose_ana_meto_xc40_aqum_eg_wallclock_kgo
+                           recon_meto_xc40_aqum_eg => rose_ana_meto_xc40_aqum_eg_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_aqum_eg
+                           gatekeeper_fcm_make_meto_xc40_cce_um_safe_noomp => fcm_make_meto_xc40_cce_um_safe_noomp => \
+                           recon_meto_xc40_aqum_noomp_eg => atmos_meto_xc40_aqum_noomp_eg_4x9 => rose_ana_meto_xc40_aqum_noomp_eg_atmos_kgo
+                           recon_meto_xc40_aqum_noomp_eg => rose_ana_meto_xc40_aqum_noomp_eg_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_aqum_noomp_eg
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_aqum_eg_glomap"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_aqum_eg_glomap => atmos_meto_xc40_aqum_eg_glomap_4x9 => rose_ana_meto_xc40_aqum_eg_glomap_atmos_kgo & rose_ana_meto_xc40_aqum_eg_glomap_wallclock_kgo
+                           recon_meto_xc40_aqum_eg_glomap => rose_ana_meto_xc40_aqum_eg_glomap_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_aqum_eg_glomap
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_aqum_eg_iau"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_aqum_eg_iau => atmos_meto_xc40_aqum_eg_iau_4x9 => rose_ana_meto_xc40_aqum_eg_iau_atmos_kgo & rose_ana_meto_xc40_aqum_eg_iau_wallclock_kgo
+                           recon_meto_xc40_aqum_eg_iau => rose_ana_meto_xc40_aqum_eg_iau_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_aqum_eg_iau
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_aqum_eg_comp_check" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp => fcm_make_meto_xc40_cce_um_rigorous_omp => \
+                           recon_meto_xc40_aqum_eg_comp_check => atmos_meto_xc40_aqum_eg_comp_check_4x9 => \
+                           rose_ana_meto_xc40_aqum_eg_comp_check_atmos_kgo
+                           recon_meto_xc40_aqum_eg_comp_check => rose_ana_meto_xc40_aqum_eg_comp_check_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_aqum_eg_comp_check
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_aqum_eg_glomap_comp_check" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp => fcm_make_meto_xc40_cce_um_rigorous_omp => \
+                           recon_meto_xc40_aqum_eg_glomap_comp_check => atmos_meto_xc40_aqum_eg_glomap_comp_check_4x9 => \
+                           rose_ana_meto_xc40_aqum_eg_glomap_comp_check_atmos_kgo
+                           recon_meto_xc40_aqum_eg_glomap_comp_check => rose_ana_meto_xc40_aqum_eg_glomap_comp_check_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_aqum_eg_glomap_comp_check
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_ukv1p5_eg_noda"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_ukv1p5_eg_noda_2x4 => atmos_meto_xc40_ukv1p5_eg_noda_6x41
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukv1p5_eg_noda_2x4 => rose_ana_meto_xc40_ukv1p5_eg_noda_recon_kgo
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukv1p5_eg_bitcomp_noda_2x4 & recon_meto_xc40_ukv1p5_eg_bitcomp_noda_4x2 => rose_ana_meto_xc40_ukv1p5_eg_noda_recon_proc
+                           atmos_meto_xc40_ukv1p5_eg_noda_6x41 => rose_ana_meto_xc40_ukv1p5_eg_noda_atmos_kgo
+                           recon_meto_xc40_ukv1p5_eg_bitcomp_noda_2x4 => atmos_meto_xc40_ukv1p5_eg_bitcomp_noda_12x22 & atmos_meto_xc40_ukv1p5_eg_bitcomp_noda_8x33 => rose_ana_meto_xc40_ukv1p5_eg_noda_atmos_proc
+                           gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_ukv1p5_eg_bitcomp_noda_2x4 & recon_meto_xc40_ukv1p5_eg_bitcomp_noda_4x2
+                           recon_meto_xc40_ukv1p5_eg_noda_2x4 => atmos_meto_xc40_ukv1p5_eg_noda_NRUN_6x41 => atmos_meto_xc40_ukv1p5_eg_noda_CRUN_6x41
+                           atmos_meto_xc40_ukv1p5_eg_noda_CRUN_6x41 & atmos_meto_xc40_ukv1p5_eg_noda_6x41 => rose_ana_meto_xc40_ukv1p5_eg_noda_atmos_nruncrun
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_ukv1p5_eg_da"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_ukv1p5_eg_da_2x4 => atmos_meto_xc40_ukv1p5_eg_da_6x41
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukv1p5_eg_da_2x4 => rose_ana_meto_xc40_ukv1p5_eg_da_recon_kgo
+                           atmos_meto_xc40_ukv1p5_eg_da_6x41 => rose_ana_meto_xc40_ukv1p5_eg_da_atmos_kgo
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_ukv1p5_exp"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_ukv1p5_exp_2x4 => atmos_meto_xc40_ukv1p5_exp_6x41
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_ukv1p5_exp_2x4 => rose_ana_meto_xc40_ukv1p5_exp_recon_kgo
+                           atmos_meto_xc40_ukv1p5_exp_6x41 => rose_ana_meto_xc40_ukv1p5_exp_atmos_kgo
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_idealised_exo_iso_hd209"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_idealised_exo_iso_hd209_2x1 => atmos_meto_xc40_idealised_exo_iso_hd209_4x4 => \
+                           rose_ana_meto_xc40_idealised_exo_iso_hd209_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_exo_iso_hd209_2x1 => \
+                           rose_ana_meto_xc40_idealised_exo_iso_hd209_recon_kgo
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_idealised_exo_shj"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_idealised_exo_shj_2x1 => atmos_meto_xc40_idealised_exo_shj_4x4 => \
+                           rose_ana_meto_xc40_idealised_exo_shj_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_exo_shj_2x1 => \
+                           rose_ana_meto_xc40_idealised_exo_shj_recon_kgo
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_idealised_exo_el_rt"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_idealised_exo_el_rt_2x1 => atmos_meto_xc40_idealised_exo_el_rt_4x4 => \
+                           rose_ana_meto_xc40_idealised_exo_el_rt_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_exo_el_rt_2x1 => \
+                           rose_ana_meto_xc40_idealised_exo_el_rt_recon_kgo
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_idealised_bicyclic_lam_rce" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_idealised_bicyclic_lam_rce_1x4 => atmos_meto_xc40_idealised_bicyclic_lam_rce_4x9 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_rce_atmos_kgo & rose_ana_meto_xc40_idealised_bicyclic_lam_rce_wallclock_kgo
+                           fcm_make_meto_xc40_cce_um_safe_omp => recon_meto_xc40_idealised_bicyclic_lam_rce_4x1
+                           atmos_meto_xc40_idealised_bicyclic_lam_rce_4x9 => rose_ana_meto_xc40_idealised_bicyclic_lam_rce_atmos_proc
+                           recon_meto_xc40_idealised_bicyclic_lam_rce_1x4 => atmos_meto_xc40_idealised_bicyclic_lam_rce_6x6 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_rce_atmos_proc
+                           recon_meto_xc40_idealised_bicyclic_lam_rce_1x4 => atmos_meto_xc40_idealised_bicyclic_lam_rce_nrun_4x9 => \
+                           atmos_meto_xc40_idealised_bicyclic_lam_rce_crun_4x9 => rose_ana_meto_xc40_idealised_bicyclic_lam_rce_atmos_nruncrun
+                           atmos_meto_xc40_idealised_bicyclic_lam_rce_4x9 => rose_ana_meto_xc40_idealised_bicyclic_lam_rce_atmos_nruncrun
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_bicyclic_lam_rce_1x4 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_rce_recon_kgo & rose_ana_meto_xc40_idealised_bicyclic_lam_rce_recon_proc
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_bicyclic_lam_rce_4x1 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_rce_recon_proc
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_idealised_bicyclic_lam_bomex" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_idealised_bicyclic_lam_bomex_1x4 => atmos_meto_xc40_idealised_bicyclic_lam_bomex_4x9 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_atmos_kgo & rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_wallclock_kgo
+                           fcm_make_meto_xc40_cce_um_safe_omp => recon_meto_xc40_idealised_bicyclic_lam_bomex_4x1
+                           atmos_meto_xc40_idealised_bicyclic_lam_bomex_4x9 => rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_atmos_proc
+                           recon_meto_xc40_idealised_bicyclic_lam_bomex_1x4 => atmos_meto_xc40_idealised_bicyclic_lam_bomex_6x6 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_bicyclic_lam_bomex_1x4 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_recon_kgo & rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_recon_proc
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_bicyclic_lam_bomex_4x1 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_recon_proc
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_idealised_bicyclic_lam_dry2dpl" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_4x1 => atmos_meto_xc40_idealised_bicyclic_lam_dry2dpl_18x1 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_atmos_kgo & rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_wallclock_kgo
+                           fcm_make_meto_xc40_cce_um_safe_omp => recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_8x1
+                           atmos_meto_xc40_idealised_bicyclic_lam_dry2dpl_18x1 => rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_atmos_proc
+                           recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_4x1 => atmos_meto_xc40_idealised_bicyclic_lam_dry2dpl_8x1 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_4x1 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_recon_kgo & rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_recon_proc
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_8x1 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_recon_proc
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_idealised_bicyclic_lam_rce_gnu" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_um_safe_omp => fcm_make_meto_xc40_gnu_um_safe_omp => \
+                           recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_1x4 => atmos_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x9 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_atmos_kgo
+                           fcm_make_meto_xc40_gnu_um_safe_omp => recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x1
+                           atmos_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x9 => rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_atmos_proc
+                           recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_1x4 => atmos_meto_xc40_idealised_bicyclic_lam_rce_gnu_6x6 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_1x4 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_recon_kgo & rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_recon_proc
+                           meto_xc40_install_ctldata => recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x1 => \
+                           rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_recon_proc
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga7_amip_2day" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga7_amip_2day_2x4 => atmos_meto_xc40_n48_ga7_amip_2day_4x9 
+                           fcm_make_meto_xc40_cce_um_high_omp => recon_meto_xc40_n48_ga7_amip_2day_4x2 => \
+                           atmos_meto_xc40_n48_ga7_amip_2day_6x6 & atmos_meto_xc40_n48_ga7_amip_2day_nc3_6x6 & \
+                           atmos_meto_xc40_n48_ga7_amip_2day_nc4_6x6 & atmos_meto_xc40_n48_ga7_amip_2day_nc4_32_6x6 
+                           fcm_make_meto_xc40_cce_um_high_omp => recon_meto_xc40_n48_ga7_amip_2day_4x2_nrunPlusNrun
+                           recon_meto_xc40_n48_ga7_amip_2day_4x2 => atmos_meto_xc40_n48_ga7_amip_1day_NRUN_6x6 => \
+                           atmos_meto_xc40_n48_ga7_amip_1day_CRUN_6x6
+                           recon_meto_xc40_n48_ga7_amip_2day_4x2 => atmos_meto_xc40_n48_ga7_amip_1day_NRUN_nc3_6x6 => \
+                           atmos_meto_xc40_n48_ga7_amip_1day_CRUN_nc3_6x6
+                           recon_meto_xc40_n48_ga7_amip_2day_4x2 => atmos_meto_xc40_n48_ga7_amip_1day_NRUN_nc4_6x6 => \
+                           atmos_meto_xc40_n48_ga7_amip_1day_CRUN_nc4_6x6
+                           recon_meto_xc40_n48_ga7_amip_2day_4x2 => atmos_meto_xc40_n48_ga7_amip_1day_NRUN_nc4_32_6x6 => \
+                           atmos_meto_xc40_n48_ga7_amip_1day_CRUN_nc4_32_6x6
+                           atmos_meto_xc40_n48_ga7_amip_1day_CRUN_6x6 & atmos_meto_xc40_n48_ga7_amip_2day_6x6 => rose_ana_meto_xc40_n48_ga7_amip_2day_atmos_nruncrun_lrun
+                           atmos_meto_xc40_n48_ga7_amip_1day_CRUN_nc3_6x6 & atmos_meto_xc40_n48_ga7_amip_2day_nc3_6x6 => rose_ana_meto_xc40_n48_ga7_amip_2day_nc3_atmos_nruncrun_lrun
+                           atmos_meto_xc40_n48_ga7_amip_1day_CRUN_nc4_6x6 & atmos_meto_xc40_n48_ga7_amip_2day_nc4_6x6 => rose_ana_meto_xc40_n48_ga7_amip_2day_nc4_atmos_nruncrun_lrun
+                           atmos_meto_xc40_n48_ga7_amip_1day_CRUN_nc4_32_6x6 & atmos_meto_xc40_n48_ga7_amip_2day_nc4_32_6x6 => rose_ana_meto_xc40_n48_ga7_amip_2day_nc4_32_atmos_nruncrun_lrun
+                           atmos_meto_xc40_n48_ga7_amip_2day_4x9 & atmos_meto_xc40_n48_ga7_amip_2day_6x6 => rose_ana_meto_xc40_n48_ga7_amip_2day_atmos_proc
+                           atmos_meto_xc40_n48_ga7_amip_2day_6x6 => rose_ana_meto_xc40_n48_ga7_amip_2day_atmos_kgo
+                           atmos_meto_xc40_n48_ga7_amip_2day_nc3_6x6 => rose_ana_meto_xc40_n48_ga7_amip_2day_nc3_atmos_kgo
+                           atmos_meto_xc40_n48_ga7_amip_2day_nc4_6x6 => rose_ana_meto_xc40_n48_ga7_amip_2day_nc4_atmos_kgo
+                           atmos_meto_xc40_n48_ga7_amip_2day_nc4_32_6x6 => rose_ana_meto_xc40_n48_ga7_amip_2day_nc4_32_atmos_kgo
+                           recon_meto_xc40_n48_ga7_amip_2day_2x4 & recon_meto_xc40_n48_ga7_amip_2day_4x2 => rose_ana_meto_xc40_n48_ga7_amip_2day_recon_proc
+                           recon_meto_xc40_n48_ga7_amip_2day_4x2 => rose_ana_meto_xc40_n48_ga7_amip_2day_recon_kgo
+                           recon_meto_xc40_n48_ga7_amip_2day_4x2_nrunPlusNrun => \
+                               atmos_meto_xc40_n48_ga7_amip_2day_LRUN_6x6 => \
+                               rose_ana_meto_xc40_n48_ga7_amip_2day_atmos_nrunplusnrun_lrun
+                           recon_meto_xc40_n48_ga7_amip_2day_4x2_nrunPlusNrun => \
+                               atmos_meto_xc40_n48_ga7_amip_1day_NRUN1_6x6 => \
+                               atmos_meto_xc40_n48_ga7_amip_1day_NRUN2_6x6 => \
+                               rose_ana_meto_xc40_n48_ga7_amip_2day_atmos_nrunplusnrun_lrun                               
+                           atmos_meto_xc40_n48_ga7_amip_1day_NRUN1_6x6 => 
+                               recon_meto_xc40_n48_ga7_amip_2day_4x2_nrunPlusNrun_restart => \
+                               rose_ana_meto_xc40_n48_ga7_amip_recon_after_nrun_kgo                           
+                           fcm_make_meto_xc40_install_ctldata => \
+                               fcm_make2_meto_xc40_install_ctldata => \
+                               meto_xc40_install_ctldata => \
+                               recon_meto_xc40_n48_ga7_amip_2day_2x4 & recon_meto_xc40_n48_ga7_amip_2day_4x2 & recon_meto_xc40_n48_ga7_amip_2day_4x2_nrunPlusNrun
+                           recon_meto_xc40_n48_ga7_amip_2day_2x4 => atmos_meto_xc40_n48_ga7_amip_2day_4x9_1thread
+                           atmos_meto_xc40_n48_ga7_amip_2day_4x9_1thread & atmos_meto_xc40_n48_ga7_amip_2day_4x9 => rose_ana_meto_xc40_n48_ga7_amip_2day_atmos_thread
+                           gatekeeper_fcm_make_meto_xc40_cce_um_high_noomp => fcm_make_meto_xc40_cce_um_high_noomp => atmos_meto_xc40_n48_ga7_amip_2day_4x9_noomp
+                           recon_meto_xc40_n48_ga7_amip_2day_2x4 => atmos_meto_xc40_n48_ga7_amip_2day_4x9_noomp
+                           atmos_meto_xc40_n48_ga7_amip_2day_4x9_noomp & atmos_meto_xc40_n48_ga7_amip_2day_4x9 => rose_ana_meto_xc40_n48_ga7_amip_2day_atmos_omp
+
+                           #Single precision physics
+                           gatekeeper_fcm_make_meto_xc40_cce_um_high_omp_sp_physics => fcm_make_meto_xc40_cce_um_high_omp_sp_physics => \
+                           recon_meto_xc40_n48_ga7_amip_sp_physics_2x4 => atmos_meto_xc40_n48_ga7_amip_sp_physics_4x9
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga7_amip_sp_physics_4x2
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga7_amip_sp_physics_2x4
+                           fcm_make_meto_xc40_cce_um_high_omp_sp_physics => recon_meto_xc40_n48_ga7_amip_sp_physics_4x2 => \
+                           atmos_meto_xc40_n48_ga7_amip_sp_physics_6x6
+                           atmos_meto_xc40_n48_ga7_amip_sp_physics_4x9 & atmos_meto_xc40_n48_ga7_amip_sp_physics_6x6 => rose_ana_meto_xc40_n48_ga7_amip_sp_physics_atmos_proc
+                           atmos_meto_xc40_n48_ga7_amip_sp_physics_6x6 => rose_ana_meto_xc40_n48_ga7_amip_sp_physics_atmos_kgo
+
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+
+    "meto_xc40_n48_ga7_amip_2day_nrchem" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga7_amip_2day_nrchem_2x4 => atmos_meto_xc40_n48_ga7_amip_2day_nrchem_4x9
+			   recon_meto_xc40_n48_ga7_amip_2day_nrchem_2x4 => rose_ana_meto_xc40_n48_ga7_amip_2day_nrchem_recon_kgo
+			   atmos_meto_xc40_n48_ga7_amip_2day_nrchem_4x9 => rose_ana_meto_xc40_n48_ga7_amip_2day_nrchem_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => \
+                               fcm_make2_meto_xc40_install_ctldata => \
+                               meto_xc40_install_ctldata => \
+                               recon_meto_xc40_n48_ga7_amip_2day_nrchem_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga7_amip_naming" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga7_amip_naming_2x4 => atmos_meto_xc40_n48_ga7_amip_naming_4x9 => \
+                           rose_ana_meto_xc40_n48_ga7_amip_naming_atmos_kgo
+                           recon_meto_xc40_n48_ga7_amip_naming_2x4 => rose_ana_meto_xc40_n48_ga7_amip_naming_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga7_amip_naming_2x4
+                           recon_meto_xc40_n48_ga7_amip_naming_2x4  => atmos_meto_xc40_n48_ga7_amip_naming_crun_4x9_0 => meto_xc40_ga7_amip_naming_crun_install_1 => meto_xc40_ga7_amip_naming_crun_archive_0
+                           meto_xc40_ga7_amip_naming_crun_install_1 => atmos_meto_xc40_n48_ga7_amip_naming_crun_4x9_1 => meto_xc40_ga7_amip_naming_crun_install_2 => meto_xc40_ga7_amip_naming_crun_archive_1
+                           meto_xc40_ga7_amip_naming_crun_install_2 => atmos_meto_xc40_n48_ga7_amip_naming_crun_4x9_2 => meto_xc40_ga7_amip_naming_crun_install_3 => meto_xc40_ga7_amip_naming_crun_archive_2
+                           meto_xc40_ga7_amip_naming_crun_install_3 => atmos_meto_xc40_n48_ga7_amip_naming_crun_4x9_3 => meto_xc40_ga7_amip_naming_crun_archive_3
+                           atmos_meto_xc40_n48_ga7_amip_naming_4x9 => rose_ana_meto_xc40_n48_ga7_amip_naming_lrun_crun_atmos
+                           meto_xc40_ga7_amip_naming_crun_archive_0 & meto_xc40_ga7_amip_naming_crun_archive_1 & meto_xc40_ga7_amip_naming_crun_archive_2 & meto_xc40_ga7_amip_naming_crun_archive_3 => \
+                           rose_ana_meto_xc40_n48_ga7_amip_naming_lrun_crun_atmos
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+
+    "meto_xc40_n48_ga7_amip_2day_comp_check" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp => fcm_make_meto_xc40_cce_um_rigorous_omp => \
+                           recon_meto_xc40_n48_ga7_amip_2day_comp_check_2x4 => atmos_meto_xc40_n48_ga7_amip_2day_comp_check_4x9 => \
+                           rose_ana_meto_xc40_n48_ga7_amip_2day_comp_check_atmos_kgo
+                           recon_meto_xc40_n48_ga7_amip_2day_comp_check_2x4 => rose_ana_meto_xc40_n48_ga7_amip_2day_comp_check_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga7_amip_2day_comp_check_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga7_amip_10day" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga7_amip_10day_2x4 => atmos_meto_xc40_n48_ga7_amip_10day_12x9
+                           fcm_make_meto_xc40_cce_um_high_omp => recon_meto_xc40_n48_ga7_amip_10day_4x2 => \
+                           atmos_meto_xc40_n48_ga7_amip_10day_16x9
+                           atmos_meto_xc40_n48_ga7_amip_10day_16x9 & atmos_meto_xc40_n48_ga7_amip_10day_12x9 => rose_ana_meto_xc40_n48_ga7_amip_10day_atmos_proc
+                           atmos_meto_xc40_n48_ga7_amip_10day_12x9 => rose_ana_meto_xc40_n48_ga7_amip_10day_atmos_kgo
+                           recon_meto_xc40_n48_ga7_amip_10day_2x4 & recon_meto_xc40_n48_ga7_amip_10day_4x2 => rose_ana_meto_xc40_n48_ga7_amip_10day_recon_proc
+                           recon_meto_xc40_n48_ga7_amip_10day_2x4 => rose_ana_meto_xc40_n48_ga7_amip_10day_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga7_amip_10day_2x4 & recon_meto_xc40_n48_ga7_amip_10day_4x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga7_amip_30day" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga7_amip_30day_2x4 => atmos_meto_xc40_n48_ga7_amip_30day_12x9
+                           fcm_make_meto_xc40_cce_um_high_omp => recon_meto_xc40_n48_ga7_amip_30day_4x2 => \
+                           atmos_meto_xc40_n48_ga7_amip_30day_16x9
+                           atmos_meto_xc40_n48_ga7_amip_30day_16x9 & atmos_meto_xc40_n48_ga7_amip_30day_12x9 => rose_ana_meto_xc40_n48_ga7_amip_30day_atmos_proc
+                           atmos_meto_xc40_n48_ga7_amip_30day_12x9 => rose_ana_meto_xc40_n48_ga7_amip_30day_atmos_kgo
+                           recon_meto_xc40_n48_ga7_amip_30day_2x4 & recon_meto_xc40_n48_ga7_amip_30day_4x2 => rose_ana_meto_xc40_n48_ga7_amip_30day_recon_proc
+                           recon_meto_xc40_n48_ga7_amip_30day_2x4 => rose_ana_meto_xc40_n48_ga7_amip_30day_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga7_amip_30day_2x4 & recon_meto_xc40_n48_ga7_amip_30day_4x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga_amip_exp_2day" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga_amip_exp_2day_2x4 => atmos_meto_xc40_n48_ga_amip_exp_2day_4x9
+                           fcm_make_meto_xc40_cce_um_high_omp => recon_meto_xc40_n48_ga_amip_exp_2day_4x2 => \
+                           atmos_meto_xc40_n48_ga_amip_exp_2day_6x6 & atmos_meto_xc40_n48_ga_amip_exp_2day_nc3_6x6  & \
+                           atmos_meto_xc40_n48_ga_amip_exp_2day_nc4_6x6 & atmos_meto_xc40_n48_ga_amip_exp_2day_nc4_32_6x6  
+                           fcm_make_meto_xc40_cce_um_high_omp => recon_meto_xc40_n48_ga_amip_exp_2day_4x2_nrunPlusNrun
+                           recon_meto_xc40_n48_ga_amip_exp_2day_4x2 => atmos_meto_xc40_n48_ga_amip_exp_1day_NRUN_6x6 => \
+                           atmos_meto_xc40_n48_ga_amip_exp_1day_CRUN_6x6
+                           recon_meto_xc40_n48_ga_amip_exp_2day_4x2 => atmos_meto_xc40_n48_ga_amip_exp_1day_NRUN_nc3_6x6 => \
+                           atmos_meto_xc40_n48_ga_amip_exp_1day_CRUN_nc3_6x6
+                           recon_meto_xc40_n48_ga_amip_exp_2day_4x2 => atmos_meto_xc40_n48_ga_amip_exp_1day_NRUN_nc4_6x6 => \
+                           atmos_meto_xc40_n48_ga_amip_exp_1day_CRUN_nc4_6x6
+                           recon_meto_xc40_n48_ga_amip_exp_2day_4x2 => atmos_meto_xc40_n48_ga_amip_exp_1day_NRUN_nc4_32_6x6 => \
+                           atmos_meto_xc40_n48_ga_amip_exp_1day_CRUN_nc4_32_6x6
+                           atmos_meto_xc40_n48_ga_amip_exp_1day_CRUN_6x6 & atmos_meto_xc40_n48_ga_amip_exp_2day_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_atmos_nruncrun_lrun
+                           atmos_meto_xc40_n48_ga_amip_exp_1day_CRUN_nc3_6x6 & atmos_meto_xc40_n48_ga_amip_exp_2day_nc3_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_nc3_atmos_nruncrun_lrun
+                           atmos_meto_xc40_n48_ga_amip_exp_1day_CRUN_nc4_6x6 & atmos_meto_xc40_n48_ga_amip_exp_2day_nc4_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_nc4_atmos_nruncrun_lrun
+                           atmos_meto_xc40_n48_ga_amip_exp_1day_CRUN_nc4_32_6x6 & atmos_meto_xc40_n48_ga_amip_exp_2day_nc4_32_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_nc4_32_atmos_nruncrun_lrun
+                           atmos_meto_xc40_n48_ga_amip_exp_2day_4x9 & atmos_meto_xc40_n48_ga_amip_exp_2day_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_atmos_proc
+                           atmos_meto_xc40_n48_ga_amip_exp_2day_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_atmos_kgo
+                           atmos_meto_xc40_n48_ga_amip_exp_2day_nc3_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_nc3_atmos_kgo
+                           atmos_meto_xc40_n48_ga_amip_exp_2day_nc4_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_nc4_atmos_kgo
+                           atmos_meto_xc40_n48_ga_amip_exp_2day_nc4_32_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_nc4_32_atmos_kgo
+                           recon_meto_xc40_n48_ga_amip_exp_2day_2x4 & recon_meto_xc40_n48_ga_amip_exp_2day_4x2 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_recon_proc
+                           recon_meto_xc40_n48_ga_amip_exp_2day_4x2 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_recon_kgo
+                           recon_meto_xc40_n48_ga_amip_exp_2day_4x2_nrunPlusNrun => \
+                               atmos_meto_xc40_n48_ga_amip_exp_2day_LRUN_6x6 => \
+                               rose_ana_meto_xc40_n48_ga_amip_exp_2day_atmos_nrunplusnrun_lrun                               
+                           recon_meto_xc40_n48_ga_amip_exp_2day_4x2_nrunPlusNrun => \
+                               atmos_meto_xc40_n48_ga_amip_exp_1day_NRUN1_6x6 => \
+                               atmos_meto_xc40_n48_ga_amip_exp_1day_NRUN2_6x6 => \
+                               rose_ana_meto_xc40_n48_ga_amip_exp_2day_atmos_nrunplusnrun_lrun                               
+                           atmos_meto_xc40_n48_ga_amip_exp_1day_NRUN1_6x6 => 
+                               recon_meto_xc40_n48_ga_amip_exp_2day_4x2_nrunPlusNrun_restart => \
+                               rose_ana_meto_xc40_n48_ga_amip_exp_recon_after_nrun_kgo                           
+                           fcm_make_meto_xc40_install_ctldata => \
+                               fcm_make2_meto_xc40_install_ctldata => \
+                               meto_xc40_install_ctldata => \
+                               recon_meto_xc40_n48_ga_amip_exp_2day_2x4 & recon_meto_xc40_n48_ga_amip_exp_2day_4x2 & recon_meto_xc40_n48_ga_amip_exp_2day_4x2_nrunPlusNrun 
+                           recon_meto_xc40_n48_ga_amip_exp_2day_2x4 => atmos_meto_xc40_n48_ga_amip_exp_2day_4x9_noomp
+                           gatekeeper_fcm_make_meto_xc40_cce_um_high_noomp => fcm_make_meto_xc40_cce_um_high_noomp => atmos_meto_xc40_n48_ga_amip_exp_2day_4x9_noomp
+                           atmos_meto_xc40_n48_ga_amip_exp_2day_4x9_noomp & atmos_meto_xc40_n48_ga_amip_exp_2day_4x9 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_atmos_omp
+                           recon_meto_xc40_n48_ga_amip_exp_2day_2x4 => atmos_meto_xc40_n48_ga_amip_exp_2day_4x9_1thread
+                           atmos_meto_xc40_n48_ga_amip_exp_2day_4x9_1thread & atmos_meto_xc40_n48_ga_amip_exp_2day_4x9 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_atmos_thread
+
+                           #Single precision physics
+                           gatekeeper_fcm_make_meto_xc40_cce_um_high_omp_sp_physics => fcm_make_meto_xc40_cce_um_high_omp_sp_physics => \
+                           recon_meto_xc40_n48_ga_amip_exp_sp_physics_2x4 => atmos_meto_xc40_n48_ga_amip_exp_sp_physics_4x9
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga_amip_exp_sp_physics_4x2
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga_amip_exp_sp_physics_2x4
+                           fcm_make_meto_xc40_cce_um_high_omp_sp_physics => recon_meto_xc40_n48_ga_amip_exp_sp_physics_4x2 => \
+                           atmos_meto_xc40_n48_ga_amip_exp_sp_physics_6x6
+                           atmos_meto_xc40_n48_ga_amip_exp_sp_physics_4x9 & atmos_meto_xc40_n48_ga_amip_exp_sp_physics_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_sp_physics_atmos_proc
+                           atmos_meto_xc40_n48_ga_amip_exp_sp_physics_6x6 => rose_ana_meto_xc40_n48_ga_amip_exp_sp_physics_atmos_kgo
+
+
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga_amip_exp_2day_nrchem" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga_amip_exp_2day_nrchem_2x4 => atmos_meto_xc40_n48_ga_amip_exp_2day_nrchem_4x9
+			   recon_meto_xc40_n48_ga_amip_exp_2day_nrchem_2x4 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_nrchem_recon_kgo
+			   atmos_meto_xc40_n48_ga_amip_exp_2day_nrchem_4x9 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_nrchem_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => \
+                               fcm_make2_meto_xc40_install_ctldata => \
+                               meto_xc40_install_ctldata => \
+                               recon_meto_xc40_n48_ga_amip_exp_2day_nrchem_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga_amip_exp_naming" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga_amip_exp_naming_2x4 => atmos_meto_xc40_n48_ga_amip_exp_naming_4x9 => \
+                           rose_ana_meto_xc40_n48_ga_amip_exp_naming_atmos_kgo
+                           recon_meto_xc40_n48_ga_amip_exp_naming_2x4 => rose_ana_meto_xc40_n48_ga_amip_exp_naming_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga_amip_exp_naming_2x4
+                           recon_meto_xc40_n48_ga_amip_exp_naming_2x4  => atmos_meto_xc40_n48_ga_amip_exp_naming_crun_4x9_0 => meto_xc40_ga_amip_exp_naming_crun_install_1 => meto_xc40_ga_amip_exp_naming_crun_archive_0
+                           meto_xc40_ga_amip_exp_naming_crun_install_1 => atmos_meto_xc40_n48_ga_amip_exp_naming_crun_4x9_1 => meto_xc40_ga_amip_exp_naming_crun_install_2 => meto_xc40_ga_amip_exp_naming_crun_archive_1
+                           meto_xc40_ga_amip_exp_naming_crun_install_2 => atmos_meto_xc40_n48_ga_amip_exp_naming_crun_4x9_2 => meto_xc40_ga_amip_exp_naming_crun_install_3 => meto_xc40_ga_amip_exp_naming_crun_archive_2
+                           meto_xc40_ga_amip_exp_naming_crun_install_3 => atmos_meto_xc40_n48_ga_amip_exp_naming_crun_4x9_3 => meto_xc40_ga_amip_exp_naming_crun_archive_3
+                           atmos_meto_xc40_n48_ga_amip_exp_naming_4x9 => rose_ana_meto_xc40_n48_ga_amip_exp_naming_lrun_crun_atmos
+                           meto_xc40_ga_amip_exp_naming_crun_archive_0 & meto_xc40_ga_amip_exp_naming_crun_archive_1 & meto_xc40_ga_amip_exp_naming_crun_archive_2 & meto_xc40_ga_amip_exp_naming_crun_archive_3 => \
+                           rose_ana_meto_xc40_n48_ga_amip_exp_naming_lrun_crun_atmos
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga_amip_exp_2day_comp_check" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp => fcm_make_meto_xc40_cce_um_rigorous_omp => \
+                           recon_meto_xc40_n48_ga_amip_exp_2day_comp_check_2x4 => atmos_meto_xc40_n48_ga_amip_exp_2day_comp_check_4x9 => \
+                           rose_ana_meto_xc40_n48_ga_amip_exp_2day_comp_check_atmos_kgo
+                           recon_meto_xc40_n48_ga_amip_exp_2day_comp_check_2x4 => rose_ana_meto_xc40_n48_ga_amip_exp_2day_comp_check_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga_amip_exp_2day_comp_check_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga_amip_exp_10day" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga_amip_exp_10day_2x4 => atmos_meto_xc40_n48_ga_amip_exp_10day_12x9
+                           fcm_make_meto_xc40_cce_um_high_omp => recon_meto_xc40_n48_ga_amip_exp_10day_4x2 => \
+                           atmos_meto_xc40_n48_ga_amip_exp_10day_16x9
+                           atmos_meto_xc40_n48_ga_amip_exp_10day_16x9 & atmos_meto_xc40_n48_ga_amip_exp_10day_12x9 => rose_ana_meto_xc40_n48_ga_amip_exp_10day_atmos_proc
+                           atmos_meto_xc40_n48_ga_amip_exp_10day_12x9 => rose_ana_meto_xc40_n48_ga_amip_exp_10day_atmos_kgo
+                           recon_meto_xc40_n48_ga_amip_exp_10day_2x4 & recon_meto_xc40_n48_ga_amip_exp_10day_4x2 => rose_ana_meto_xc40_n48_ga_amip_exp_10day_recon_proc
+                           recon_meto_xc40_n48_ga_amip_exp_10day_2x4 => rose_ana_meto_xc40_n48_ga_amip_exp_10day_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga_amip_exp_10day_2x4 & recon_meto_xc40_n48_ga_amip_exp_10day_4x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ga_amip_exp_30day" : 
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n48_ga_amip_exp_30day_2x4 => atmos_meto_xc40_n48_ga_amip_exp_30day_12x9
+                           fcm_make_meto_xc40_cce_um_high_omp => recon_meto_xc40_n48_ga_amip_exp_30day_4x2 => \
+                           atmos_meto_xc40_n48_ga_amip_exp_30day_16x9
+                           atmos_meto_xc40_n48_ga_amip_exp_30day_16x9 & atmos_meto_xc40_n48_ga_amip_exp_30day_12x9 => rose_ana_meto_xc40_n48_ga_amip_exp_30day_atmos_proc
+                           atmos_meto_xc40_n48_ga_amip_exp_30day_12x9 => rose_ana_meto_xc40_n48_ga_amip_exp_30day_atmos_kgo
+                           recon_meto_xc40_n48_ga_amip_exp_30day_2x4 & recon_meto_xc40_n48_ga_amip_exp_30day_4x2 => rose_ana_meto_xc40_n48_ga_amip_exp_30day_recon_proc
+                           recon_meto_xc40_n48_ga_amip_exp_30day_2x4 => rose_ana_meto_xc40_n48_ga_amip_exp_30day_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ga_amip_exp_30day_2x4 & recon_meto_xc40_n48_ga_amip_exp_30day_4x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n96_triffid_eg" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_n96_triffid_eg => atmos_meto_xc40_n96_triffid_eg_12x9 & atmos_meto_xc40_n96_triffid_eg_12x12 =>\
+                           rose_ana_meto_xc40_n96_triffid_eg_atmos_proc
+                           recon_meto_xc40_n96_triffid_eg => rose_ana_meto_xc40_n96_triffid_eg_recon_kgo
+                           atmos_meto_xc40_n96_triffid_eg_12x12 => rose_ana_meto_xc40_n96_triffid_eg_atmos_kgo & rose_ana_meto_xc40_n96_triffid_eg_wallclock_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n96_triffid_eg
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n96_triffid_eg_2day" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_n96_triffid_eg_2day => atmos_meto_xc40_n96_triffid_eg_2day_12x9 => rose_ana_meto_xc40_n96_triffid_eg_2day_atmos_kgo
+                           recon_meto_xc40_n96_triffid_eg_2day => rose_ana_meto_xc40_n96_triffid_eg_2day_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n96_triffid_eg_2day
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+
+    "meto_xc40_n96_triffid_esm_eg" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_n96_triffid_esm_eg => atmos_meto_xc40_n96_triffid_esm_eg_12x18 & atmos_meto_xc40_n96_triffid_esm_eg_18x12 =>\
+                           rose_ana_meto_xc40_n96_triffid_esm_eg_atmos_proc
+                           recon_meto_xc40_n96_triffid_esm_eg => rose_ana_meto_xc40_n96_triffid_esm_eg_recon_kgo
+                           atmos_meto_xc40_n96_triffid_esm_eg_12x18 => rose_ana_meto_xc40_n96_triffid_esm_eg_atmos_kgo & rose_ana_meto_xc40_n96_triffid_esm_eg_wallclock_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n96_triffid_esm_eg
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",                          
+
+    "meto_xc40_n512_eg"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp_single_precis => fcm_make_meto_xc40_cce_um_fast_omp_single_precis => \
+                           recon_meto_xc40_n512_eg => atmos_meto_xc40_n512_eg_10x23 => rose_ana_meto_xc40_n512_eg_atmos_kgo & rose_ana_meto_xc40_n512_eg_wallclock_kgo
+                           recon_meto_xc40_n512_eg => rose_ana_meto_xc40_n512_eg_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n512_eg
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n96_amip_eg"   :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n96_amip_eg_1x4 => atmos_meto_xc40_n96_amip_eg_4x9 => rose_ana_meto_xc40_n96_amip_eg_atmos_kgo
+                           recon_meto_xc40_n96_amip_eg_1x4 => rose_ana_meto_xc40_n96_amip_eg_recon_kgo
+                           fcm_make_meto_xc40_cce_um_high_omp => recon_meto_xc40_n96_amip_eg_4x1
+                           recon_meto_xc40_n96_amip_eg_1x4 => rose_ana_meto_xc40_n96_amip_eg_recon_proc
+                           recon_meto_xc40_n96_amip_eg_4x1 => rose_ana_meto_xc40_n96_amip_eg_recon_proc
+                           recon_meto_xc40_n96_amip_eg_4x1 => atmos_meto_xc40_n96_amip_eg_6x6
+                           atmos_meto_xc40_n96_amip_eg_4x9 => rose_ana_meto_xc40_n96_amip_eg_atmos_proc
+                           atmos_meto_xc40_n96_amip_eg_6x6 => rose_ana_meto_xc40_n96_amip_eg_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n96_amip_eg_1x4 & recon_meto_xc40_n96_amip_eg_4x1
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n96_amip_eg_fvtrack"   :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp => \
+                           recon_meto_xc40_n96_amip_eg_fvtrack_1x4 => atmos_meto_xc40_n96_amip_eg_fvtrack_4x9 => rose_ana_meto_xc40_n96_amip_eg_fvtrack_atmos_kgo
+                           recon_meto_xc40_n96_amip_eg_fvtrack_1x4 => atmos_meto_xc40_n96_amip_eg_fvtrack_6x6
+                           atmos_meto_xc40_n96_amip_eg_fvtrack_4x9 => rose_ana_meto_xc40_n96_amip_eg_fvtrack_atmos_proc
+                           atmos_meto_xc40_n96_amip_eg_fvtrack_6x6 => rose_ana_meto_xc40_n96_amip_eg_fvtrack_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n96_amip_eg_fvtrack_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+
+    "meto_xc40_n96_eg_dyntracers"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_n96_eg_dyntracers_1x4 => atmos_meto_xc40_n96_eg_dyntracers_4x9 => rose_ana_meto_xc40_n96_eg_dyntracers_atmos_kgo
+                           recon_meto_xc40_n96_eg_dyntracers_1x4 => atmos_meto_xc40_n96_eg_dyntracers_6x6
+                           atmos_meto_xc40_n96_eg_dyntracers_4x9 => rose_ana_meto_xc40_n96_eg_dyntracers_atmos_proc
+                           atmos_meto_xc40_n96_eg_dyntracers_6x6 => rose_ana_meto_xc40_n96_eg_dyntracers_atmos_proc                   
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n96_eg_dyntracers_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+
+    "meto_xc40_n96_amip_eg_drhook" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_drhook => fcm_make_meto_xc40_cce_um_safe_omp_drhook => \
+                           recon_meto_xc40_n96_amip_eg_drhook => atmos_meto_xc40_n96_amip_eg_drhook_4x9 => rose_ana_meto_xc40_n96_amip_eg_drhook_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n96_amip_eg_drhook
+                           recon_meto_xc40_n96_amip_eg_drhook => rose_ana_meto_xc40_n96_amip_eg_drhook_recon_kgo
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_omp_noios"        :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp  => \
+                           recon_meto_xc40_n48_eg_omp_noios_1x2 => atmos_meto_xc40_n48_eg_omp_noios_1x2 => rose_ana_meto_xc40_n48_eg_omp_noios_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_noios_1x2 => rose_ana_meto_xc40_n48_eg_omp_noios_recon_kgo
+                           fcm_make_meto_xc40_cce_um_safe_omp => recon_meto_xc40_n48_eg_omp_noios_2x1
+                           recon_meto_xc40_n48_eg_omp_noios_1x2 => rose_ana_meto_xc40_n48_eg_omp_noios_recon_proc
+                           recon_meto_xc40_n48_eg_omp_noios_2x1 => rose_ana_meto_xc40_n48_eg_omp_noios_recon_proc
+                           recon_meto_xc40_n48_eg_omp_noios_2x1 => atmos_meto_xc40_n48_eg_omp_noios_2x1
+                           atmos_meto_xc40_n48_eg_omp_noios_1x2 => rose_ana_meto_xc40_n48_eg_omp_noios_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_noios_2x1 => rose_ana_meto_xc40_n48_eg_omp_noios_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_noios_1x2 & recon_meto_xc40_n48_eg_omp_noios_2x1
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_omp_ios"        :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp  => \
+                           recon_meto_xc40_n48_eg_omp_ios_1x2 => atmos_meto_xc40_n48_eg_omp_ios_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_ios_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_recon_kgo
+                           fcm_make_meto_xc40_cce_um_safe_omp => recon_meto_xc40_n48_eg_omp_ios_2x1
+                           recon_meto_xc40_n48_eg_omp_ios_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_2x1 => atmos_meto_xc40_n48_eg_omp_ios_2x1
+                           atmos_meto_xc40_n48_eg_omp_ios_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_ios_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_atmos_proc
+                           recon_meto_xc40_n48_eg_omp_ios_1x2 =>\
+                               atmos_meto_xc40_n48_eg_omp_ios_1x2_lrun =>\
+                               rose_ana_meto_xc40_n48_eg_norms
+                           recon_meto_xc40_n48_eg_omp_ios_1x2 => \
+                               atmos_meto_xc40_n48_eg_omp_ios_1x2_nrun1 =>\
+                               atmos_meto_xc40_n48_eg_omp_ios_1x2_nrun2 =>\
+                               rose_ana_meto_xc40_n48_eg_norms
+                           rose_ana_meto_xc40_n48_eg_norms =>\
+                               rose_ana_meto_xc40_n48_eg_nrun_nrun_atmos
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_ios_1x2 & recon_meto_xc40_n48_eg_omp_ios_2x1
+                           recon_meto_xc40_n48_eg_omp_ios_1x2 => atmos_meto_xc40_n48_eg_omp_ios_1x2_nrun & atmos_meto_xc40_n48_eg_omp_ios_1x2_nrun_shortstep
+                           atmos_meto_xc40_n48_eg_omp_ios_1x2_nrun => atmos_meto_xc40_n48_eg_omp_ios_1x2_crun             
+                           atmos_meto_xc40_n48_eg_omp_ios_1x2_nrun_shortstep => atmos_meto_xc40_n48_eg_omp_ios_1x2_crun_shortstep
+                           atmos_meto_xc40_n48_eg_omp_ios_1x2_crun => rose_ana_meto_xc40_n48_eg_omp_ios_lrun_crun_atmos
+                           atmos_meto_xc40_n48_eg_omp_ios_1x2_crun_shortstep => rose_ana_meto_xc40_n48_eg_omp_ios_crun_shortstep_atmos_kgo
+                           atmos_meto_xc40_n48_eg_omp_ios_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_lrun_crun_atmos
+                           recon_meto_xc40_n48_eg_omp_ios_1x2 => atmos_meto_xc40_n48_eg_omp_ios_1x2_dyn 
+                           recon_meto_xc40_n48_eg_omp_ios_2x1 => atmos_meto_xc40_n48_eg_omp_ios_2x1_dyn 
+                           atmos_meto_xc40_n48_eg_omp_ios_1x2_dyn => rose_ana_meto_xc40_n48_eg_omp_ios_atmos_proc_dyn
+                           atmos_meto_xc40_n48_eg_omp_ios_2x1_dyn => rose_ana_meto_xc40_n48_eg_omp_ios_atmos_proc_dyn
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_omp_ios_moruses"        :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp  => \
+                           recon_meto_xc40_n48_eg_omp_ios_moruses_1x2 => atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_moruses_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_ios_moruses_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_moruses_recon_kgo
+                           fcm_make_meto_xc40_cce_um_safe_omp => recon_meto_xc40_n48_eg_omp_ios_moruses_2x1
+                           recon_meto_xc40_n48_eg_omp_ios_moruses_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_moruses_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_moruses_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_moruses_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_moruses_2x1 => atmos_meto_xc40_n48_eg_omp_ios_moruses_2x1
+                           atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_moruses_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_ios_moruses_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_moruses_atmos_proc
+                           recon_meto_xc40_n48_eg_omp_ios_moruses_1x2 =>\
+                               atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_lrun =>\
+                               rose_ana_meto_xc40_n48_eg_moruses_norms
+                           recon_meto_xc40_n48_eg_omp_ios_moruses_1x2 => \
+                               atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_nrun1 =>\
+                               atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_nrun2 =>\
+                               rose_ana_meto_xc40_n48_eg_moruses_norms
+                           rose_ana_meto_xc40_n48_eg_moruses_norms =>\
+                               rose_ana_meto_xc40_n48_eg_moruses_nrun_nrun_atmos
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_ios_moruses_1x2 & recon_meto_xc40_n48_eg_omp_ios_moruses_2x1
+                           recon_meto_xc40_n48_eg_omp_ios_moruses_1x2 => atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_nrun & atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_nrun_shortstep
+                           atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_nrun => atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_crun             
+                           atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_nrun_shortstep => atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_crun_shortstep
+                           atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_crun => rose_ana_meto_xc40_n48_eg_omp_ios_moruses_lrun_crun_atmos
+                           atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2_crun_shortstep => rose_ana_meto_xc40_n48_eg_omp_ios_moruses_crun_shortstep_atmos_kgo
+                           atmos_meto_xc40_n48_eg_omp_ios_moruses_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_moruses_lrun_crun_atmos
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread"        :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp  => \
+                           recon_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_1x2 => atmos_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_1x2 => rose_ana_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_1x2 => rose_ana_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_recon_kgo
+                           fcm_make_meto_xc40_cce_um_safe_omp => recon_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_2x1
+                           recon_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_1x2 => rose_ana_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_recon_proc
+                           recon_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_2x1 => rose_ana_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_recon_proc
+                           recon_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_2x1 => atmos_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_2x1
+                           atmos_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_1x2 => rose_ana_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_2x1 => rose_ana_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_1x2 & recon_meto_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread_2x1
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_omp_ios_ifort" :
+                          "gatekeeper_fcm_make_meto_xc40_ifort_um_high_omp => fcm_make_meto_xc40_ifort_um_high_omp  => \
+                           recon_meto_xc40_n48_eg_omp_ios_ifort_1x2 => atmos_meto_xc40_n48_eg_omp_ios_ifort_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_ifort_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_ios_ifort_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_ifort_recon_kgo
+                           fcm_make_meto_xc40_ifort_um_high_omp => recon_meto_xc40_n48_eg_omp_ios_ifort_2x1
+                           recon_meto_xc40_n48_eg_omp_ios_ifort_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_ifort_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_ifort_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_ifort_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_ifort_2x1 => atmos_meto_xc40_n48_eg_omp_ios_ifort_2x1
+                           atmos_meto_xc40_n48_eg_omp_ios_ifort_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_ifort_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_ios_ifort_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_ifort_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_ios_ifort_1x2 & recon_meto_xc40_n48_eg_omp_ios_ifort_2x1
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_omp_ios_gnu" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_um_safe_omp => fcm_make_meto_xc40_gnu_um_safe_omp  => \
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_1x2 => atmos_meto_xc40_n48_eg_omp_ios_gnu_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_recon_kgo
+                           fcm_make_meto_xc40_gnu_um_safe_omp => recon_meto_xc40_n48_eg_omp_ios_gnu_2x1
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_2x1 => atmos_meto_xc40_n48_eg_omp_ios_gnu_2x1
+                           atmos_meto_xc40_n48_eg_omp_ios_gnu_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_ios_gnu_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_ios_gnu_1x2 & recon_meto_xc40_n48_eg_omp_ios_gnu_2x1
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_omp_ios_gnu_comp_check" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_um_rigorous_omp => fcm_make_meto_xc40_gnu_um_rigorous_omp  => \
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_comp_check_1x2 => atmos_meto_xc40_n48_eg_omp_ios_gnu_comp_check_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_comp_check_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_comp_check_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_comp_check_recon_kgo
+                           fcm_make_meto_xc40_gnu_um_rigorous_omp => recon_meto_xc40_n48_eg_omp_ios_gnu_comp_check_2x1
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_comp_check_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_comp_check_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_comp_check_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_comp_check_recon_proc
+                           recon_meto_xc40_n48_eg_omp_ios_gnu_comp_check_2x1 => atmos_meto_xc40_n48_eg_omp_ios_gnu_comp_check_2x1
+                           atmos_meto_xc40_n48_eg_omp_ios_gnu_comp_check_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_comp_check_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_ios_gnu_comp_check_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_gnu_comp_check_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_ios_gnu_comp_check_1x2 & recon_meto_xc40_n48_eg_omp_ios_gnu_comp_check_2x1
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ukca_eg_omp_noios_gnu" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_um_safe_omp => fcm_make_meto_xc40_gnu_um_safe_omp  => \
+                           recon_meto_xc40_n48_ukca_eg_omp_noios_gnu_1x2 => atmos_meto_xc40_n48_ukca_eg_omp_noios_gnu_4x4 => rose_ana_meto_xc40_n48_ukca_eg_omp_noios_gnu_atmos_kgo
+                           recon_meto_xc40_n48_ukca_eg_omp_noios_gnu_1x2 => rose_ana_meto_xc40_n48_ukca_eg_omp_noios_gnu_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ukca_eg_omp_noios_gnu_1x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ukca_eg_omp_noios_gnu_comp_check" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_um_rigorous_omp => fcm_make_meto_xc40_gnu_um_rigorous_omp  => \
+                           recon_meto_xc40_n48_ukca_eg_omp_noios_gnu_comp_check_1x2 => atmos_meto_xc40_n48_ukca_eg_omp_noios_gnu_comp_check_4x4 => rose_ana_meto_xc40_n48_ukca_eg_omp_noios_gnu_comp_check_atmos_kgo
+                           recon_meto_xc40_n48_ukca_eg_omp_noios_gnu_comp_check_1x2 => rose_ana_meto_xc40_n48_ukca_eg_omp_noios_gnu_comp_check_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ukca_eg_omp_noios_gnu_comp_check_1x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_ukca_eg_noomp_gnu" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_um_safe_noomp => fcm_make_meto_xc40_gnu_um_safe_noomp  => \
+                           recon_meto_xc40_n48_ukca_eg_noomp_gnu_1x2 => atmos_meto_xc40_n48_ukca_eg_noomp_gnu_4x4 => rose_ana_meto_xc40_n48_ukca_eg_noomp_gnu_atmos_kgo
+                           recon_meto_xc40_n48_ukca_eg_noomp_gnu_1x2 => rose_ana_meto_xc40_n48_ukca_eg_noomp_gnu_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_ukca_eg_noomp_gnu_1x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_omp_ios_comp_check" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp => fcm_make_meto_xc40_cce_um_rigorous_omp => \
+                           recon_meto_xc40_n48_eg_omp_ios_comp_check => atmos_meto_xc40_n48_eg_omp_ios_comp_check
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => meto_xc40_install_ctldata => \
+                           recon_meto_xc40_n48_eg_omp_ios_comp_check
+                           atmos_meto_xc40_n48_eg_omp_ios_comp_check => housekeep_meto_xc40",
+
+    "meto_xc40_pws_diag_test" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp  => \
+                           recon_meto_xc40_n48_eg_omp_ios_pws_diag_test_1x2 => atmos_meto_xc40_n48_eg_omp_ios_pws_diag_test_1x2 => \
+                           rose_ana_meto_xc40_n48_eg_omp_ios_pws_diag_test_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_ios_pws_diag_test_1x2 => atmos_meto_xc40_n48_eg_omp_ios_pws_diag_test_no_dependencies_1x2
+                           recon_meto_xc40_n48_eg_omp_ios_pws_diag_test_1x2 => atmos_meto_xc40_n48_eg_omp_ios_pws_diag_test_2x1
+                           atmos_meto_xc40_n48_eg_omp_ios_pws_diag_test_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_pws_diag_test_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_ios_pws_diag_test_no_dependencies_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_pws_diag_test_atmos_dependencies
+                           atmos_meto_xc40_n48_eg_omp_ios_pws_diag_test_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_pws_diag_test_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_ios_pws_diag_test_1x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_free_tracers" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp  => \
+                           recon_meto_xc40_n48_eg_omp_ios_free_tracers_1x2 => atmos_meto_xc40_n48_eg_omp_ios_free_tracers_1x2 => \
+                           rose_ana_meto_xc40_n48_eg_omp_ios_free_tracers_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_ios_free_tracers_1x2 => atmos_meto_xc40_n48_eg_omp_ios_free_tracers_2x1
+                           atmos_meto_xc40_n48_eg_omp_ios_free_tracers_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_free_tracers_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_ios_free_tracers_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_free_tracers_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_ios_free_tracers_1x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_screen_dch" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp  => \
+                           recon_meto_xc40_n48_eg_omp_ios_screen_dch_1x2 => atmos_meto_xc40_n48_eg_omp_ios_screen_dch_1x2 => \
+                           rose_ana_meto_xc40_n48_eg_omp_ios_screen_dch_atmos_kgo
+                           recon_meto_xc40_n48_eg_omp_ios_screen_dch_1x2 => atmos_meto_xc40_n48_eg_omp_ios_screen_dch_2x1
+                           atmos_meto_xc40_n48_eg_omp_ios_screen_dch_1x2 => rose_ana_meto_xc40_n48_eg_omp_ios_screen_dch_atmos_proc
+                           atmos_meto_xc40_n48_eg_omp_ios_screen_dch_2x1 => rose_ana_meto_xc40_n48_eg_omp_ios_screen_dch_atmos_proc
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_ios_screen_dch_1x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_noomp"        :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_noomp => fcm_make_meto_xc40_cce_um_safe_noomp  => \
+                           recon_meto_xc40_n48_eg_noomp_1x2 => atmos_meto_xc40_n48_eg_noomp_1x2 => rose_ana_meto_xc40_n48_eg_noomp_atmos_kgo
+                           recon_meto_xc40_n48_eg_noomp_1x2 => rose_ana_meto_xc40_n48_eg_noomp_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_noomp_1x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n48_eg_omp_noios_drhook" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_drhook => fcm_make_meto_xc40_cce_um_safe_omp_drhook => \
+                           recon_meto_xc40_n48_eg_omp_noios_drhook => atmos_meto_xc40_n48_eg_omp_noios_drhook_1x2 => rose_ana_meto_xc40_n48_eg_omp_noios_drhook_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_n48_eg_omp_noios_drhook
+                           recon_meto_xc40_n48_eg_omp_noios_drhook => rose_ana_meto_xc40_n48_eg_omp_noios_drhook_recon_kgo
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_mogreps_g_eg"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_single_precis => fcm_make_meto_xc40_cce_um_safe_omp_single_precis => \
+                           recon_meto_xc40_mogreps_g_eg => atmos_meto_xc40_mogreps_g_eg_8x26 => rose_ana_meto_xc40_mogreps_g_eg_atmos_kgo
+                           recon_meto_xc40_mogreps_g_eg => rose_ana_meto_xc40_mogreps_g_eg_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_mogreps_g_eg
+                           rose_ana_meto_xc40_mogreps_g_eg_atmos_kgo & rose_ana_meto_xc40_mogreps_g_eg_wallclock_kgo
+                           atmos_meto_xc40_mogreps_g_eg_8x26 => rose_ana_meto_xc40_mogreps_g_eg_wallclock_kgo
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_mogreps_g_exp_eg"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_single_precis => fcm_make_meto_xc40_cce_um_safe_omp_single_precis => \
+                           recon_meto_xc40_mogreps_g_exp_eg => atmos_meto_xc40_mogreps_g_exp_eg_8x26 => rose_ana_meto_xc40_mogreps_g_exp_eg_atmos_kgo
+                           recon_meto_xc40_mogreps_g_exp_eg => rose_ana_meto_xc40_mogreps_g_exp_eg_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_mogreps_g_exp_eg
+                           rose_ana_meto_xc40_mogreps_g_exp_eg_atmos_kgo & rose_ana_meto_xc40_mogreps_g_exp_eg_wallclock_kgo
+                           atmos_meto_xc40_mogreps_g_exp_eg_8x26 => rose_ana_meto_xc40_mogreps_g_exp_eg_wallclock_kgo
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n96_orca025_mct_technical_gc3" :
+                           "gatekeeper_fcm_make_drivers => fcm_make_drivers => coupled_meto_xc40_n96_orca025_mct_technical_gc3
+                            gatekeeper_fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct => fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct => recon_meto_xc40_n96_orca025_mct_technical_gc3
+                            gatekeeper_fcm_make_meto_xc40_cce_coupled_ocean_orca025_mct_technical_gc3 => fcm_make_meto_xc40_cce_coupled_ocean_orca025_mct_technical_gc3 => recon_meto_xc40_n96_orca025_mct_technical_gc3
+                            fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => meto_xc40_install_ctldata => recon_meto_xc40_n96_orca025_mct_technical_gc3
+                            recon_meto_xc40_n96_orca025_mct_technical_gc3 => coupled_meto_xc40_n96_orca025_mct_technical_gc3
+                            coupled_meto_xc40_n96_orca025_mct_technical_gc3 => rose_ana_meto_xc40_n96_orca025_mct_technical_gc3_kgo
+                            METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_n96_orca1_mct_ukesm":
+                           "gatekeeper_fcm_make_drivers => fcm_make_drivers => coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_18x6 & coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_12x9
+                            gatekeeper_fcm_make_meto_xc40_cce_coupled_ocean_ukesm => fcm_make_meto_xc40_cce_coupled_ocean_ukesm => recon_meto_xc40_n96_orca1_mct_ukesm
+                            gatekeeper_fcm_make_meto_xc40_cce_ukesm_coupled_um_safe_n96_mct => fcm_make_meto_xc40_cce_ukesm_coupled_um_safe_n96_mct => recon_meto_xc40_n96_orca1_mct_ukesm
+                            fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => meto_xc40_install_ctldata => recon_meto_xc40_n96_orca1_mct_ukesm
+                            recon_meto_xc40_n96_orca1_mct_ukesm => coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_18x6 & coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_12x9
+                            coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_18x6 & coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_12x9 => rose_ana_meto_xc40_n96_orca1_mct_ukesm_proc
+                            coupled_meto_xc40_n96_orca1_mct_ukesm_atmos_12x9 => rose_ana_meto_xc40_n96_orca1_mct_ukesm_kgo
+                            METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_seukf_tkebl"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_seukf_tkebl => atmos_meto_xc40_seukf_tkebl_4x9 => rose_ana_meto_xc40_seukf_tkebl_atmos_kgo & rose_ana_meto_xc40_seukf_tkebl_wallclock_kgo
+                           recon_meto_xc40_seukf_tkebl => rose_ana_meto_xc40_seukf_tkebl_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_seukf_tkebl
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_seukv_eg"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_seukv_eg => atmos_meto_xc40_seukv_eg_4x9 => rose_ana_meto_xc40_seukv_eg_atmos_kgo & rose_ana_meto_xc40_seukv_eg_wallclock_kgo
+                           recon_meto_xc40_seukv_eg => atmos_meto_xc40_seukv_eg_nc3_4x9 => rose_ana_meto_xc40_seukv_eg_nc3_atmos_kgo
+                           recon_meto_xc40_seukv_eg => atmos_meto_xc40_seukv_eg_nc4_4x9 => rose_ana_meto_xc40_seukv_eg_nc4_atmos_kgo
+                           recon_meto_xc40_seukv_eg => atmos_meto_xc40_seukv_eg_nc4_32_4x9 => rose_ana_meto_xc40_seukv_eg_nc4_32_atmos_kgo
+                           recon_meto_xc40_seukv_eg => rose_ana_meto_xc40_seukv_eg_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_seukv_eg
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_seukv_eg_casim"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_seukv_eg_casim => \
+                           atmos_meto_xc40_seukv_eg_casim_6x6 & atmos_meto_xc40_seukv_eg_casim_4x9 => \
+                           rose_ana_meto_xc40_seukv_eg_casim_atmos_proc
+                           atmos_meto_xc40_seukv_eg_casim_4x9 => rose_ana_meto_xc40_seukv_eg_casim_atmos_kgo & rose_ana_meto_xc40_seukv_eg_casim_wallclock_kgo
+                           recon_meto_xc40_seukv_eg_casim => rose_ana_meto_xc40_seukv_eg_casim_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_seukv_eg_casim
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_seukv_eg_casim_comp_check"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp => fcm_make_meto_xc40_cce_um_rigorous_omp => \
+                           recon_meto_xc40_seukv_eg_casim_comp_check => atmos_meto_xc40_seukv_eg_casim_comp_check_4x9 =>  \
+                           rose_ana_meto_xc40_seukv_eg_casim_comp_check_atmos_kgo
+                           recon_meto_xc40_seukv_eg_casim_comp_check => rose_ana_meto_xc40_seukv_eg_casim_comp_check_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_seukv_eg_casim_comp_check
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_seukv_eg_drhook"  :     
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_drhook => fcm_make_meto_xc40_cce_um_safe_omp_drhook => \
+                           recon_meto_xc40_seukv_eg_drhook => atmos_meto_xc40_seukv_eg_drhook_4x9 => rose_ana_meto_xc40_seukv_eg_drhook_atmos_kgo
+                           recon_meto_xc40_seukv_eg_drhook => rose_ana_meto_xc40_seukv_eg_drhook_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_seukv_eg_drhook
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_seukv_eg_urban1t"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_seukv_eg_urban1t => atmos_meto_xc40_seukv_eg_urban1t_4x9 => rose_ana_meto_xc40_seukv_eg_urban1t_atmos_kgo & rose_ana_meto_xc40_seukv_eg_urban1t_wallclock_kgo
+                           recon_meto_xc40_seukv_eg_urban1t => rose_ana_meto_xc40_seukv_eg_urban1t_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_seukv_eg_urban1t
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_seukv_eg_comp_check"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp => fcm_make_meto_xc40_cce_um_rigorous_omp => \
+                           recon_meto_xc40_seukv_eg_comp_check => atmos_meto_xc40_seukv_eg_comp_check_4x9 => rose_ana_meto_xc40_seukv_eg_comp_check_atmos_kgo
+                           recon_meto_xc40_seukv_eg_comp_check => rose_ana_meto_xc40_seukv_eg_comp_check_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_seukv_eg_comp_check
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_seukv_eg_noda" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_seukv_eg_noda => atmos_meto_xc40_seukv_eg_noda_4x9 => rose_ana_meto_xc40_seukv_eg_noda_atmos_kgo & rose_ana_meto_xc40_seukv_eg_noda_wallclock_kgo
+                           recon_meto_xc40_seukv_eg_noda => rose_ana_meto_xc40_seukv_eg_noda_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_seukv_eg_noda
+                           recon_meto_xc40_seukv_eg_noda => \
+                           atmos_meto_xc40_seukv_eg_noda_6x6 & atmos_meto_xc40_seukv_eg_noda_4x9 => \
+                           rose_ana_meto_xc40_seukv_eg_noda_atmos_proc
+                           recon_meto_xc40_seukv_eg_noda => atmos_meto_xc40_seukv_eg_noda_NRUN_6x6 => atmos_meto_xc40_seukv_eg_noda_CRUN_6x6
+                           atmos_meto_xc40_seukv_eg_noda_CRUN_6x6 & atmos_meto_xc40_seukv_eg_noda_6x6 => rose_ana_meto_xc40_seukv_eg_noda_atmos_nruncrun
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_seukv_eg_noda_urban1t" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp => fcm_make_meto_xc40_cce_um_safe_omp => \
+                           recon_meto_xc40_seukv_eg_noda_urban1t => atmos_meto_xc40_seukv_eg_noda_urban1t_4x9 => rose_ana_meto_xc40_seukv_eg_noda_urban1t_atmos_kgo & rose_ana_meto_xc40_seukv_eg_noda_urban1t_wallclock_kgo
+                           recon_meto_xc40_seukv_eg_noda_urban1t => rose_ana_meto_xc40_seukv_eg_noda_urban1t_recon_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_seukv_eg_noda_urban1t
+                           recon_meto_xc40_seukv_eg_noda_urban1t => \
+                           atmos_meto_xc40_seukv_eg_noda_urban1t_6x6 & atmos_meto_xc40_seukv_eg_noda_urban1t_4x9 => \
+                           rose_ana_meto_xc40_seukv_eg_noda_urban1t_atmos_proc
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+  "meto_xc40_recon_n108_nd_interp_all_fields" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n108_nd_interp_all_fields_1x1 => \
+                           rose_ana_meto_xc40_recon_n108_nd_interp_all_fields_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n108_nd_interp_all_fields_1x1
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n216_eg_interp_all_fields_basic" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_1x4 => \
+                           rose_ana_meto_xc40_recon_n216_eg_interp_all_fields_basic_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n216_eg_interp_all_fields_basic_nogrib" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp_nogrib => fcm_make_meto_xc40_cce_recon_safe_omp_nogrib => \
+                           recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_nogrib_1x4 => \
+                           rose_ana_meto_xc40_recon_n216_eg_interp_all_fields_basic_nogrib_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_nogrib_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n216_eg_select_fields_from_namelist" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n216_eg_select_fields_from_namelist_1x4 => \
+                           rose_ana_meto_xc40_recon_n216_eg_select_fields_from_namelist_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n216_eg_select_fields_from_namelist_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n216_eg_init_mlsnow" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n216_eg_init_mlsnow_1x4 => \
+                           rose_ana_meto_xc40_recon_n216_eg_init_mlsnow_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n216_eg_init_mlsnow_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n320_n320_mlsnow" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n320_n320_mlsnow_1x4 => \
+                           rose_ana_meto_xc40_recon_n320_n320_mlsnow_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n320_n320_mlsnow_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n320_n320_mlsnow_mirror" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp_mirror => \
+                           fcm_make_meto_xc40_cce_recon_safe_omp_mirror => fcm_make2_meto_xc40_cce_recon_safe_omp_mirror => \
+                           recon_meto_xc40_recon_n320_n320_mlsnow_mirror_1x4 => \
+                           rose_ana_meto_xc40_recon_n320_n320_mlsnow_mirror_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n320_n320_mlsnow_mirror_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n320_n320frc_mlsnow" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n320_n320frc_mlsnow_1x4 => \
+                           rose_ana_meto_xc40_recon_n320_n320frc_mlsnow_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n320_n320frc_mlsnow_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n320_n3201t_mlsnow" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n320_n3201t_mlsnow_1x4 => \
+                           rose_ana_meto_xc40_recon_n320_n3201t_mlsnow_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n320_n3201t_mlsnow_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n320_n216_mlsnow" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n320_n216_mlsnow_1x4 => \
+                           rose_ana_meto_xc40_recon_n320_n216_mlsnow_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n320_n216_mlsnow_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n320_n512_mlsnow" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n320_n512_mlsnow_1x4 => \
+                           rose_ana_meto_xc40_recon_n320_n512_mlsnow_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n320_n512_mlsnow_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n320_n216zsl_mlsnow" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n320_n216zsl_mlsnow_1x4 => \
+                           rose_ana_meto_xc40_recon_n320_n216zsl_mlsnow_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n320_n216zsl_mlsnow_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n320_n320sl7_mlsnow" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n320_n320sl7_mlsnow_1x4 => \
+                           rose_ana_meto_xc40_recon_n320_n320sl7_mlsnow_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n320_n320sl7_mlsnow_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+   "meto_xc40_recon_n108_nd_var_area_weight" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_serial_safe_omp => fcm_make_meto_xc40_cce_recon_serial_safe_omp => \
+                           recon_meto_xc40_recon_n108_nd_var_area_weight_1x1 => \
+                           rose_ana_meto_xc40_recon_n108_nd_var_area_weight_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n108_nd_var_area_weight_1x1
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_n512_nd_grib1":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n512_nd_grib1_4x2 => rose_ana_meto_xc40_recon_n512_nd_grib1_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n512_nd_grib1_4x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_n512_nd_grib2":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n512_nd_grib2_4x2 => rose_ana_meto_xc40_recon_n512_nd_grib2_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n512_nd_grib2_4x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_n512_eg_grib1":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n512_eg_grib1_4x2 => rose_ana_meto_xc40_recon_n512_eg_grib1_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n512_eg_grib1_4x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_n512_eg_grib2":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n512_eg_grib2_4x2 => rose_ana_meto_xc40_recon_n512_eg_grib2_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n512_eg_grib2_4x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_n96_nd_init_prog_ancil":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n96_nd_init_prog_ancil_1x4 => rose_ana_meto_xc40_recon_n96_nd_init_prog_ancil_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n96_nd_init_prog_ancil_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_LAM_fix_to_var_res":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_LAM_fix_to_var_res_2x4 => rose_ana_meto_xc40_recon_LAM_fix_to_var_res_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_LAM_fix_to_var_res_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_LAM_fix_to_fix_res":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_LAM_fix_to_fix_res_2x4 => rose_ana_meto_xc40_recon_LAM_fix_to_fix_res_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_LAM_fix_to_fix_res_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_LAM_var_to_fix_res":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_LAM_var_to_fix_res_2x4 => rose_ana_meto_xc40_recon_LAM_var_to_fix_res_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_LAM_var_to_fix_res_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_LAM_var_to_var_res":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_LAM_var_to_var_res_2x4 => rose_ana_meto_xc40_recon_LAM_var_to_var_res_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_LAM_var_to_var_res_2x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_1x4 => rose_ana_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_1x4
+                           fcm_make_meto_xc40_cce_recon_safe_omp & meto_xc40_install_ctldata => \
+                           recon_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_specify_nl_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_lam_from_grib_cutout":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_lam_from_grib_cutout_2x2 => rose_ana_meto_xc40_recon_lam_from_grib_cutout_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_lam_from_grib_cutout_2x2
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_recon_nearest_neighbour_nz":
+                          "gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp => fcm_make_meto_xc40_cce_recon_safe_omp => \
+                           recon_meto_xc40_recon_nearest_neighbour_nz_1x4 => rose_ana_meto_xc40_recon_nearest_neighbour_nz_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => recon_meto_xc40_recon_nearest_neighbour_nz_1x4
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_scm_togacoare_ga6_omp"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_scm_debug_omp => fcm_make_meto_xc40_cce_scm_debug_omp
+                           fcm_make_meto_xc40_cce_scm_debug_omp => scm_meto_xc40_scm_togacoare_ga6_omp_1_thread => \
+                           rose_ana_meto_xc40_scm_togacoare_ga6_omp_1_thread_atmos_kgo
+                           fcm_make_meto_xc40_cce_scm_debug_omp => scm_meto_xc40_scm_togacoare_ga6_omp_2_threads => housekeep_meto_xc40
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => scm_meto_xc40_scm_togacoare_ga6_omp_1_thread & scm_meto_xc40_scm_togacoare_ga6_omp_2_threads
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_scm_togacoare_ga6_noomp"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_scm_debug_noomp => fcm_make_meto_xc40_cce_scm_debug_noomp => \
+                           scm_meto_xc40_scm_togacoare_ga6_noomp => rose_ana_meto_xc40_scm_togacoare_ga6_noomp_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => scm_meto_xc40_scm_togacoare_ga6_noomp
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_scm_togacoare_ga6_gnu_omp"  :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_scm_rigorous_omp => fcm_make_meto_xc40_gnu_scm_rigorous_omp
+                           fcm_make_meto_xc40_gnu_scm_rigorous_omp => scm_meto_xc40_scm_togacoare_ga6_gnu_omp_1_thread => \
+                           rose_ana_meto_xc40_scm_togacoare_ga6_gnu_omp_1_thread_atmos_kgo
+                           fcm_make_meto_xc40_gnu_scm_rigorous_omp => scm_meto_xc40_scm_togacoare_ga6_gnu_omp_2_threads => housekeep_meto_xc40
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => scm_meto_xc40_scm_togacoare_ga6_gnu_omp_1_thread & scm_meto_xc40_scm_togacoare_ga6_gnu_omp_2_threads
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_scm_togacoare_ga6_gnu_noomp" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_scm_rigorous_noomp => fcm_make_meto_xc40_gnu_scm_rigorous_noomp => \
+                           scm_meto_xc40_scm_togacoare_ga6_gnu_noomp => rose_ana_meto_xc40_scm_togacoare_ga6_gnu_noomp_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => scm_meto_xc40_scm_togacoare_ga6_gnu_noomp
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_scm_gabls3_ga6_omp"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_scm_debug_omp => fcm_make_meto_xc40_cce_scm_debug_omp
+                           fcm_make_meto_xc40_cce_scm_debug_omp => scm_meto_xc40_scm_gabls3_ga6_omp_1_thread => \
+                           rose_ana_meto_xc40_scm_gabls3_ga6_omp_1_thread_atmos_kgo
+                           fcm_make_meto_xc40_cce_scm_debug_omp => scm_meto_xc40_scm_gabls3_ga6_omp_2_threads => housekeep_meto_xc40
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => scm_meto_xc40_scm_gabls3_ga6_omp_1_thread & scm_meto_xc40_scm_gabls3_ga6_omp_2_threads
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_scm_gabls3_ga6_noomp"  :
+                          "gatekeeper_fcm_make_meto_xc40_cce_scm_debug_noomp => fcm_make_meto_xc40_cce_scm_debug_noomp => \
+                           scm_meto_xc40_scm_gabls3_ga6_noomp => rose_ana_meto_xc40_scm_gabls3_ga6_noomp_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => scm_meto_xc40_scm_gabls3_ga6_noomp
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_scm_gabls3_ga6_gnu_omp"  :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_scm_debug_omp => fcm_make_meto_xc40_gnu_scm_debug_omp
+                           fcm_make_meto_xc40_gnu_scm_debug_omp => scm_meto_xc40_scm_gabls3_ga6_gnu_omp_1_thread => \
+                           rose_ana_meto_xc40_scm_gabls3_ga6_gnu_omp_1_thread_atmos_kgo
+                           fcm_make_meto_xc40_gnu_scm_debug_omp => scm_meto_xc40_scm_gabls3_ga6_gnu_omp_2_threads => housekeep_meto_xc40
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => scm_meto_xc40_scm_gabls3_ga6_gnu_omp_1_thread & scm_meto_xc40_scm_gabls3_ga6_gnu_omp_2_threads
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_scm_gabls3_ga6_gnu_noomp"  :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_scm_debug_noomp => fcm_make_meto_xc40_gnu_scm_debug_noomp => \
+                           scm_meto_xc40_scm_gabls3_ga6_gnu_noomp => rose_ana_meto_xc40_scm_gabls3_ga6_gnu_noomp_atmos_kgo
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => \
+                           meto_xc40_install_ctldata => scm_meto_xc40_scm_gabls3_ga6_gnu_noomp
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_ifort_createbc_calcs" :
+                          "
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_omp => fcm_make_meto_xc40_ifort_createbc_high_omp
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => meto_xc40_install_ctldata
+                         
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_nd_fixed_nd_2dust2 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_nd_fixed_nd_2dust2_kgo
+                         
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_nd_fixed_eg_0dust0 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_nd_fixed_eg_0dust0_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_eg_fixed_nd_0dust0 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_eg_fixed_eg_2dust6 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_eg_fixed_eg_2dust6_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_eg_fixed_eg_timecontrol => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_eg_fixed_eg_timecontrol_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_eg_varres_nd_0dust0 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_eg_varres_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_eg_varres_eg_2dust6 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_eg_varres_eg_2dust6_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_fixed_eg_varres_nd_0dust0 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_fixed_eg_varres_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_fixed_eg_fixed_nd_0dust0 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_fixed_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_fixed_eg_fixed_eg_0dust0 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_fixed_eg_fixed_eg_0dust0_kgo
+                         
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_varres_eg_fixed_eg_0dust0 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_varres_eg_fixed_eg_0dust0_kgo
+                         
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_varres_eg_fixed_nd_0dust0 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_varres_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_nd_fixed_eg_freetracer => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_nd_fixed_eg_freetracer_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_eg_fixed_nd_aqumtracer => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_eg_fixed_nd_aqumtracer_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_eg_fixed_eg_aqumtracer => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_eg_fixed_eg_aqumtracer_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_eg_frame_eg_2dust2 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_eg_frame_eg_2dust2_kgo
+                           createbc_meto_xc40_ifort_createbc_calcs_global_eg_frame_eg_2dust2 => \
+                           createbc_meto_xc40_ifort_createbc_calcs_frame_eg_varres_eg_2dust6 => rose_ana_meto_xc40_ifort_createbc_calcs_frame_eg_varres_eg_2dust6_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_global_eg_frame_eg_ps39ukv => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_global_eg_frame_eg_ps39ukv_kgo
+                           createbc_meto_xc40_ifort_createbc_calcs_global_eg_frame_eg_ps39ukv => \
+                           createbc_meto_xc40_ifort_createbc_calcs_frame_eg_varres_eg_ps39ukv => rose_ana_meto_xc40_ifort_createbc_calcs_frame_eg_varres_eg_ps39ukv_kgo
+
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_varres_eg_frame_eg_0dust0 => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_varres_eg_frame_eg_0dust0_kgo
+                           createbc_meto_xc40_ifort_createbc_calcs_varres_eg_frame_eg_0dust0 => \
+                           createbc_meto_xc40_ifort_createbc_calcs_frame_eg_fixed_eg_0dust0 => rose_ana_meto_xc40_ifort_createbc_calcs_frame_eg_fixed_eg_0dust0_kgo
+                           
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_rigorous_noomp => fcm_make_meto_xc40_ifort_createbc_rigorous_noomp
+                           fcm_make_meto_xc40_ifort_createbc_rigorous_noomp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_noomp => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_kgo
+
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_rigorous_omp => fcm_make_meto_xc40_ifort_createbc_rigorous_omp
+                           fcm_make_meto_xc40_ifort_createbc_rigorous_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp
+                           createbc_meto_xc40_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_noomp => rose_ana_meto_xc40_ifort_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp
+
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_rigorous_noomp => fcm_make_meto_xc40_ifort_createbc_rigorous_noomp
+                           fcm_make_meto_xc40_ifort_createbc_rigorous_noomp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_noomp => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_kgo
+
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_rigorous_omp => fcm_make_meto_xc40_ifort_createbc_rigorous_omp
+                           fcm_make_meto_xc40_ifort_createbc_rigorous_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_omp => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_omp
+                           createbc_meto_xc40_ifort_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_noomp => rose_ana_meto_xc40_ifort_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_omp
+
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_noomp => fcm_make_meto_xc40_ifort_createbc_high_noomp
+                           fcm_make_meto_xc40_ifort_createbc_high_noomp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_noomp => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_kgo
+
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_omp => fcm_make_meto_xc40_ifort_createbc_high_omp
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp
+                           createbc_meto_xc40_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_noomp => rose_ana_meto_xc40_ifort_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp
+
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_noomp => fcm_make_meto_xc40_ifort_createbc_high_noomp
+                           fcm_make_meto_xc40_ifort_createbc_high_noomp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_noomp => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_kgo
+
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_omp => fcm_make_meto_xc40_ifort_createbc_high_omp
+                           fcm_make_meto_xc40_ifort_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_ifort_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_omp => \
+                           rose_ana_meto_xc40_ifort_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_omp
+                           createbc_meto_xc40_ifort_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_noomp => rose_ana_meto_xc40_ifort_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_omp
+
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+                         
+
+    "meto_xc40_cce_createbc_calcs" :
+                          "
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_high_omp => fcm_make_meto_xc40_cce_createbc_high_omp
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => meto_xc40_install_ctldata
+                         
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_nd_fixed_nd_2dust2 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_nd_fixed_nd_2dust2_kgo
+                         
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_nd_fixed_eg_0dust0 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_nd_fixed_eg_0dust0_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_eg_fixed_nd_0dust0 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_eg_fixed_eg_2dust6 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_eg_fixed_eg_2dust6_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_eg_fixed_eg_timecontrol => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_eg_fixed_eg_timecontrol_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_eg_varres_nd_0dust0 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_eg_varres_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_eg_varres_eg_2dust6 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_eg_varres_eg_2dust6_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_fixed_eg_varres_nd_0dust0 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_fixed_eg_varres_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_fixed_eg_fixed_nd_0dust0 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_fixed_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_fixed_eg_fixed_eg_0dust0 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_fixed_eg_fixed_eg_0dust0_kgo
+                         
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_varres_eg_fixed_eg_0dust0 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_varres_eg_fixed_eg_0dust0_kgo
+                         
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_varres_eg_fixed_nd_0dust0 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_varres_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_nd_fixed_eg_freetracer => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_nd_fixed_eg_freetracer_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_eg_fixed_nd_aqumtracer => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_eg_fixed_nd_aqumtracer_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_eg_fixed_eg_aqumtracer => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_eg_fixed_eg_aqumtracer_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_eg_frame_eg_2dust2 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_eg_frame_eg_2dust2_kgo
+                           createbc_meto_xc40_cce_createbc_calcs_global_eg_frame_eg_2dust2 => \
+                           createbc_meto_xc40_cce_createbc_calcs_frame_eg_varres_eg_2dust6 => rose_ana_meto_xc40_cce_createbc_calcs_frame_eg_varres_eg_2dust6_kgo
+
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_varres_eg_frame_eg_0dust0 => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_varres_eg_frame_eg_0dust0_kgo
+                           createbc_meto_xc40_cce_createbc_calcs_varres_eg_frame_eg_0dust0 => \
+                           createbc_meto_xc40_cce_createbc_calcs_frame_eg_fixed_eg_0dust0 => rose_ana_meto_xc40_cce_createbc_calcs_frame_eg_fixed_eg_0dust0_kgo
+                           
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_rigorous_noomp => fcm_make_meto_xc40_cce_createbc_rigorous_noomp
+                           fcm_make_meto_xc40_cce_createbc_rigorous_noomp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_noomp => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_kgo
+
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_rigorous_omp => fcm_make_meto_xc40_cce_createbc_rigorous_omp
+                           fcm_make_meto_xc40_cce_createbc_rigorous_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp
+                           createbc_meto_xc40_cce_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_noomp => rose_ana_meto_xc40_cce_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp
+
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_rigorous_noomp => fcm_make_meto_xc40_cce_createbc_rigorous_noomp
+                           fcm_make_meto_xc40_cce_createbc_rigorous_noomp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_noomp => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_kgo
+
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_rigorous_omp => fcm_make_meto_xc40_cce_createbc_rigorous_omp
+                           fcm_make_meto_xc40_cce_createbc_rigorous_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_omp => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_omp
+                           createbc_meto_xc40_cce_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_noomp => rose_ana_meto_xc40_cce_createbc_calcs_comp_check_varres_eg_fixed_eg_rowcol_omp
+                           
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_high_noomp => fcm_make_meto_xc40_cce_createbc_high_noomp
+                           fcm_make_meto_xc40_cce_createbc_high_noomp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_noomp => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_kgo
+
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_high_omp => fcm_make_meto_xc40_cce_createbc_high_omp
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp
+                           createbc_meto_xc40_cce_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_noomp => rose_ana_meto_xc40_cce_createbc_calcs_omp_check_global_eg_varres_eg_2dust6_omp
+
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_high_noomp => fcm_make_meto_xc40_cce_createbc_high_noomp
+                           fcm_make_meto_xc40_cce_createbc_high_noomp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_noomp => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_kgo
+
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_high_omp => fcm_make_meto_xc40_cce_createbc_high_omp
+                           fcm_make_meto_xc40_cce_createbc_high_omp & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_omp => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_omp
+                           createbc_meto_xc40_cce_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_noomp => rose_ana_meto_xc40_cce_createbc_calcs_omp_check_varres_eg_fixed_eg_rowcol_omp
+
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+                         
+
+    "meto_xc40_cce_createbc_calcs_drhook" :
+                          "
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => meto_xc40_install_ctldata
+
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_high_omp_drhook => fcm_make_meto_xc40_cce_createbc_high_omp_drhook
+                           fcm_make_meto_xc40_cce_createbc_high_omp_drhook & meto_xc40_install_ctldata => createbc_meto_xc40_cce_createbc_calcs_global_eg_varres_eg_2dust6_drhook => \
+                           rose_ana_meto_xc40_cce_createbc_calcs_global_eg_varres_eg_2dust6_drhook_kgo
+                           
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_vomext_calcs" :
+                          "
+                           gatekeeper_fcm_make_meto_xc40_cce_utils_serial_high_omp => fcm_make_meto_xc40_cce_utils_serial_high_omp
+
+                           fcm_make_meto_xc40_cce_utils_serial_high_omp => utils_meto_xc40_vomext_calcs_default_nd
+                           utils_meto_xc40_vomext_calcs_default_nd => rose_ana_meto_xc40_utils_vomext_calcs_default_nd_kgo
+                           rose_ana_meto_xc40_utils_vomext_calcs_default_nd_kgo
+
+                           fcm_make_meto_xc40_cce_utils_serial_high_omp => utils_meto_xc40_vomext_calcs_default_eg
+                           utils_meto_xc40_vomext_calcs_default_eg => rose_ana_meto_xc40_utils_vomext_calcs_default_eg_kgo
+                           rose_ana_meto_xc40_utils_vomext_calcs_default_eg_kgo
+
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_convpp_calcs" :
+                          "
+                           gatekeeper_fcm_make_meto_xc40_cce_utils_serial_high_omp => fcm_make_meto_xc40_cce_utils_serial_high_omp
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => meto_xc40_install_ctldata
+
+                           fcm_make_meto_xc40_cce_utils_serial_high_omp => utils_meto_xc40_convpp_calcs_64B_large_ff
+                           meto_xc40_install_ctldata => utils_meto_xc40_convpp_calcs_64B_large_ff
+                           utils_meto_xc40_convpp_calcs_64B_large_ff =>  rose_ana_meto_xc40_utils_convpp_calcs_64B_large_ff_kgo
+
+                           fcm_make_meto_xc40_cce_utils_serial_high_omp => utils_meto_xc40_convpp_calcs_64B_small_ff
+                           meto_xc40_install_ctldata => utils_meto_xc40_convpp_calcs_64B_small_ff
+                           utils_meto_xc40_convpp_calcs_64B_small_ff =>  rose_ana_meto_xc40_utils_convpp_calcs_64B_small_ff_kgo
+
+                           fcm_make_meto_xc40_cce_utils_serial_high_omp => utils_meto_xc40_convpp_calcs_ibm_number_mdl_lvls
+                           meto_xc40_install_ctldata => utils_meto_xc40_convpp_calcs_ibm_number_mdl_lvls
+                           utils_meto_xc40_convpp_calcs_ibm_number_mdl_lvls =>  rose_ana_meto_xc40_utils_convpp_calcs_ibm_number_mdl_lvls_kgo
+
+                           fcm_make_meto_xc40_cce_utils_serial_high_omp => utils_meto_xc40_convpp_calcs_ibm_number_std_lvls
+                           meto_xc40_install_ctldata => utils_meto_xc40_convpp_calcs_ibm_number_std_lvls
+                           utils_meto_xc40_convpp_calcs_ibm_number_std_lvls =>  rose_ana_meto_xc40_utils_convpp_calcs_ibm_number_std_lvls_kgo
+
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_pptoanc_calcs" :
+                          "
+                           gatekeeper_fcm_make_meto_xc40_cce_utils_serial_high_omp => fcm_make_meto_xc40_cce_utils_serial_high_omp
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => meto_xc40_install_ctldata
+
+                           fcm_make_meto_xc40_cce_utils_serial_high_omp => utils_meto_xc40_pptoanc_calcs_basic_test
+                           meto_xc40_install_ctldata => utils_meto_xc40_pptoanc_calcs_basic_test
+                           utils_meto_xc40_pptoanc_calcs_basic_test => rose_ana_meto_xc40_utils_pptoanc_calcs_basic_test_kgo
+                           rose_ana_meto_xc40_utils_pptoanc_calcs_basic_test_kgo
+
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_crmstyle_coarse_grid" :
+                          "
+                           gatekeeper_fcm_make_meto_xc40_cce_utils_mpp_high_omp => fcm_make_meto_xc40_cce_utils_mpp_high_omp
+
+                           fcm_make_meto_xc40_cce_utils_mpp_high_omp => utils_meto_xc40_crmstyle_coarse_grid_whole 
+                           fcm_make_meto_xc40_cce_utils_mpp_high_omp => utils_meto_xc40_crmstyle_coarse_grid_part_1x2 
+                           fcm_make_meto_xc40_cce_utils_mpp_high_omp => utils_meto_xc40_crmstyle_coarse_grid_part_2x1
+
+                           utils_meto_xc40_crmstyle_coarse_grid_whole => rose_ana_meto_xc40_utils_crmstyle_coarse_grid_whole_kgo
+                           rose_ana_meto_xc40_utils_crmstyle_coarse_grid_whole_kgo
+
+                           utils_meto_xc40_crmstyle_coarse_grid_part_2x1 => rose_ana_meto_xc40_utils_crmstyle_coarse_grid_part_kgo
+                           rose_ana_meto_xc40_utils_crmstyle_coarse_grid_part_kgo
+
+                           utils_meto_xc40_crmstyle_coarse_grid_part_1x2 & \
+                           utils_meto_xc40_crmstyle_coarse_grid_part_2x1 => rose_ana_meto_xc40_utils_crmstyle_coarse_grid_part_proc
+
+                           METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+    "meto_xc40_global_to_lam_eg" :
+                          "
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_omp => fcm_make_meto_xc40_ifort_createbc_high_omp => createbc_meto_xc40_global_to_lam_frame_seukv_eg => createbc_meto_xc40_global_to_lam_createbc_seukv_eg
+                           gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp => \
+                           recon_meto_xc40_global_to_lam_seukv_eg => atmos_meto_xc40_global_to_lam_seukv_eg_4x9
+                           createbc_meto_xc40_global_to_lam_createbc_seukv_eg => atmos_meto_xc40_global_to_lam_seukv_eg_4x9
+                           atmos_meto_xc40_n512_eg_10x23 => recon_meto_xc40_global_to_lam_seukv_eg
+                           atmos_meto_xc40_n512_eg_10x23 => createbc_meto_xc40_global_to_lam_frame_seukv_eg
+                           fcm_make_meto_xc40_install_ctldata => fcm_make2_meto_xc40_install_ctldata => meto_xc40_install_ctldata => \
+                           recon_meto_xc40_n512_eg
+                           atmos_meto_xc40_global_to_lam_seukv_eg_4x9 => rose_ana_meto_xc40_global_to_lam_seukv_eg_4x9_atmos_kgo
+                           recon_meto_xc40_global_to_lam_seukv_eg => rose_ana_meto_xc40_global_to_lam_seukv_eg_recon_kgo
+                           createbc_meto_xc40_global_to_lam_createbc_seukv_eg => rose_ana_meto_xc40_global_to_lam_seukv_eg_createbc_kgo
+                           createbc_meto_xc40_global_to_lam_frame_seukv_eg => rose_ana_meto_xc40_global_to_lam_seukv_eg_frame_kgo
+                           
+                           gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp_single_precis => fcm_make_meto_xc40_cce_um_fast_omp_single_precis => \
+                           recon_meto_xc40_n512_eg => atmos_meto_xc40_n512_eg_10x23 => rose_ana_meto_xc40_n512_eg_atmos_kgo & rose_ana_meto_xc40_n512_eg_wallclock_kgo
+                           recon_meto_xc40_n512_eg => rose_ana_meto_xc40_n512_eg_recon_kgo
+                           METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40",
+
+
+    "meto_xc40_gnu_um_standards" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_um_safe_omp => fcm_make_meto_xc40_gnu_um_safe_omp => housekeep_meto_xc40",
+
+    "meto_xc40_gnu_um_single_standards" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_um_safe_omp_single => fcm_make_meto_xc40_gnu_um_safe_omp_single => housekeep_meto_xc40",
+
+    "meto_xc40_gnu_recon_serial_standards" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_recon_serial_safe_omp => fcm_make_meto_xc40_gnu_recon_serial_safe_omp => housekeep_meto_xc40",
+
+    "meto_xc40_gnu_scm_standards" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_scm_debug_omp => fcm_make_meto_xc40_gnu_scm_debug_omp => housekeep_meto_xc40",
+
+    "meto_xc40_gnu_createbc_standards" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_createbc_high_omp => fcm_make_meto_xc40_gnu_createbc_high_omp => housekeep_meto_xc40",
+
+    "meto_xc40_gnu_utils_serial_standards" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_utils_serial_high_omp => fcm_make_meto_xc40_gnu_utils_serial_high_omp => housekeep_meto_xc40",
+
+    "meto_xc40_gnu_utils_mpp_standards" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_utils_mpp_high_omp => fcm_make_meto_xc40_gnu_utils_mpp_high_omp => housekeep_meto_xc40",
+
+    "meto_xc40_gnu_libs_standards" :
+                          "gatekeeper_fcm_make_meto_xc40_gnu_libs => fcm_make_meto_xc40_gnu_libs => housekeep_meto_xc40",
+
+
+    "monitor_xc40_tasks"   :
+                          "monitor_xc40_tasks",
+
+    }
+-%}

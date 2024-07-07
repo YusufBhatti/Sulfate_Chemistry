@@ -1,0 +1,2238 @@
+#!/usr/bin/env perl
+# *****************************COPYRIGHT*******************************
+# (C) Crown copyright Met Office. All rights reserved. 
+# For further details please refer to the file COPYRIGHT.txt 
+# which you should have received as part of this distribution. 
+# *****************************COPYRIGHT******************************* 
+#
+# Owner: UM System Development Team
+#
+# Purpose: Generates a html STASHmaster browser 
+#
+# Usage: Script has two mandatory arguments: 
+#        -i path to STASHmaster file
+#        -o output_directory         
+use Getopt::Long;
+use File::Path;
+$progname="STASHweb";
+$fullout_root="smfull_";
+$liteout_root="smlite_";
+$html_ext="html";
+$help="stash_help.$html_ext";
+$outdir=".";
+
+$usage="
+Usage: $progname -i STASHmaster1,STASHmaster2,...,STASHmastern
+                -o output_directory\n";
+                 
+GetOptions ("i=s","o=s") or die($usage);
+
+if ($opt_i) {
+  @stash_files=split(/\,/,$opt_i);
+  for ($i=0 ; $i < @stash_files ; $i++) {
+    if (! -f $stash_files[$i]) {die ("$progname: Input file \"$stash_files[$i]\" not found.\n");}
+    @these_lines=();
+    $file_in=$stash_files[$i];
+    open(file_in);
+    @these_lines=<file_in>;
+    push(@stash_master,@these_lines);
+    close(file_in);
+  }
+} else {die($usage)};
+
+if ($opt_o) {$outdir=$opt_o;}
+if (! -d $outdir) {
+  print "Creating directory \"$outdir\"\n";
+  mkpath($outdir) or die ("$progname: Could not create directory $outdir.\n");
+}
+
+
+$Model_text[1]="Atmosphere";
+$Model_text[2]=" ";
+$Model_text[3]=" ";
+$Model_text[4]=" ";
+
+$SectA_text[0]="Prognostic variables";
+$SectA_text[1]="Short Wave Radiation";
+$SectA_text[2]="Long Wave Radiation";
+$SectA_text[3]="Boundary layer / Surface processes";
+$SectA_text[4]="Large Scale Precipitation";
+$SectA_text[5]="Convection";
+$SectA_text[6]="Gravity Wave Drag";
+$SectA_text[7]="Vertical Diffusion";
+$SectA_text[8]="Hydrology";
+$SectA_text[9]="Cloud";
+$SectA_text[10]="Dynamical Adjustment and Solver";
+$SectA_text[11]="Tracer Advection";
+$SectA_text[12]="Primary field Advection";
+$SectA_text[13]="Diffusion and Filtering";
+$SectA_text[14]="Energy Adjustment";
+$SectA_text[15]="Processed Dynamics Diagnostics";
+$SectA_text[16]="Processed Physics Diagnostics";
+$SectA_text[17]="CLASSIC Aerosols";
+$SectA_text[18]="Data Assimilation";
+$SectA_text[19]="Vegetation";
+$SectA_text[20]="Fieldcalc/PWS generated Diagnostics";
+$SectA_text[21]="Thunderstorm Electrification";
+$SectA_text[26]="River Routing";
+$SectA_text[30]="Processed Climate Diagnostics";
+$SectA_text[31]="LBC fields for input (i.e. by a LAM model)";
+$SectA_text[32]="LBC fields for output";
+$SectA_text[33]="Free Tracers";
+$SectA_text[34]="UKCA";
+$SectA_text[35]="Stochastic Physics";
+$SectA_text[36]="Tracer LBCs";
+$SectA_text[37]="UKCA LBC Tracers";
+$SectA_text[38]="UKCA Diagnostics";
+$SectA_text[39]="Nudging";
+$SectA_text[40]="VAR/PF model field";
+$SectA_text[41]="VAR/PF model field";
+$SectA_text[42]="VAR/PF model field";
+$SectA_text[43]="VAR/PF model field";
+$SectA_text[44]="VAR/PF model field";
+$SectA_text[45]="VAR/PF model field";
+$SectA_text[46]="VAR/PF model field";
+$SectA_text[47]="VAR/PF model field";
+$SectA_text[48]="VAR/PF model field";
+$SectA_text[49]="VAR/PF model field";
+$SectA_text[50]="UKCA Chemical Diagnostics";
+$SectA_text[51]="UKCA section 34 diagnostics on pressure levels";
+$SectA_text[52]="UKCA ASAD section 50 diagnostics on pressure levels";
+$SectA_text[53]="Diagnostics from idealised UM";
+$SectA_text[54]="GLOMAP_MODE aerosol climatology";
+$SectA_text[55]="Pollen prognostics";
+
+$Space_text[0]="Diagnostic field for which space is required only when the diagnostic is requested";
+$Space_text[1]="Non-prognostic field for which space is always required";
+$Space_text[2]="Primary field available to STASH";
+$Space_text[3]="Primary field addressed in the dump and D1 but unavailable to STASH (usually because land-packed)";
+$Space_text[4]="Primary field which is addressed in D1 only <i>(Pre vn5.0)</i>";
+$Space_text[5]="Primary field which is addressed in the dump only <i>(Pre vn5.0)</i>";
+$Space_text[6]="Diagnostic field for which space is required when requested or implied by other diagnostics";
+$Space_text[7]="Non-primary field which points back to section 0 field";
+$Space_text[8]="Dual time level (ocean prognostic)";
+$Space_text[9]="Extra items at the end of D1 for internal fields (i.e. fields required through the timestep, derived from dump fields)";
+$Space_text[10]="Field not held in D1 or the dump";
+
+$Time_text[1]="Diagnostic available every timestep";
+$Time_text[2]="Diagnostic available every long wave radiation timestep";
+$Time_text[3]="Diagnostic available every short wave radiation timestep";
+$Time_text[4]="Diagnostic available every coupling period";
+$Time_text[5]="Diagnostic available every call of atmospheric climate meaning period 1";
+$Time_text[6]="Diagnostic available every call of atmospheric climate meaning period 2";
+$Time_text[7]="Diagnostic available every call of atmospheric climate meaning period 3";
+$Time_text[8]="Diagnostic available every call of atmospheric climate meaning period 4";
+$Time_text[13]="Diagnostic available every convection timestep";
+$Time_text[14]="Diagnostic available every leaf phenology timestep";
+$Time_text[15]="Diagnostic available every vegetation competition timestep";
+$Time_text[16]="Diagnostic available every river routing timestep";
+$Time_text[17]="Diagnostic available every UKCA chemistry timestep";
+$Time_text[18]="Diagnostic available every prognostic long wave radiation timestep";
+$Time_text[19]="Diagnostic available every prognostic short wave radiation timestep";
+
+$Grid_text[1]="Data on atmospheric theta points";
+$Grid_text[2]="Data on atmospheric theta points, values over land only";
+$Grid_text[3]="Data on atmospheric theta points, values over sea only";
+$Grid_text[4]="Data on atmospheric zonal theta points";
+$Grid_text[5]="Data on atmospheric meridional theta points";
+$Grid_text[11]="Data on atmospheric uv points";
+$Grid_text[12]="Data on atmospheric uv points, values over land only";
+$Grid_text[13]="Data on atmospheric uv points, values over sea only";
+$Grid_text[14]="Data on atmospheric zonal uv points";
+$Grid_text[15]="Data on atmospheric meridional uv points";
+$Grid_text[17]="Atmospheric scalar";
+$Grid_text[18]="Data on atmospheric u points on the 'c' grid";
+$Grid_text[19]="Data on atmospheric v points on the 'c' grid";
+$Grid_text[21]="Data compressed to atmospheric land points";
+$Grid_text[22]="Data on the ozone grid";
+$Grid_text[23]="Data on the river-routing grid";
+$Grid_text[25]="Data on the atmospheric LBC grid <i>pre vn5.0</i>";
+$Grid_text[26]="Lateral boundary data at atmospheric theta points";
+$Grid_text[27]="Lateral boundary data at atmospheric u points";
+$Grid_text[28]="Lateral boundary data at atmospheric v points";
+$Grid_text[29]="Lateral boundary data at atmospheric orography points";
+
+#$LevelT_text[0]="Data on many levels, but stored as one array (eg. Lateral Boundary Conditions)";
+$LevelT_text[0]="Unspecified level";
+$LevelT_text[1]="Data on model rho levels <i>(full levels pre vn5.0)</i>";
+$LevelT_text[2]="Data on model theta levels <i>(half levels pre vn5.0)</i>";
+$LevelT_text[3]="Data on pressure levels";
+$LevelT_text[4]="Data on geometric height levels";
+$LevelT_text[5]="Single level data (LevelL & LevelF -1: not shown)";
+$LevelT_text[6]="Data on deep soil levels";
+$LevelT_text[7]="Data on theta levels";
+$LevelT_text[8]="Data on potential vorticity levels (ascending order)";
+$LevelT_text[9]="Data on cloud threshold (octas)";
+$LevelT_text[10]="Data on wave model directions";
+$LevelT_text[11]="Data on ISCCP levels - not supported";
+
+#$LevelFL_text[-1]="Unset (single level data)";
+$LevelFL_text[1]="First atmospheric level";
+$LevelFL_text[2]="Top atmospheric level";
+$LevelFL_text[3]="Top wet level";
+$LevelFL_text[4]="Top atmospheric level -1";
+$LevelFL_text[5]="First level in boundary layer";
+$LevelFL_text[6]="Last level in boundary layer";
+$LevelFL_text[7]="First level above boundary layer";
+$LevelFL_text[8]="First soil level";
+$LevelFL_text[9]="Last soil level";
+$LevelFL_text[10]="First tracer level";
+$LevelFL_text[11]="Last tracer level";
+$LevelFL_text[12]="Last gravity wave drag level +1";
+$LevelFL_text[13]="First gravity wave drag level";
+$LevelFL_text[14]="Last gravity wave drag level";
+$LevelFL_text[15]="First level in vertical diffusion routine";
+$LevelFL_text[16]="Last level in vertical diffusion routine -1";
+$LevelFL_text[17]="Last level in vertical diffusion routine";
+$LevelFL_text[18]="Last level in boundary layer -1";
+$LevelFL_text[19]="Top level of atmosphere +1";
+$LevelFL_text[20]="First soil level +1";
+$LevelFL_text[23]="Top ozone level";
+$LevelFL_text[24]="Number of atmosphere levels * SW bands";
+$LevelFL_text[25]="(Number of atmosphere levels+1) * SW bands";
+$LevelFL_text[26]="Number of wet levels * SW bands";
+$LevelFL_text[27]="Number of atmosphere levels * LW bands";
+$LevelFL_text[28]="(Number of atmosphere levels+1) * LW bands";
+$LevelFL_text[29]="Number of wet levels * LW bands";
+$LevelFL_text[32]="Number of SW radiation bands";
+$LevelFL_text[33]="Number of LW radiation bands";
+$LevelFL_text[34]="Number of soil hydrology levels";
+$LevelFL_text[35]="Number of cloudy levels";
+$LevelFL_text[36]="First wave model direction";
+$LevelFL_text[37]="Last wave model direction";
+$LevelFL_text[38]="Surface level or 0th atmospheric level (used for vert vel, radn incr, BL stress)";
+$LevelFL_text[39]="Number of ISCCP levels (Not supported)";
+$LevelFL_text[40]="Indicator for bottom level.  0 for Endgame and 1 for New Dyamics";
+#Note that most derived levels (X * radn bands) are replaced by pseudolevels
+
+$PseudoT_text[0]="None (PseudoF & PseudoL not shown)";
+$PseudoT_text[1]="SW radiation bands";
+$PseudoT_text[2]="LW radiation bands";
+$PseudoT_text[3]="Atmospheric assimilation groups";
+$PseudoT_text[4]="Radiation bands for calculating aerosol optical depth";
+#$PseudoT_text[4]="MW surface emissivity frequencies";
+#$PseudoT_text[5]="Ocean tracer transport (MEAD) diagnostics";
+#$PseudoT_text[6]="Wave model frequencies";
+#$PseudoT_text[7]="Wave model wave-train number";
+$PseudoT_text[8]="HadCM2 sulphate loading pattern index";
+$PseudoT_text[9]="Land and vegetation surface types";
+$PseudoT_text[10]="Multiple category sea-ice";
+$PseudoT_text[11]="No.of land surface tiles * maximum no.of snow layers";
+#$PseudoT_text[11]="Aerosol modes";
+#$PseudoT_text[12]="Emmission classes";
+
+# Added new COSP PseudoLevelTypes here :-
+$PseudoT_text[12]="COSP radar reflectivity intervals";
+$PseudoT_text[13]="COSP hydrometeors";
+$PseudoT_text[14]="COSP lidar SR intervals";
+$PseudoT_text[15]="COSP tau bins";
+$PseudoT_text[16]="COSP subcolumns";
+
+
+$PseudoF_text[1]="Dimension starts at 1";
+$PseudoF_text[21]="Dimension starts at the first group for the atmospheric assimilation set P* observation type";
+$PseudoF_text[22]="Dimension starts at the first group for the atmospheric assimilation set Theta observation type";
+$PseudoF_text[23]="Dimension starts at the first group for the atmospheric assimilation set U,V observation type";
+$PseudoF_text[24]="Dimension starts at the first group for the atmospheric assimilation set Relative Humidity observation type";
+$PseudoF_text[25]="Dimension starts at the first group for the atmospheric assimilation set Rainfall Rate observation type";
+
+$PseudoL_text[1]="The number of short wave bands";
+$PseudoL_text[2]="The number of long wave bands";
+$PseudoL_text[3]="The number of bands for aerosol optical depth calculations";
+#$PseudoL_text[3]="(Number of mead_types)*(Number of ocean basins)";
+$PseudoL_text[4]="Highest wave frequency (wave model)";
+$PseudoL_text[5]="Highest wave-train number (wave model)";
+$PseudoL_text[6]="The number of sulphate loading patterns";
+$PseudoL_text[7]="The total number of surface types";
+$PseudoL_text[8]="The number of surface types that are vegetation";
+$PseudoL_text[9]="The number of land surface tiles";
+$PseudoL_text[10]="Number of sea-ice categories";
+$PseudoL_text[11]="Number of land surface tiles * maximum number of snow layers";
+$PseudoL_text[12]="COSP Radar Reflectivity bins";
+$PseudoL_text[13]="COSP Number of Hydrometeors";
+$PseudoL_text[14]="COSP Backscattering ratio bins";
+$PseudoL_text[15]="COSP ISCCP tau bins";
+$PseudoL_text[16]="COSP Maximum number of subcolumns allowed to be output";
+$PseudoL_text[21]="The last group for the atmospheric assimilation set P* observation type";
+$PseudoL_text[22]="The last group for the atmospheric assimilation set Theta observation type";
+$PseudoL_text[23]="The last group for the atmospheric assimilation set U,V observation type";
+$PseudoL_text[24]="The last group for the atmospheric assimilation set Relative Humidity observation type";
+$PseudoL_text[25]="The last group for the atmospheric assimilation set Rainfall Rate observation type";
+
+$LevCom_text[0]="STASH receives input on all available levels and pseudo levels";
+$LevCom_text[1]="STASH receives diagnostic input on a STASH input levels list. Compression is performed in either the routine or the interfacing.";
+
+$Halo_text[1]="Single point halo";
+$Halo_text[2]="Extended halo";
+$Halo_text[3]="No halo";
+
+$DataT_text[1]="Real";
+$DataT_text[2]="Integer";
+$DataT_text[3]="Logical";
+
+$Rotate_text[0]="Data is either non-vectorial or is relative to the model's grid";
+$Rotate_text[1]="Data is passed to STASH relative to the lat-long grid";
+
+$out_count=0;
+for ($line=0 ; $line < @stash_master ; $line++) {
+  @component=split(/\|/,$stash_master[$line]);
+  $lineno=$component[0];
+  for ($comp=1 ; $comp < @component ; $comp++) {
+    $component[$comp] =~ s/ *$//;
+    $component[$comp] =~ s/^ *//;
+    $component[$comp] =~ s/   */ /;
+  }
+  if (($lineno eq "1") && ($component[1] ne "-1")) {
+    $Model=$component[1];
+    $Sectn=$component[2];
+    $Item=$component[3];
+    $Name=$component[4];
+    
+    $pad_Model="0" x (2-length($Model)) . $Model;
+    $pad_Sectn="0" x (3-length($Sectn)) . $Sectn;
+    $pad_Item="0" x (3-length($Item)) . $Item;
+    $ID=$pad_Model . $pad_Sectn . $pad_Item;
+    $outlist[$out_count]=$ID;
+    $outlist_name[$out_count]=$Name;
+    $out_count++;    
+  }
+}
+   
+  
+for ($line=0 ; $line < @stash_master ; $line++) {
+  @component=split(/\|/,$stash_master[$line]);
+  $lineno=$component[0];
+  for ($comp=1 ; $comp < @component ; $comp++) {
+    $component[$comp] =~ s/ *$//;
+    $component[$comp] =~ s/^ *//;
+    $component[$comp] =~ s/   */ /;
+  }
+  
+  if ($lineno eq "1") {
+    $Model=$component[1];
+    $Sectn=$component[2];
+    $Item=$component[3];
+    $Name=$component[4];
+    
+    $pad_Model="0" x (2-length($Model)) . $Model;
+    $pad_Sectn="0" x (3-length($Sectn)) . $Sectn;
+    $pad_Item="0" x (3-length($Item)) . $Item;
+  }
+  
+  if ($lineno eq "2") {
+    $Space=$component[1];
+    $Point=$component[2];
+    $Time=$component[3];
+    $Grid=$component[4];
+    $LevelT=$component[5];
+    $LevelF=$component[6];
+    $LevelL=$component[7];
+    $PseudoT=$component[8];
+    $PseudoF=$component[9];
+    $PseudoL=$component[10];
+    $LevCom=$component[11];
+  }
+  
+  if ($lineno eq "3") {
+    $Option_Codes=$component[1];
+    $Version_Mask=$component[2];
+    $Halo=$component[3];
+  }
+  
+  if ($lineno eq "4") {
+    $DataT=$component[1];
+    $DumpP=$component[2];
+    @PCn=split(/  */,$component[3]);
+  }
+  
+  if ($lineno eq "5") {
+    $Rotate=$component[1];
+    $PPFC=$component[2];
+    $USER=$component[3];
+    $LBVC=$component[4];
+    $BLEV=$component[5];
+    $TLEV=$component[6];
+    $RBLEVV=$component[7];
+    $CFLL=$component[8];
+    $CFFF=$component[9];
+  }  
+    
+  if (($lineno eq "5") && ($Model ne "-1")) {
+
+    $ID=$pad_Model . $pad_Sectn . $pad_Item;
+    $FULLOUTFILE=$fullout_root . $ID . "." . $html_ext;
+    $LITEOUTFILE=$liteout_root . $ID . "." . $html_ext;
+    $FULLOUTFILEN="$outdir/".$FULLOUTFILE;
+    $LITEOUTFILEN="$outdir/".$LITEOUTFILE;
+    
+    open (FULLOUTFILE,">$FULLOUTFILEN");
+    open (LITEOUTFILE,">$LITEOUTFILEN");
+    
+    $i=0;do {} until (($outlist[$i++] eq $ID) || ($i > @outlist)); $i--;
+#    $current_record=$ID;
+    if ($i > 0) {$previous_record=$outlist[$i-1]} else {$previous_record=$outlist[@outlist-1]}
+    if ($i < @outlist-1) {$next_record=$outlist[$i+1]} else {$next_record=$outlist[0]}  
+    
+    print FULLOUTFILE "<head><style type=text/css>a{text-decoration:none;}</style></head>\n";
+    print FULLOUTFILE "<body bgcolor=white text=navy link=black vlink=black alink=black>\n";
+    print FULLOUTFILE "<font face=helvitica>\n";
+       
+#    print $Name,"\n";
+    
+    print FULLOUTFILE "<p><table align=center cellpadding=5 bgcolor=silver>\n";
+    print FULLOUTFILE "<tr><td><a href=$fullout_root$previous_record",".","$html_ext",">\<--Previous--</a></td>";
+    print FULLOUTFILE "<td><a href=$LITEOUTFILE>--Less Detail--</a></td>";
+    print FULLOUTFILE "<td><a href=$fullout_root$next_record",".","$html_ext",">--Next--\></a></td></tr></table><p>\n";    
+
+    print FULLOUTFILE "<table bgcolor=silver cellpadding=5 align=centers>\n";    
+    print FULLOUTFILE "<tr><td bgcolor=darkseagreen colspan=4 nowrap align=center><font size=6>Section $Sectn, Item $Item ($Model_text[$Model] Model)</font></td><td></td></tr>\n";
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td bgcolor=cornflowerblue colspan=4 align=center><font color=white size=3><b>$Name</b></font></td>";
+    print FULLOUTFILE "</tr>\n<tr>";
+    print FULLOUTFILE "<td align=left><b>Symbol</b></td>";
+    print FULLOUTFILE "<td align=left><b>Name</b></td>";
+    print FULLOUTFILE "<td align=left><b>Value</b></td>";
+    print FULLOUTFILE "<td align=left><b>Description</b></td>";
+    print FULLOUTFILE "</tr>\n";
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Model','help_pop','scrollbars,resizable,width=400,height=400')\">Model</a></td>";
+    print FULLOUTFILE "<td>Model</td>";
+    print FULLOUTFILE "<td>$Model</td>";
+    print FULLOUTFILE "<td>$Model_text[$Model]</td>";
+    print FULLOUTFILE "</tr>\n";   
+
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Section','help_pop','scrollbars,resizable,width=400,height=400')\">Section</a></td>";
+    print FULLOUTFILE "<td>Section</td>";
+    print FULLOUTFILE "<td>$Sectn</td>";
+    if ($Model eq 1) {print FULLOUTFILE "<td>$SectA_text[$Sectn]</td>";}
+    print FULLOUTFILE "</tr>\n";
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Item','help_pop','scrollbars,resizable,width=400,height=400')\">Item</a></td>";
+    print FULLOUTFILE "<td>Item</td>";
+    print FULLOUTFILE "<td>$Item</td>";
+    print FULLOUTFILE "<td>$Name</td>";
+    print FULLOUTFILE "</tr>\n";     
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Space','help_pop','scrollbars,resizable,width=400,height=400')\">Space</a></td>";
+    print FULLOUTFILE "<td>Space Code</td>";
+    print FULLOUTFILE "<td>$Space</td>";
+    print FULLOUTFILE "<td>$Space_text[$Space]</td>";
+    print FULLOUTFILE "</tr>\n";
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Point','help_pop','scrollbars,resizable,width=400,height=400')\">Point</a></td>";
+    print FULLOUTFILE "<td>Section 0 Point Back</td>";
+    print FULLOUTFILE "<td>$Point</td>";
+    if ($Space eq "7") {
+      print FULLOUTFILE "<td>Points back to item ";
+      #print FULLOUTFILE "<a href=\#$Model","0","$Point",">$Point</a></td>";
+	$pad_Point="0" x (3-length($Point)) . $Point;
+	print FULLOUTFILE "<a href=smfull_","$pad_Model","000","$pad_Point",".html> $Point </a></td>";
+    } else {
+      print FULLOUTFILE "<td>-</td>";
+    }
+    print FULLOUTFILE "</tr>\n";
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Time','help_pop','scrollbars,resizable,width=400,height=400')\">Time</a></td>";
+    print FULLOUTFILE "<td>Time availability code</td>";
+    print FULLOUTFILE "<td>$Time</td>";
+    print FULLOUTFILE "<td>$Time_text[$Time]</td>";
+    print FULLOUTFILE "</tr>\n";
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Grid','help_pop','scrollbars,resizable,width=400,height=400')\">Grid</a></td>";
+    print FULLOUTFILE "<td>Grid type code</td>";
+    print FULLOUTFILE "<td>$Grid</td>";
+    print FULLOUTFILE "<td>$Grid_text[$Grid]</td>";
+    print FULLOUTFILE "</tr>\n";
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LevelT','help_pop','scrollbars,resizable,width=400,height=400')\">LevelT</a></td>";
+    print FULLOUTFILE "<td>Level type code</td>";
+    print FULLOUTFILE "<td>$LevelT</td>";
+    print FULLOUTFILE "<td>$LevelT_text[$LevelT]</td>";
+    print FULLOUTFILE "</tr>\n";
+    
+    if ($LevelT ne 5) {
+      print FULLOUTFILE "<tr>";
+      print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LevelF','help_pop','scrollbars,resizable,width=400,height=400')\">LevelF</a></td>";
+      print FULLOUTFILE "<td>First level code</td>";
+      print FULLOUTFILE "<td>$LevelF</td>";
+      if ($LevelF eq "-1") {
+        print FULLOUTFILE "<td>Single level field</td>";
+      } else {
+        print FULLOUTFILE "<td>$LevelFL_text[$LevelF]</td>";
+      }
+      print FULLOUTFILE "</tr>\n";
+        
+      print FULLOUTFILE "<tr>";
+      print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LevelL','help_pop','scrollbars,resizable,width=400,height=400')\">LevelL</a></td>";
+      print FULLOUTFILE "<td>Last level code</td>";
+      print FULLOUTFILE "<td>$LevelL</td>";
+      if ($LevelL eq "-1") {
+        print FULLOUTFILE "<td>-</td>";
+      } else {
+        print FULLOUTFILE "<td>$LevelFL_text[$LevelL]</td>";
+      }
+      print FULLOUTFILE "</tr>\n";
+    }
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PseudoT','help_pop','scrollbars,resizable,width=400,height=400')\">PseudoT</a></td>";
+    print FULLOUTFILE "<td>Pseudo level type code</td>";
+    print FULLOUTFILE "<td>$PseudoT</td>";
+    print FULLOUTFILE "<td>$PseudoT_text[$PseudoT]</td>";
+    print FULLOUTFILE "</tr>\n";
+    
+    if ($PseudoT ne 0) {
+      print FULLOUTFILE "<tr>";
+      print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PseudoF','help_pop','scrollbars,resizable,width=400,height=400')\">PseudoF</a></td>";
+      print FULLOUTFILE "<td>First pseudo level code</td>";
+      print FULLOUTFILE "<td>$PseudoF</td>";
+      print FULLOUTFILE "<td>$PseudoF_text[$PseudoF]</td>";
+      print FULLOUTFILE "</tr>\n";
+    
+    
+      print FULLOUTFILE "<tr>";
+      print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PseudoL','help_pop','scrollbars,resizable,width=400,height=400')\">PseudoL</a></td>";
+      print FULLOUTFILE "<td>Last pseudo level code</td>";
+      print FULLOUTFILE "<td>$PseudoL</td>";
+      print FULLOUTFILE "<td>$PseudoL_text[$PseudoL]</td>";
+      print FULLOUTFILE "</tr>\n";
+    }
+
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LevCom','help_pop','scrollbars,resizable,width=400,height=400')\">LevCom</a></td>";
+    print FULLOUTFILE "<td>Level compression flag</td>";
+    print FULLOUTFILE "<td>$LevCom</td>";
+    print FULLOUTFILE "<td>$LevCom_text[$LevCom]</td>";
+    print FULLOUTFILE "</tr>\n";    
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#OptionCode','help_pop','scrollbars,resizable,width=400,height=400')\">Option Code</a></td>";
+    print FULLOUTFILE "<td>Option code</td>";
+    print FULLOUTFILE "<td nowrap>$Option_Codes</td>";
+    print FULLOUTFILE "<td>n30n29n28...n4n3n2n1<br>Any relevant option codes described below</td>";
+    print FULLOUTFILE "</tr>\n";
+
+# Unallocated option codes commented for the time being to avoid warnings
+    $n30=substr($Option_Codes,0,1);
+    $n29=substr($Option_Codes,1,1);
+    $n28=substr($Option_Codes,2,1);
+#    $n27=substr($Option_Codes,3,1);
+    $n26=substr($Option_Codes,4,1);
+    $n25=substr($Option_Codes,5,1);
+    $n24=substr($Option_Codes,6,1);
+    $n23=substr($Option_Codes,7,1);
+    $n22=substr($Option_Codes,8,1);
+    $n21=substr($Option_Codes,9,1);
+    $n20=substr($Option_Codes,10,1);
+    $n19=substr($Option_Codes,11,1);
+    $n18=substr($Option_Codes,12,1);
+    $n17=substr($Option_Codes,13,1);
+    $n16=substr($Option_Codes,14,1);
+    $n15=substr($Option_Codes,15,1);
+    $n14=substr($Option_Codes,16,1);
+    $n13=substr($Option_Codes,17,1);
+    $n12=substr($Option_Codes,18,1);
+    $n11=substr($Option_Codes,19,1);
+    $n10n9=substr($Option_Codes,20,2);
+    $n10=substr($Option_Codes,20,1);
+    $n9=substr($Option_Codes,21,1);
+    $n8=substr($Option_Codes,22,1);
+    $n7=substr($Option_Codes,23,1);
+    $n6=substr($Option_Codes,24,1);
+    $n5=substr($Option_Codes,25,1);
+    $n4=substr($Option_Codes,26,1);
+    $n3=substr($Option_Codes,27,1);
+    $n2=substr($Option_Codes,28,1);
+    $n1=substr($Option_Codes,29,1);
+      
+    if (($Sectn eq 0) || 
+        ($Sectn eq 31) || ($Sectn eq 32)) {
+# LBCs  ($Sectn eq 33) || ($Sectn eq 36) || ($Sectn eq 37)) {
+        
+        if (($n1 ne 0) || ($n2 ne 0)) {
+            print FULLOUTFILE "<tr><td align=right>n2n1</td><td>Tracer Number</td><td>$n2$n1</td>";
+            print FULLOUTFILE "<td>Item included only if the $n2$n1 tracer switch is set</td></tr>\n";
+        }
+        
+        if ($n3 ne 0) {
+            print FULLOUTFILE "<tr><td align=right>n3</td><td>Hydrology indicator</td><td>$n3</td>";
+            if ($n3 eq 5) {print FULLOUTFILE "<td>Item included only for large-scale (TOPMODEL) hydrology scheme</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n4 ne 0) {
+            print FULLOUTFILE "<tr><td align=right>n4</td><td>Aerosol climatology indicator</td><td>$n4</td>";
+            if ($n4 eq 1) {print FULLOUTFILE "<td>Item included only for biogenic aerosol climatology</td>";}
+            if ($n4 eq 2) {print FULLOUTFILE "<td>Item included only for biomass burning aerosol climatology</td>";}
+            if ($n4 eq 3) {print FULLOUTFILE "<td>Item included only for black carbon aerosol climatology</td>";}
+            if ($n4 eq 4) {print FULLOUTFILE "<td>Item included only for sea salt aerosol climatology</td>";}
+            if ($n4 eq 5) {print FULLOUTFILE "<td>Item included only for sulphate aerosol climatology</td>";}
+            if ($n4 eq 6) {print FULLOUTFILE "<td>Item included only for dust aerosol climatology</td>";}
+            if ($n4 eq 7) {print FULLOUTFILE "<td>Item included only for organic carbon fossil fuel climatology</td>";}
+            if ($n4 eq 8) {print FULLOUTFILE "<td>Item included only for delta aerosol climatology</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n5 ne 0) {
+            print FULLOUTFILE "<tr><td align=right>n5</td><td>Orographic roughness or slope indicator</td><td>$n5</td>";
+            if ($n5 eq 1) {print FULLOUTFILE "<td>Item included when orographic roughness used</td>";}
+            if ($n5 eq 2) {print FULLOUTFILE "<td>Item included when orographic gradients used in GWD</td>";}
+            if ($n5 eq 3) {print FULLOUTFILE "<td>Item available only if radiation gradient correction used (SW Radiation)</td>";}
+            if ($n5 eq 4) {print FULLOUTFILE "<td>Item available only if configured, unfiltered orography is used</td>";}
+            if ($n5 eq 7) {print FULLOUTFILE "<td>Item available because total precip at timestep start is needed</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n6 ne 0) {
+            print FULLOUTFILE "<tr><td align=right>n6</td><td>Interface indicator</td><td>$n6</td>";  
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item included only in Limited Area Models</td>";}
+            if ($n6 eq 2) {print FULLOUTFILE "<td>Item included only for models with lower boundary</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n7 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n7</td><td>Coupling indicator</td><td>$n7</td>";
+            if ($n7 eq 1) {print FULLOUTFILE "<td>Item included only if OASIS-MCT coupling is used</td>";}
+            if ($n7 eq 2) {print FULLOUTFILE "<td>Item included only if OASIS-MCT and ocean biogeochemistry coupling is used and carbon cycle is interactive</td>";}
+            if ($n7 eq 3) {print FULLOUTFILE "<td>Item included if OASIS-MCT coupling and iceberg calving active</td>";}
+            if ($n7 eq 4) {print FULLOUTFILE "<td>Item included only if OASIS-MCT and ocean biogeochemistry coupling is used and dust available from Classic or UKCA</td>";}
+            if ($n7 eq 7) {print FULLOUTFILE "<td>Coupled run with DMS ocean flux, but unconditionally excluded (redundant option)</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n8 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n8</td><td>Extra fields indicator</td><td>$n8</td>";
+            if ($n8 eq 1) {print FULLOUTFILE "<td>Item included only for SST anomaly runs</td>";}
+            if ($n8 eq 2) {print FULLOUTFILE "<td>Item included only if decoupled screen temperature is used</td>";}
+            if ($n8 eq 3) {print FULLOUTFILE "<td>Item included only if convective gustiness is used</td>";}
+            if ($n8 eq 4) {print FULLOUTFILE "<td>Item included only for total aerosol murk for visibility</td>";}
+            if ($n8 eq 5) {print FULLOUTFILE "<td>Item included only for total aerosol emission runs</td>";}
+            if ($n8 eq 6) {print FULLOUTFILE "<td>Item included only if snow albedo and JULES snow layers are used</td>";}
+            if ($n8 eq 7) {print FULLOUTFILE "<td>Item included only if tke closure scheme used</td>";}
+            if ($n8 eq 8) {print FULLOUTFILE "<td>Item included only if energy adjustment scheme (section 14) used</td>";}
+            if ($n8 eq 9) {print FULLOUTFILE "<td>Item included only if thunderstorm electric scheme (section 21) used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n10n9 ne '00') {
+            print  FULLOUTFILE "<tr><td align=right>n10n9</td><td>CLASSIC aerosol scheme indicator</td><td>$n10n9</td>";
+            if ($n10n9 eq '01') {print FULLOUTFILE "<td>Item included only for SO2 sulphur cycle</td>";}
+            if ($n10n9 eq '02') {print FULLOUTFILE "<td>Item included only for SO2 with surface emissions</td>";}
+            if ($n10n9 eq '03') {print FULLOUTFILE "<td>Item included only for SO2 with high level emissions</td>";}
+            if ($n10n9 eq '04') {print FULLOUTFILE "<td>Item included only for SO2 with natural emissions</td>";}
+            if ($n10n9 eq '05') {print FULLOUTFILE "<td>Item included only for SO2 with DMS cycle</td>";}
+            if ($n10n9 eq '06') {print FULLOUTFILE "<td>Item included only for SO2 with DMS cycle and emissions</td>";}
+            if ($n10n9 eq '07') {print FULLOUTFILE "<td>Item included for SO2 with O3 oxidation included and not using UKCA oxidants in S cycle</td>";}
+            if ($n10n9 eq '08') {print FULLOUTFILE "<td>Item included for SO2 with O3 oxidation and NH3 included</td>";}
+            if ($n10n9 eq '09') {print FULLOUTFILE "<td>Item included for SO2 with O3 oxidation and NH3 emissions</td>";}
+            if ($n10n9 eq '10') {print FULLOUTFILE "<td>Item included for SO2 sulphur cycle and not using UKCA oxidants in S cycle</td>";}
+            if ($n10n9 eq '11') {print FULLOUTFILE "<td>Item included for SO2 sulphur cycle with DMS cycle and emissions or if UKCA Aerosol chemistry is active</td>";}
+            if ($n10n9 eq '21') {print FULLOUTFILE "<td>Item included for soot scheme only</td>";}
+            if ($n10n9 eq '22') {print FULLOUTFILE "<td>Item included for soot scheme with surface emissions</td>";}
+            if ($n10n9 eq '23') {print FULLOUTFILE "<td>Item included for soot scheme with high level emissions</td>";}
+            if ($n10n9 eq '24') {print FULLOUTFILE "<td>Item included if biomass modelling set </td>";}
+            if ($n10n9 eq '25') {print FULLOUTFILE "<td>Item included if biomass with surface emission used </td>";}
+            if ($n10n9 eq '26') {print FULLOUTFILE "<td>Item included if biomass with elevated emissions used </td>";}
+            if ($n10n9 eq '27') {print FULLOUTFILE "<td>Item included if prognostic mineral dust scheme used </td> </td>";}
+            if ($n10n9 eq '28') {print FULLOUTFILE "<td>Item included if diagnosing mineral dust emissions </td> </td>";}
+            if ($n10n9 eq '31') {print FULLOUTFILE "<td>Item available only with Nitrate Aerosol scheme</td>";}
+            if ($n10n9 eq '35') {print FULLOUTFILE "<td>Included if fossil-fuel organic carbon modelling used</td>";}
+            if ($n10n9 eq '36') {print FULLOUTFILE "<td>Included if surface emissions OCFF used</td>";}
+            if ($n10n9 eq '37') {print FULLOUTFILE "<td>Included if elevated emissions OCFF used</td>";}
+            if ($n10n9 eq '38') {print FULLOUTFILE "<td>Item included only for 6-bin Dust Schemes</td> </td>";}
+            if ($n10n9 eq '39') {print FULLOUTFILE "<td>Included if var ht elevated emission biomass scheme used</td> </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n11 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n11</td><td>Vegetation parameterisation indicator</td><td>$n11</td>";
+            if ($n11 eq 1) {print FULLOUTFILE "<td>Item included only if direct vegetation parameterisation (no longer used)</td>";}
+            if ($n11 eq 2) {print FULLOUTFILE "<td>Item included only for fractional vegetation parameterisation</td>";}
+            if ($n11 eq 3) {print FULLOUTFILE "<td>Item included only for TRIFFID vegetation parameterisation</td>";}
+            if ($n11 eq 4) {print FULLOUTFILE "<td>Item included only for land surface albedo scaled to observations, albedos have no spectral variation</td>";}
+            if ($n11 eq 5) {print FULLOUTFILE "<td>Item included only for land surface albedo scaled to observations, albedos have a spectral variation</td>";}
+            if ($n11 eq 6) {print FULLOUTFILE "<td>Item included only for aggregated thermal roughness prognostic</td>";}
+            if ($n11 eq 7) {print FULLOUTFILE "<td>Item included only for bare soil momentum roughness length</td>";}
+            if ($n11 eq 8) {print FULLOUTFILE "<td>Item included only for TRIFFID vegetation and landuse prognostics</td>";}
+            if ($n11 eq 9) {print FULLOUTFILE "<td>Item included only for TRIFFID vegetation and Nitrogen schemes</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n12 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n12</td><td>Mixed phase precipitation</td><td>$n12</td>";
+            if ($n12 eq 3) {print FULLOUTFILE "<td>Item included as prognostic if mixed phase precip and prognostic cloud ice crystals are used</td>";}
+            if ($n12 eq 4) {print FULLOUTFILE "<td>Item included as prognostic if mixed phase precip and prognostic rain are used</td>";}
+            if ($n12 eq 5) {print FULLOUTFILE "<td>Item included as prognostic if mixed phase precip and prognostic graupel are used</td>";}
+            if ($n12 eq 6) {print FULLOUTFILE "<td>Item included as prognostic if PC2 cloud scheme is used</td>";}
+	    if ($n12 eq 7) {print FULLOUTFILE "<td>Item included as prognostic if Turbulent mixed phase cloud is used</td>";}
+            if ($n12 eq 8) {print FULLOUTFILE "<td>Item included as prognostic if CASIM microphysics is used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n13 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n13</td><td>Convective cloud scheme indicator</td><td>$n13</td>";
+            if ($n13 eq 1) {print FULLOUTFILE "<td>Item included only if Conv Cloud Amount is 2D (anvil code OFF)</td>";}
+            if ($n13 eq 2) {print FULLOUTFILE "<td>Item included only if Conv Cloud Amount is 3D (anvil code ON)</td>";}
+            if ($n13 eq 3) {print FULLOUTFILE "<td>Item included if CCRAD used</td>";}
+            if ($n13 eq 5) {print FULLOUTFILE "<td>Item included if convective history used</td>";}
+            if ($n13 eq 6) {print FULLOUTFILE "<td>Item included only if convection experimental 3D prognostics group 1 requested (development use only)</td>";}
+            if ($n13 eq 7) {print FULLOUTFILE "<td>Item included only if convection experimental 3D prognostics group 2 requested (development use only)</td>";}
+            if ($n13 eq 8) {print FULLOUTFILE "<td>Item included only if convection experimental 3D prognostics group 3 requested (development use only)</td>";}
+            if ($n13 eq 9) {print FULLOUTFILE "<td>Item included only if 3D prognostic field of recent convective precipitation used (development use only)</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n14 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n14</td><td>TRIFFID land-use indicator, separate or combined crop and pasture</td><td>$n14</td>";
+            if ($n14 eq 1) {print FULLOUTFILE "<td>Item included for separate crop and pasture fractions, L_TRIFFID,L_TRIF_CROP both true</td>";}
+            if ($n14 eq 2) {print FULLOUTFILE "<td>Item excluded if separate crop and pasture fractions used, included if combined fraction used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n15 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n15</td><td>Carbon cycle indicator</td><td>$n15</td>";
+            if ($n15 eq 3) {print FULLOUTFILE "<td>Item included only for carbon cycle</td>";}
+            print FULLOUTFILE "</tr>\n";
+            if ($n15 eq 4) {print FULLOUTFILE "<td>Item included if interactive carbon cycle used or ocean biogeochemistry coupling true</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }        
+
+        if ($n16 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n16</td><td>JULES surface exchange scheme indicator</td><td>$n16</td>";
+            if ($n16 eq 2) {print FULLOUTFILE "<td>Item included if multiple layer JULES snow scheme is used</td>";}
+            if ($n16 eq 3) {print FULLOUTFILE "<td>Item included if snow soot albedo effect is used</td>";}
+            if ($n16 eq 4) {print FULLOUTFILE "<td>Item included if URBAN-2T/MORUSES scheme is used</td>";}
+            if ($n16 eq 5) {print FULLOUTFILE "<td>Item included if FLake inland water model is used</td>";}
+            if ($n16 eq 6) {print FULLOUTFILE "<td>Item included if subsurface has elevated tiles for ice</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+        if ($n18 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n18</td><td>Coastal tiling, river routing, sea surface and sea-ice indicator</td><td>$n18</td>";
+            if ($n18 eq 1) {print FULLOUTFILE "<td>Item included only if coastal tiling scheme is used</td>";}
+            if ($n18 eq 2) {print FULLOUTFILE "<td>Item included if open sea albedo or GLOMAP primary marine aerosol uses variable chlorophyll content</td>";}
+            if ($n18 eq 3) {print FULLOUTFILE "<td>Item included if river-routing scheme is used </td>";}
+            if ($n18 eq 4) {print FULLOUTFILE "<td>Item included if inland basin flow scheme is used </td>";}
+            if ($n18 eq 6) {print FULLOUTFILE "<td>Item included if single sea ice category selected </td>";}
+            if ($n18 eq 7) {print FULLOUTFILE "<td>Item included if multiple sea-ice categories selected </td>";}
+            if ($n18 eq 8) {print FULLOUTFILE "<td>Item included if sea ice categories fully used </td>";}
+            if ($n18 eq 9) {print FULLOUTFILE "<td>Item included if multi-level sea ice scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n19 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n19</td><td>Tropopause based ozone indicator</td><td>$n19</td>";
+            if ($n19 eq 1) {print FULLOUTFILE "<td>Item included only for tropopause based ozone scheme</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n20 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n20</td><td>Thermal Vegetation Canopy, Sea-Ice and -Surface Indicator</td><td>$n20</td>";
+            if ($n20 eq 1) {print FULLOUTFILE "<td>Item included for snow canopy with JULES snow layers</td>";}
+            if ($n20 eq 2) {print FULLOUTFILE "<td>Item included if sea-ice meltponds are used in surface albedo calculation</td>";}
+            if ($n20 eq 3) {print FULLOUTFILE "<td>Item included if sea-surface freezing temperature is salinity-dependent</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n21 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n21</td><td>Separate Convective Cloud Amount Indicator</td><td>$n21</td>";
+            if ($n21 eq 1) {print FULLOUTFILE "<td>Item included if deep convection cloud amount is used </td>";}
+            if ($n21 eq 2) {print FULLOUTFILE "<td>Item included if mid-level convection cloud amount is used </td>";}
+            if ($n21 eq 3) {print FULLOUTFILE "<td>Item included if shallow convection cloud amount is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n22 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n22</td><td>CASIM Prognostic Microphysics Indicator</td><td>$n22</td>";
+            if ($n22 eq 1) {print FULLOUTFILE "<td>Item included if prognostic cloud number is used </td>";}
+            if ($n22 eq 2) {print FULLOUTFILE "<td>Item included if prognostic rain number is used </td>";}
+            if ($n22 eq 3) {print FULLOUTFILE "<td>Item included if prognostic rain 3rd moment is used </td>";}
+            if ($n22 eq 4) {print FULLOUTFILE "<td>Item included if prognostic ice number is used </td>";}
+            if ($n22 eq 5) {print FULLOUTFILE "<td>Item included if prognostic snow number is used </td>";}
+            if ($n22 eq 6) {print FULLOUTFILE "<td>Item included if prognostic snow 3rd moment is used </td>";}
+            if ($n22 eq 7) {print FULLOUTFILE "<td>Item included if prognostic graupel number is used </td>";}
+            if ($n22 eq 8) {print FULLOUTFILE "<td>Item included if prognostic graupel 3rd moment is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n23 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n23</td><td>CASIM Prognostic Microphysics Aerosol Indicator</td><td>$n23</td>";
+            if ($n23 eq 1) {print FULLOUTFILE "<td>Item included if prognostic soluble liquid is used </td>";}
+            if ($n23 eq 2) {print FULLOUTFILE "<td>Item included if prognostic soluble rain is used </td>";}
+            if ($n23 eq 3) {print FULLOUTFILE "<td>Item included if prognostic insoluble ice is used </td>";}
+            if ($n23 eq 4) {print FULLOUTFILE "<td>Item included if prognostic soluble ice is used </td>";}
+            if ($n23 eq 5) {print FULLOUTFILE "<td>Item included if prognostic insoluble liquid is used </td>";}
+            if ($n23 eq 6) {print FULLOUTFILE "<td>Item included if prognostic soluble number is used </td>";}
+            if ($n23 eq 7) {print FULLOUTFILE "<td>Item included if prognostic insoluble number is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n24 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n24</td><td>Dynamcical tracer prognostics Indicator</td><td>$n24</td>";
+            if ($n24 eq 1) {print FULLOUTFILE "<td>Item included if PV-tracers prognostics used </td>";}
+            if ($n24 eq 2) {print FULLOUTFILE "<td>Item included if PV-tracers for dynamical processes used </td>";}
+            if ($n24 eq 3) {print FULLOUTFILE "<td>Item included if PV-tracers for advection only used </td>";}
+            if ($n24 eq 4) {print FULLOUTFILE "<td>Item included if diabatic-tracer scheme is used </td>";}
+            if ($n24 eq 5) {print FULLOUTFILE "<td>Item included if BL split in diabatic-tracer scheme is used </td>";}
+            if ($n24 eq 6) {print FULLOUTFILE "<td>Item included if Radiation split in diabatic-tracer scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n25 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n25</td><td>Photosynthetically Active Radiation (PAR) Indicator</td><td>$n25</td>";
+            if ($n25 eq 3) {print FULLOUTFILE "<td>Item included if PAR (photochemically active radiation) increments used (not currently active) </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n26 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n26</td><td>Stochastic physics Indicator</td><td>$n26</td>";
+            if ($n26 eq 1) {print FULLOUTFILE "<td>Item included if BL perturbation scheme switched on </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n28 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n28</td><td>Cariolle Ozone Indicator</td><td>$n28</td>";
+            if ($n28 eq 1) {print FULLOUTFILE "<td>Item included if Cariolle ozone tracer transport and basic chemistry used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+        if ($n29 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n29</td><td>Grid-staggering dependent prognotics Indicator</td><td>$n29</td>"; 
+            if ($n29 eq 1) {print FULLOUTFILE "<td>Item excluded if C-grid staggering being used </td>";}
+            if ($n29 eq 2) {print FULLOUTFILE "<td>Item excluded if ENDGame staggering being used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+    } elsif ($Sectn eq 1) {
+        
+        if ($n1 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>Global model indicator</td><td>$n1</td>";
+            if ($n1 eq 1) {print FULLOUTFILE "<td>Item available only for global atmosphere</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n2 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n2</td><td>Cloud microphysics indicator</td><td>$n2</td>";  
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item available only if cloud microphysics used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n3 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n3</td><td>HadCM2 approximate radiative effects of sulphate indicator</td><td>$n3</td>";  
+            if ($n3 eq 1) {print FULLOUTFILE "<td>Item available only if HadCM2 approximate radiative effects of sulphate used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n4 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n4</td><td>Indirect effect of sulphate aerosol in SW radiation</td><td>$n4</td>";  
+            if ($n4 eq 1) {print FULLOUTFILE "<td>Item available only if indirect effect of Sulphate Aerosol in SW radiation requested</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n5 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n5</td><td>Effect of Sea-Salt parametrization in SW Radiation</td><td>$n5</td>";  
+            if ($n5 eq 1) {print FULLOUTFILE "<td>Item available only if direct or indirect effects of Sea-Salt in SW radiation requested</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>PC2 Cloud Scheme indicator</td><td>$n6</td>";  
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item available only if PC2 Cloud Scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n8 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n8</td><td>Sea-ice categories indicator</td><td>$n8</td>";
+            if ($n8 eq 1) {print FULLOUTFILE "<td>Item available only if nice usage on </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n9 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n9</td><td>EasyAerosol scheme indicator</td><td>$n9</td>";
+            if ($n9 eq 1) {print FULLOUTFILE "<td>Item available only if EasyAerosol-radiation interactions are being used in SW Radiation </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+    } elsif ($Sectn eq 2) {
+
+        if ($n1 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>Matching of ozone tropopause</td><td>$n1</td>";
+            if ($n1 eq 1) {print FULLOUTFILE "<td>Item available only if this option selected </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>PC2 Cloud Scheme indicator</td><td>$n6</td>";
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item available only if PC2 Cloud Scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n7 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n7</td><td>COSP diagnostics</td><td>$n7</td>";  
+            if ($n7 eq 1) {print FULLOUTFILE "<td>Item available only if COSP switched on </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n8 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n8</td><td>Sea-ice categories indicator</td><td>$n8</td>";
+            if ($n8 eq 1) {print FULLOUTFILE "<td>Item available only if nice usage on </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n9 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n9</td><td>EasyAerosol scheme indicator</td><td>$n9</td>";
+            if ($n9 eq 1) {print FULLOUTFILE "<td>Item available only if EasyAerosol-radiation interactions are being used in LW Radiation </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+    } elsif ($Sectn eq 3) {
+        
+        if ($n1 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>Orographic roughness indicator</td><td>$n1</td>";
+            if ($n1 eq 1) {print FULLOUTFILE "<td>Item available only if orographic roughness is used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n2 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n2</td><td>SO2 sulphur cycle / NH3 / Soot indicator</td><td>$n2</td>";
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item available only if SO2 sulphur cycle used</td>";}
+            if ($n2 eq 2) {print FULLOUTFILE "<td>Item available only if NH3 scheme used</td>";}
+            if ($n2 eq 3) {print FULLOUTFILE "<td>Item available only if Soot scheme used</td>";}
+            if ($n2 eq 4) {print FULLOUTFILE "<td>Item available only if biomass scheme used</td>";}
+            if ($n2 eq 5) {print FULLOUTFILE "<td>Item available only if mineral dust scheme used</td>";}
+            if ($n2 eq 6) {print FULLOUTFILE "<td>Item available if Fossil-Fuel Organic Carbon scheme is used</td>";}
+            if ($n2 eq 7) {print FULLOUTFILE "<td>Item available if Nitrate Aerosol scheme is used</td>";}
+            if ($n2 eq 8) {print FULLOUTFILE "<td>Item available if Dust scheme diagnostics are used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n3 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n3</td><td>Carbon cycle indicator</td><td>$n3</td>";
+            if ($n3 eq 1) {print FULLOUTFILE "<td>Item included only if carbon cycle used</td>";}     
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n4 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n4</td><td>Multiple sea-ice categories indicator</td><td>$n4</td>";
+            if ($n4 eq 1) {print FULLOUTFILE "<td>Item included only if multiple sea-ice categories selected</td>";}
+            if ($n4 eq 2) {print FULLOUTFILE "<td>Item included only if multiple sea-ice usage selected</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n5 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n5</td><td>Leonard term indicator</td><td>$n5</td>";
+            if ($n5 eq 1) {print FULLOUTFILE "<td>Item included only if Leonard turbulent flux terms are selected</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>PC2 Cloud Scheme indicator</td><td>$n6</td>";  
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item available only if PC2 cloud Scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n7 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n7</td><td>Dust Scheme Indicator</td><td>$n7</td>";  
+            if ($n7 eq 1) {print FULLOUTFILE "<td>Item available for 2 and 6 bin Dust Schemes </td>";}
+            if ($n7 eq 2) {print FULLOUTFILE "<td>Item available only for 6 bin Dust Schemes </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+    } elsif ($Sectn eq 4) {
+        
+        if ($n2 ne 0) {
+            print FULLOUTFILE "<tr><td align=right>n2</td><td>SO2 sulphur cycle / NH3 / Soot indicator</td><td>$n2</td>";
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item available only if SO2 sulphur cycle used</td>";}
+            if ($n2 eq 2) {print FULLOUTFILE "<td>Item available only if NH3 scheme used</td>";}
+            if ($n2 eq 3) {print FULLOUTFILE "<td>Item available only if soot scheme used</td>";}
+            if ($n2 eq 4) {print FULLOUTFILE "<td>Item available only if biomass scheme used</td>";}
+            if ($n2 eq 5) {print FULLOUTFILE "<td>Item available only if mineral dust scheme used</td>";}
+            if ($n2 eq 6) {print FULLOUTFILE "<td>Item available only if fossil-fuel organic carbon scheme is used</td>";}
+            if ($n2 eq 7) {print FULLOUTFILE "<td>Item available only if nitrate scheme is used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+	
+	if ($n5 ne 0) {
+            print FULLOUTFILE "<tr><td align=right>n5</td><td>Turbulent mixed phase scheme indicator</td><td>$n5</td>";
+            if ($n5 eq 0) {print FULLOUTFILE "<td>Item not dependent on turbulent mixed phase scheme</td>";}
+            if ($n5 eq 1) {print FULLOUTFILE "<td>Item available only if turbulent mixed phase scheme is used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>PC2 Cloud Scheme indicator</td><td>$n6</td>";  
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item available only if PC2 cloud Scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n7 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n7</td><td>Mineral Dust Scheme Indicator</td><td>$n7</td>";  
+            if ($n7 eq 1) {print FULLOUTFILE "<td>Item available for 2 and 6 bin Dust Schemes</td> </td>";}
+            if ($n7 eq 2) {print FULLOUTFILE "<td>Item available only for 6 bin Dust Schemes</td> </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n8 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n8</td><td>Cloud AeroSol Interaction Microphysics Scheme indicator</td><td>$n8</td>";
+            if ($n8 eq 1) {print FULLOUTFILE "<td>Item available only if CASIM Scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n9 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n9</td><td>Microphysics prognostic variable Indicator</td><td>$n9</td>";
+            if ($n9 eq 1) {print FULLOUTFILE "<td>Item available if prognostic graupel in use </td>";}
+            if ($n9 eq 2) {print FULLOUTFILE "<td>Item available if prognostic rain in use </td>";}
+            if ($n9 eq 3) {print FULLOUTFILE "<td>Item available if prognostic for second ice (crystals) in use </td>";}
+            if ($n9 eq 4) {print FULLOUTFILE "<td>Item available if prognostic for second ice crystals in use or generic ice particle size distrn not in use </td>";}
+            if ($n9 eq 5) {print FULLOUTFILE "<td>Item available if seeder feeder orographic precipitation scheme in use </td>";}
+            if ($n9 eq 6) {print FULLOUTFILE "<td>Item available if riming enhancement in seeder feeder scheme in use </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+    } elsif ($Sectn eq 5) {
+        
+        if ($n2 ne 0) {
+            print FULLOUTFILE "<tr><td align=right>n2</td><td>SO2 sulphur cycle / NH3 / Soot indicator</td><td>$n2</td>";
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item available only if SO2 sulphur cycle used</td>";}
+            if ($n2 eq 2) {print FULLOUTFILE "<td>Item available only if NH3 scheme used</td>";}
+            if ($n2 eq 3) {print FULLOUTFILE "<td>Item available only if soot scheme used</td>";}
+            if ($n2 eq 4) {print FULLOUTFILE "<td>Item available only if biomass scheme used</td>";}
+            if ($n2 eq 5) {print FULLOUTFILE "<td>Item available only if mineral dust scheme used</td>";}
+            if ($n2 eq 6) {print FULLOUTFILE "<td>Item available if fossil-fuel organic carbon scheme is used</td>";}
+            if ($n2 eq 7) {print FULLOUTFILE "<td>Item available only if ammonium nitrate scheme used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n3 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n3</td><td>2D or 3D convective cloud amount indicator</td><td>$n3</td>";
+            if ($n3 eq 1) {print FULLOUTFILE "<td>Item included only if CCA is 2D (anvil code OFF)</td>";}
+            if ($n3 eq 2) {print FULLOUTFILE "<td>Item included only if CCA is 3D (anvil code ON)</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n4 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n4</td><td>Indicator to allow whole convection scheme to be switched off</td><td>$n4</td>";  
+            if ($n4 eq 1) {print FULLOUTFILE "<td>Item remains available if convection section included, but convection option switched off</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>PC2 Cloud Scheme indicator</td><td>$n6</td>";  
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item available only if PC2 cloud Scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n7 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n7</td><td>Mineral Dust Scheme Indicator</td><td>$n7</td>";  
+            if ($n7 eq 1) {print FULLOUTFILE "<td>Item available for 2 and 6 bin Dust Schemes </td>";}
+            if ($n7 eq 2) {print FULLOUTFILE "<td>Item available only for 6 bin Dust Schemes </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+    } elsif ($Sectn eq 6) {
+
+        if ($n2 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n2</td><td>Orographic Drag scheme indicator </td><td>$n2</td>";  
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item available if orographic drag scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n3 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n3</td><td>Spectral gravity wave scheme indicator</td><td>$n3</td>";  
+            if ($n3 eq 1) {print FULLOUTFILE "<td>Item available if spectral gravity wave scheme is used</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+
+    } elsif ($Sectn eq 7) {
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 8) {
+
+        if ($n1 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>Large scale (TOPMODEL) hydrology scheme indicator </td><td>$n1</td>";
+            if ($n1 eq 1) {print FULLOUTFILE "<td>Item available if TOPMODEL hydrology scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+        if ($n22 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n22</td><td>River routing diagnostics indicator </td><td>$n22</td>";
+            if ($n22 eq 1) {print FULLOUTFILE "<td>Item available if river routing scheme is used </td>";}
+            if ($n22 eq 2) {print FULLOUTFILE "<td>Item available if inland basin flow scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+    } elsif ($Sectn eq 9) {
+        
+        if ($n2 ne 0) {
+            print FULLOUTFILE "<tr><td align=right>n2</td><td>Cloud area parametrization indicator</td><td>$n2</td>";
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item available only if cloud area parametrization used</td>";}   
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n3 ne 0) {
+            print FULLOUTFILE "<tr><td align=right>n3</td><td>RHcrit parametrization indicator</td><td>$n3</td>";
+            if ($n3 eq 1) {print FULLOUTFILE "<td>Item available only if RHcrit parametrization used</td>";}   
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>PC2 Cloud Scheme indicator</td><td>$n6</td>";  
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item available only if PC2 cloud Scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+        
+    } elsif ($Sectn eq 10) {
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 11) {
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 12) {
+
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>PC2 Cloud Scheme indicator</td><td>$n6</td>";  
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item available only if PC2 cloud Scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+
+    } elsif ($Sectn eq 13) {
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 14) {
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 15) {
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 16) {
+        
+        if (($n1 ne 0) || ($n2 ne 0)) {
+            print FULLOUTFILE "<tr><td align=right>n2n1</td><td>Tracer Number</td><td>$n2$n1</td>";
+            print FULLOUTFILE "<td>Item included only if the $n2$n1 tracer switch is set</td></tr>\n";
+        }
+
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>PC2 Cloud Scheme indicator</td><td>$n6</td>";  
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item available only if PC2 cloud Scheme is used </td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+        
+    } elsif ($Sectn eq 17) {
+        
+        if ($n1 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>CLASSIC Aerosol scheme indicator</td><td>$n1</td>";
+            if ($n1 eq 1) {print FULLOUTFILE "<td>Item included only for sulphur cycle</td>";}
+            if ($n1 eq 2) {print FULLOUTFILE "<td>Item included only for soot scheme</td>";}
+            if ($n1 eq 3) {print FULLOUTFILE "<td>Item included only for biomass scheme</td>";}
+            if ($n1 eq 4) {print FULLOUTFILE "<td>Item included only for dust scheme</td>";}
+            if ($n1 eq 5) {print FULLOUTFILE "<td>Item included only for OCFF scheme</td>";}
+            if ($n1 eq 6) {print FULLOUTFILE "<td>Item included only for biogenic model</td>";}
+            if ($n1 eq 7) {print FULLOUTFILE "<td>Item included only for sea salt scheme</td>";}
+            if ($n1 eq 8) {print FULLOUTFILE "<td>Item included only for nitrate scheme</td>";}
+            if ($n1 eq 9) {print FULLOUTFILE "<td>Item included for any aerosol scheme</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n2 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n2</td><td>Sulphur cycle options indicator</td><td>$n2</td>";
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item included only if DMS included</td>";}
+            if ($n2 eq 2) {print FULLOUTFILE "<td>Item included only if O3 oxidation included</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+    } elsif ($Sectn eq 18) {
+        
+        if ($n1 eq 1) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>Non-prognostic IAU increment indicator</td><td>$n1</td>";
+            print FULLOUTFILE "<td>Item will be searched for in IAU increments file</td>";
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+        
+    } elsif ($Sectn eq 19) {
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 21) {
+
+        if ($n2 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n2</td><td>Thunderstorm Electrification scheme indicator</td><td>$n2</td>";
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item included for McCaul et al (2009) lightning scheme</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 26) {
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+        if ($n22 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n22</td><td>River routing diagnostics indicator</td><td>$n22</td>";
+            if ($n22 eq 1) {print FULLOUTFILE "<td>Item included only for river routing scheme</td>";}
+            if ($n22 eq 2) {print FULLOUTFILE "<td>Item included only for inland basin flow scheme</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+    } elsif ($Sectn eq 30) {
+
+        if ($n1 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>Validity indicator for FV-TRACK diagnostics</td><td>$n1</td>";
+            if ($n1 eq 1) {print FULLOUTFILE "<td>Item available only in global models</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }  
+
+        if ($n15 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n15</td><td>Carbon cycle indicator</td><td>$n15</td>";
+            if ($n15 eq 3) {print FULLOUTFILE "<td>Item included for carbon cycle</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 33) {
+
+        if (($n1 ne 0) || ($n2 ne 0) || ($n3 ne 0)) {
+            print FULLOUTFILE "<tr><td align=right>n3n2n1</td><td>Tracer Number</td><td>$n3$n2$n1</td>";
+            print FULLOUTFILE "<td>Item included only if the $n3$n2$n1 tracer switch is set</td></tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif (($Sectn eq 34) || ($Sectn eq 50) || ($Sectn eq 51) || ($Sectn eq 52)) {
+        if ($n30 eq 0) {
+            print  FULLOUTFILE "<tr><td align=right>n30</td><td>UKCA Chemistry Scheme Setup Indicator</td><td>$n30</td>";
+            print FULLOUTFILE "</tr>\n";   
+            if ($n1 ne 0) {
+                print FULLOUTFILE "<tr><td align=right>n1</td><td>Age of Air Scheme Indicator </td><td>$n1</td>";
+                if ($n1 eq 1) {print FULLOUTFILE "<td>Item included for Age of Air Scheme </td>";}
+                print FULLOUTFILE "</tr>\n";   
+            }
+            
+            if ($n2 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n2</td><td>Standard Tropospheric (BE) Scheme Indicator</td><td>$n2</td>";
+                if ($n2 eq 1) {print FULLOUTFILE "<td>Item is available for BE Tropospheric</td>";}
+                if ($n2 eq 2) {print FULLOUTFILE "<td>Item is available when using extension to chemistry for aerosol modelling</td>";}
+                if ($n2 eq 3) {print FULLOUTFILE "<td>Currently unavailable - should not be used</td>";}
+                if ($n2 eq 4) {print FULLOUTFILE "<td>Item is available when photolysis is turned ON</td>";}
+                if ($n2 eq 5) {print FULLOUTFILE "<td>Item is available when water vapour feedback is turned ON</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+            
+            if ($n3 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n3</td><td>BE Regional Air Quality Scheme Indicator</td><td>$n3</td>";
+                if ($n3 eq 1) {print FULLOUTFILE "<td>Item is available for BE RAQ </td>";}
+                if ($n3 eq 2) {print FULLOUTFILE "<td>Item is available when using extension to chemistry for aerosol modelling</td>";}
+                if ($n3 eq 3) {print FULLOUTFILE "<td>Currently unavailable - should not be used</td>";}
+                if ($n3 eq 4) {print FULLOUTFILE "<td>Item is available when photolysis is turned ON</td>";}
+                if ($n3 eq 5) {print FULLOUTFILE "<td>Item is available when water vapour feedback is turned ON</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+
+            if ($n4 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n4</td><td>NR Tropospheric + Isoprene Scheme Indicator</td><td>$n4</td>";
+                if ($n4 eq 1) {print FULLOUTFILE "<td>Item is available for NR TropIsop </td>";}
+                if ($n4 eq 2) {print FULLOUTFILE "<td>Item is available when using extension to chemistry for aerosol modelling</td>";}
+                if ($n4 eq 3) {print FULLOUTFILE "<td>Currently unavailable - should not be used</td>";}
+                if ($n4 eq 4) {print FULLOUTFILE "<td>Item is available when photolysis is turned ON</td>";}
+                if ($n4 eq 5) {print FULLOUTFILE "<td>Item is available when water vapour feedback is turned ON</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+            
+            if ($n5 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n5</td><td>NR Stratospheric-Tropospheric Scheme Indicator</td><td>$n5</td>";
+                if ($n5 eq 1) {print FULLOUTFILE "<td>Item is available for NR StratTrop </td>";}
+                if ($n5 eq 2) {print FULLOUTFILE "<td>Item is available when using extension to chemistry for aerosol modelling</td>";}
+                if ($n5 eq 3) {print FULLOUTFILE "<td>Currently unavailable - should not be used</td>";}
+                if ($n5 eq 4) {print FULLOUTFILE "<td>Item is available when photolysis is turned ON</td>";}
+                if ($n5 eq 5) {print FULLOUTFILE "<td>Item is available when water vapour feedback is turned ON</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+
+            if ($n6 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n6</td><td>NR Stratospheric Scheme Indicator</td><td>$n6</td>";
+                if ($n6 eq 1) {print FULLOUTFILE "<td>Item is available for NR Strat </td>";}
+                if ($n6 eq 2) {print FULLOUTFILE "<td>Item is available when using extension to chemistry for aerosol modelling</td>";}
+                if ($n6 eq 3) {print FULLOUTFILE "<td>Currently unavailable - should not be used</td>";}
+                if ($n6 eq 4) {print FULLOUTFILE "<td>Item is available when photolysis is turned ON</td>";}
+                if ($n6 eq 5) {print FULLOUTFILE "<td>Item is available when water vapour feedback is turned ON</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+
+            if ($n7 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n7</td><td>NR Offline oxidants chemistry Scheme Indicator</td><td>$n7</td>";
+                if ($n7 eq 1) {print FULLOUTFILE "<td>Item is available for NR Offline </td>";}
+                if ($n7 eq 2) {print FULLOUTFILE "<td>Item is available when using extension to chemistry for aerosol modelling</td>";}
+                if ($n7 eq 3) {print FULLOUTFILE "<td>Currently unavailable - should not be used</td>";}
+                if ($n7 eq 4) {print FULLOUTFILE "<td>Item is available when photolysis is turned ON</td>";}
+                if ($n7 eq 5) {print FULLOUTFILE "<td>Item is available when water vapour feedback is turned ON</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+
+            if ($n8 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n8</td><td>BE Offline oxidants chemistry Scheme Indicator</td><td>$n8</td>";
+                if ($n8 eq 1) {print FULLOUTFILE "<td>Item is available for BE Offline </td>";}
+                if ($n8 eq 2) {print FULLOUTFILE "<td>Item is available when using extension to hemistry for aerosol modelling</td>";}
+                if ($n8 eq 3) {print FULLOUTFILE "<td>Currently unavailable - should not be used</td>";}
+                if ($n8 eq 4) {print FULLOUTFILE "<td>Item is available when photolysis is turned ON</td>";}
+                if ($n8 eq 5) {print FULLOUTFILE "<td>Item is available when water vapour feedback is turned ON</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+
+        } elsif ($n30 eq 1) {
+            print  FULLOUTFILE "<tr><td align=right>n30</td><td>GLOMAP-Mode Aerosol Scheme Setup Indicator</td><td>$n30</td>";
+            print FULLOUTFILE "</tr>\n";
+            if ($n1 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n1</td><td>Sulphate and sea-salt components in 4 soluble modes indicator</td><td>$n1</td>";
+                if ($n1 eq 1) {print FULLOUTFILE "<td>Item is available </td>";}
+                if ($n1 eq 2) {print FULLOUTFILE "<td>Item is available if tropospheric heterogeneous chemistry is on</td>";}
+                if ($n1 eq 3) {print FULLOUTFILE "<td>Item is available if ACTIVATE is on</td>";}
+                if ($n1 eq 4) {print FULLOUTFILE "<td>Item is available if aie1 or aie2 or ACTIVATE is on</td>";}
+                if ($n1 eq 5) {print FULLOUTFILE "<td>Item is available if RADAER is on for ukca</td>";}
+                print FULLOUTFILE "</tr>\n";   
+            }  
+            if ($n2 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n2</td><td>Sulphate, sea-salt, black carbon (BC), & organic carbon (OC) components in 4 soluble modes and 1 insoluble mode indicator</td><td>$n2</td>";
+                if ($n2 eq 1) {print FULLOUTFILE "<td>Item is available </td>";}
+                if ($n2 eq 2) {print FULLOUTFILE "<td>Item is available if tropospheric heterogeneous chemistry is on</td>";}
+                if ($n2 eq 3) {print FULLOUTFILE "<td>Item is available if ACTIVATE is on</td>";}
+                if ($n2 eq 4) {print FULLOUTFILE "<td>Item is available if aie1 or aie2 or ACTIVATE is on</td>";}
+                if ($n2 eq 5) {print FULLOUTFILE "<td>Item is available if RADAER is on for ukca</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+            if ($n6 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n6</td><td>Dust (DU) only components in 2 insoluble modes indicator</td><td>$n6</td>";
+                if ($n6 eq 1) {print FULLOUTFILE "<td>Item is available </td>";}
+                if ($n6 eq 2) {print FULLOUTFILE "<td>Item is available if tropospheric heterogeneous chemistry is on</td>";}
+                if ($n6 eq 3) {print FULLOUTFILE "<td>Item is available if ACTIVATE is on</td>";}
+                if ($n6 eq 4) {print FULLOUTFILE "<td>Item is available if aie1 or aie2 or ACTIVATE is on</td>";}
+                if ($n6 eq 5) {print FULLOUTFILE "<td>Item is available if RADAER is on for ukca</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+            if ($n8 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n8</td><td>Sulphate, sea-salt, black carbon (BC), organic carbon (OC) & Dust (DU) components in 4 soluble modes and 3 insoluble mode indicator</td><td>$n8</td>";
+                if ($n8 eq 1) {print FULLOUTFILE "<td>Item is available </td>";}
+                if ($n8 eq 2) {print FULLOUTFILE "<td>Item is available if tropospheric heterogeneous chemistry is on</td>";}
+                if ($n8 eq 3) {print FULLOUTFILE "<td>Item is available if ACTIVATE is on</td>";}
+                if ($n8 eq 4) {print FULLOUTFILE "<td>Item is available if aie1 or aie2 or ACTIVATE is on</td>";}
+                if ($n8 eq 5) {print FULLOUTFILE "<td>Item is available if RADAER is on for ukca</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+            if ($n10 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n10</td><td>Development only - Sulphate, sea-salt, black carbon, organic carbon, nitrate & ammonium components in 4 soluble modes and 1 insoluble mode indicator</td><td>$n10</td>";
+                if ($n10 eq 1) {print FULLOUTFILE "<td>Item is available </td>";}
+                if ($n10 eq 2) {print FULLOUTFILE "<td>Item is available if tropospheric heterogeneous chemistry is on</td>";}
+                if ($n10 eq 3) {print FULLOUTFILE "<td>Item is available if ACTIVATE is on</td>";}
+                if ($n10 eq 4) {print FULLOUTFILE "<td>Item is available if aie1 or aie2 or ACTIVATE is on</td>";}
+                if ($n10 eq 5) {print FULLOUTFILE "<td>Item is available if RADAER is on for ukca</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+        }
+
+    } elsif ($Sectn eq 35) {
+
+	if ($n1 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>Stochastic physics scheme indicator</td><td>$n1</td>";
+            if ($n1 eq 1) {print FULLOUTFILE "<td>Item included for Stochastic Kinetic Energy Backscatter v2 (SKEB2) scheme</td>";}
+            if ($n1 eq 2) {print FULLOUTFILE "<td>Item included for Stochastic Parametrization of Tendencies (SPT) scheme</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n17 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n17</td><td>VAR reconfiguration indicator</td><td>$n17</td>";
+            if ($n17 eq 1) {print FULLOUTFILE "<td>Item included for VAR reconfiguration</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }          
+
+    } elsif ($Sectn eq 36) {
+
+        if (($n1 ne 0) || ($n2 ne 0) || ($n3 ne 0)) {
+            print FULLOUTFILE "<tr><td align=right>n3n2n1</td><td>Free Tracer Number</td><td>$n3$n2$n1</td>";
+            print FULLOUTFILE "<td>LBCs included only if this $n3$n2$n1 tracer switch is set</td></tr>\n";
+        }
+
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>Free tracer LBC updating indicator</td><td>$n6</td>";
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item included only in limited area models</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+    } elsif ($Sectn eq 37) {
+
+        if (($n1 ne 0) || ($n2 ne 0) || ($n3 ne 0)) {
+            print FULLOUTFILE "<tr><td align=right>n3n2n1</td><td>UKCA Tracer Number</td><td>$n3$n2$n1</td>";
+            print FULLOUTFILE "<td>LBCs included only if this $n3$n2$n1 tracer switch is set</td></tr>\n";
+        }
+
+        if ($n6 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n6</td><td>UKCA tracer LBC updating indicator</td><td>$n6</td>";
+            if ($n6 eq 1) {print FULLOUTFILE "<td>Item included only in limited area models</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+    } elsif ($Sectn eq 54) {
+
+        if ($n30 eq 1) {
+            print  FULLOUTFILE "<tr><td align=right>n30</td><td>GLOMAP-Mode NWP Climatology prognostics Indicator</td><td>$n30</td>";
+            print FULLOUTFILE "</tr>\n";
+            if ($n2 ne 0) {
+                print  FULLOUTFILE "<tr><td align=right>n2</td><td>Sulphate, sea-salt, organic carbon, black carbon components 5 mode Indicator</td><td>$n2</td>";
+                if ($n2 eq 1) {print FULLOUTFILE "<td>Items available if i_glomap_clim_setup=2 represent SUSSOCBC_5mode</td>";}
+                if ($n2 eq 5) {print FULLOUTFILE "<td>Items available if l_glomap_clim_radaer is true, (for this choice of i\_glomap\_clim\_setup)</td>";}
+                print FULLOUTFILE "</tr>\n";
+            }
+        }
+
+    } elsif ($Sectn eq 55) {
+
+        if ($n1 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>Birch tree pollen scheme indicator</td><td>$n1</td>";
+            if ($n1 eq 1) {print FULLOUTFILE "<td>Item included for birch pollen scheme</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+        if ($n2 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n2</td><td>Olive tree pollen scheme indicator</td><td>$n2</td>";
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item included for olive pollen scheme</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+
+    } elsif (($Sectn eq 40) && ($Model eq 3)) {
+        
+        if ($n1 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n1</td><td>Slab calibration indicator</td><td>$n1</td>";
+            if ($n1 eq 1) {print FULLOUTFILE "<td>Item only available for slab calibration runs</td>";}
+            if ($n1 eq 2) {print FULLOUTFILE "<td>Item only available for slab non-calibration runs</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n2 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n2</td><td>Slab calibration indicator</td><td>$n2</td>";
+            if ($n2 eq 1) {print FULLOUTFILE "<td>Item available only for ice advection of cavitating fluid model</td>";}
+            if ($n2 eq 2) {print FULLOUTFILE "<td>Item available only for ice advection model</td>";}
+            if ($n2 eq 3) {print FULLOUTFILE "<td>Item available only for cavitating fluid model</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }
+        
+        if ($n3 ne 0) {
+            print  FULLOUTFILE "<tr><td align=right>n3</td><td>Ice thermodynamics indicator</td><td>$n3</td>";
+            if ($n3 eq 1) {print FULLOUTFILE "<td>Item available only for ice thermodynamics model</td>";}
+            print FULLOUTFILE "</tr>\n";
+        }      
+        
+    } # Section
+
+
+
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#VersionMask','help_pop','scrollbars,resizable,width=400,height=400')\">Version Mask</a></td>";
+    print FULLOUTFILE "<td>Version mask</td>";
+    print FULLOUTFILE "<td nowrap>$Version_Mask</td>";
+    print FULLOUTFILE "<td>Available to the following versions of section $Sectn:<br>";
+    $firstvn=1;
+    for ($pos=19 ; $pos > -1 ; $pos--) {
+        $version=20-$pos;
+        $string=substr($Version_Mask,$pos,1);
+        if ($string ne 0) {
+            if ($firstvn ne 1) {print FULLOUTFILE ", ";}
+            $firstvn=0;
+            print FULLOUTFILE "Version $version";
+        }
+    }
+    print FULLOUTFILE "</td></tr>\n";
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Halo','help_pop','scrollbars,resizable,width=400,height=400')\">Halo</a></td>";
+    print FULLOUTFILE "<td>Halo code</td>";
+    print FULLOUTFILE "<td>$Halo</td>";
+    print FULLOUTFILE "<td>$Halo_text[$Halo]</td>";
+    print FULLOUTFILE "</tr>\n";    
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#DataT','help_pop','scrollbars,resizable,width=400,height=400')\">DataT</a></td>";
+    print FULLOUTFILE "<td>Data type code</td>";
+    print FULLOUTFILE "<td>$DataT</td>";
+    print FULLOUTFILE "<td>$DataT_text[$DataT]</td>";
+    print FULLOUTFILE "</tr>\n";    
+    
+    $lbpack="0" x (5-length($DumpP)) . $DumpP;
+    $n5=substr($lbpack,0,1);
+    $n4=substr($lbpack,1,1);
+    $n3=substr($lbpack,2,1);
+    $n2=substr($lbpack,3,1);
+    $n1=substr($lbpack,4,1);
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#DumpP','help_pop','scrollbars,resizable,width=400,height=400')\">DumpP</a></td>";
+    print FULLOUTFILE "<td>Dump packing code</td>";
+    print FULLOUTFILE "<td>$DumpP</td><td>";
+    if ($n1 eq 0) {print FULLOUTFILE "No packing, ";}
+    if ($n1 eq 1) {print FULLOUTFILE "WGDOS packing, ";}
+    if ($n1 eq 2) {print FULLOUTFILE "32bit packing, ";}
+    if ($n1 eq 3) {print FULLOUTFILE "GRIB packing (retired), ";}
+    if ($n2 eq 0) {print FULLOUTFILE "No compression, ";}
+    if ($n2 eq 1) {print FULLOUTFILE "Compressed using group $n3 field index array, ";}
+    if ($n2 eq 2) {
+        if ($n3 eq 1) {print FULLOUTFILE "Compressed using land mask, ";}
+        if ($n3 eq 2) {print FULLOUTFILE "Compressed using sea mask, ";}
+    }
+    print FULLOUTFILE "Stored in ";
+    if ($n4 eq 0) {print FULLOUTFILE "native machine format.";}
+    if ($n4 eq 1) {print FULLOUTFILE "IBM format.";}
+    if ($n4 eq 2) {print FULLOUTFILE "CRAY format.";}
+    if ($n4 eq 3) {print FULLOUTFILE "IEEE format.";}
+    if ($n4 eq 4) {print FULLOUTFILE "GRIB format (retired).";}
+    if ($n4 eq 5) {print FULLOUTFILE "VAX format (obsolete).";}
+    print FULLOUTFILE "</td></tr>\n";
+
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PCn','help_pop','scrollbars,resizable,width=400,height=400')\">PCn</a></td>";
+    print FULLOUTFILE "<td>Packing accuracy codes</td>";
+    print FULLOUTFILE "<td>@PCn</td>";
+    print FULLOUTFILE "<td>Available Packing Profiles:<br>";
+    $pack_count=0;
+    for ($i=0 ; $i<@PCn ; $i++) {
+        $index=$i+1;
+        if ($index eq 10) {$index="a"}
+        if ($PCn[$i] ne -99) {
+            $pack_count++;
+            if ($PCn[$i] lt 0) {
+                $neg=-1*$PCn[$i];         
+                print FULLOUTFILE "PC$index"," : WGDOS packing to accuracy 2**$neg<br>";
+            } else {
+                print FULLOUTFILE "PC$index"," : GRIB packing, difference stored in $PCn[$i] bits (retired)<br>";
+            }
+        }      
+    }
+    if ($pack_count eq 0) {print FULLOUTFILE "None<br>";}
+    print FULLOUTFILE "</td></tr>\n";
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Rotate','help_pop','scrollbars,resizable,width=400,height=400')\">Rotate</a></td>";
+    print FULLOUTFILE "<td>Rotation code</td>";
+    print FULLOUTFILE "<td>$Rotate</td>";
+    print FULLOUTFILE "<td>$Rotate_text[$Rotate]</td>";
+    print FULLOUTFILE "</tr>\n";
+
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PPFC','help_pop','scrollbars,resizable,width=400,height=400')\">PPFC</a></td>";
+    print FULLOUTFILE "<td>PP field code</td>";
+    print FULLOUTFILE "<td>$PPFC</td>";
+    print FULLOUTFILE "<td>Defined in PP package document and UMDP C04</td>";
+    print FULLOUTFILE "</tr>\n";        
+
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#USER','help_pop','scrollbars,resizable,width=400,height=400')\">USER</a></td>";
+    print FULLOUTFILE "<td>Not used</td>";
+    print FULLOUTFILE "<td>$USER</td>";
+    print FULLOUTFILE "<td>Not used</td>";
+    print FULLOUTFILE "</tr>\n";            
+
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LBVC','help_pop','scrollbars,resizable,width=400,height=400')\">LBVC</a></td>";
+    print FULLOUTFILE "<td>PP vertical coordinate code</td>";
+    print FULLOUTFILE "<td>$LBVC</td>";
+    print FULLOUTFILE "<td>Defined in PP package document and UMDPs C04,F03</td>";
+    print FULLOUTFILE "</tr>\n";            
+
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#BLEV','help_pop','scrollbars,resizable,width=400,height=400')\">BLEV</a></td>";
+    print FULLOUTFILE "<td>Base level reference code</td>";
+    print FULLOUTFILE "<td>$BLEV</td>";
+    print FULLOUTFILE "<td>Not used</td>";
+    print FULLOUTFILE "</tr>\n";            
+
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#TLEV','help_pop','scrollbars,resizable,width=400,height=400')\">TLEV</a></td>";
+    print FULLOUTFILE "<td>Top level reference code</td>";
+    print FULLOUTFILE "<td>$TLEV</td>";
+    print FULLOUTFILE "<td>Not used</td>";
+    print FULLOUTFILE "</tr>\n";
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#RBLEVV','help_pop','scrollbars,resizable,width=400,height=400')\">RBLEVV</a></td>";
+    print FULLOUTFILE "<td>Not Used</td>";
+    print FULLOUTFILE "<td>$RBLEVV</td>";
+    print FULLOUTFILE "<td>Defined in PP package document by ref_lbvc=LBRVC</td>";
+    print FULLOUTFILE "</tr>\n"; 
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#CFLL','help_pop','scrollbars,resizable,width=400,height=400')\">CFLL</a></td>";
+    print FULLOUTFILE "<td>CF level code (Historical)</td>";
+    print FULLOUTFILE "<td>$CFLL</td>";
+    print FULLOUTFILE "<td>Historical CF level code</td>";
+    print FULLOUTFILE "</tr>\n";     
+    
+    print FULLOUTFILE "<tr>";
+    print FULLOUTFILE "<td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#CFFF','help_pop','scrollbars,resizable,width=400,height=400')\">CFFF</a></td>";
+    print FULLOUTFILE "<td>CF field code (Historical)</td>";
+    print FULLOUTFILE "<td>$CFFF</td>";
+    print FULLOUTFILE "<td>Historical CF field code</td>";
+    print FULLOUTFILE "</tr>\n";     
+    
+    print FULLOUTFILE "</table>\n<p>\n";
+    
+    print FULLOUTFILE "<p><table align=center cellpadding=5 bgcolor=silver>\n";
+    print FULLOUTFILE "<tr><td><a href=$fullout_root$previous_record",".","$html_ext",">\<--Previous--</a></td>";
+    print FULLOUTFILE "<td><a href=$LITEOUTFILE>--Less Detail--</a></td>";
+    print FULLOUTFILE "<td><a href=$fullout_root$next_record",".","$html_ext",">--Next--\></a></td></tr>\n";   
+    print FULLOUTFILE "<tr><td></td><td><a href=\"javascript:var tmp=window.open('guide.$html_ext','help_pop','scrollbars,resizable,width=400,height=600')\">Help Guide</a></td></tr>";
+    print FULLOUTFILE "</table><p>\n";
+    
+    print LITEOUTFILE "<head><style type=text/css>a{text-decoration:none;}</style></head>\n";
+    print LITEOUTFILE "<body bgcolor=white text=navy link=black vlink=black alink=black>\n";
+    print LITEOUTFILE "<font face=helvitica>\n";
+    
+    print LITEOUTFILE "<p><table align=center cellpadding=5 bgcolor=silver>\n";
+    print LITEOUTFILE "<tr><td><a href=$liteout_root$previous_record",".","$html_ext",">\<--Previous--</a></td>";
+    print LITEOUTFILE "<td><a href=$FULLOUTFILE>--More Detail--</a></td>";
+    print LITEOUTFILE "<td><a href=$liteout_root$next_record",".","$html_ext",">--Next--\></a></td></tr></table><p>\n";
+    
+    print LITEOUTFILE "<table align=center cellpadding=5>\n";    
+    print LITEOUTFILE "<tr bgcolor=darkseagreen><td colspan=2 nowrap align=center><font size=6>Section $Sectn, Item $Item ($Model_text[$Model] Model)</font></td><td></td></tr>\n";
+    print LITEOUTFILE "<tr>";
+    print LITEOUTFILE "<td bgcolor=cornflowerblue colspan=2 align=center><font color=white size=3><b>$Name</b></font></td>";
+    print LITEOUTFILE "</tr>\n<tr>";
+    print LITEOUTFILE "<td><table bgcolor=silver cellpadding=5>\n";
+    print LITEOUTFILE "<tr><td align=left><b>Symbol</b></td><td align=left><b>Value</td></tr>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Space','help_pop','scrollbars,resizable,width=400,height=400')\">Space</a></td><td>$Space</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Point','help_pop','scrollbars,resizable,width=400,height=400')\">Point</a></td><td>$Point</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Time','help_pop','scrollbars,resizable,width=400,height=400')\">Time</a></td><td>$Time</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Grid','help_pop','scrollbars,resizable,width=400,height=400')\">Grid</a></td><td>$Grid</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LevelT','help_pop','scrollbars,resizable,width=400,height=400')\">LevelT</a></td><td>$LevelT</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LevelF','help_pop','scrollbars,resizable,width=400,height=400')\">LevelF</a></td><td>$LevelF</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LevelL','help_pop','scrollbars,resizable,width=400,height=400')\">LevelL</a></td><td>$LevelL</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PseudoT','help_pop','scrollbars,resizable,width=400,height=400')\">PseudoT</a></td><td>$PseudoT</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PseudoF','help_pop','scrollbars,resizable,width=400,height=400')\">PseudoF</a></td><td>$PseudoF</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PseudoF','help_pop','scrollbars,resizable,width=400,height=400')\">PseudoL</a></td><td>$PseudoL</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LevCom','help_pop','scrollbars,resizable,width=400,height=400')\">LevCom</a></td><td>$LevCom</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#OptionCode','help_pop','scrollbars,resizable,width=400,height=400')\">Option Code</a></td><td>$Option_Codes</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#VersionMask','help_pop','scrollbars,resizable,width=400,height=400')\">Version Mask</a></td><td>$Version_Mask</td>\n";
+    print LITEOUTFILE "</table></td><td><table bgcolor=silver cellpadding=5>\n";    
+    print LITEOUTFILE "<tr><td align=center><b>Symbol</b></td><td align=center><b>Value</td></tr>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Halo','help_pop','scrollbars,resizable,width=400,height=400')\">Halo</a></td><td>$Halo</td>\n";    
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#DataT','help_pop','scrollbars,resizable,width=400,height=400')\">DataT</a></td><td>$DataT</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#DumpP','help_pop','scrollbars,resizable,width=400,height=400')\">DumpP</a></td><td>$DumpP</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PCn','help_pop','scrollbars,resizable,width=400,height=400')\">PCn</a></td><td>@PCn</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#Rotate','help_pop','scrollbars,resizable,width=400,height=400')\">Rotate</a></td><td>$Rotate</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#PPFC','help_pop','scrollbars,resizable,width=400,height=400')\">PPFC</a></td><td>$PPFC</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#USER','help_pop','scrollbars,resizable,width=400,height=400')\">USER</a></td><td>$USER</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#LBVC','help_pop','scrollbars,resizable,width=400,height=400')\">LBVC</a></td><td>$LBVC</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#BLEV','help_pop','scrollbars,resizable,width=400,height=400')\">BLEV</a></td><td>$BLEV</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#TLEV','help_pop','scrollbars,resizable,width=400,height=400')\">TLEV</a></td><td>$TLEV</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#RBLEVV','help_pop','scrollbars,resizable,width=400,height=400')\">RBLEVV</a></td><td>$RBLEVV</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#CFLL','help_pop','scrollbars,resizable,width=400,height=400')\">CFLL</a></td><td>$CFLL</td>\n";
+    print LITEOUTFILE "<tr><td><a href=\"javascript:var tmp=window.open('stash_help.$html_ext#CFFF','help_pop','scrollbars,resizable,width=400,height=400')\">CFFF</a></td><td>$CFFF</td>\n";        
+    print LITEOUTFILE "</table></td></tr>\n";
+    print LITEOUTFILE "</table>\n";
+
+    print LITEOUTFILE "<p><table align=center cellpadding=5 bgcolor=silver>\n";
+    print LITEOUTFILE "<tr><td><a href=$liteout_root$previous_record",".","$html_ext",">\<--Previous--</a></td>";
+    print LITEOUTFILE "<td><a href=$FULLOUTFILE>--More Detail--</a></td>";
+    print LITEOUTFILE "<td><a href=$liteout_root$next_record",".","$html_ext",">--Next--\></a></td></tr>\n";
+    print LITEOUTFILE "<tr><td></td><td><a href=\"javascript:var tmp=window.open('guide.$html_ext','help_pop','scrollbars,resizable,width=400,height=600')\">Help Guide</a></td></tr>";
+    print LITEOUTFILE "</table><p>\n";
+    close(FULLOUTFILE);
+    
+  }
+}
+
+$current_Model="xxx";
+$current_Sectn="xxx";
+$Model_count=0;
+$Sectn_count=0;
+$Item_count=0;
+
+$ITEMFILE="xxx";
+$SECTFILE="xxx";
+
+for ($line=0 ; $line < @outlist+1 ; $line++) {
+
+    if ($line eq @outlist) {$finished=1} else {$finished=0}
+    
+    if ($finished eq 0) {
+        $Model_pad=substr($outlist[$line],0,2);$Model=$Model_pad;
+        $Sectn_pad=substr($outlist[$line],2,3);$Sectn=$Sectn_pad;
+        $Item_pad=substr($outlist[$line],5,3);$Item=$Item_pad;
+        $Model=~s/^0*//;
+        $Sectn=~s/^0*//;
+        if ($Sectn eq "") {$Sectn="0"};
+        $Item=~s/^0*//;
+        
+    }
+    
+    if ($current_Model ne $Model) {$new_Model=1} else {$new_Model=0}
+    if ($current_Sectn ne $Sectn) {$new_Sectn=1} else {$new_Sectn=0}
+    if ($finished eq 1) {$new_Model=0;$new_Sectn=0}
+    
+    if (($new_Model eq 1) || ($new_Sectn eq 1) || ($finished eq 1)) {
+        
+        if ($Item_count > 0) {
+            $ITEMFILEN="$outdir/".$ITEMFILE;
+            open(ITEMFILE,">$ITEMFILEN");
+            print ITEMFILE "<head><script LANGUAGE=\"Javascript\">\n<!--\n";
+            print ITEMFILE "function item_Handler(form){\n";
+            print ITEMFILE "var URL = document.item_form.item.options[document.item_form.item.selectedIndex].value;\n";
+            print ITEMFILE "top.stash_display.location.href=URL;\n}\n//-->\n</script></head>\n";
+            print ITEMFILE "<table align=center width=100%><tr><td bgcolor=cornflowerblue align=center>\n";
+            print ITEMFILE "<font color=white size=4><b>Item List</b></td></tr></table>\n";
+            print ITEMFILE "<table align=left><tr><td><form name=\"item_form\">\n";
+            print ITEMFILE "<select name=item size=7 onChange=\"javascript:item_Handler()\">\n";
+            for ($i=0 ; $i < $Item_count ; $i++) {
+                print ITEMFILE "<option value=\"$Item_link[$i]\">$Item_text[$i]\n";
+            }
+            print ITEMFILE "</select></form></td></tr></table>\n";
+            close(ITEMFILE);
+        }
+        $Item_count=0;
+        $ITEMFILE="item_menu".$Model_pad.$Sectn_pad.".$html_ext";
+        
+        if (($new_Model eq 1) || ($finished eq 1)) {
+            if ($Sectn_count > 0) {
+                $SECTFILEN="$outdir/".$SECTFILE;
+                open(SECTFILE,">$SECTFILEN");
+                print SECTFILE "<head><script LANGUAGE=\"Javascript\">\n<!--\n";
+                print SECTFILE "function sect_Handler(form){\n";
+                print SECTFILE "var URL = document.sect_form.sect.options[document.sect_form.sect.selectedIndex].value;\n";
+                print SECTFILE "top.item_menu.location.href=URL;\n}\n//-->\n</script></head>\n";
+                print SECTFILE "<body onLoad=top.item_menu.location.href=\"empty_item_mess.$html_ext\">\n";
+                print SECTFILE "<table align=center width=100%><tr><td bgcolor=cornflowerblue align=center>\n";
+                print SECTFILE "<font color=white size=4><b>Section List</b></td></tr></table>\n";
+                print SECTFILE "<table align=center><tr><td><form name=\"sect_form\">\n";
+                print SECTFILE "<select name=sect size=7 onChange=\"javascript:sect_Handler()\">\n";
+                for ($i=0 ; $i < $Sectn_count ; $i++) {
+                    print SECTFILE "<option value=\"$Sectn_link[$i]\">$Sectn_text[$i]\n";
+                }
+                print SECTFILE "</select></form></td></tr></table>\n";
+                close(SECTFILE);
+            }
+            $Sectn_count=0;
+            $SECTFILE="sect_menu".$Model_pad.".$html_ext";
+            
+            if ($new_Model eq 1) {
+                $Model_link[$Model_count]=$SECTFILE;
+                $nModel_text[$Model_count]=$Model_text[$Model];
+                $Model_count++;
+            }
+        }
+        
+        if ($new_Sectn eq 1) {
+            $Sectn_link[$Sectn_count]=$ITEMFILE;
+
+            if ($Model eq 1) {$Sectn_text[$Sectn_count]=$Sectn.") ".$SectA_text[$Sectn]}
+            $Sectn_count++;
+        }
+        
+        if ($finished eq 1) {
+            if ($Model_count > 0) {
+                $MODELFILE="$outdir/"."im_menu.$html_ext";
+                open(MODELFILE,">$MODELFILE");
+                print MODELFILE "<head><script LANGUAGE=\"Javascript\">\n<!--\n";
+                print MODELFILE "function model_Handler(form){\n";
+                print MODELFILE "var URL = document.model_form.model.options[document.model_form.model.selectedIndex].value;\n";
+                print MODELFILE "top.sel_menu.location.href=URL;\n}\n//-->\n</script></head>\n";
+                print MODELFILE "<table align=center width=100%><tr><td bgcolor=cornflowerblue align=center>\n";
+                print MODELFILE "<font color=white size=4><b>Model List</b></td></tr></table>\n";
+                print MODELFILE "<table align=center><tr><td><form name=\"model_form\">\n";
+                print MODELFILE "<select name=model size=7 onChange=\"javascript:model_Handler()\">\n";
+                for ($i=0 ; $i < $Model_count ; $i++) {
+                    print MODELFILE "<option value=\"$Model_link[$i]\">$nModel_text[$i]\n";
+                }
+                print MODELFILE "</select></form></td></tr></table>\n";
+                close(MODELFILE);
+            }
+        }
+    }
+    
+    if ($finished eq 0) {
+        $Item_link[$Item_count]=$liteout_root.$Model_pad.$Sectn_pad.$Item_pad.".$html_ext";
+        $Item_text[$Item_count]=$Item.") ".$outlist_name[$line];
+        $Item_count++;
+        
+        $current_Model=$Model;
+        $current_Sectn=$Sectn;
+    }
+}
+
+$INDEXFILE="$outdir/"."index.$html_ext";
+open(INDEXFILE,">$INDEXFILE");
+print INDEXFILE "
+<head><title>STASHMaster Browser</title></head>
+<FRAMESET ROWS=\"200,*\" frameborder=10 border=10>
+  <FRAMESET COLS=\"150,400,*\" frameborder=5 border=5>
+    <FRAME frameborder=0 SRC=\"im_menu.$html_ext\" NAME=\"im_menu\" SCROLLING=\"no\">
+    <FRAME frameborder=0 SRC=\"empty.$html_ext\" NAME=\"sel_menu\" SCROLLING=\"no\">
+    <FRAME frameborder=0 SRC=\"empty.$html_ext\" NAME=\"item_menu\" SCROLLING=\"no\">
+  </FRAMESET>
+  <FRAME border=1 SRC=\"startup.$html_ext\" NAME=\"stash_display\">
+</FRAMESET>";
+close(INDEXFILE);
+
+$EMPTYFILE="$outdir/"."empty.$html_ext";
+open(EMPTYFILE,">$EMPTYFILE");
+print EMPTYFILE "<html></html>";
+close(EMPTYFILE);
+
+$EMPTYFILE="$outdir/"."empty_item_mess.$html_ext";
+open(EMPTYFILE,">$EMPTYFILE");
+print EMPTYFILE "
+<table align=center width=100%><tr><td bgcolor=cornflowerblue align=center>
+<font color=white size=4><b>Pick a section</b></td></tr></table>
+";
+close(EMPTYFILE);
+
+$STARTFILE="$outdir/"."startup.$html_ext";
+open(STARTFILE,">$STARTFILE");
+print STARTFILE "
+<body bgcolor=white text=navy link=black vlink=black alink=black
+      onload=\"javascript:var tmp=window.open('guide.$html_ext','help_pop',
+              'scrollbars,resizable,width=400,height=600')\">
+<font face=helvitica>
+<table align=center cellpadding=5 bgcolor=silver width=70%>
+<tr><td bgcolor=cornflowerblue align=center><font color=white size=3>
+<b>Welcome to the Unified Model STASHmaster browser</b></td></tr>
+<tr><td>The following STASHmaster file was used to create this documentation:<br><ol>";
+
+# Set a few variables to defaults to remove warnings
+$wday  = 0;
+$isdst = 0;
+$yday  = 0;
+
+
+for ($i=0 ; $i < @stash_files ; $i++) {
+    @statout=stat($stash_files[$i]);
+    $time=$statout[9];
+    $size=$statout[7];
+    ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime($time);
+    $year=$year+1900;
+    $mon++;
+    $date_time = sprintf('%02d/%02d/%04d %02d:%02d:%02d',$mday,$mon,$year,$hour,$min,$sec);
+    
+    print STARTFILE "<li> $stash_files[$i] ($date_time $size bytes)\n";
+}
+
+print STARTFILE "</ol></td></tr></table>";
+close(STARTFILE);
+
+$HELPFILE="$outdir/".$help;
+open(HELPFILE,">$HELPFILE");
+print HELPFILE "
+<head><title>STASHmaster Help</title></head>
+
+<body bgcolor=white text=navy link=black vlink=black alink=black>
+<font face=helvitica>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"Model\">Model</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+The internal model number
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"Section\">Section</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>The section number</b><br>
+Section numbers are in the range 0-55. Section 0 is for main primary fields.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"Item\">Item</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>The item number</b><br>
+Item numbers are in the range 1-999.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"Space\">Space</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>The space code</b><br>
+Specifies the space requirements of a STASH item. 
+If a diagnostic is only calculated when required by STASH (i.e. under a STASH 
+flag), or copied to STASHwork under a STASH flag, then the space code is 0. 
+If a section uses STASHwork space directly without STASHflag protection, 
+then 0 is not appropriate - a space code of 1 is more likely.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"Point\">Point</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Section zero point back</b><br>
+This is used for non-section 0 items with <a href=\"#Space\">space code</a> 7. 
+Any such field is a copy of a primary field. The value of \"point\" is the 
+section 0 item number of which it is a copy.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"Time\">Time</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Time availability code</b><br>
+Specifies at which time steps the diagnostic is available.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"Grid\">Grid</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Grid type code</b><br>
+Specifies the type of horizontal grid on which the field is defined.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"LevelT\">LevelT</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Level type code</b><br>
+Specifies the type of vertical levels on which the field is defined.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"LevelF\">LevelF</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>First level code</b><br>
+Specifies the first level on which the field is defined.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"LevelL\">LevelL</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Last level code</b><br>
+Specifies the last level on which the field is defined.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"PseudoT\">PseudT</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Pseudo level type</b><br>
+Defines the type of pseudo level that the diagnostic is defined on.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"PseudF\">PseudF</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>First pseudo level code</b><br>
+Defines the lower bound of the possible values of pseudo level for a field.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"PseudL\">PseudL</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Last pseudo level code</b><br>
+Defines the upper bound of the possible values of pseudo level for a field.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"LevCom\">LevCom</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Level compression flag</b><br>
+Defines which of the available levels are passed as input to STASH.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"OptionCode\">Option Code</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Sectional option code</b><br>
+A 30 digit decimal code which defines under what conditions an item is 
+unavailable to STASH. Each STASH section has its own definitions for the option 
+codes. The digits are labelled n30,n29,...,n1.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"VersionMask\">Version Mask</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Version mask</b><br>
+A 20 digit binary code. Each STASH section can have up to 20 versions and each 
+version uses some subset of the item numbers in that section. Version 0 of a 
+section is a null version, i.e. that section is not activated, so none of the 
+STASH items in that section would be available to the run. The Rose GUI defines 
+which versions of each section are available. The version mask digits are 
+numbered from right to left; a 1 in position N implies that this variable is 
+available to version N of that section. A 0 implies that it is not.<br>E.g. a 
+section version of 6A (or 6B or 6C etc.) would have a version mask of
+00000000000000100000
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"Halo\">Halo</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Halo code</b><br>
+Defines the size of the MPP decomposition halo region.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"DataT\">DataT</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Data type code</b><br>
+Defines the type (REAL, INTEGER or LOGICAL) of the data.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"DumpP\">DumpP</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Dump packing code</b><br>
+PP LBPACK code for data in the dump. See UMDP document F03 for more details.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"PCn\">PCn</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Packing accuracy codes</b><br>
+This code is used for packing data within fieldsfiles. 10 codes are available to 
+describe 10 packing profiles for different output requirements. A value of -99 
+indicates the field is not packed. N.B. 6th code for GRIB packing is retired.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"Rotate\">Rotate</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Rotation code</b><br>
+This is for wind diagnostics. It indicates whether STASH receives the wind 
+components relative to the model grid (for models on a rotated equatorial 
+lat-long) or the true lat-long grid.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"PPFC\">PPFC</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>PP field code</b><br>
+The PP field code as defined in the PP package document and UMDP C04.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"USER\">USER</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Not used</b><br>
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"LBVC\">LBVC</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>PP level code</b><br>
+The PP vertical coordinate code defined in the PP package document and UMDPs C04, F03.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"BLEV\">BLEV</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Base level reference code</b><br>
+Not used.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"TLEV\">TLEV</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+<b>Top level reference code</b><br>
+Not used.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"RBLEVV\">RBLEVV</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+Defined in PP package documentation by ref_lbvc=LBRVC.<br>Not used.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"CFLL\">CFLL</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+Historical CF level code. Defined in 'Met O8' documentation at COP.CORE.ADMIN(FFPPLIST).
+Normally CFLL=8888 for no level or special level and CFLL=9999 for surface.
+</td></tr></table><p>
+
+<p><table width=20% cellpadding=5 bgcolor=cornflowerblue>
+<tr><td><font color=white size=4><b><a name=\"CFFF\">CFFF</a></b></td></tr></table>
+<table width=100% cellpadding=5 bgcolor=silver>
+<tr><td>
+Historical CF field code. Defined in 'Met O8' documentation at COP.CORE.ADMIN(FFPPLIST).
+</td></tr></table><p>
+";
+close(HELPFILE);
+
+$GUIDE="$outdir/"."guide.$html_ext";
+open(GUIDEFILE,">$GUIDE");
+print GUIDEFILE "
+<body bgcolor=white text=navy link=black vlink=black alink=black>
+<font face=helvitica>
+<table align=center cellpadding=5 bgcolor=silver>
+<tr><td bgcolor=cornflowerblue align=center><font color=white size=3>
+<b>Unified Model STASHmaster Browsing System</b></td></tr>
+<tr><td>
+Welcome - this web page allows easy browsing of the UM STASHmaster file.</td></tr>
+<tr><td>
+<ol>
+<li>Click on \"Atmosphere\" in the Model List.
+<li>A Section List will appear. Click on one of the sections in this list.
+<li>An Item list will now appear. Click on any item from the list to see 
+the STASHmaster entry for this item.
+</ol>
+</td></tr><tr><td>
+The basic display information is gathered directly from the STASHmaster file. 
+By pressing \"More Detail\" (available at top or bottom of the table) a much 
+more detailed version is available which interprets the value of each item 
+and gives a description of its meaning. Press \"Less Detail\" to take you back 
+to the original basic display.<p>
+Pressing \"Previous\" will take you to the Item before the current one in the 
+STASHmaster file and \"Next\" will take you to the next Item in the file.<p>
+On either the basic or detailed display you can click on any entry in the 
+\"Symbol\" column to get a description of what that entry means.
+</td></tr></table>";
+close(GUIDEFILE);
+
+

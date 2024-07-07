@@ -1,0 +1,76 @@
+# Machine-specific classes for the SAWS HPC
+
+# Extract and build on HPC, no mirror
+    [[EXTRACT]]
+        inherit = EXTRACT_SOURCE
+        [[[job submission]]]
+            method = pbs
+        [[[environment]]]
+            PLATFORM=saws-xc30-cce
+            OPENMP=true
+            DRHOOK=false
+
+    [[SAWS]] 
+        pre-script = """  
+            module load PrgEnv-cray
+            module list 2>&1
+        """  
+        [[[job submission]]]
+            method = pbs
+        [[[directives]]] 
+            -W = umask=0022     
+            -l = ncpus=1,walltime=3600
+        [[[environment]]]
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+# Serial jobs
+    [[SAWS_SERIAL]]
+        inherit = SAWS
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 1
+        [[[directives]]]
+            -l = ncpus=1,walltime=3600
+
+# Parallel jobs
+    [[SAWS_PARALLEL]]
+        inherit = SAWS
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+        [[[directives]]]
+            -l = ncpus=1,walltime=3600
+
+# Cray compiler build jobs
+    [[SAWS_CRAY_BUILD]]
+        inherit = EXTRACT_SOURCE, SAWS_PARALLEL
+        pre-script = """
+                             module load PrgEnv-cray
+                             module load cray-mpich/7.0.2
+                             module load cray-netcdf/4.3.2
+                             module list 2>&1
+                             """
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+            PLATFORM=saws-xc30-cce
+            OPENMP=true
+            DRHOOK=false
+
+# Intel compiler build jobs
+    [[SAWS_INTEL_BUILD]]
+        inherit = EXTRACT_SOURCE, SAWS_PARALLEL
+        pre-script = """
+                             module swap PrgEnv-cray PrgEnv-intel/5.2.25
+                             module swap craype-ivybridge craype-sandybridge
+                             module load cray-netcdf/4.3.2
+                             module list 2>&1
+                             """
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+            PLATFORM=saws-xc30-ifort
+            OPENMP=true
+            DRHOOK=false
+
+

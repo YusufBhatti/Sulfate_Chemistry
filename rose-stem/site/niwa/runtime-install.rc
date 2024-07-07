@@ -1,0 +1,30 @@
+    [[niwa_xc50_cce_install_utils]]
+        inherit = INSTALL, NIWA_XC50, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP=install_utils
+            PLATFORM=xc50_cce
+            SOURCES="fcm_make_niwa_xc50_cce_utils_serial_high_omp \
+                     fcm_make_niwa_xc50_cce_utils_mpp_high_omp \
+                     fcm_make_niwa_xc50_cce_createbc_high_omp"
+
+    [[niwa_xc50_ifort_install_utils]]
+        inherit = INSTALL, NIWA_XC50, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP=install_utils
+            PLATFORM=xc50_ifort
+            SOURCES="fcm_make_niwa_xc50_ifort_utils_serial_high_omp \
+                     fcm_make_niwa_xc50_ifort_utils_mpp_high_omp \
+                     fcm_make_niwa_xc50_ifort_createbc_high_omp"
+
+    [[fcm_make_niwa_xc50_install_ctldata]]
+        inherit = INSTALL, NIWA_XC50, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=extract
+            ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[niwa_xc50_install_ctldata]]
+        inherit = INSTALL, NIWA_XC50, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP=install_ctldata
+            TASK_DIR=fcm_make_niwa_xc50_install_ctldata

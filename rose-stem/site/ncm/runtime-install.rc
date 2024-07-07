@@ -1,0 +1,33 @@
+    [[ncmhpc_install_utils]]
+        inherit = INSTALL, NCMHPC, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP    = install_utils
+            PLATFORM=ncm-ibm-ifort
+            SOURCES=fcm_make_ncmhpc_utils_serial_high_omp fcm_make_ncmhpc_utils_mpp_high_omp
+
+    [[fcm_make_ncmhpc_install_ctldata]]
+        inherit = INSTALL, NCMHPC, EXTRACT_SOURCE
+	[[[remote]]]
+	    host = ncmlogin3
+	[[[environment]]]
+	    ROSE_APP_OPT_CONF_KEYS=extract
+	    ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[fcm_make_ncmhpc_install_ctldata]]
+        inherit = INSTALL, NCMHPC, EXTRACT_SOURCE
+	[[[remote]]]
+	    host = ncmlogin3
+	[[[environment]]]
+	    ROSE_APP_OPT_CONF_KEYS=mirror
+	    ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[ncmhpc_install_ctldata]]
+        inherit = INSTALL, NCMHPC, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP    = install_ctldata
+	    TASK_DIR=fcm_make_ncm_install_ctldata
+      [[[directives]]]
+          resources        = ConsumableMemory(500mb)
+          wall_clock_limit = "00:10:00,00:09:00"
+

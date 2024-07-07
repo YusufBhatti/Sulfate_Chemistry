@@ -1,0 +1,26 @@
+# Groups for NCM rose stem tests
+#
+# developer: To be run when contributing changes to trunk
+#
+# nightly:  Run automatically on trunk
+#           https://climate-cms.org/jenkins/job/UM/job/trunk-nightly
+# weekly:   Run automatically on trunk, like nightly but more expensive runs
+#           https://climate-cms.org/jenkins/job/UM/job/trunk-weekly
+
+{%- set groups = {
+
+    "developer" : ["ncm_n48_eg_noomp"], 
+    "nightly"   : ["developer", "ncm_n48_eg_omp_ios"],
+    "weekly"    : ["ncm"],
+
+    "scripts"   : ["umdp3_check", "ifdef_check", "nl_bcast_check"],
+
+    "scm" : [  "ncm_scm_togacoare_ga6",  ],
+
+    "ncm" : [
+		 "ncm_n48_eg_noomp",
+		 "ncm_n48_eg_omp_noios",
+		 "ncm_n48_eg_omp_ios",
+		 ],
+    }
+%}

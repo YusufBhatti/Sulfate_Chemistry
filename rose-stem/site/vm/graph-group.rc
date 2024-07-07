@@ -1,0 +1,72 @@
+{# Groups that include KGO comparisons should be added to the 'kgo' group #}
+{# rather than the 'all' group. #}
+{# Developer tests that include KGO comparisons should be added to the #}
+{# 'developer_kgo' group rather than the 'developer' group. #}
+{# This ensures that the 'kgo' and 'developer_kgo' groups generate all KGO #}
+{# required for the 'all' and 'developer' groups, respectively. #}
+
+{%- set groups = {
+
+ "developer_kgo" : [
+                   "vm_n48_eg_omp_noios",
+                   "vm_scm_togacoare_ga6_omp",
+                   "vm_idealised_bicyclic_lam_rce",
+                  ],
+
+    "developer" : [
+                   "scripts",
+                   "developer_kgo",
+                  ],
+
+    "scripts"   : [
+                   "umdp3_check",
+                   "ifdef_check",
+                   "nl_bcast_check",
+                   "drhook_check",
+                   "site_validate",
+                   "metadata_check",
+                  ],
+
+    "install"   : [
+                   "vm_install",
+                   "vm_install_mule",
+                  ],
+
+    "n48"       : [
+                   "vm_n48_eg_omp_ios",
+                   "vm_n48_eg_omp_ios_comp_check",
+                   "vm_n48_eg_omp_noios",
+                   "vm_n48_eg_noomp",
+                  ],
+
+    "idealised" : [
+                   "vm_idealised_bicyclic_lam_rce",
+                  ],
+
+    "ukca"      : [
+                   "vm_n48_ukca_eg_omp_noios",
+                   "vm_n48_ukca_eg_omp_noios_comp_check",
+                   "vm_n48_ukca_eg_noomp",
+                  ],
+
+    "scm"       : [
+                   "vm_scm_togacoare_ga6_omp",
+                   "vm_scm_togacoare_ga6_noomp",
+                   "vm_scm_gabls3_ga6_omp",
+                   "vm_scm_gabls3_ga6_noomp",
+                  ],
+
+    "kgo"       : [
+                   "n48",
+                   "idealised",
+                   "scm",
+                  ],
+
+    "all"       : [
+                   "fcm_make",
+                   "scripts",
+                   "install",
+                   "kgo",
+                  ],
+    }
+%}

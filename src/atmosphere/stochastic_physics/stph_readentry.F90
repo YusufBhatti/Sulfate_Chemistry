@@ -1,0 +1,89 @@
+! *****************************COPYRIGHT*******************************
+! (C) Crown copyright Met Office. All rights reserved.
+! For further details please refer to the file COPYRIGHT.txt
+! which you should have received as part of this distribution.
+! *****************************COPYRIGHT*******************************
+!
+! Code Owner: Please refer to the UM file CodeOwners.txt
+! This file belongs in section: Stochastic Physics
+MODULE stph_readentry_mod
+
+USE stochastic_physics_run_mod, ONLY: stphseed_unit
+
+IMPLICIT NONE
+
+INTERFACE  stph_readentry
+MODULE PROCEDURE stph_readentry_int, stph_readentry_real
+END INTERFACE
+
+CHARACTER(LEN=*), PARAMETER, PRIVATE :: ModuleName='STPH_READENTRY_MOD'
+
+CONTAINS
+
+! -------------------------------------------------------------------
+! Subroutine in which stpharray is passed as a 1D integer array
+! -------------------------------------------------------------------
+SUBROUTINE stph_readentry_int( stpharray, sizearray)
+
+! This routine reads in the random seed and stochastic wave coefficients
+! from unformatted file written previously at dump steps.
+
+USE yomhook, ONLY: lhook, dr_hook
+USE parkind1, ONLY: jprb, jpim
+USE stochastic_physics_run_mod, ONLY: stphseed_unit
+
+IMPLICIT NONE
+
+! Arguments
+INTEGER, INTENT(IN)  :: sizearray            ! The size of the array
+INTEGER, INTENT(OUT) :: stpharray(sizearray) ! The random seed
+
+INTEGER(KIND=jpim), PARAMETER :: zhook_in  = 0
+INTEGER(KIND=jpim), PARAMETER :: zhook_out = 1
+REAL(KIND=jprb)               :: zhook_handle
+
+CHARACTER(LEN=*), PARAMETER :: RoutineName='STPH_READENTRY_INT'
+
+IF (lhook) CALL dr_hook(ModuleName//':'//RoutineName,zhook_in,zhook_handle)
+
+! Read array from seed file (unformatted)
+READ(stphseed_unit) stpharray
+
+IF (lhook) CALL dr_hook(ModuleName//':'//RoutineName,zhook_out,zhook_handle)
+RETURN
+END SUBROUTINE stph_readentry_int
+
+! -------------------------------------------------------------------
+! Subroutine in which stpharray is passed as a 2D real array
+! -------------------------------------------------------------------
+SUBROUTINE stph_readentry_real( stpharray, sizearray)
+
+! This routine reads in the random seed and stochastic wave coefficients
+! from unformatted file written previously at dump steps.
+
+USE yomhook, ONLY: lhook, dr_hook
+USE parkind1, ONLY: jprb, jpim
+USE stochastic_physics_run_mod, ONLY: stphseed_unit
+
+IMPLICIT NONE
+
+! Arguments
+REAL,    INTENT(OUT) :: stpharray(:,:) ! Random coefficients
+INTEGER, INTENT(IN)  :: sizearray      ! The size of the array
+
+INTEGER(KIND=jpim), PARAMETER :: zhook_in  = 0
+INTEGER(KIND=jpim), PARAMETER :: zhook_out = 1
+REAL(KIND=jprb)               :: zhook_handle
+
+CHARACTER(LEN=*), PARAMETER :: RoutineName='STPH_READENTRY_REAL'
+
+IF (lhook) CALL dr_hook(ModuleName//':'//RoutineName,zhook_in,zhook_handle)
+
+! Read array from seed file (unformatted)
+READ(stphseed_unit) stpharray
+
+IF (lhook) CALL dr_hook(ModuleName//':'//RoutineName,zhook_out,zhook_handle)
+RETURN
+END SUBROUTINE stph_readentry_real
+
+END MODULE stph_readentry_mod

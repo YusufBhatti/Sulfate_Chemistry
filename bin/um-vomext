@@ -1,0 +1,219 @@
+#!/usr/bin/env bash 
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+#
+#  Script: vomext
+#
+#  Purpose: utility to extract profiles from UM data for 3DVOM model
+#
+#  Interface: See "usage" function below and "usf_Print_Common_Args"
+#             function from UM script functions file for arguments
+#             and UMDP-F5 for full descriptions
+#
+#  Code Owner: Please refer to the UM file CodeOwners.txt
+#  This file belongs in section: Rose scripts
+#
+# End of header -------------------------------------------------------
+#
+set -eu
+
+# Source common UM script functions from file
+um_scripts=$(dirname "$0")/um_script_functions
+if [ -f "$um_scripts" ] ; then
+    . $um_scripts
+else
+    echo "[FAIL] UM script functions file not found: $um_scripts " 1>&2
+    echo "[FAIL] Ensure the UM file above is located in the same " 1>&2
+    echo "[FAIL] directory as this script                        " 1>&2
+    exit 1
+fi
+
+################################################################################
+# Setup Error traps and cleanup routine to perfom on exit
+#
+usf_Set_Err_Traps
+
+function cleanup {
+  usf_Print 'VOMEXT output in:' ${out_dir:-}
+
+  if [ ${ERR_STATE:-0} != 0 ]; then
+    usf_EReport "Problem with Vomext program"
+  else
+    echo '[ OK ] Vomext successful'
+  fi
+
+  exit ${ERR_STATE:-0}
+} 
+
+#######################################################################
+# Print usage message for use on error
+function usage
+{
+usf_Print "Usage:                                                        " 1>&2
+usf_Print "  um-vomext [common-args] -n namelist                         " 1>&2
+usf_Print "            -i dump1 [[dump2] [dump3]...]                     " 1>&2
+usf_Print "            -o[w] output1 [[output2] [output3] ...]           " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "Arguments:                                                    " 1>&2
+usf_Print "  -n namelist namelist containing details of profiles         " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "  -i dump1 [[dump2] [dump3] ...]                              " 1>&2
+usf_Print "              list of input dumps/fields files used in        " 1>&2
+usf_Print "              creation of profile dataset                     " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "  -o[w] output1 [[output2] [output3] ...]                     " 1>&2
+usf_Print "              list of the output profile files (w switch      " 1>&2
+usf_Print "              enables automatic overwrite of existing files)  " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print_Common_Args
+}
+
+#######################################################################
+# Handling of command line arguments
+function process_cmd_args
+{
+    # There are 6 mandatory arguments
+    if [ $# -lt 6 ] ; then
+        usf_EReport "Incorrect number of arguments" usage
+    fi
+
+    # Set up the initial values for filenum and vom_filenum
+    # so that correct environment variables are generated
+    filenum=0
+    vom_filenum=0
+    NAMELIST=
+
+    # Check to see if being run in a suite - if so make overwriting the default.
+    if usf_Running_As_Suite ; then
+        OVERWRITE=${OVERWRITE:-1}
+    else
+        OVERWRITE=${OVERWRITE:-0}
+    fi
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -n) shift
+                NAMELIST=${1:?$(usf_EReport "Namelist not given" usage)} ;;
+            -i)
+                usf_Print "Set up the input files :"
+                filename=${2:?$(usf_EReport "No input filenames given" usage)}
+                # Stop looking for filenames on argument
+                # begining with '-' or no more args
+                while [ ${filename:0:1} != "-" ] && [ $# -gt 1 ] ; do
+                    filenum=$(printf "%02d" $(expr $filenum + 1))
+                    env_var="FILE${filenum}"
+                    if [ -f "$filename" ]; then
+                        usf_Print \
+                         "Input file \"$filename\" assigned to ENV var $env_var"
+                        export $env_var=$filename
+                    else
+                        usf_EReport "Input file does not exist: $filename"
+                    fi
+                    shift
+                    filename=${2:-no-argument-provided}
+                done ;;
+
+             -o|-ow)
+                if [ "$1" = "-ow" ] ; then
+                    OVERWRITE=1
+                fi
+
+                usf_Print "Set up the output files :"
+                filename=${2:?$(usf_EReport "No output filenames given" usage)}
+                # Stop looking for filenames on argument
+                # begining with '-' or no more args
+                while [ ${filename:0:1} != "-" ] && [ $# -gt 1 ] ; do
+                    vom_filenum=$(printf "%01d" $(expr $vom_filenum + 1))
+                    env_var="VOMFIL${vom_filenum}"
+                    usf_Print \
+                        "Output file \"$filename\" assigned to ENV var $env_var"
+                    export $env_var=$filename
+                    shift
+                    if [ -e "$filename" ] ; then
+                        if [ $OVERWRITE == 1 ] ; then
+                            usf_Print "Removing existing output file: $filename"
+                            rm -f $filename
+                        else
+                            usf_EReport "Output file already exists: $filename"
+                        fi
+                    fi
+                    filename=${2:-no-output-filename-provided}
+                done ;;
+
+            # Pass any unrecognised optional arguments to the common
+            # argument handler (note that it returns the updated
+            # argument list which is then re-set in this routine)
+            *) usf_Handle_Common_Arg args $@
+               set -- $args
+               continue ;;
+        esac
+        shift
+    done
+
+    # Check the namelist was set and the file exists
+    if [ -z "$NAMELIST" ]; then
+        usf_EReport "Namelist filename not defined" usage
+    else
+        if [ -f "$NAMELIST" ]; then
+            usf_Print "Namelist: $NAMELIST"
+        else
+            usf_EReport "Namelist file not found: $NAMELIST" usage
+        fi
+    fi
+
+    # Check at least one input filename has been exported.
+    if [ -z "${FILE01:-}" ]; then
+        usf_EReport "FILE01 (first input file) not defined" usage
+    else
+        if [ ! -f "$FILE01" ] ; then
+            usf_EReport "FILE01 (first input file) not found: $FILE01" usage
+        fi
+    fi
+
+    # Check at least one output filename has been exported.
+    if [ -z "${VOMFIL1:-}" ]; then
+        usf_EReport "VOMFIL1 (first output file) not defined" usage
+    fi
+}
+
+#######################################################################
+# Start of script
+process_cmd_args $@
+
+#Set default Print Status
+usf_set_print_status
+
+# Directory for intermediate files
+usf_Set_Out_Dir "" "vomext_out" "${VOMEXT_OUT_DIR:-}"
+
+# Set the number of OpenMP threads to 1 if not provided
+usf_set_omp_threads
+
+# Export environment variables
+export NAMELIST
+export VOMFIL1
+
+usf_print_script_path
+
+# Run the executable
+vomext_exec=$(dirname "$0")/${VOMEXT_EXEC:-um-vomext.exe}
+if [ -x $vomext_exec ] ; then
+    usf_Print "Using executable: $vomext_exec"
+
+# If $UM_UTIL_LAUNCHER is set, use the contents of that variable as the 
+# launcher; if it's unset or null, invoke the exec directly (as null will
+# be substituted in the if condition).
+if [ ${UM_UTIL_LAUNCHER+1} ]; then
+    usf_Print "$UM_UTIL_LAUNCHER $vomext_exec"
+    $UM_UTIL_LAUNCHER $vomext_exec
+else
+    $vomext_exec
+fi
+else
+    usf_EReport "Vomext Executable not found: $vomext_exec"
+fi
+
+exit 0

@@ -1,0 +1,351 @@
+    [[METO_LINUX_INSTALL_UMDIR]]
+        inherit = INSTALL, DESKTOP, METO_LINUX, EXTRACT_SOURCE
+
+    [[meto_linux_install_utils]]
+        inherit = METO_LINUX_INSTALL_UMDIR
+        [[[environment]]]
+            ROSE_TASK_APP = install_utils
+            PLATFORM = linux
+            SOURCES = "fcm_make_meto_linux_ifort_utils_serial_high_noomp \
+                       fcm_make_meto_linux_ifort_utils_mpp_high_omp \
+                       fcm_make_meto_linux_ifort_createbc_high_omp"
+
+    [[METO_XC40_INSTALL_UMDIR]]
+        inherit = INSTALL, METO_XC40, EXTRACT_SOURCE
+
+    [[meto_xc40_install_utils]]
+        inherit = METO_XC40_INSTALL_UMDIR
+        [[[environment]]]
+            ROSE_TASK_APP = install_utils
+            PLATFORM = xc40
+            SOURCES = "fcm_make_meto_xc40_cce_utils_serial_high_omp \
+                       fcm_make_meto_xc40_cce_utils_mpp_high_omp \
+                       fcm_make_meto_xc40_ifort_createbc_high_omp"
+
+# Libraries - linux
+    [[METO_LINUX_INSTALL_LIBS]]
+        inherit = INSTALL, DESKTOP, METO_LINUX, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = install_libs
+            PLATFORM = linux
+
+    [[meto_linux_install_libs_gcc_ifort]]
+        inherit = METO_LINUX_INSTALL_LIBS
+        [[[environment]]]
+            LIB_SUFFIX = _gcc_ifort
+            TASK_DIR = "fcm_make_meto_linux_gcc_ifort_libs" 
+
+    [[meto_linux_install_libs_clang_ifort]]
+        inherit = METO_LINUX_INSTALL_LIBS
+        [[[environment]]]
+            LIB_SUFFIX = _clang_ifort
+            TASK_DIR = "fcm_make_meto_linux_clang_ifort_libs"
+
+# Libraries - XC40
+    [[METO_XC40_INSTALL_LIBS]]
+        inherit = INSTALL, METO_XC40, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = install_libs
+            PLATFORM = xc40
+
+    [[meto_xc40_install_libs_cce]]
+        inherit = METO_XC40_INSTALL_LIBS
+        [[[environment]]]
+            LIB_SUFFIX = _cce
+            TASK_DIR = "fcm_make_meto_xc40_cce_libs"
+
+    [[meto_xc40_install_libs_ifort]]
+        inherit = METO_XC40_INSTALL_LIBS
+        [[[environment]]]
+            LIB_SUFFIX = _ifort
+            TASK_DIR = "fcm_make_meto_xc40_ifort_libs"
+
+    [[meto_xc40_install_libs_gnu]]
+        inherit = METO_XC40_INSTALL_LIBS
+        [[[environment]]]
+            LIB_SUFFIX = _gnu
+            TASK_DIR = "fcm_make_meto_xc40_gnu_libs"
+
+# Mule - Linux
+    [[FCM_MAKE_METO_LINUX_INSTALL_MULE]]
+        inherit = INSTALL, DESKTOP, METO_LINUX, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = fcm_make_install_mule
+            ROSE_APP_OPT_CONF_KEYS=extract
+
+    [[fcm_make_meto_linux_install_mule_gcc_ifort]]
+        inherit = FCM_MAKE_METO_LINUX_INSTALL_MULE
+
+    [[fcm_make_meto_linux_install_mule_clang_ifort]]
+        inherit = FCM_MAKE_METO_LINUX_INSTALL_MULE
+
+    [[METO_LINUX_INSTALL_MULE]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = INSTALL, DESKTOP, METO_XC40, EXTRACT_SOURCE
+        pre-script = ""
+{% else %}
+        inherit = INSTALL, DESKTOP, METO_LINUX, EXTRACT_SOURCE
+{% endif %}
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT = $UM_INSTALL_DIR
+            ROSE_TASK_APP          = install_mule
+            PLATFORM               = linux
+
+    [[meto_linux_install_mule_gcc_ifort]]
+        inherit = METO_LINUX_INSTALL_MULE
+        [[[environment]]]
+            TASK_DIR = fcm_make_meto_linux_install_mule_gcc_ifort
+            CC = gcc
+            SUFFIX = _gcc_ifort
+            SHUMLIB_LIB = $UMDIR/lib/ifort-16.0.1-gcc-4.4.7/shumlib/shumlib-2018.06.1/openmp
+
+    [[meto_linux_install_mule_clang_ifort]]
+        inherit = METO_LINUX_INSTALL_MULE
+        [[[environment]]]
+            TASK_DIR = fcm_make_meto_linux_install_mule_clang_ifort
+            CC = clang
+            SUFFIX = _clang_ifort
+            SHUMLIB_LIB = $UMDIR/lib/ifort-16.0.1-clang-3.4.2/shumlib/shumlib-2018.06.1/openmp
+
+{% if "linux_test_mule" in name_graphs_out %}
+
+    [[METO_LINUX_TEST_MULE]]
+        inherit = DESKTOP, METO_LINUX, METO_LINUX_MULE
+        [[[environment]]]
+            SSTPERT_INPUT = $INPUT_DATA/mule_sstpert/sstpert_input_clim.ff
+            WAFCCB_INPUT = $INPUT_DATA/mule_wafccb/wafccb_input.ff
+            ROSE_TASK_APP = run_mule_tests
+
+    [[meto_linux_test_mule_gcc_ifort]]
+        inherit = METO_LINUX_TEST_MULE
+        [[[environment]]]
+            SUFFIX = _gcc_ifort
+
+    [[meto_linux_test_mule_clang_ifort]]
+        inherit = METO_LINUX_TEST_MULE
+        [[[environment]]]
+            SUFFIX = _clang_ifort
+
+    [[rose_ana_linux_mule_sstpert_gcc_ifort_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX
+        [[[environment]]]
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_utils_sstpert/{{LINUX_UTILS_SSTPERT_KGO}}
+            DIR1=../meto_linux_test_mule_gcc_ifort
+            ROSE_TASK_APP=rose_ana_mule_sstpert
+            KGO=0   
+
+    [[rose_ana_linux_mule_sstpert_clang_ifort_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX
+        [[[environment]]]
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_utils_sstpert/{{LINUX_UTILS_SSTPERT_KGO}}
+            DIR1=../meto_linux_test_mule_clang_ifort
+            ROSE_TASK_APP=rose_ana_mule_sstpert
+            KGO=0   
+
+    [[rose_ana_linux_mule_wafccb_gcc_ifort_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX
+        [[[environment]]]
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_utils_wafccb/{{LINUX_UTILS_WAFCCB_KGO}}
+            DIR1=../meto_linux_test_mule_gcc_ifort
+            ROSE_TASK_APP=rose_ana_mule_wafccb
+            KGO=0   
+
+    [[rose_ana_linux_mule_wafccb_clang_ifort_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX
+        [[[environment]]]
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_utils_wafccb/{{LINUX_UTILS_WAFCCB_KGO}}
+            DIR1=../meto_linux_test_mule_clang_ifort
+            ROSE_TASK_APP=rose_ana_mule_wafccb
+            KGO=0   
+
+{% endif %}
+
+# Mule - XC40
+    [[FCM_MAKE_METO_XC40_INSTALL_MULE]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = INSTALL, DESKTOP, METO_XC40, EXTRACT_SOURCE
+        pre-script = ""
+{% else %}
+        inherit = INSTALL, DESKTOP, METO_LINUX, EXTRACT_SOURCE
+{% endif %}
+        [[[environment]]]
+            ROSE_TASK_APP = fcm_make_install_mule
+            ROSE_APP_OPT_CONF_KEYS=mirror
+
+    [[fcm_make_meto_xc40_install_mule_cce]]
+        inherit = FCM_MAKE_METO_XC40_INSTALL_MULE
+
+    [[fcm_make_meto_xc40_install_mule_ifort]]
+        inherit = FCM_MAKE_METO_XC40_INSTALL_MULE
+
+    [[fcm_make_meto_xc40_install_mule_gnu]]
+        inherit = FCM_MAKE_METO_XC40_INSTALL_MULE
+
+    [[FCM_MAKE2_METO_XC40_INSTALL_MULE]]
+        inherit = METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP = fcm_make_install_mule
+
+    [[fcm_make2_meto_xc40_install_mule_cce]]
+        inherit = FCM_MAKE2_METO_XC40_INSTALL_MULE
+
+    [[fcm_make2_meto_xc40_install_mule_ifort]]
+        inherit = FCM_MAKE2_METO_XC40_INSTALL_MULE
+
+    [[fcm_make2_meto_xc40_install_mule_gnu]]
+        inherit = FCM_MAKE2_METO_XC40_INSTALL_MULE
+
+# PLATFORM cannot be set in this family as the METO_XC40_<node>_<compiler>
+# families used by the install tasks will override it.
+    [[METO_XC40_INSTALL_MULE]]
+        inherit = INSTALL, METO_XC40, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT = $UM_INSTALL_DIR
+            ROSE_TASK_APP          = install_mule
+        [[[directives]]]
+            -l mem = 500MB
+        [[[job]]]
+            execution time limit = PT10M
+
+    [[meto_xc40_install_mule_cce]]
+        inherit = METO_XC40_CCE_IVYBRIDGE, METO_XC40_INSTALL_MULE
+        [[[environment]]]
+            PLATFORM = xc40
+            TASK_DIR = fcm_make_meto_xc40_install_mule_cce
+            SUFFIX = _cce
+            SHUMLIB_LIB = $UMDIR/shumlib/shumlib-2018.06.1/meto-xc40-ivybridge-crayftn-8.4.3-craycc-8.4.3/openmp
+
+    [[meto_xc40_install_mule_ifort]]
+        inherit = METO_XC40_INTEL_HASWELL, METO_XC40_INSTALL_MULE
+        [[[environment]]]
+            PLATFORM = xc40
+            TASK_DIR = fcm_make_meto_xc40_install_mule_ifort
+            SUFFIX = _ifort
+            SHUMLIB_LIB = $UMDIR/shumlib/shumlib-2018.06.1/meto-xc40-haswell-ifort-15.0.0-icc-15.0.0/openmp
+
+    [[meto_xc40_install_mule_gnu]]
+        inherit = METO_XC40_GNU_HASWELL, METO_XC40_INSTALL_MULE
+        [[[environment]]]
+            PLATFORM = xc40
+            TASK_DIR = fcm_make_meto_xc40_install_mule_gnu
+            SUFFIX = _gnu
+            SHUMLIB_LIB = $UMDIR/shumlib/shumlib-2018.06.1/meto-xc40-haswell-gfortran-4.9.1-gcc-4.9.1/openmp
+
+{% if "xc40_test_mule" in name_graphs_out %}
+
+    [[METO_XC40_TEST_MULE]]
+        inherit = METO_XC40, METO_XC40_MULE
+        [[[environment]]]
+            ROSE_TASK_APP = run_mule_tests
+            SSTPERT_INPUT = $INPUT_DATA/mule_sstpert/sstpert_input_clim.ff
+            WAFCCB_INPUT = $INPUT_DATA/mule_wafccb/wafccb_input.ff
+
+    [[meto_xc40_test_mule_cce]]
+        inherit = METO_XC40_CCE_IVYBRIDGE, METO_XC40_TEST_MULE
+        [[[environment]]]
+            SUFFIX = _cce
+
+    [[meto_xc40_test_mule_ifort]]
+        inherit = METO_XC40_INTEL_HASWELL, METO_XC40_TEST_MULE
+        [[[environment]]]
+            SUFFIX = _ifort
+
+    [[meto_xc40_test_mule_gnu]]
+        inherit = METO_XC40_GNU_HASWELL, METO_XC40_TEST_MULE
+        [[[environment]]]
+            SUFFIX = _gnu
+
+    [[rose_ana_xc40_mule_sstpert_cce_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mule_sstpert
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_sstpert/cce/{{XC40_UTILS_CCE_SSTPERT_KGO}}
+            DIR1=../meto_xc40_test_mule_cce
+            KGO=0   
+
+    [[rose_ana_xc40_mule_sstpert_ifort_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mule_sstpert
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_sstpert/ifort/{{XC40_UTILS_IFORT_SSTPERT_KGO}}
+            DIR1=../meto_xc40_test_mule_ifort
+            KGO=0   
+
+    [[rose_ana_xc40_mule_sstpert_gnu_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mule_sstpert
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_sstpert/gnu/{{XC40_UTILS_GNU_SSTPERT_KGO}}
+            DIR1=../meto_xc40_test_mule_gnu
+            KGO=0   
+
+    [[rose_ana_xc40_mule_wafccb_cce_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mule_wafccb
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_wafccb/cce/{{XC40_UTILS_CCE_WAFCCB_KGO}}
+            DIR1=../meto_xc40_test_mule_cce
+            KGO=0   
+
+    [[rose_ana_xc40_mule_wafccb_ifort_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mule_wafccb
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_wafccb/ifort/{{XC40_UTILS_IFORT_WAFCCB_KGO}}
+            DIR1=../meto_xc40_test_mule_ifort
+            KGO=0   
+
+    [[rose_ana_xc40_mule_wafccb_gnu_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_mule_wafccb
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_wafccb/gnu/{{XC40_UTILS_GNU_WAFCCB_KGO}}
+            DIR1=../meto_xc40_test_mule_gnu
+            KGO=0   
+
+{% endif %}
+
+# Ctldata
+    [[fcm_make_meto_linux_install_ctldata]]
+        inherit = METO_LINUX_INSTALL_UMDIR
+            [[[environment]]]
+                ROSE_APP_OPT_CONF_KEYS=extract
+                ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[fcm_make_meto_xc40_install_ctldata]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = METO_XC40_INSTALL_UMDIR
+        pre-script = ""
+{% else %}
+        inherit = METO_LINUX_INSTALL_UMDIR
+{% endif %}
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=mirror
+            ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[fcm_make2_meto_xc40_install_ctldata]]
+        inherit = METO_XC40
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_install_ctldata
+        [[[directives]]]
+            -l mem = 256MB
+        [[[job]]]
+            execution time limit = PT3M
+
+    [[meto_linux_install_ctldata]]
+        inherit = METO_LINUX_INSTALL_UMDIR
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT = $UM_INSTALL_DIR
+            ROSE_TASK_APP          = install_ctldata
+            TASK_DIR               = fcm_make_meto_linux_install_ctldata
+
+    [[meto_xc40_install_ctldata]]
+        inherit = METO_XC40_INSTALL_UMDIR
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT = $UM_INSTALL_DIR
+            ROSE_TASK_APP          = install_ctldata
+            TASK_DIR               = fcm_make_meto_xc40_install_ctldata
+        [[[directives]]]
+            -l mem = 1GB
+        [[[job]]]
+            execution time limit = PT16M

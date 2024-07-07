@@ -1,0 +1,8 @@
+{%- set name_graphs = {
+
+    "install"     : "fcm_make_ecmwf_xc30_cce_utils_serial_high_omp => fcm_make2_ecmwf_xc30_cce_utils_serial_high_omp => ecmwf_install_utils
+                     fcm_make_ecmwf_xc30_ifort_createbc_high_omp   => fcm_make2_ecmwf_xc30_ifort_createbc_high_omp   => ecmwf_install_utils
+                     fcm_make_ecmwf_install_ctldata => fcm_make2_ecmwf_install_ctldata => ecmwf_install_ctldata",
+
+    }
+-%}

@@ -1,0 +1,10 @@
+    [[queues]]
+        [[[build_on_linux]]]
+            limit = 10
+            members = KMALINUX_BUILD
+        [[[extract_on_linux]]]
+            limit = 10
+            members = EXTRACT
+        [[[run_on_xc40]]]
+            limit = 10
+            members = KMA_XC40

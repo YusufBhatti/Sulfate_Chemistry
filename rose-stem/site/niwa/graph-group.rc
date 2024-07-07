@@ -1,0 +1,66 @@
+{%- set groups = {
+
+    "developer" : [
+                   "fcm_make_xc50_cce_debug",
+                   "fcm_make_xc50_ifort_debug",
+                   "xc50_cce_n48_omp_noios",
+                   "xc50_ifort_n48_omp_noios",
+                   "scripts",
+                  ],
+
+    "nightly" : [
+                 "fcm_make_xc50_cce_high",
+                 "fcm_make_xc50_ifort_high",
+                 "xc50_cce_n48_omp_noios",
+                 "xc50_ifort_n48_omp_noios",
+                ],
+
+    "weekly" : [
+                "xc50_build_all",
+                "xc50_test_all",
+               ],
+
+    "xc50_build_all" : ["xc50_build_all_cce", "xc50_build_all_ifort"],
+
+    "xc50_build_all_cce" : [
+                            "fcm_make_xc50_cce_high",
+                            "fcm_make_xc50_cce_debug",
+                            "fcm_make_xc50_cce_safe",
+                            "fcm_make_xc50_cce_rigorous",
+                           ],
+
+    "xc50_build_all_ifort" : [
+                              "fcm_make_xc50_ifort_high",
+                              "fcm_make_xc50_ifort_debug",
+                              "fcm_make_xc50_ifort_safe",
+                              "fcm_make_xc50_ifort_rigorous",
+                             ],
+
+    "xc50_test_all" : ["xc50_test_all_cce", "xc50_test_all_ifort"],
+
+    "xc50_test_all_cce" : [
+                             "xc50_cce_n48_omp_noios",
+                             "xc50_cce_n512_eg",
+                             "xc50_cce_seukv_eg_omp_noios",
+                             "xc50_cce_recon_n512_eg_grib1",
+                             "xc50_cce_recon_n512_eg_grib2",
+                          ],
+
+    "xc50_test_all_ifort" : [
+                             "xc50_ifort_n48_omp_noios",
+                             "xc50_ifort_n512_eg",
+                             "xc50_ifort_nzcsm",
+                             "xc50_ifort_seukv_eg_omp_noios",
+                             "xc50_ifort_recon_n512_eg_grib1",
+                             "xc50_ifort_recon_n512_eg_grib2",
+                             "xc50_ifort_createbc_calcs",
+                            ],
+
+    "scripts"   : [
+                   "umdp3_check",
+                   "ifdef_check",
+                  ],
+
+    }
+
+%}

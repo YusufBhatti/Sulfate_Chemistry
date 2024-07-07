@@ -1,0 +1,347 @@
+#!/usr/bin/env bash
+#set -x
+#
+# *****************************COPYRIGHT*******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT*******************************
+# 
+# J.C.Thil's original script improved and tidied up. Now using f90tohtml 
+# (which is # updated version of code2html 0.8), plus a few corrections.
+# Plan entirely changed, as follows. Toby White 2003
+# 
+# UPDATE: Previous version rewritten by Tom Edwards April 2006
+#
+# This script has been significantly simplified thanks to the change to 
+# FCM. It operates in x stages
+
+# stage 1: Process command line options
+# stage 2: Do an FCM extract for the source code from the respoitory
+# stage 3: Process source code for duplicates and C decks
+# stage 4: Do the f90tohtml processing on the resulting directory
+# stage 5: Process the sections of code on the index.
+# stage 6: Do some post processing
+#
+##########################################
+
+##########################################
+# stage 1: Process command line options
+##########################################
+
+usage="f90tohtml_procedure -w <work_dir> -l <logfile> -t <repos0> [repos1] outdir "
+
+WORKDIR=${TMPDIR:-/var/tmp}/f90tohtml-work
+LOGFILE=""
+REVISION="HEAD"
+TRACURL=""
+TRACURL_OPT="false"
+
+while getopts r:w:c:tl:: o 
+do
+   case $o in
+     w) WORKDIR="$OPTARG";;
+     t) TRACURL_OPT="true";;
+     l)  if [[ "$OPTARG" == "" ]]; then
+           LOGFILE="$0.log" $(date);
+         else
+           LOGFILE="$OPTARG"
+         fi;;
+     \?) echo $usage
+         exit 1;;
+   esac
+done
+shift $(( $OPTIND - 1 ))
+
+if [ $# -lt 2 ]
+then
+  echo $usage
+  exit 1
+fi
+
+export ID=0
+export WORKDIR
+export HERE=$(dirname $0)
+export UMLS=$WORKDIR/UM_ls
+
+# Remove any potential older copies of the file
+rm -rf $UMLS
+rm -rf $WORKDIR/UMPL
+
+# Make the directories required by the model
+test -d $WORKDIR || mkdir -p $WORKDIR
+mkdir $WORKDIR/UMPL || exit 1
+mkdir $UMLS || exit 1
+
+# Create logfile
+echo $LOGFILE > $LOGFILE
+
+##########################################
+# stage 2: Do an FCM extract for the source code from the respoitory
+##########################################
+
+# We can search the svn root path
+# Loop over all repositories in commandline.
+while [ $# -gt 1 ]
+do
+  export ID=$((ID+1))
+  export UMPL=$WORKDIR/src/$ID
+  ROOT=${1%@*}
+  REVISION=${1#*@}
+
+  if [ "$REVISION" == "$ROOT" ]
+  then
+    REVISION=HEAD
+  fi
+
+  # Check revision and $ROOT make sense
+  fcm info -r $REVISION $ROOT
+  if [ $? -ne 0 ]
+  then
+    echo "fcm ls error"
+    exit 1
+  fi
+ 
+  COMMON=$(fcm ls -r $REVISION -R $ROOT | grep -E '\.([Ff](90)?|h|c)$' | $HERE/lcbase)
+ 
+  echo "---" $COMMON
+  LOCATION="$ROOT/$COMMON"
+  echo $(date) "Completed svn listing" | tee -a $LOGFILE
+  
+  echo "===" $LOCATION
+  
+  # Convert possible keyword into revision number.
+  REVISION=$(fcm info -r $REVISION $LOCATION | grep "Last Changed Rev:" | cut -d \  -f 4)
+ 
+  export REVISION
+  
+  # Obtain Trac URL from fcm.
+  if [ "$TRACURL_OPT" == "true" ]
+  then
+    TRACURL=$( (fcm trac --browser echo $ROOT@$REVISION 2>/dev/null || echo -n "" ) | grep "^[^=]" )
+    if [ -n "$TRACURL" ]
+    then
+      echo $(date) "Found Trac webpage at $TRACURL" | tee -a $LOGFILE
+    else
+      echo $(date) "Failed to find Trac webpage" | tee -a $LOGFILE
+    fi
+  fi
+  
+  
+  if [[ $( fcm info $ROOT | grep ^URL: | sed 's/^URL://' | grep trunk ) != "" ]]; then
+   export BRANCH="$BRANCH$ID:$ROOT@$REVISION<br>"
+  else
+   THISBRANCH=$( fcm info $ROOT | grep ^URL: | sed 's/^[^\w]*branches//g' )
+   export BRANCH="$BRANCH$ID:$THISBRANCH@$REVISION<br>"
+  fi
+  
+  # Export from the fcm system
+  fcm export --force $LOCATION -r $REVISION  $UMPL >> $LOGFILE
+  if [[ $? -gt 0 ]]; then
+    echo "fcm export failed"
+    exit 1;
+  fi
+  echo $(date) "Completed fcm export" | tee -a $LOGFILE
+ 
+  ##########################################
+  # stage 3: Process source code for duplicates and C decks
+  ##########################################
+  
+  # Add HTML link to Trac website version of file at top of file if specified.
+  if [ -n "$TRACURL" ]
+  then
+    for file in `find $UMPL -type f -name '*.[Ff]90' -or -name \*.h -or -name '*.[Ff]'`
+    do
+      name=$(basename $file)
+      srcdir=$(dirname $file)
+      srcdir=${srcdir#$UMPL/}
+    
+      awk -v tracurl=${TRACURL%@*} -v srcdir=$srcdir -v name=$name -v rev=$REVISION -v commondir=$COMMON \
+      'NR==1{
+  print "! Automatically added by code browser";
+  printf "! Trac link: <a href=\"%s/%s/%s/%s@%s\">%s</a>\n", tracurl, commondir, srcdir, name, rev, name;
+  print "! End of automatically added text.";
+  }{print $0}' $file > $file.tmp
+      mv $file.tmp $file
+    done
+    echo $(date) "Completed adding Trac links to Fortran files" | tee -a $LOGFILE
+  fi
+  # It handle C files automatically.
+  # Alternatively this can be commented out and done manually in UM_prepare
+  # The options to parsec are cpp options, -P is needed to remove confusing 
+  # line markers in output.
+  for cfile in `find $UMPL -name \*.c`
+  do
+    # Rename file to be consistent with Fortran files.
+    cname=$(basename $cfile .c)
+    dirname=$(dirname $cfile)
+    file=$dirname/$ID-$cname.c
+    mv $cfile $file
+    name=$(basename $file .c)
+
+    # We can place as many defines as required
+    # (the code browser will handle different versions of the same C function)
+    # Parsec creates a HTML file in the current directory (i.e. $WORKDIR).
+    $HERE/parsec -P -I $UMPL/include/other -DC95_2A -DC95_2B -DC_LOW $file
+    if [ -n "$TRACURL" ]
+    then
+      awk -v tracurl=${TRACURL%@*} -v name=$(basename $cfile) -v srcdir=${dirname#$UMPL/} -v rev=$REVISION -v commondir=$COMMON \
+      'NR==1{
+  print "! Automatically added by code browser";
+  printf "! Trac link: <a href=\"%s/%s/%s/%s@%s\">%s</a>\n", tracurl, commondir, srcdir, name, rev, name;
+  print "! End of automatically added text.";
+  }{print $0}' $WORKDIR/$name.F90 > $WORKDIR/$name.F90.tmp
+      mv $WORKDIR/$name.F90.tmp $dirname/$cname.F90 2>&1 >> $LOGFILE
+      rm $WORKDIR/$name.F90
+    else
+      mv $WORKDIR/$name.F90 $dirname/$cname.F90 2>&1 >> $LOGFILE
+    fi
+    clist="$clist $name" 
+  done
+  if [ -n "$TRACURL" ]
+  then  
+    echo $(date) "Completed parsing C into Fortran and adding Trac links" | tee -a $LOGFILE
+  else
+    echo $(date) "Completed parsing C into Fortran" | tee -a $LOGFILE
+  fi
+  
+  # Copy all files to UMPL directory.
+  for file in `find $UMPL -name '*.[Ff]90' -or -name '*.[Ff]'`;
+  do
+    cp $file $WORKDIR/UMPL/$ID-`basename $file` 2>&1 >> $LOGFILE
+  done
+  
+  # Find all header files except c_fort2c.h which causes compilation warning.
+  # Should really remove all references to C headers.
+  for file in `find $UMPL -name \*.h -not -name "c_fort2c.h"`
+  do
+    destfile=$WORKDIR/UMPL/`basename $file`
+    if [ -f $destfile ]
+    then
+      echo $(date) "WARNING: Include `basename $file` has duplicate." | tee -a $LOGFILE
+      echo "" >> $destfile  
+      echo "! *** DUPLICATE *** - following from repository $ID" >> $destfile
+      echo "" >> $destfile
+      cat $file >> $destfile
+    else
+      cp $file $destfile 2>&1 >> $LOGFILE
+    fi
+  done
+  echo $(date) "Finished copying header and F90 decks to working directory" | tee -a $LOGFILE
+
+  # Move onto next repository.
+  shift
+done
+
+# Remaining argument should be HTML directory.
+export HTML=$1
+echo $(date) "Using $HTML for output directory" | tee -a $LOGFILE
+rm -rf $HTML
+mkdir -p $HTML
+
+##########################################
+# stage 4: Do the f90tohtml processing on the resulting directory
+##########################################
+
+# play with duplicate subroutines.
+$HERE/UM_prepare $WORKDIR >> $LOGFILE
+CC=$?
+if [ $CC != 0 ]
+then
+  echo $(date) "Failed running UM_prepare" | tee -a $LOGFILE
+  exit $CC
+fi
+
+# Create list of files for f90tohtml to process (specified in UM.co2h).
+find $WORKDIR/UMPL -name '*.[Ff]90' -or -name '*.[Ff]' | sort > $UMLS/UMPL.lst
+find $WORKDIR/UMPL -name \*.h | sort > $UMLS/include.lst
+echo $(date) "Generated F90 and include file listings"
+
+# Run f90tohtml
+cd $HERE
+$HERE/f90tohtml UM.co2h >> $LOGFILE
+CC=$?
+if [[ $CC -gt 0 ]]; then
+  echo $(date) "Failed running f90tohtml" | tee -a $LOGFILE
+  exit $CC
+fi
+echo $(date) "Finished running f90tohtml code" | tee -a $LOGFILE
+
+# Correct C links.  Parsec has created a HTML file in $WORKDIR which we need to 
+# copy to the browser's html location.
+for file in $clist;
+do 
+  echo $(date) "Fixed html for C source from file $file" | tee -a $LOGFILE
+  mv $WORKDIR/$file.html $HTML/UMbrowser/html_code/UM/
+  sed -i -e "s/\&lt\;/\</g" -e "s/\&gt\;/\>/g" $HTML/UMbrowser/html_code/UM/$file.F90.html
+done
+
+# Correct HTML in Fortran added by this script to link to Trac.
+if [ -n "$TRACURL" ]
+then
+  for file in `find $HTML/UMbrowser/html_code -type f`
+  do
+    sed -i -e '/^! Trac link:/s/\&lt\;/\</g' \
+           -e '/^! Trac link:/s/\&gt\;/\>/g' $file
+  done
+  echo $(date) "Fixed Trac links in Fortran files" | tee -a $LOGFILE
+fi
+
+# Create cgi-bin directory which is used in f90tohtml script.
+mkdir $HTML/cgi-bin
+cp $HERE/grepper.cgi $HTML/cgi-bin
+
+cat > $HTML/cgi-bin/.htaccess <<EOF
+AddHandler cgi-script .cgi
+Options +ExecCGI
+EOF
+
+##########################################
+# stage 5: Process the sections of code on the index.
+##########################################
+
+# Create section listings:
+# Not terribly robust srcipt - depends heavily on output
+# format of f90tohtml index files. May break on f90tohtml upgrade.
+echo "indices"
+$HERE/UM_indices
+
+##########################################
+# stage 6: Do some post processing
+##########################################
+
+# Clean up working directories & files
+rm -rf $WORKDIR
+
+echo Done!
+
+if [[ "$LOGFILE" != "/dev/null" ]]; then
+  echo "Logfile: $LOGFILE"
+fi
+
+exit 0
+
+=pod
+
+=head1 f90tohtml_procedure
+
+=head1 SYNOPSIS
+
+ f90tohtml_procedure -w work_dir -l logfile -t -r revision svn_uri(s) outdir
+
+=head1 DESCRIPTION
+
+Imports code from subversion, performs various cleaning operations,
+and generates hyperlinked HTML pages of codebase.
+
+See header comments for further details.
+
+=head1 AUTHORS
+
+Jean-Christophe Thil
+Toby White
+Tom Edwards
+Paul Selwood
+Thomas Green
+
+=cut

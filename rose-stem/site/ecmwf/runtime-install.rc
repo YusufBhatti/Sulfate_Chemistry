@@ -1,0 +1,44 @@
+# Two stage extract and mirror from local platform with repository access
+# to remote platform
+    [[fcm_make_ecmwf_install_ctldata]]
+        inherit = INSTALL, EXTRACT
+	[[[environment]]]
+	    ROSE_APP_OPT_CONF_KEYS=mirror
+	    ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[fcm_make2_ecmwf_install_ctldata]]
+        inherit = XC30
+	[[[environment]]]
+	    ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[ecmwf_install_ctldata]]
+        inherit = INSTALL, EXTRACT_SOURCE, XC30
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP    = install_ctldata
+	    TASK_DIR=fcm_make_ecmwf_install_ctldata
+    
+    [[ecmwf_install_utils]]
+        inherit = INSTALL, EXTRACT_SOURCE, XC30
+        [[[environment]]]
+            ROSE_TASK_APP    = install_utils
+            PLATFORM         = xc30
+            SOURCES          = fcm_make_ecmwf_utils_serial_high_omp
+            ROSE_TASK_OPTIONS = -v -v -v -v
+            ROSE_TASK_N_JOBS = 4
+        [[[job submission]]]
+           method = pbs
+        [[[remote]]]
+           host = $(rose host-select hpc)
+        [[[directives]]]
+            -l = walltime=3600
+            -l EC_total_tasks=1
+            -q = ns
+    
+
+       
+
+
+
+
+

@@ -1,0 +1,14 @@
+{%- set integ_graphs = {
+
+    "ncas_xc30_install" : "",
+    "ncas_xc30_n48_eg_noomp" : "",
+    "ncas_xc30_n48_eg_omp_noios_drhook" : "", 
+    "ncas_xc30_n48_eg_omp_ios" : "",
+    "ncas_xc30_compile_debug" : "",
+    "ncas_xc30_createbc_calcs" : "",
+    "ncas_xc30_global_to_lam_eg" : "",
+    "ncas_xc30_n48_ga_amip_exp_2day" : "",
+ 
+    }
+-%}
+

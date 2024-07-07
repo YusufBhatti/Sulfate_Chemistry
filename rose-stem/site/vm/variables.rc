@@ -1,0 +1,26 @@
+{%- set UMDIR = '$HOME/umdir' %}
+{%- set VM_CENTRAL_INSTALL_DIR='$HOME/umdir' %}
+{%- set GRIB_API_VM_ROOT_DIR='/usr' %}
+{%- if MPI_TASKS is not defined %}
+{%- set MPI_TASKS=2 %}
+{%- endif %}
+{%- if LIMIT is not defined %}
+{%- set LIMIT=1 %}
+{%- endif %}
+{%- if UKCA is not defined %}
+{%- set UKCA=false %}
+{%- endif %}
+{%- set KGO_VM_ROOT_DIR='$HOME/umdir/standard_jobs/kgo' %}
+{#  KGO file versions
+    For tests copied from the Met Office these should point to the equivalent
+    `meto` variable, as the `meto` variable gets updated when the output
+    changes.
+#}
+{%- import 'site/meto/variables.rc' as meto %}
+{%- set VM_N48_EG_KGO=meto.XC40_N48_EG_GNU_KGO %}
+{%- set VM_N48_EG_COMP_CHECK_KGO=meto.XC40_N48_EG_GNU_COMP_CHECK_KGO %}
+{%- set VM_N48_UKCA_EG_KGO=meto.XC40_N48_UKCA_EG_GNU_NOOMP_KGO %}
+{%- set VM_N48_UKCA_EG_COMP_CHECK_KGO=meto.XC40_N48_UKCA_EG_GNU_COMP_CHECK_KGO %}
+{%- set VM_IDEALISED_BICYCLIC_LAM_RCE_KGO=meto.XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU_KGO %}
+{%- set VM_SCM_TOGACOARE_GA6_KGO=meto.XC40_SCM_TOGACOARE_GA6_GNU_KGO %}
+{%- set VM_SCM_GABLS3_GA6_KGO=meto.XC40_SCM_GABLS3_GA6_GNU_KGO %}

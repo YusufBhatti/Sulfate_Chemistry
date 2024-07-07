@@ -1,0 +1,28 @@
+# Machine specific classes for x86 server with GCC compilers
+# Tasks should use one of:
+#
+#  * UOE_X86-GNU       - for tasks which run on an x86 server with GNU compilers
+#  * UOE_X86-GNU-BUILD - for tasks which compile on an x86 server with GNU compilers
+
+# Subclass for x86 jobs (gfortran)
+    [[UOE_X86_GNU]]
+        pre-script = ". /usr/local/bin/prg_gfortran"
+        [[[environment]]]
+            PLATFORM=uoe-x86-gnu
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{X86_GNU_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{X86_GNU_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+	    STASH2CF={{X86_GNU_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+        [[[job]]]
+            batch system = background
+	    execution time limit = PT100H
+
+# Subclass for x86 build jobs (gfortran)
+    [[UOE_X86_GNU_BUILD]]
+        inherit = EXTRACT_SOURCE, UOE_X86_GNU
+        [[[environment]]]
+            DRHOOK = false
+            OPENMP = false
+            PREBUILD =
+	    

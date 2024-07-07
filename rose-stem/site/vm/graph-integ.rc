@@ -1,0 +1,142 @@
+{%- set integ_graphs = {
+
+    "install_source"        : "",
+
+    "vm_install"            : "",
+
+    "vm_install_ctldata"    : "",
+
+    "vm_install_libs" : "",
+
+    "vm_install_mule"       : "",
+
+    "fcm_make"              : "",
+    
+    "vm_n48_eg_omp_ios"     : "fcm_make_vm_gnu_um_safe_omp => \
+                               recon_vm_n48_eg_omp_ios_"~MPI_TASKS~"x1 => atmos_vm_n48_eg_omp_ios_"~MPI_TASKS~"x1
+                               fcm_make_vm_install_ctldata => vm_install_ctldata => \
+                               recon_vm_n48_eg_omp_ios_"~MPI_TASKS~"x1
+                               recon_vm_n48_eg_omp_ios_1x"~MPI_TASKS~" & recon_vm_n48_eg_omp_ios_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_n48_eg_omp_ios_recon_proc => \
+                               housekeep_recon_vm_n48_eg_omp_ios_1x"~MPI_TASKS~" & housekeep_recon_vm_n48_eg_omp_ios_"~MPI_TASKS~"x1
+                               atmos_vm_n48_eg_omp_ios_1x"~MPI_TASKS~" & atmos_vm_n48_eg_omp_ios_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_n48_eg_omp_ios_atmos_proc => \
+                               housekeep_atmos_vm_n48_eg_omp_ios_1x"~MPI_TASKS~" & housekeep_atmos_vm_n48_eg_omp_ios_"~MPI_TASKS~"x1
+                               atmos_vm_n48_eg_omp_ios_"~MPI_TASKS~"x1 => housekeep_recon_vm_n48_eg_omp_ios_"~MPI_TASKS~"x1",
+
+    "vm_n48_eg_omp_noios"   : "fcm_make_vm_gnu_um_safe_omp => \
+                               recon_vm_n48_eg_omp_noios_"~MPI_TASKS~"x1 => atmos_vm_n48_eg_omp_noios_"~MPI_TASKS~"x1
+                               fcm_make_vm_install_ctldata => vm_install_ctldata => \
+                               recon_vm_n48_eg_omp_noios_"~MPI_TASKS~"x1
+                               recon_vm_n48_eg_omp_noios_1x"~MPI_TASKS~" & recon_vm_n48_eg_omp_noios_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_n48_eg_omp_noios_recon_proc => \
+                               housekeep_recon_vm_n48_eg_omp_noios_1x"~MPI_TASKS~" & housekeep_recon_vm_n48_eg_omp_noios_"~MPI_TASKS~"x1
+                               atmos_vm_n48_eg_omp_noios_1x"~MPI_TASKS~" & atmos_vm_n48_eg_omp_noios_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_n48_eg_omp_noios_atmos_proc => \
+                               housekeep_atmos_vm_n48_eg_omp_noios_1x"~MPI_TASKS~" & housekeep_atmos_vm_n48_eg_omp_noios_"~MPI_TASKS~"x1
+                               atmos_vm_n48_eg_omp_noios_"~MPI_TASKS~"x1 => housekeep_recon_vm_n48_eg_omp_noios_"~MPI_TASKS~"x1",
+
+    "vm_n48_eg_noomp"       : "fcm_make_vm_gnu_um_safe_noomp => \
+                               recon_vm_n48_eg_noomp_"~MPI_TASKS~"x1 => atmos_vm_n48_eg_noomp_"~MPI_TASKS~"x1
+                               fcm_make_vm_install_ctldata => vm_install_ctldata => \
+                               recon_vm_n48_eg_noomp_"~MPI_TASKS~"x1
+                               recon_vm_n48_eg_noomp_1x"~MPI_TASKS~" & recon_vm_n48_eg_noomp_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_n48_eg_noomp_recon_proc => \
+                               housekeep_recon_vm_n48_eg_noomp_1x"~MPI_TASKS~" & housekeep_recon_vm_n48_eg_noomp_"~MPI_TASKS~"x1
+                               atmos_vm_n48_eg_noomp_1x"~MPI_TASKS~" & atmos_vm_n48_eg_noomp_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_n48_eg_noomp_atmos_proc => \
+                               housekeep_atmos_vm_n48_eg_noomp_1x"~MPI_TASKS~" & housekeep_atmos_vm_n48_eg_noomp_"~MPI_TASKS~"x1
+                               atmos_vm_n48_eg_noomp_"~MPI_TASKS~"x1 => housekeep_recon_vm_n48_eg_noomp_"~MPI_TASKS~"x1",
+
+  "vm_n48_eg_omp_ios_comp_check" : "fcm_make_vm_gnu_um_rigorous_omp => \
+                               recon_vm_n48_eg_omp_ios_comp_check_"~MPI_TASKS~"x1 => atmos_vm_n48_eg_omp_ios_comp_check_"~MPI_TASKS~"x1
+                               fcm_make_vm_install_ctldata => vm_install_ctldata => \
+                               recon_vm_n48_eg_omp_ios_comp_check_"~MPI_TASKS~"x1
+                               recon_vm_n48_eg_omp_ios_comp_check_1x"~MPI_TASKS~" & recon_vm_n48_eg_omp_ios_comp_check_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_n48_eg_omp_ios_comp_check_recon_proc => \
+                               housekeep_recon_vm_n48_eg_omp_ios_comp_check_1x"~MPI_TASKS~" & housekeep_recon_vm_n48_eg_omp_ios_comp_check_"~MPI_TASKS~"x1
+                               atmos_vm_n48_eg_omp_ios_comp_check_1x"~MPI_TASKS~" & atmos_vm_n48_eg_omp_ios_comp_check_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_n48_eg_omp_ios_comp_check_atmos_proc => \
+                               housekeep_atmos_vm_n48_eg_omp_ios_comp_check_1x"~MPI_TASKS~" & housekeep_atmos_vm_n48_eg_omp_ios_comp_check_"~MPI_TASKS~"x1
+                               atmos_vm_n48_eg_omp_ios_comp_check_"~MPI_TASKS~"x1 => housekeep_recon_vm_n48_eg_omp_ios_comp_check_"~MPI_TASKS~"x1",
+
+    "vm_idealised_bicyclic_lam_rce" : "fcm_make_vm_gnu_um_safe_omp => \
+                               recon_vm_idealised_bicyclic_lam_rce_"~MPI_TASKS~"x1 => atmos_vm_idealised_bicyclic_lam_rce_"~MPI_TASKS~"x1
+                               fcm_make_vm_install_ctldata => vm_install_ctldata => \
+                               recon_vm_idealised_bicyclic_lam_rce_"~MPI_TASKS~"x1
+                               recon_vm_idealised_bicyclic_lam_rce_1x"~MPI_TASKS~" & recon_vm_idealised_bicyclic_lam_rce_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_idealised_bicyclic_lam_rce_recon_proc => \
+                               housekeep_recon_vm_idealised_bicyclic_lam_rce_1x"~MPI_TASKS~" & housekeep_recon_vm_idealised_bicyclic_lam_rce_"~MPI_TASKS~"x1
+                               atmos_vm_idealised_bicyclic_lam_rce_1x"~MPI_TASKS~" & atmos_vm_idealised_bicyclic_lam_rce_"~MPI_TASKS~"x1 => \
+                               rose_ana_vm_idealised_bicyclic_lam_rce_atmos_proc => \
+                               housekeep_atmos_vm_idealised_bicyclic_lam_rce_1x"~MPI_TASKS~" & housekeep_atmos_vm_idealised_bicyclic_lam_rce_"~MPI_TASKS~"x1
+                               atmos_vm_idealised_bicyclic_lam_rce_"~MPI_TASKS~"x1 => housekeep_recon_vm_idealised_bicyclic_lam_rce_"~MPI_TASKS~"x1
+                               recon_vm_idealised_bicyclic_lam_rce_1x"~MPI_TASKS~" => atmos_vm_idealised_bicyclic_lam_rce_nrun_1x"~MPI_TASKS~" => \
+                               atmos_vm_idealised_bicyclic_lam_rce_crun_1x"~MPI_TASKS~" => rose_ana_vm_idealised_bicyclic_lam_rce_atmos_nruncrun
+                               atmos_vm_idealised_bicyclic_lam_rce_1x"~MPI_TASKS~" => rose_ana_vm_idealised_bicyclic_lam_rce_atmos_nruncrun => \
+                               housekeep_atmos_vm_idealised_bicyclic_lam_rce_1x"~MPI_TASKS~"
+                               atmos_vm_idealised_bicyclic_lam_rce_nrun_1x"~MPI_TASKS~" => housekeep_recon_vm_idealised_bicyclic_lam_rce_1x"~MPI_TASKS,
+
+    "vm_n48_ukca_eg_omp_noios"   : "fcm_make_vm_gnu_um_safe_omp => \
+                           recon_vm_n48_ukca_eg_omp_noios_"~MPI_TASKS~"x1 => atmos_vm_n48_ukca_eg_omp_noios_"~MPI_TASKS~"x1
+			   recon_vm_n48_ukca_eg_omp_noios_1x"~MPI_TASKS~" & recon_vm_n48_ukca_eg_omp_noios_"~MPI_TASKS~"x1 => \
+			   rose_ana_vm_n48_ukca_eg_omp_noios_recon_proc
+			   atmos_vm_n48_ukca_eg_omp_noios_"~MPI_TASKS~"x1 => housekeep_recon_vm_n48_ukca_eg_omp_noios_"~MPI_TASKS~"x1
+			   rose_ana_vm_n48_ukca_eg_omp_noios_recon_proc => housekeep_recon_vm_n48_ukca_eg_omp_noios_"~MPI_TASKS~"x1
+			   rose_ana_vm_n48_ukca_eg_omp_noios_recon_proc => housekeep_recon_vm_n48_ukca_eg_omp_noios_1x"~MPI_TASKS~"
+			   atmos_vm_n48_ukca_eg_omp_noios_1x"~MPI_TASKS~" & atmos_vm_n48_ukca_eg_omp_noios_"~MPI_TASKS~"x1 => \
+			   rose_ana_vm_n48_ukca_eg_omp_noios_atmos_proc
+			   rose_ana_vm_n48_ukca_eg_omp_noios_atmos_proc => housekeep_atmos_vm_n48_ukca_eg_omp_noios_"~MPI_TASKS~"x1
+			   rose_ana_vm_n48_ukca_eg_omp_noios_atmos_proc => housekeep_atmos_vm_n48_ukca_eg_omp_noios_1x"~MPI_TASKS~"
+                           fcm_make_vm_install_ctldata => vm_install_ctldata => \
+                           recon_vm_n48_ukca_eg_omp_noios_"~MPI_TASKS~"x1",
+
+    "vm_n48_ukca_eg_omp_noios_comp_check"   : "fcm_make_vm_gnu_um_rigorous_omp => \
+                           recon_vm_n48_ukca_eg_omp_noios_comp_check_"~MPI_TASKS~"x1 => atmos_vm_n48_ukca_eg_omp_noios_comp_check_"~MPI_TASKS~"x1
+			   recon_vm_n48_ukca_eg_omp_noios_comp_check_1x"~MPI_TASKS~" & recon_vm_n48_ukca_eg_omp_noios_comp_check_"~MPI_TASKS~"x1 => \
+			   rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_recon_proc
+			   atmos_vm_n48_ukca_eg_omp_noios_comp_check_"~MPI_TASKS~"x1 => housekeep_recon_vm_n48_ukca_eg_omp_noios_comp_check_"~MPI_TASKS~"x1
+			   rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_recon_proc => housekeep_recon_vm_n48_ukca_eg_omp_noios_comp_check_"~MPI_TASKS~"x1
+			   rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_recon_proc => housekeep_recon_vm_n48_ukca_eg_omp_noios_comp_check_1x"~MPI_TASKS~"
+			   atmos_vm_n48_ukca_eg_omp_noios_comp_check_1x"~MPI_TASKS~" & atmos_vm_n48_ukca_eg_omp_noios_comp_check_"~MPI_TASKS~"x1 => \
+			   rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_atmos_proc
+			   rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_atmos_proc => housekeep_atmos_vm_n48_ukca_eg_omp_noios_comp_check_"~MPI_TASKS~"x1
+			   rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_atmos_proc => housekeep_atmos_vm_n48_ukca_eg_omp_noios_comp_check_1x"~MPI_TASKS~"
+                           fcm_make_vm_install_ctldata => vm_install_ctldata => \
+                           recon_vm_n48_ukca_eg_omp_noios_comp_check_"~MPI_TASKS~"x1",
+
+    "vm_n48_ukca_eg_noomp"   : "fcm_make_vm_gnu_um_safe_noomp => \
+                           recon_vm_n48_ukca_eg_noomp_"~MPI_TASKS~"x1 => atmos_vm_n48_ukca_eg_noomp_"~MPI_TASKS~"x1
+			   recon_vm_n48_ukca_eg_noomp_1x"~MPI_TASKS~" & recon_vm_n48_ukca_eg_noomp_"~MPI_TASKS~"x1 => \
+			   rose_ana_vm_n48_ukca_eg_noomp_recon_proc
+			   atmos_vm_n48_ukca_eg_noomp_"~MPI_TASKS~"x1 => housekeep_recon_vm_n48_ukca_eg_noomp_"~MPI_TASKS~"x1
+			   rose_ana_vm_n48_ukca_eg_noomp_recon_proc => housekeep_recon_vm_n48_ukca_eg_noomp_"~MPI_TASKS~"x1
+			   rose_ana_vm_n48_ukca_eg_noomp_recon_proc => housekeep_recon_vm_n48_ukca_eg_noomp_1x"~MPI_TASKS~"
+			   atmos_vm_n48_ukca_eg_noomp_1x"~MPI_TASKS~" & atmos_vm_n48_ukca_eg_noomp_"~MPI_TASKS~"x1 => \
+			   rose_ana_vm_n48_ukca_eg_noomp_atmos_proc
+			   rose_ana_vm_n48_ukca_eg_noomp_atmos_proc => housekeep_atmos_vm_n48_ukca_eg_noomp_"~MPI_TASKS~"x1
+			   rose_ana_vm_n48_ukca_eg_noomp_atmos_proc => housekeep_atmos_vm_n48_ukca_eg_noomp_1x"~MPI_TASKS~"
+                           fcm_make_vm_install_ctldata => vm_install_ctldata => \
+                           recon_vm_n48_ukca_eg_noomp_"~MPI_TASKS~"x1",
+
+    "vm_scm_togacoare_ga6_omp" : "",
+
+    "vm_scm_togacoare_ga6_noomp" : "",
+
+    "vm_scm_gabls3_ga6_omp" : "",
+
+    "vm_scm_gabls3_ga6_noomp" : "",
+
+    "umdp3_check"      : "",
+
+    "ifdef_check"      : "",
+
+    "nl_bcast_check"   : "",
+
+    "drhook_check"     : "",
+
+    "site_validate"    : "",
+
+    "metadata_check"   :  "",
+    }
+%}

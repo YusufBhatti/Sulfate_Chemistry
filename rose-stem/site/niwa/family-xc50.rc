@@ -1,0 +1,139 @@
+# Machine specific task families for XC50
+
+    [[NIWA_XC50]]
+        [[[remote]]]
+            host = {{HOST_XC50}}
+        [[[environment]]]
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s unlimited
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+# Submission setup - SLURM
+    [[NIWA_XC50_SL]]
+        [[[job]]]
+            batch system = slurm
+        [[[directives]]]
+            --partition = NIWA_Research
+            --job-name = um_test
+            --time = 00:30:00
+            --mem-per-cpu = 4G
+            --hint=nomultithread
+
+# XC50 node setup
+# Single OpenMP thread
+    [[NIWA_XC50_PARALLEL_THREADS_1]]
+        [[[directives]]]
+            --cpus-per-task = 1
+        [[[environment]]]
+            OMP_NUM_THREADS = 1
+	    OMP_STACKSIZE = 1g
+
+# Two OpenMP threads
+    [[NIWA_XC50_PARALLEL_THREADS_2]]
+        [[[directives]]]
+            --cpus-per-task = 2
+        [[[environment]]]
+            OMP_NUM_THREADS = 2
+	    OMP_STACKSIZE = 1g
+
+# Four OpenMP threads
+    [[NIWA_XC50_PARALLEL_THREADS_4]]
+        [[[directives]]]
+            --cpus-per-task = 4
+        [[[environment]]]
+            OMP_NUM_THREADS = 4
+	    OMP_STACKSIZE = 1g
+
+# Single task
+    [[NIWA_XC50_PARALLEL_TASKS_1]]
+        [[[directives]]]
+            --nodes  = 1
+            --ntasks = 1
+
+# Two tasks
+    [[NIWA_XC50_PARALLEL_TASKS_2]]
+        [[[directives]]]
+            --nodes  = 1
+            --ntasks = 2
+
+# Four tasks
+    [[NIWA_XC50_PARALLEL_TASKS_4]]
+        [[[directives]]]
+            --nodes  = 1
+            --ntasks = 4
+
+# Eight tasks
+    [[NIWA_XC50_PARALLEL_TASKS_8]]
+        [[[directives]]]
+            --nodes  = 1
+            --ntasks = 8
+
+# 32 tasks
+    [[NIWA_XC50_PARALLEL_TASKS_32]]
+        [[[directives]]]
+            --nodes  = 1
+            --ntasks = 32
+
+# 40 tasks
+    [[NIWA_XC50_PARALLEL_TASKS_40]]
+        [[[directives]]]
+            --nodes  = 1
+            --ntasks = 40
+
+# 240 tasks
+    [[NIWA_XC50_PARALLEL_TASKS_240]]
+        [[[directives]]]
+            --nodes  = 6
+            --ntasks = 240
+
+# 280 tasks
+    [[NIWA_XC50_PARALLEL_TASKS_280]]
+        [[[directives]]]
+            --nodes  = 7
+            --ntasks = 280
+
+# Needed for umdp3 check
+    [[EXTRACT]]
+        inherit = NIWA_XC50, EXTRACT_SOURCE
+
+# Build task families for XC50
+    [[NIWA_XC50_BUILD]]
+        inherit = NIWA_XC50, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 6
+            DRHOOK=false
+
+    [[NIWA_XC50_BUILD_CCE]]
+        inherit = NIWA_XC50_BUILD
+        pre-script = """
+                     module load PrgEnv-cray craype-x86-skylake cray-netcdf FCM
+                     module swap PrgEnv-cray PrgEnv-cray/6.0.4
+                     module swap cce cce/8.6.2
+                     module swap cray-netcdf cray-netcdf/4.4.1.1.3
+                     module swap FCM FCM/2017.10.0
+                     module load grib_api/1.23.1-CrayCCE-2017.06
+                     """
+        [[[environment]]]
+            PLATFORM=niwa-xc50-cce
+
+    [[NIWA_XC50_BUILD_IFORT]]
+        inherit = NIWA_XC50_BUILD
+        pre-script = """
+                     module load PrgEnv-cray craype-x86-skylake cray-netcdf FCM
+                     module swap PrgEnv-cray PrgEnv-intel/6.0.4
+                     module swap intel intel/17.0.4.196
+                     module swap cray-netcdf cray-netcdf/4.4.1.1.3
+                     module swap FCM FCM/2017.10.0
+                     module load grib_api/1.23.1-CrayIntel-2017.06
+                     """
+        [[[environment]]]
+            PLATFORM=niwa-xc50-ifort
+
+# Rose ana comparisons
+    [[NIWA_XC50_MULE]]
+        pre-script = """
+                 module load Mule/2017.08.1-CrayGNU-2017.06
+                 """

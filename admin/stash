@@ -1,0 +1,293 @@
+#!/usr/bin/env bash
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+#
+#  Script: stash 
+#
+#  Purpose: list stash codes, seek for items in stashmaster
+#
+#  Code Owner: Please refer to the UM file CodeOwners.txt
+#  This file belongs in section: UM system team
+#
+#  Usage:  stash [-m submodel] [-p|-s] [-r version] [string|code[code...]]
+# 
+#  DESCRIPTION
+# 
+#      stash(1) prints the stash code, pp field code and field description
+#      to standard output for the specified arguments.
+# 
+#      The arguments are interpreted as stash codes or a search string, i.e.
+#      if all the arguments contain only digits, they are taken as stash codes,
+#      otherwise the arguments form a search string. The -p option interprets
+#      arguments as PP codes instead of stash codes. The -s option forces a 
+#      string search.
+# 
+#      If no arguments are given, all codes are listed.
+#      If a code is not found, nothing is printed.
+#
+#      Stash codes greater than 5 digits and PP codes greater than 3 digits
+#      are non-valid. In this case a message is printed and stash(1) exits.
+# 
+#      The submodel option, -m, is only applicable to Unified Model versions
+#      betweeen 4.1 and 9.1. This selects a particular submodel stashmaster file.
+#      By default all submodel stashmaster files are searched, where applicable.
+# 
+#      The version of the Unified Model to be used is resolved as follows:
+# 
+#         * from the argument supplied with option -r
+# 
+#         * Default value in the code (typically the most recent UM release).
+# 
+#  OPTIONS
+#      -m    Select a Unified Model submodel: A, O, W or S. This option
+#            is only applicable to 9.1 >UM version >4.1 ; it is
+#            ignored otherwise. The default is to search on all submodels.
+# 
+#      -p    Interprets arguments as PP field codes.
+# 
+#      -r    The Unified Model version to be used. This must be in the format
+#            m.n, for example, -r 8.0
+# 
+#      -s    Forces interpretation of the arguments to be a string.
+#            The string is NOT case sensitive.
+# 
+#  EXAMPLES
+#      $ stash 24
+# 
+#      00024  16 SURFACE TEMPERATURE AFTER TIMESTEP
+# 
+#      $ stash -p 106
+# 
+#      00021 106 SOIL MOISTURE CONTENT,AFTER T'STEP
+#      08208 106 SOIL MOISTURE CONTENT : UNGATHERED
+# 
+#      $ stash -s lw rad
+# 
+#      02004  16 TEMPERATURE AFTER LW RAD INCREMENTS
+#      02201 187 NET DOWN SURFACE LW RAD FLUX
+#      02202 187 NET DOWN LW RAD FLUX: SOLID SURFACE
+#      02203 187 NET DOWN LW RAD FLUX: OPEN SEA
+#      02204  30 TOTAL CLOUD AMOUNT IN LW RADIATION
+#      02205 206 OUTGOING LW RAD FLUX (TOA)
+#
+#      $ stash -s lw rad
+# 
+#      02004  16 TEMPERATURE AFTER LW RAD INCREMENTS
+#      02201 187 NET DOWN SURFACE LW RAD FLUX
+#      02202 187 NET DOWN LW RAD FLUX: SOLID SURFACE
+#      02203 187 NET DOWN LW RAD FLUX: OPEN SEA
+#      02204  30 TOTAL CLOUD AMOUNT IN LW RADIATION
+#      02205 206 OUTGOING LW RAD FLUX (TOA)
+#      02207 205 DOWN LW RAD FLUX: SURFACE
+# 
+#      $UMDIR is location of UM installations. 
+#      should be set to locate stashmaster files.
+
+iam=`basename $0`
+DefaultVersion=11.1
+version=
+models="A O W S"
+model=
+CodeType=
+synopsis="Synopsis: stash [-m submodel] [-p|-s] [-r version] [string|code[code...]]"
+
+# Function to convert to upper-case.
+function upper
+{
+  typeset __upper
+  __upper=$(echo $* | tr '[:lower:]' '[:upper:]') ; echo $__upper
+}
+
+# Parse options
+set -- `getopt m:pr:s $*` || exit 1
+while [ $1 != -- ] ; do
+  case $1 in
+     -m) model=`upper $2`; shift 2;;
+     -p) CodeType=pp; shift;;
+     -r) version=$2; shift 2;;
+     -s) CodeType=string; shift;;
+     -*) echo stash: bad option: $1 >&2; exit 1;;
+  esac
+done
+shift
+
+#
+# Store arguments in Codes
+#
+
+Codes=$*
+
+#
+# Check if Codes is "?".
+# If so, send synopsis to stdout
+#
+
+if [ "$Codes" = "?" ];then
+   echo $synopsis
+   exit
+fi
+
+version=${version:=$DefaultVersion}
+
+#
+# Check if Codes is "?".
+# If so, send synopsis to stdout
+#
+if [ -z "${version}" ];then
+   echo $iam:\
+   Supply Unified Model version number via option -r
+   exit 1
+elif [ -z "`echo $version | sed -n -e '\?.*\..*?p'`" ];then
+   echo $iam:\
+   Supply Unified Model version number in format m.n
+   exit 1
+fi
+
+#
+# Set StashMasterDir to the stashmaster directory for
+# the requested version of the Unified Model.
+#
+StashMasterDir=$UMDIR/vn$version/ctldata/STASHmaster/
+#
+# Check that the StashMasterDir directory exists.
+#
+if [ ! -d $StashMasterDir ]; then
+   echo
+   echo $iam: \
+   $StashMasterDir does not exist.
+   echo Probably an invalid version number - $version
+   echo
+   exit 1
+fi
+
+#
+# Store template stashmaster file name 
+# in StashMaster
+#
+StashMaster=$StashMasterDir/STASHmaster_
+
+#
+# Generate required list of submodel stashmaster
+# files and store in StashMasters
+#
+if [ -z "$model" ];then
+  for i in $models
+  do
+     StashMasters_tmp=$StashMasters_tmp" "$StashMaster$i
+  done
+else
+  StashMasters_tmp=$StashMaster$model
+fi
+
+#
+# Check that all requested submodel stashmaster
+# files exist
+#
+
+# If a particular submodel doesnt exist then remove it from the list
+
+# echo "StashMasters is set to $StashMasters"
+
+# reset StashMasters
+StashMasters=""
+
+
+# test submodel exists .. add to list otherwise skip.
+
+for i in $StashMasters_tmp
+do
+   if [ -f $i ]; then
+      StashMasters=$StashMasters" "$i
+   fi
+done
+
+#
+# Search the submodel stashmaster files for
+# the specified stashcodes/pp-codes/search-string
+#
+if [ $# = 0 ]; then
+#
+# No search criteria specified. List everything.
+#
+   awk -F\| \
+   '$1==1 {section=$3; item=$4; sub(/  *$/,"",$5); description=$5}
+    $1==5 {pp=$3;
+           if (item!=-1) 
+              printf "%2.2i%3.3i%5i %s\n",section,item,pp,description}' \
+    $StashMasters
+    exit 0
+fi
+#
+# Check if arguments are valid
+#
+echo "$Codes" | grep ^[[:digit:]][[:digit:][:space:]]*$ > /dev/null
+test $? -eq 0 && AllDigit=yes || AllDigit=no
+
+if [ "$CodeType" = "pp" -a "$AllDigit" = "no" ]; then
+  echo "$iam: Error: PP-code(s) must be numeric - "$Codes
+  exit 1
+fi
+
+if [ -z "$CodeType" ]; then
+  test "$AllDigit" = "no" && CodeType=string || CodeType=stash
+fi
+
+#
+# Search for match
+#
+
+if [ "$CodeType" = "string" ]; then
+#
+# Search for specified string
+#
+   string="`upper $Codes`"
+   awk -vSTRING="$string" -F\| \
+   '$1==1 {section=$3; item=$4; sub(/  *$/,"",$5); description=$5}
+    $1==5 {pp=$3;
+           if (index(description,STRING) != 0)
+              printf "%2.2i%3.3i%5i %s\n",section,item,pp,description}' \
+    $StashMasters
+elif [ "$CodeType" = "stash" ]; then
+#
+# Search for specified stashcodes
+#
+   for code in $Codes; do
+      len=`echo $code | wc -c`
+      len=`expr $len - 1`
+      case $len in
+        1|2|3) section=0; item=$code;;
+            4) section=`echo $code | cut -c1`;
+               item=`echo $code | cut -c2-`;;
+            5) section=`echo $code | cut -c1-2`;
+               item=`echo $code | cut -c3-`;;
+            *) echo stash: Stash Code not valid $code; exit 1;;
+      esac
+      awk -vSEC=$section -vITEM=$item -F\| \
+      '$1==1 {section=$3; item=$4; sub(/  *$/,"",$5); description=$5}
+       $1==5 {pp=$3;
+              if (SEC==section && ITEM==item) 
+	         printf "%2.2i%3.3i%5i %s\n",section,item,pp,description}' \
+        $StashMasters
+   done
+elif [ "$CodeType" = "pp" ]; then
+#
+# Search for specified pp-codes
+#
+   for code in $Codes; do
+      len=`echo $code | wc -c`
+      len=`expr $len - 1`
+      case $len in
+        1|2|3) awk -vPPCODE=$code -F\| \
+               '$1==1 {section=$3; item=$4; sub(/  *$/,"",$5); description=$5}
+                $1==5 {pp=$3;
+                        if (PPCODE==pp) 
+                          printf "%2.2i%3.3i%5i %s\n",section,item,pp,description}' \
+               $StashMasters;;
+            *) echo stash: PP code not valid $code; exit 1;;
+      esac
+   done
+fi
+exit 0

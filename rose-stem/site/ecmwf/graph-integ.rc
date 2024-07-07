@@ -1,0 +1,7 @@
+{%- set integ_graphs = {
+
+    "ecmwf_install"    :  "",
+
+    }
+-%}
+

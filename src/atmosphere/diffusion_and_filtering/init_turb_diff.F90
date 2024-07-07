@@ -1,0 +1,196 @@
+! *****************************COPYRIGHT*******************************
+! (C) Crown copyright Met Office. All rights reserved.
+! For further details please refer to the file COPYRIGHT.txt
+! which you should have received as part of this distribution.
+! *****************************COPYRIGHT*******************************
+!
+! Subroutine Init_turb_diff
+!
+
+SUBROUTINE Init_turb_diff(                 &
+    model_levels, bl_levels,               &
+    start_hor_lev, end_hor_lev,            &
+    start_vert_lev, end_vert_lev,          &
+    global_u_filter, global_v_filter,      &
+    diff_factor_in, mix_factor_in,         &
+    L_horiz, L_vert)
+
+! Purpose:
+!          Initialises turbulent diffusion parameters
+!          and declares arrays. Called from setcona
+!
+! Code Owner: Please refer to the UM file CodeOwners.txt
+! This file belongs in section: Top Level
+!
+! Code Description:
+!   Language: FORTRAN 90
+!   This code is written to UMDP3 programming standards.
+
+USE turb_diff_mod, ONLY: l_subfilter_horiz, l_subfilter_vert,         &
+    turb_startlev_horiz,turb_endlev_horiz,                            &
+    turb_startlev_vert,turb_endlev_vert, diff_factor, mix_factor
+USE UM_ParParams
+USE ereport_mod, ONLY: ereport
+USE parkind1, ONLY: jprb, jpim
+USE yomhook, ONLY: lhook, dr_hook
+
+USE umPrintMgr
+
+USE model_domain_mod, ONLY: model_type, mt_global
+
+IMPLICIT NONE
+
+! Input variables
+LOGICAL  :: L_horiz
+LOGICAL  :: L_vert
+
+INTEGER  :: model_levels
+INTEGER  :: bl_levels
+INTEGER  :: start_hor_lev
+INTEGER  :: end_hor_lev
+INTEGER  :: start_vert_lev
+INTEGER  :: end_vert_lev
+INTEGER  :: global_u_filter
+INTEGER  :: global_v_filter
+
+REAL  :: diff_factor_in
+REAL  :: mix_factor_in
+
+! Loop indices.
+INTEGER  ::  i, j
+INTEGER  ::  errorstatus
+
+INTEGER(KIND=jpim), PARAMETER :: zhook_in  = 0
+INTEGER(KIND=jpim), PARAMETER :: zhook_out = 1
+REAL(KIND=jprb)               :: zhook_handle
+
+CHARACTER(LEN=*), PARAMETER :: RoutineName='INIT_TURB_DIFF'
+
+IF (lhook) CALL dr_hook(RoutineName,zhook_in,zhook_handle)
+
+! Code to prepare for Smagorinsky turbulence scheme
+L_subfilter_horiz = L_horiz
+L_subfilter_vert  = L_vert
+
+turb_startlev_horiz = start_hor_lev
+turb_endlev_horiz   = end_hor_lev
+turb_startlev_vert  = start_vert_lev
+turb_endlev_vert    = end_vert_lev
+
+diff_factor = diff_factor_in
+mix_factor  = mix_factor_in
+
+CALL umPrint('',src='init_turb_diff')
+IF (bl_levels /= model_levels - 1) THEN
+  WRITE(umMessage,*)'BL_LEVELS = ',bl_levels,                          &
+      'MODEL_LEVELS = ',model_levels
+  CALL umPrint(umMessage,src='init_turb_diff')
+  errorstatus=123
+  CALL ereport("INIT_TURB_DIFF", errorstatus,                     &
+        "The number of boundary layer levels must equal " //      &
+        "the number of model levels minus one when the " //       &
+        "3D subgrid turbulence scheme is selected.")
+ELSE ! bl_levels = model_levels - 1
+  WRITE(umMessage,*)'3D subgrid turbulence scheme is active '
+  CALL umPrint(umMessage,src='init_turb_diff')
+  WRITE(umMessage,*)' bl_levels = ', bl_levels
+  CALL umPrint(umMessage,src='init_turb_diff')
+END IF ! bl_levels /= model_levels - 1
+
+IF (diff_factor < 0.0 .OR. diff_factor > 1.0) THEN
+  WRITE(umMessage,*)' diff_factor = ', diff_factor
+  CALL umPrint(umMessage,src='init_turb_diff')
+  errorstatus=123
+  CALL ereport("INIT_TURB_DIFF", errorstatus,                      &
+         "diff_factor must have a value greater than " //          &
+         "zero and less than or equal to 1.0 so that the "//       &
+         "numerical stability is maintained")
+ELSE    ! 0.0 <= diff_factor <= 1.0
+  WRITE(umMessage,*)' diff_factor = ', diff_factor
+  CALL umPrint(umMessage,src='init_turb_diff')
+END IF !  diff_factor < 0.0 .OR. diff_factor > 1.0
+
+IF (mix_factor <= 0.0 .OR. mix_factor > 1.0) THEN
+  WRITE(umMessage,*)' mix_factor =',mix_factor
+  CALL umPrint(umMessage,src='init_turb_diff')
+  errorstatus=123
+  CALL ereport("INIT_TURB_DIFF", errorstatus,                     &
+        "mix_factor should have a value greater or equal " //     &
+        "to zero and less than or equal to 1.0 ")
+ELSE    ! 0.0 <= mix_factor <= 1.0
+  WRITE(umMessage,*)' mix_factor =', mix_factor
+  CALL umPrint(umMessage,src='init_turb_diff')
+END IF !  mix_factor <= 0.0 .OR. mix_factor > 1.0
+
+IF (l_subfilter_horiz) THEN
+
+  IF (turb_startlev_horiz > turb_endlev_horiz) THEN
+    errorstatus=123
+    CALL ereport("INIT_TURB_DIFF", errorstatus,                    &
+           "The start level for the horizontal turbulence  " //    &
+           "scheme is greater than the end level! ")
+  END IF ! turb_startlev_horiz > turb_endlev_horiz
+
+  ! The levels over which the turbulence scheme acts must be
+  ! at most model_levels-1
+
+  IF (turb_endlev_horiz > model_levels - 1)                       &
+      turb_endlev_horiz = model_levels - 1
+
+  WRITE(umMessage,*)' Horizontal subgrid turbulence'
+  CALL umPrint(umMessage,src='init_turb_diff')
+  WRITE(umMessage,*)'  turb_startlev_horiz = ', turb_startlev_horiz
+  CALL umPrint(umMessage,src='init_turb_diff')
+  WRITE(umMessage,*)'  turb_endlev_horiz = ', turb_endlev_horiz
+  CALL umPrint(umMessage,src='init_turb_diff')
+  IF (model_type == mt_global) THEN
+    CALL umPrint( ' Horizontal subgrid turbulence will not' //   &
+                   ' be applied in longitudinal',src='init_turb_diff')
+    CALL umPrint( ' direction where polar filter is applied,')
+    WRITE(umMessage,'(A, I3, A, I3, A)') ' i.e. for first and last',     &
+                      global_u_filter+1, ' rows for u/theta and',        &
+                                 global_v_filter, ' rows for v.'
+    CALL umPrint(umMessage,src='init_turb_diff')
+  END IF !  model_type == mt_global
+
+ELSE  !  l_subfilter_horiz
+
+  WRITE(umMessage,*)' Horizontal subgrid turbulence is not active '
+  CALL umPrint(umMessage,src='init_turb_diff')
+
+END IF !  l_subfilter_horiz
+
+IF (l_subfilter_vert) THEN
+
+  IF (turb_startlev_vert > turb_endlev_vert) THEN
+    errorstatus=123
+    CALL ereport("INIT_TURB_DIFF", errorstatus,                   &
+           "The start level for the vertical turbulence  " //     &
+           "scheme is greater than the end level! ")
+  END IF !  turb_startlev_vert > turb_endlev_vert
+
+  ! The levels over which the turbulence scheme acts must be
+  ! between 2 and model_levels-1
+
+  IF ( turb_startlev_vert < 2) turb_startlev_vert = 2
+  IF ( turb_endlev_vert > model_levels - 1)                       &
+       turb_endlev_vert = model_levels - 1
+
+  WRITE(umMessage,*)' Vertical subgrid turbulence '
+  CALL umPrint(umMessage,src='init_turb_diff')
+  WRITE(umMessage,*)'  turb_startlev_vert = ', turb_startlev_vert
+  CALL umPrint(umMessage,src='init_turb_diff')
+  WRITE(umMessage,*)'  turb_endlev_vert = ', turb_endlev_vert
+  CALL umPrint(umMessage,src='init_turb_diff')
+
+ELSE  !  l_subfilter_vert
+
+  WRITE(umMessage,*)' Vertical subgrid turbulence is not active '
+  CALL umPrint(umMessage,src='init_turb_diff')
+
+END IF  !  l_subfilter_vert
+
+IF (lhook) CALL dr_hook(RoutineName,zhook_out,zhook_handle)
+
+RETURN
+END SUBROUTINE init_turb_diff

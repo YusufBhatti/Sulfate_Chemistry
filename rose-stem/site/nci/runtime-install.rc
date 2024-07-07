@@ -1,0 +1,68 @@
+    [[nci_install_utils]]
+        inherit = INSTALL, NCI, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP    = install_utils
+            PLATFORM=linux
+            SOURCES="fcm_make_nci_utils_serial_high_omp \
+		     fcm_make_nci_createbc_high_omp"
+        [[[directives]]]
+            -q = 'express'
+
+    [[nci_install_libs]]
+        inherit = INSTALL, NCI, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = install_libs
+            PLATFORM      = linux
+            TASK_DIR      = "fcm_make_nci_libs"
+
+    [[fcm_make_nci_install_mule]]
+        inherit = INSTALL, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = fcm_make_install_mule
+            ROSE_APP_OPT_CONF_KEYS=mirror
+
+    [[fcm_make2_nci_install_mule]]
+        inherit = NCI_MULE_PYTHON, NCI
+        [[[environment]]]
+            ROSE_TASK_APP = fcm_make_install_mule
+
+    [[nci_install_mule]]
+        inherit = INSTALL, NCI_MULE_PYTHON, NCI, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT = $UM_INSTALL_DIR
+            ROSE_TASK_APP          = install_mule
+            TASK_DIR               = fcm_make_nci_install_mule
+            PLATFORM = linux
+            SHUMLIB_LIB = /projects/access/apps/shumlib/2018.06.1/ifort-15
+        [[[directives]]]
+            -l mem = 500MB
+        [[[job]]]
+            execution time limit = PT5M
+
+    [[nci_runtest_mule]]
+        inherit = NCI_MULE_PYTHON, NCI
+        [[[environment]]]
+            ROSE_TASK_APP = run_mule_tests
+
+    [[fcm_make_nci_install_ctldata]]
+        inherit = INSTALL, EXTRACT
+	[[[environment]]]
+	    ROSE_APP_OPT_CONF_KEYS=mirror
+	    ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[fcm_make2_nci_install_ctldata]]
+        inherit = NCI
+	[[[environment]]]
+	    ROSE_TASK_APP=fcm_make_install_ctldata
+        [[[directives]]]
+            -q = 'express'
+
+    [[nci_install_ctldata]]
+        inherit = INSTALL, NCI, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP    = install_ctldata
+	    TASK_DIR=fcm_make_nci_install_ctldata
+	    # Note: need to not load um module in this case.
+        [[[directives]]]
+            -q = 'express'

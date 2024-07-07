@@ -1,0 +1,44 @@
+{%- set integ_graphs = {
+
+    "uoe_dirac_install"   : "",
+
+    "uoe_dirac_n48_noomp" : "",
+    
+	
+    "uoe_emps_install"     : "",
+
+    "uoe_emps_fcm_make"    : "",
+
+    "uoe_emps_n48_noomp"   : "",
+    
+
+    "uoe_isca_install"   : "",
+
+    "uoe_isca_n48_noomp" : "",
+    
+    
+    "uoe_x86_gnu_install"       : "",
+
+    "uoe_x86_gnu_exo_iso"       : "",
+
+    "uoe_x86_gnu_exo_hs"        : "",
+
+    "uoe_x86_gnu_exo_tle"       : "",
+
+    "uoe_x86_gnu_exo_el"        : "",
+
+    "uoe_x86_gnu_exo_el_rt"     : "",
+
+    "uoe_x86_gnu_exo_shj"       : "",
+
+    "uoe_x86_gnu_exo_iso_hd209" : "",
+
+    "uoe_x86_gnu_exo_hd209"     : "",
+
+    "uoe_x86_gnu_exo_earth_all" : "",
+
+    "uoe_x86_gnu_exo_all"       : "",
+
+    
+    }
+-%}

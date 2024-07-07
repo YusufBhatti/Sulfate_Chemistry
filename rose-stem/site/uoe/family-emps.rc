@@ -1,0 +1,56 @@
+# Machine specific classes for EMPS machines
+# Tasks should use one of:
+#  * UOE_EMPS         - for simple tasks such as rose-ana
+#  * UOE_EMPS_EXTRACT - for tasks which extract and mirror code only
+#  * UOE_EMPS_BUILD   - for tasks which compile
+#  * UOE_EMPS_RECON   - for reconfiguration tasks
+#  * UOE_EMPS_ATMOS   - for atmosphere run tasks
+
+    [[UOE_EMPS]]
+        pre-script = "module load intel openmpi-intel"
+        [[[environment]]]
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{EMPS_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{EMPS_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{EMPS_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+        [[[job]]]
+            batch system = at
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+
+# Extract & mirror tasks should use this class directly.
+# Extract & build tasks should use UOE_EMPS_BUILD instead.
+    [[UOE_EMPS_EXTRACT]]
+        inherit = EXTRACT_SOURCE
+        [[[environment]]]
+            DRHOOK = false
+            OPENMP = false
+            PLATFORM = uoe-x86-ifort
+        [[[job]]]
+            batch system = at
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+
+# Subclass for build jobs
+    [[UOE_EMPS_BUILD]]
+        inherit = EXTRACT_SOURCE, UOE_EMPS
+        [[[environment]]]
+            DRHOOK = false
+            OPENMP = false
+            PLATFORM = uoe-x86-ifort
+
+# Class for reconfiguration jobs
+    [[UOE_EMPS_RECON]]
+        script = {{TASK_RUN_RECON}}
+        inherit = UOE_EMPS
+        [[[environment]]]
+            decfort_dump_flag = y
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 1000000 -c unlimited
+
+# Class for atmosphere run jobs
+    [[UOE_EMPS_ATMOS]]
+        inherit = UOE_EMPS
+        [[[environment]]]
+            decfort_dump_flag = y
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 4000000 -c unlimited

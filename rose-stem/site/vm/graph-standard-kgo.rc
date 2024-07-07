@@ -1,0 +1,18 @@
+# This file sets the graph for OpenMP jobs to the NoOpenMP
+# equivalents for use when generating KGO
+%include 'site/vm/graph-standard-vm.rc'
+
+{%- set update_graphs_kgo = {
+
+    "vm_n48_eg_omp_ios"  : name_graphs_vm["vm_n48_eg_noomp"],
+
+    "vm_n48_eg_omp_noios"  : name_graphs_vm["vm_n48_eg_noomp"],
+
+    "vm_n48_ukca_eg_omp_noios"  : name_graphs_vm["vm_n48_ukca_eg_noomp"],
+
+    "vm_scm_togacoare_ga6_omp"  : name_graphs_vm["vm_scm_togacoare_ga6_noomp"],
+
+    "vm_scm_gabls3_ga6_omp"  : name_graphs_vm["vm_scm_gabls3_ga6_noomp"],
+                                      
+    }
+%}

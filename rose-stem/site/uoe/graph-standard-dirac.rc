@@ -1,0 +1,12 @@
+{%- set name_graphs_dirac = {
+
+    "uoe_dirac_install"    : "fcm_make_uoe_dirac_install_ctldata => fcm_make2_uoe_dirac_install_ctldata => uoe_dirac_install_ctldata",
+
+    "uoe_dirac_n48_noomp"  : "fcm_make_uoe_dirac_ifort_um_safe_noomp => fcm_make2_uoe_dirac_ifort_um_safe_noomp => recon_uoe_dirac_n48_noomp
+                             recon_uoe_dirac_n48_noomp => rose_ana_uoe_dirac_n48_noomp_recon_kgo
+                             recon_uoe_dirac_n48_noomp => atmos_uoe_dirac_n48_noomp_4x4
+                             atmos_uoe_dirac_n48_noomp_4x4 => rose_ana_uoe_dirac_n48_noomp_atmos_kgo
+                             rose_ana_uoe_dirac_n48_noomp_atmos_kgo => housekeep_atmos_uoe_dirac_n48_noomp_4x4"
+
+    }
+-%}

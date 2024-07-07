@@ -1,0 +1,50 @@
+# MSS HPC UM install tasks
+
+    [[fcm_make_mss_install_ctldata]]
+        inherit = INSTALL, EXTRACT_SOURCE, MSS
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=extract
+            ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[mss_install_utils]]
+        inherit = INSTALL, EXTRACT_SOURCE, MSS
+        pre-script = """
+           module load PrgEnv-cray
+           module list
+           """
+        [[[environment]]]
+            ROSE_TASK_APP    = install_utils
+            PLATFORM         = xc30
+            SOURCES          = "fcm_make_mss_utils_serial_high_noomp \
+                               fcm_make_mss_utils_mpp_high_omp \
+                               fcm_make_mss_recon_serial_high_omp \
+                               fcm_make_mss_recon_high_omp \
+                               fcm_make_mss_ifort_createbc_high_omp \
+                               fcm_make_mss_ifort_createbc_high_noomp"
+            ROSE_TASK_OPTIONS = -v -v -v -v
+            ROSE_TASK_N_JOBS = 4
+        [[[job submission]]]
+           method = pbs
+        [[[directives]]]
+           -l = ncpus=1,walltime=10800
+
+    [[mss_install_ctldata]]
+        inherit = INSTALL, EXTRACT_SOURCE, MSS
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP    = install_ctldata
+            TASK_DIR=fcm_make_mss_install_ctldata
+
+    [[mss_cray_install_libs]]
+        inherit = INSTALL, EXTRACT_SOURCE, MSS
+        [[[environment]]]
+            ROSE_TASK_APP     = install_libs
+            PLATFORM          = xc30/cce
+            TASK_DIR          = fcm_make_mss_cray_libs
+
+    [[mss_gnu_install_libs]]
+        inherit = INSTALL, EXTRACT_SOURCE, MSS
+        [[[environment]]]
+            ROSE_TASK_APP     = install_libs
+            PLATFORM          = xc30/gnu
+            TASK_DIR          = fcm_make_mss_gnu_libs

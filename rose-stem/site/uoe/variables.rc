@@ -1,0 +1,18 @@
+{%- set UMDIR = '$UMDIR' %}
+{%- set SCRIPTDIR = '$UMDIR/bin' %}
+{%- set SCRIPTDATA = '$UMDIR/if_def_checker' %}
+{%- set GRIB_API_EMPS_ROOT_DIR='/usr/local/um/grib_api/grib_api' %}
+{%- set X86_GNU_CENTRAL_INSTALL_DIR='/home/um/um' %}
+{%- set X86_GNU_N48_EG_KGO='vn11.1' %}
+{%- set KGO_X86_GNU_ROOT_DIR='/home/um/um/standard_jobs/kgo' %}
+{%- set DIRAC_INSTALL_DIR='$HOME/um' %}
+{%- set DIRAC_N48_EG_KGO='vn11.1' %}
+{%- set KGO_DIRAC_ROOT_DIR='$UMDIR/standard_jobs/kgo' %}
+{%- set KGO_EMPS_ROOT_DIR='/usr/local/um/standard_jobs/kgo' %}
+{%- set EMPS_CENTRAL_INSTALL_DIR='/usr/local/um' %}
+{%- set EMPS_N48_EG_KGO='vn11.1' %}
+{%- set PREBUILD_EMPS_ROOT_DIR='/usr/local/um/cylc-run/vn11.1_prebuilds/share' %}
+{%- set ISCA_CENTRAL_INSTALL_DIR='/gpfs/ts0/projects/Research_Project-157370/um/um' %}
+{%- set ISCA_N48_EG_KGO='vn11.1' %}
+{%- set KGO_ISCA_ROOT_DIR='/gpfs/ts0/projects/Research_Project-157370/um/um/standard_jobs/kgo' %}
+

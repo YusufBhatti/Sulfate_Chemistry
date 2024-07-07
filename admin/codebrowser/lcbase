@@ -1,0 +1,41 @@
+#!/usr/bin/env perl
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+#
+# Script:     lcbase
+# Purpose:    Returns the lowest common base directory from a list of files
+# Code owner: UM System Development team
+
+sub lcbase {
+  # Assign two arguments
+  ($a,$b) = @_;
+
+  # Split on directory using '/'
+  my @a = split /\//, $a;
+  my @b = split /\//, $b;
+  
+  # Compare directories in ascending order
+  my @result;
+  for (my $i = 0; $i < scalar @a; $i++)  {
+    # If the two match, add to the lowest common base directory
+    if ($a[$i] eq $b[$i]) {
+      push @result, $a[$i];
+    } else {
+    # If they don't match, end the loop
+      last;
+    }
+  }
+
+  # Join the list of lowest common base directories and return  
+  return join('/',@result);
+}
+
+$smallest = <>;
+while($line = <>) {
+  $smallest=&lcbase($smallest,$line);
+}
+
+print $smallest, "\n";

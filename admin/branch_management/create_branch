@@ -1,0 +1,304 @@
+#!/usr/bin/env bash
+#
+# create_branch - a simple wrapper for fcm branch creation.
+#
+# This script asks for the basic information required to create a 
+# branch via kdialog or the command line. It is aimed at the UM
+# (so supplies fcm:um as default repository) but should work with
+# any of the projects associated with UM development. Branching from 
+# the trunk and from another branch are both supported.
+#
+# Options:
+#   -c      Forces command line input
+#
+# Assumes paths for kdialog and fcm are as provided in section 2.
+# FCM2 commands and syntax are assumed (i.e. FCM 2.0 or later).
+# Also uses UM_AWK, UM_GREP and UM_SED as defined for the UM installation,
+# if available.
+
+#################################################################
+### Section 0 - Define function(s) used later by script
+#################################################################
+
+#  text_input - Replicate the functionality of KDIALOG
+#               using input from the command line only.
+
+function text_input
+{
+  typeset VAR="" TITLE="" INPUTBOX="" DEFAULT="" COMBONUM="" COMBOBOX=""
+  while [ $# -gt 0 ]
+  do
+    VAR=$1
+    case "$VAR" in
+      --title) shift
+               TITLE=$1
+               echo "--------------------------------------------------------------------------------" 1>&2
+               echo $TITLE 1>&2
+               shift;;
+      --inputbox) shift
+                  INPUTBOX=$1
+                  shift
+                  if [ $# -eq 1 ]
+                  then
+                    DEFAULT=$1
+                    INPUTBOX="$INPUTBOX [$DEFAULT]"
+                    shift
+                  fi
+                  echo -n "$INPUTBOX " 1>&2;;
+      --combobox) shift
+                  INPUTBOX=$1
+                  echo "$INPUTBOX" 1>&2
+                  shift
+                  COMBONUM=0
+                  while [ $# -gt 0 ]
+                  do
+                    let COMBONUM=$COMBONUM+1
+                    echo "$COMBONUM. $1" 1>&2
+                    COMBOBOX[$COMBONUM]=$1
+                    shift
+                  done;;
+      *) echo "Error: Unknown option to $0." 1>&2
+         exit 1;;
+    esac
+  done
+  read
+  if [ -z $REPLY ]
+  then
+    if [[ -n $DEFAULT ]]
+    then
+      echo "$DEFAULT"
+    else
+      echo
+      return 1;
+    fi
+  else
+    if [[ $COMBONUM -gt 0 && $REPLY -gt 0 && $REPLY -le $COMBONUM ]]
+    then
+      echo "${COMBOBOX[$REPLY]}"
+    else
+      echo "$REPLY"
+    fi
+  fi
+}
+
+#################################################################
+### Section 1 - Parse input arguments
+#################################################################
+me=$(basename $0)
+usage="Usage: $me [-c]"
+while getopts 'c' OPTION
+do
+  case $OPTION in
+  c) command_line=TRUE
+     ;;
+  ?) echo $usage
+     exit 1
+     ;;
+  esac
+done
+shift $(($OPTIND - 1))
+
+#################################################################
+### Section 2 - Set variables
+#################################################################
+if [[ ( -n "$DISPLAY" ) && ( -x /usr/bin/kdialog ) && (-z "$command_line") ]]
+then
+  DIALOG=/usr/bin/kdialog
+else
+  DIALOG=text_input
+fi
+UM_AWK=${UM_AWK:-'awk'}
+UM_GREP=${UM_GREP:-'grep'}
+UM_SED=${UM_SED:-'sed'}
+
+# FCM command path  (At Met Office fcm is now in the standard path.)
+FCM=fcm  
+
+#################################################################
+### Section 3 - Get information from user
+#################################################################
+
+# Internal or external?
+location=`$DIALOG --title "FCM branch creation - location" --combobox "Which set of repositories are you using?" "Science Repository Service" "Internal repository"`
+
+if [[ $? == 1 ]]; then
+  echo "Cancelled!"
+  exit 1
+fi
+
+if [[ "$location" == "Internal repository" ]]; then
+  parent="`$FCM kp | $UM_GREP -E '\[\w+\]' | $UM_AWK -F '[][]' '{print "fcm:"$2}'` Branch/Other"
+  help=
+else
+  parent="`$FCM kp | $UM_GREP -E '\[\w+\.x\]' | $UM_AWK -F '[][]' '{print "fcm:"$2}'` Branch/Other"
+  help="
+
+You can only create branches in the external repository, not the local mirror."
+fi
+
+
+# Get the repository - default to UM
+parent=`$DIALOG --title "FCM branch creation - parent" --combobox "Where do you wish to branch from?
+
+To create a branch of a branch, select 'Branch/Other'
+and then enter the full path to the branch.
+
+Otherwise, the parent will be the trunk of the indicated repository." $parent`
+
+if [[ $? == 1 ]]; then
+  echo "Cancelled!"
+  exit 1
+fi
+
+# If "Branch/Other" has been selected then prompt for string input
+if [[ "$parent" == "Branch/Other" ]];then
+  parent=`$DIALOG --title "FCM branch creation - parent" --inputbox "Type in the full path to the trunk or branch.$help"`
+  if [[ $? == 1 ]]; then
+    echo "Cancelled!"
+    exit 1
+  fi
+fi
+
+
+# Check the given input is valid:
+if [[ "$location" == "Science Repository Service" ]]; then
+  case $parent in
+    fcm:*.xm*) echo "The mirror repository is read-only."
+               echo "Abort!"
+               exit 2
+               ;;
+  esac
+fi
+
+$FCM info $parent 1>/dev/null 2>&1
+if [[ $? != 0 ]]; then
+  echo "No such parent: $parent"
+  echo "Abort!"
+  exit 2
+fi
+
+
+# Determine what the parent will be - a branch or the trunk.
+# Note that fcm branch-info also returns true if given the trunk.
+$FCM branch-info $parent 1>/dev/null 2>&1
+RC=$?
+if [[ $RC == 0 ]]; then
+  # Could still be the trunk:
+  source=$($FCM loc-layout $parent | grep branch_category | awk '{print $2}')
+  if [[ $source == trunk ]]; then
+    bob=""
+  else
+    bob="--branch-of-branch"
+  fi
+else
+  bob=""
+fi
+
+# Get the revision - details depend on whether we're creating from the trunk
+#                    or a branch.
+#   Trunk -          For some first guesses, parse the output from
+#                    "fcm keyword-print" using "sed" to get a list of available
+#                    revision keywords. If these are not appropriate use "Other"
+#                    which prompts for string input.
+#   Branch -         Only "Other" and "Head" are valid reponses.
+# Only FCM2 syntax is supported:
+#    grep "^revision" - pick out "revision[<project>:<keyword>] = <revision>
+#    awk -F [][] {'print $2'} - take the portion in square brackets
+#    sed -e 's/^.*://g' - remove the project and leave the keyword
+#    grep -v "^revision\[um:hg6" - ignore hg6.x.y keywords from fcm:um,
+#                                  valid only on specific package branches
+#    sort -V -r - sort the keywords in (reverse) numeric order.
+if [[ -z $bob ]]; then
+  # Creating from the trunk: get keywords
+
+  revs="`$FCM kp $parent | $UM_GREP "^revision" | $UM_AWK -F [][] {'print $2'} | $UM_SED -e 's/^.*://g' | $UM_GREP -v "^revision\[um:hg6" | sort -V -r`" 2>/dev/null
+else
+  # Creating from a branch: no keywords
+  revs=""
+fi
+
+revision=`$DIALOG --title "FCM branch creation - revision" --combobox "What revision is the branch to be created at?" $revs "Head" "Other"`
+RC=$?
+if [[ $RC == 1 ]]; then
+  echo "Cancelled!"
+  exit 1
+else
+  # If "Other" has been selected then prompt for string input
+  if [[ $revision == Other ]];then
+    revision=`$DIALOG --title "FCM branch creation - revision" --inputbox "Type in which revision the branch is to be created at:"`
+    if [[ $? == 1 ]]; then
+      echo "Cancelled!"
+      exit 1
+    fi  
+  fi
+fi
+
+# Get the branch name
+name=`$DIALOG --title "FCM branch creation - branch name" --inputbox "Type in the name for the branch (do not include revision):"`
+
+if [[ $? == 1 ]]; then
+  echo "Cancelled!"
+  exit 1
+fi
+
+# Get the branch type
+brtype=`$DIALOG --title "FCM branch creation - branch type" --combobox "Which branch type do you wish to create?" "DEV::USER" "DEV::SHARE" "TEST::USER" "TEST::SHARE" "PKG::USER" "PKG::SHARE" "PKG::CONFIG" "PKG::REL"`
+
+if [[ $? == 1 ]]; then
+  echo "Cancelled!"
+  exit 1
+fi
+
+
+# UM/doc/AUX/shumlib tickets on the SRS must have a ticket:
+case $parent in
+  fcm:um*.x* | fcm:shumlib.x* | fcm:mule.x*) 
+              required=true
+              noticket=
+              ;;
+  *) 
+              required=
+              noticket="No ticket"
+              ;;
+esac
+
+
+# Get the ticket number
+ticketnumber=`$DIALOG --title "FCM branch creation - ticket number" --inputbox "What ticket number is associated with this branch?" "$noticket"`
+if [[ $? == 1 ]]; then
+ ticketnumber=$noticket
+fi
+
+if [[ -n "$required" ]]; then
+  # May not proceed until we have a valid ticket
+  while [[ $ticketnumber != +([0-9]) ]]; do
+    ticketnumber=`$DIALOG --title "FCM branch creation - ticket number" --inputbox "This branch must be associated with a ticket."`
+    if [[ $? == 1 ]]; then
+      echo "Cancelled!"
+      exit 1
+    fi
+  done
+  ticket="--ticket $ticketnumber"
+
+else
+
+  # This branch is allowed not to have a ticket
+  if [[ $ticketnumber != $noticket ]]; then
+    if [[ $ticketnumber != +([0-9]) ]]; then
+      echo "Not a valid ticket: $ticketnumber"
+      echo "Abort!"
+      exit 2
+    fi
+    ticket="--ticket $ticketnumber"
+  else
+    ticket=""
+  fi
+fi
+
+#################################################################
+### Section 4 - Create the branch
+#################################################################
+echo "--------------------------------------------------------------------------------"
+echo "Executing command:"
+echo fcm branch-create $bob $ticket --type $brtype $name $parent@$revision
+$FCM branch-create $bob $ticket --type $brtype $name $parent@$revision

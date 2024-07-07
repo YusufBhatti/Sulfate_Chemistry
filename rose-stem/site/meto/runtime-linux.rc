@@ -1,0 +1,2808 @@
+# Linux Jobs: EndGame: Limited Area Configurations: Fixed Resolution
+{% set CREATEBC_LINUX_IFORT_HIGH_NOOMP="--path= --path='share/fcm_make_meto_linux_ifort_createbc_high_noomp/build-*/bin'" %}
+{% set CREATEBC_LINUX_IFORT_HIGH_OMP="--path= --path='share/fcm_make_meto_linux_ifort_createbc_high_omp/build-*/bin'" %}
+{% set CREATEBC_LINUX_IFORT_HIGH_OMP_DRHOOK="--path= --path='share/fcm_make_meto_linux_ifort_createbc_high_omp_drhook/build-*/bin'" %}
+{% set CREATEBC_LINUX_IFORT_RIGOROUS_NOOMP="--path= --path='share/fcm_make_meto_linux_ifort_createbc_rigorous_noomp/build-*/bin'" %}
+{% set CREATEBC_LINUX_IFORT_RIGOROUS_OMP="--path= --path='share/fcm_make_meto_linux_ifort_createbc_rigorous_omp/build-*/bin'" %}
+{% set RECON_SERIAL_LINUX_IFORT_HIGH_OMP="--path= --path='share/fcm_make_meto_linux_ifort_recon_serial_high_omp/build-*/bin'" %}
+{% set RECON_LINUX_IFORT_HIGH_OMP_NOGRIB="--path= --path='share/fcm_make_meto_linux_ifort_recon_high_omp_nogrib/build-*/bin'" %}
+{% set UM_LINUX_IFORT_HIGH_NOOMP="--path= --path='share/fcm_make_meto_linux_ifort_um_high_noomp/build-*/bin'" %}
+{% set UM_LINUX_IFORT_HIGH_OMP="--path= --path='share/fcm_make_meto_linux_ifort_um_high_omp/build-*/bin'" %}
+{% set UM_LINUX_IFORT_HIGH_OMP_CLANG="--path= --path='share/fcm_make_meto_linux_clang_ifort_um_high_omp/build-*/bin'" %}
+{% set UM_LINUX_IFORT_HIGH_OMP_DRHOOK="--path= --path='share/fcm_make_meto_linux_ifort_um_high_omp_drhook/build-*/bin'" %}
+{% set UM_LINUX_IFORT_RIGOROUS_NOOMP="--path= --path='share/fcm_make_meto_linux_ifort_um_rigorous_noomp/build-*/bin'" %}
+{% set UTILS_SERIAL_LINUX_IFORT_HIGH_NOOMP="--path= --path='share/fcm_make_meto_linux_ifort_utils_serial_high_noomp/build-*/bin'" %}
+
+{% if "meto_linux_aqum_eg" in name_graphs_out or "meto_linux_aqum_eg_bit_comp" in name_graphs_out -%}
+# Linux AQUM EG
+    # Reconfiguration
+    [[recon_meto_linux_aqum_eg_1x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_AQUM_EG, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, UM_AQUM_EG, RECON_1x2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_aqum_eg_1x2/atmos.astart
+        [[[directives]]]
+            --mem=1024
+        [[[job]]]
+            execution time limit = PT13M
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_aqum_eg_1x4]]
+        inherit = METO_LINUX_AQUM_EG, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_AQUM_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+              ASTART=../recon_meto_linux_aqum_eg_1x2/atmos.astart
+              ROSE_APP_OPT_CONF_KEYS=shortrun
+        [[[directives]]]
+            --mem=24576
+        [[[job]]]
+            execution time limit = PT41M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_aqum_eg_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG, METO_LINUX, ROSE_ANA_AQUM_EG_SHORTRUN
+        [[[environment]]]
+            DIR0=$KGO_LINUX_AQUM_EG_DIR
+            DIR1=../atmos_meto_linux_aqum_eg_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_aqum_eg_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_AQUM_EG_DIR
+            DIR1=../recon_meto_linux_aqum_eg_1x2
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true and "meto_linux_aqum_eg_bit_comp" in name_graphs_out -%}%}
+    # Atmosphere Model Run 2x2
+    [[atmos_meto_linux_aqum_eg_2x2]]
+        script = "{{TASK_RUN}}  {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_AQUM_EG, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_AQUM_EG, ATMOS_2x2, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_aqum_eg_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=shortrun
+        [[[directives]]]
+            --mem=24576
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_aqum_eg_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG, METO_LINUX, ROSE_ANA_AQUM_EG_SHORTRUN
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_aqum_eg_1x4
+            DIR1=../atmos_meto_linux_aqum_eg_2x2
+            KGO=
+
+{%- endif %}
+
+
+{%- endif %}
+
+
+{% if "meto_linux_aqum_eg_glomap" in name_graphs_out or "meto_linux_aqum_eg_glomap_bit_comp" in name_graphs_out -%}
+# Linux AQUM EG with GLOMAP-mode aerosols
+    # Reconfiguration
+    [[recon_meto_linux_aqum_eg_glomap_1x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_AQUM_EG_GLOMAP, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, UM_AQUM_EG, RECON_1x2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_aqum_eg_glomap_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=glomap 
+        [[[directives]]]
+            --mem=1024
+        [[[job]]]
+            execution time limit = PT13M
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_aqum_eg_glomap_1x4]]
+        inherit = METO_LINUX_AQUM_EG_GLOMAP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_AQUM_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+              ASTART=../recon_meto_linux_aqum_eg_glomap_1x2/atmos.astart
+              ROSE_APP_OPT_CONF_KEYS=shortrun glomap 
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT55M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_aqum_eg_glomap_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG_GLOMAP, METO_LINUX, ROSE_ANA_AQUM_EG_SHORTRUN
+        [[[environment]]]
+            DIR0=$KGO_LINUX_AQUM_EG_GLOMAP_DIR
+            DIR1=../atmos_meto_linux_aqum_eg_glomap_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_aqum_eg_glomap_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG_GLOMAP, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_AQUM_EG_GLOMAP_DIR
+            DIR1=../recon_meto_linux_aqum_eg_glomap_1x2
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true and "meto_linux_aqum_eg_glomap_bit_comp" in name_graphs_out -%}%}
+    # Atmosphere Model Run 2x2
+    [[atmos_meto_linux_aqum_eg_glomap_2x2]]
+        script = "{{TASK_RUN}}  {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_AQUM_EG_GLOMAP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_AQUM_EG, ATMOS_2x2, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_aqum_eg_glomap_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=shortrun glomap 
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT55M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_aqum_eg_glomap_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG_GLOMAP, METO_LINUX, ROSE_ANA_AQUM_EG_SHORTRUN
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_aqum_eg_glomap_1x4
+            DIR1=../atmos_meto_linux_aqum_eg_glomap_2x2
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "meto_linux_aqum_eg_noomp" in name_graphs_out -%}
+
+# Linux AQUM EG no-OpenMP
+    # Reconfiguration
+    [[recon_meto_linux_aqum_eg_noomp_1x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_NOOMP }}"
+        inherit = METO_LINUX_AQUM_EG_NOOMP, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, UM_AQUM_EG, RECON_1x2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_aqum_eg_noomp_1x2/atmos.astart
+        [[[directives]]]
+            --mem=1024
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_aqum_eg_noomp_1x4]]
+        inherit = METO_LINUX_AQUM_EG_NOOMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_AQUM_EG, ATMOS_1x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_aqum_eg_noomp_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=shortrun
+        [[[directives]]]
+            --mem=24576
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_aqum_eg_noomp_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG_NOOMP, METO_LINUX, ROSE_ANA_AQUM_EG_SHORTRUN
+        [[[environment]]]
+            DIR0=$KGO_LINUX_AQUM_EG_DIR
+            DIR1=../atmos_meto_linux_aqum_eg_noomp_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_aqum_eg_noomp_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG_NOOMP, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_AQUM_EG_DIR
+            DIR1=../recon_meto_linux_aqum_eg_noomp_1x2
+            KGO=0
+
+{%- endif %}
+
+
+{% if "meto_linux_aqum_eg_glomap_noomp" in name_graphs_out -%}
+
+# Linux AQUM EG no-OpenMP with GLOMAP-mode aerosols
+    # Reconfiguration
+    [[recon_meto_linux_aqum_eg_glomap_noomp_1x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_NOOMP }}"
+        inherit = METO_LINUX_AQUM_EG_GLOMAP_NOOMP, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, UM_AQUM_EG, RECON_1x2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_aqum_eg_glomap_noomp_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=glomap 
+        [[[directives]]]
+            --mem=1024
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_aqum_eg_glomap_noomp_1x4]]
+        inherit = METO_LINUX_AQUM_EG_GLOMAP_NOOMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_AQUM_EG, ATMOS_1x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_aqum_eg_glomap_noomp_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=shortrun glomap 
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT77M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_aqum_eg_glomap_noomp_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG_GLOMAP_NOOMP, METO_LINUX, ROSE_ANA_AQUM_EG_SHORTRUN
+        [[[environment]]]
+            DIR0=$KGO_LINUX_AQUM_EG_GLOMAP_DIR
+            DIR1=../atmos_meto_linux_aqum_eg_glomap_noomp_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_aqum_eg_glomap_noomp_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_AQUM_EG_GLOMAP_NOOMP, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_AQUM_EG_GLOMAP_DIR
+            DIR1=../recon_meto_linux_aqum_eg_glomap_noomp_1x2
+            KGO=0
+
+{%- endif %}
+
+
+
+{% if "meto_linux_n48_glomap_clim_12hr" in name_graphs_out -%}
+    # LINUX GLOMAP CLIM N48 12HR
+    [[METO_LINUX_N48_GLOMAP_CLIM_12HR]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        [[[environment]]]
+            KGO_LINUX_N48_GLOMAP_CLIM_12HR_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_glomap_clim_12hr/{{LINUX_N48_GLOMAP_CLIM_12HR_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_linux_n48_glomap_clim_12hr]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_GLOMAP_CLIM_12HR, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_N48_GLOMAP_CLIM, RECON_2x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_glomap_clim_12hr/atmos.astart
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_n48_glomap_clim_12hr]]
+        inherit = METO_LINUX_N48_GLOMAP_CLIM_12HR, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_N48_GLOMAP_CLIM, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_glomap_clim_12hr/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT20M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_n48_glomap_clim_12hr_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GLOMAP_CLIM_12HR, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GLOMAP_CLIM_12HR_DIR
+            DIR1=../recon_meto_linux_n48_glomap_clim_12hr
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_glomap_clim_12hr_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GLOMAP_CLIM_12HR, METO_LINUX, ROSE_ANA_N48_GLOMAP_CLIM
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=comp12hr
+            DIR0=$KGO_LINUX_N48_GLOMAP_CLIM_12HR_DIR
+            DIR1=../atmos_meto_linux_n48_glomap_clim_12hr
+            KGO=0
+
+{%- endif %}
+
+
+
+{% if "meto_linux_n48_glomap_clim_12hr_comp_check" in name_graphs_out -%}
+    # LINUX GLOMAP CLIM N48 12HR COMP CHECK
+    [[METO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_RIGOROUS_NOOMP }}"
+        [[[environment]]]
+            KGO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_glomap_clim_12hr_comp_check/{{LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_linux_n48_glomap_clim_12hr_comp_check_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_RIGOROUS_NOOMP }}"
+        inherit = METO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_N48_GLOMAP_CLIM, RECON_2x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_glomap_clim_12hr_comp_check_2x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Reconfiguration
+    [[recon_meto_linux_n48_glomap_clim_12hr_comp_check_4x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_RIGOROUS_NOOMP }}"
+        inherit = METO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_N48_GLOMAP_CLIM, RECON_4x2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_glomap_clim_12hr_comp_check_4x2/atmos.astart
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_n48_glomap_clim_12hr_comp_check_2x4]]
+        inherit = METO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_N48_GLOMAP_CLIM, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_glomap_clim_12hr_comp_check_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT100M
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_n48_glomap_clim_12hr_comp_check_4x2]]
+        inherit = METO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_N48_GLOMAP_CLIM, ATMOS_4x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_glomap_clim_12hr_comp_check_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT100M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_n48_glomap_clim_12hr_comp_check_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK_DIR
+            DIR1=../recon_meto_linux_n48_glomap_clim_12hr_comp_check_2x4
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_glomap_clim_12hr_comp_check_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_n48_glomap_clim_12hr_comp_check_4x2
+            DIR1=../recon_meto_linux_n48_glomap_clim_12hr_comp_check_2x4
+            KGO=
+
+    [[rose_ana_meto_linux_n48_glomap_clim_12hr_comp_check_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_N48_GLOMAP_CLIM
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=comp12hr
+            DIR0=$KGO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK_DIR
+            DIR1=../atmos_meto_linux_n48_glomap_clim_12hr_comp_check_2x4
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_glomap_clim_12hr_comp_check_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GLOMAP_CLIM_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_N48_GLOMAP_CLIM
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=comp12hr
+            DIR0=../atmos_meto_linux_n48_glomap_clim_12hr_comp_check_4x2
+            DIR1=../atmos_meto_linux_n48_glomap_clim_12hr_comp_check_2x4
+            KGO=
+
+{%- endif %}
+
+{% if "meto_linux_seukv_eg" in name_graphs_out -%}
+    [[METO_LINUX_SEUKV_EG]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        [[[environment]]]
+            KGO_LINUX_SEUKV_EG_DIR={{KGO_LINUX_ROOT_DIR}}/linux_seukv_eg/{{LINUX_SEUKV_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_linux_seukv_eg_omp_2x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_SEUKV_EG, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, RECON_2x2, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_meto_linux_seukv_eg_omp_2x2/atmos.astart
+        [[[directives]]]
+            --mem=10240
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmos run - 2 threads
+    [[atmos_meto_linux_seukv_eg_omp_4x6]]
+        inherit = METO_LINUX_SEUKV_EG, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_24_TASKS, METO_LINUX_2_THREADS, UM_SEUKV_EG, ATMOS_4x6, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_seukv_eg_omp_2x2/atmos.astart
+        [[[directives]]]
+            --mem=100000
+        [[[job]]]
+            execution time limit = PT75M
+
+    # Reconfiguration
+    [[recon_meto_linux_seukv_eg_noomp_2x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_NOOMP }}"
+        inherit = METO_LINUX_SEUKV_EG, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, RECON_2x2, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_meto_linux_seukv_eg_noomp_2x2/atmos.astart
+        [[[directives]]]
+            --mem=10240
+        [[[job]]]
+            execution time limit = PT9M
+    # Atmos run
+    [[atmos_meto_linux_seukv_eg_noomp_4x6]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_HIGH_NOOMP }}"
+        inherit = METO_LINUX_SEUKV_EG, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_24_TASKS, METO_LINUX_1_THREAD, UM_SEUKV_EG, ATMOS_4x6, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_seukv_eg_noomp_2x2/atmos.astart
+        [[[directives]]]
+            --mem=100000
+        [[[job]]]
+            execution time limit = PT75M
+
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_seukv_eg_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_SEUKV_EG, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_SEUKV_EG_DIR
+            DIR1=../recon_meto_linux_seukv_eg_noomp_2x2
+            KGO=0
+
+    [[rose_ana_meto_linux_seukv_eg_recon_omp]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_SEUKV_EG, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_seukv_eg_noomp_2x2
+            DIR1=../recon_meto_linux_seukv_eg_omp_2x2
+            KGO=
+
+    [[rose_ana_meto_linux_seukv_eg_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_SEUKV_EG, METO_LINUX, ROSE_ANA_SEUKV_EG
+        [[[environment]]]
+            DIR0=$KGO_LINUX_SEUKV_EG_DIR
+            DIR1=../atmos_meto_linux_seukv_eg_noomp_4x6
+            KGO=0
+
+    [[rose_ana_meto_linux_seukv_eg_atmos_omp]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_SEUKV_EG, METO_LINUX, ROSE_ANA_SEUKV_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_seukv_eg_noomp_4x6
+            DIR1=../atmos_meto_linux_seukv_eg_omp_4x6
+            KGO=
+
+{%- endif %}
+
+
+{% if "meto_linux_idealised_bicyclic_lam_rce" in name_graphs_out -%}
+# Linux idealised bicyclic lam : radiative-convective equilibrium
+    [[METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        [[[environment]]]
+            KGO_LINUX_IDEALISED_BICYCLIC_LAM_RCE_DIR={{KGO_LINUX_ROOT_DIR}}/linux_idealised_bicyclic_lam_rce/{{LINUX_IDEALISED_BICYCLIC_LAM_RCE_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_linux_idealised_bicyclic_lam_rce_1x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, RECON_1x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_rce_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_meto_linux_idealised_bicyclic_lam_rce_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, RECON_4x1
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_rce_4x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT4M
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_idealised_bicyclic_lam_rce_2x8]]
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_16_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, ATMOS_2x8, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_rce_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_rce_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_idealised_bicyclic_lam_rce_1x4
+            DIR1=../recon_meto_linux_idealised_bicyclic_lam_rce_4x1
+            KGO=
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_rce_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_IDEALISED_BICYCLIC_LAM_RCE_DIR
+            DIR1=../recon_meto_linux_idealised_bicyclic_lam_rce_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_rce_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, METO_LINUX, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=$KGO_LINUX_IDEALISED_BICYCLIC_LAM_RCE_DIR
+            DIR1=../atmos_meto_linux_idealised_bicyclic_lam_rce_2x8
+            KGO=0
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_idealised_bicyclic_lam_rce_4x4]]
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_16_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, ATMOS_4x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_rce_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT9M
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_rce_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, METO_LINUX, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_idealised_bicyclic_lam_rce_2x8
+            DIR1=../atmos_meto_linux_idealised_bicyclic_lam_rce_4x4
+            KGO=
+
+    # Atmosphere Model Run NRUN-CRUN
+    [[atmos_meto_linux_idealised_bicyclic_lam_rce_nrun_2x8]]
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_16_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, ATMOS_2x8, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_rce_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=nrun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE
+        [[[job]]]
+            execution time limit = PT7M
+
+    # Atmosphere Model Run NRUN-CRUN
+    [[atmos_meto_linux_idealised_bicyclic_lam_rce_crun_2x8]]
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_16_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, ATMOS_2x8, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_rce_1x4/atmos.astart
+            CONTINUE=true
+            ROSE_APP_OPT_CONF_KEYS=crun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE
+        [[[job]]]
+            execution time limit = PT7M
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_rce_atmos_nruncrun]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE, METO_LINUX, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_idealised_bicyclic_lam_rce_2x8
+            DIR1=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_IDEALISED_BICYCLIC_LAM_RCE
+            ROSE_APP_OPT_CONF_KEYS=nruncrun
+            KGO=
+
+{%- endif %}
+
+
+
+{% if "meto_linux_idealised_bicyclic_lam_bomex" in name_graphs_out -%}
+# Linux idealised bicyclic lam : radiative-convective equilibrium
+    [[METO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        [[[environment]]]
+            KGO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX_DIR={{KGO_LINUX_ROOT_DIR}}/linux_idealised_bicyclic_lam_bomex/{{LINUX_IDEALISED_BICYCLIC_LAM_BOMEX_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_linux_idealised_bicyclic_lam_bomex_1x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_BOMEX, RECON_1x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_bomex_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_meto_linux_idealised_bicyclic_lam_bomex_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_BOMEX, RECON_4x1
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_bomex_4x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT4M
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_idealised_bicyclic_lam_bomex_2x8]]
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_16_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_BOMEX, ATMOS_2x8, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_bomex_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_bomex_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_idealised_bicyclic_lam_bomex_1x4
+            DIR1=../recon_meto_linux_idealised_bicyclic_lam_bomex_4x1
+            KGO=
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_bomex_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX_DIR
+            DIR1=../recon_meto_linux_idealised_bicyclic_lam_bomex_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_bomex_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX, METO_LINUX, ROSE_ANA_IDEALISED_BICYCLIC_LAM_BOMEX
+        [[[environment]]]
+            DIR0=$KGO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX_DIR
+            DIR1=../atmos_meto_linux_idealised_bicyclic_lam_bomex_2x8
+            KGO=0
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_idealised_bicyclic_lam_bomex_4x4]]
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_16_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_BOMEX, ATMOS_4x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_bomex_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT16M
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_bomex_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_BOMEX, METO_LINUX, ROSE_ANA_IDEALISED_BICYCLIC_LAM_BOMEX
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_idealised_bicyclic_lam_bomex_2x8
+            DIR1=../atmos_meto_linux_idealised_bicyclic_lam_bomex_4x4
+            KGO=
+
+{%- endif %}
+
+{% if "meto_linux_idealised_bicyclic_lam_dry2dpl" in name_graphs_out -%}
+# Linux idealised bicyclic lam : Dry "2d like" (only 6 rows) plume heating
+# As this model has only 6 rows the proc decomposition in the y direction must
+# be 1
+    [[METO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        [[[environment]]]
+            KGO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL_DIR={{KGO_LINUX_ROOT_DIR}}/linux_idealised_bicyclic_lam_dry2dpl/{{LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_DRY2DPL, RECON_4x1
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_DRY2DPL, RECON_8x1
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT4M
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1]]
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_DRY2DPL, ATMOS_4x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT13M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1
+            DIR1=../recon_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1
+            KGO=
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL_DIR
+            DIR1=../recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1
+            KGO=0
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_LINUX, ROSE_ANA_IDEALISED_BICYCLIC_LAM_DRY2DPL
+        [[[environment]]]
+            DIR0=$KGO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL_DIR
+            DIR1=../atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1
+            KGO=0
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1]]
+        inherit = METO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_DRY2DPL, ATMOS_8x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT9M
+
+    [[rose_ana_meto_linux_idealised_bicyclic_lam_dry2dpl_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_LINUX, ROSE_ANA_IDEALISED_BICYCLIC_LAM_DRY2DPL
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_4x1
+            DIR1=../atmos_meto_linux_idealised_bicyclic_lam_dry2dpl_8x1
+            KGO=
+
+{%- endif %}
+
+# Linux Jobs: Endgame: Global Configurations
+{% if "meto_linux_n48_ga7_amip_12hr" in name_graphs_out -%}
+# N48 GA7_AMIP "climate" configuration - 12 hour variant
+    # Reconfiguration
+    [[recon_meto_linux_n48_ga7_amip_12hr_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA7_AMIP, RECON_2x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT6M
+
+    [[recon_meto_linux_n48_ga7_amip_12hr_4x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA7_AMIP, RECON_4x2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT6M
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf in (["",        ""], 
+                                 ["_nc3",    "netcdf netcdf3"],
+                                 ["_nc4",    "netcdf netcdf4"],
+                                 ["_nc4_32", "netcdf netcdf4-32b"]) %}
+
+    [[atmos_meto_linux_n48_ga7_amip_12hr{{extension}}_4x2]]
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA7_AMIP, ATMOS_4x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr {{opt_conf}}
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT33M
+
+  {%- endfor %}
+
+    [[atmos_meto_linux_n48_ga7_amip_12hr_2x4]]
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA7_AMIP, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT33M
+
+    [[atmos_meto_linux_n48_ga7_amip_12hr_4x2_1thread]]
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA7_AMIP, ATMOS_4x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT66M
+
+    [[atmos_meto_linux_n48_ga7_amip_12hr_4x2_noomp]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_HIGH_NOOMP }}"
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA7_AMIP, ATMOS_4x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT66M
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf, kgo_subdir in (["",        "",       ""], 
+                                             ["_nc3",    "netcdf", "/netcdf-3/"],
+                                             ["_nc4",    "netcdf", "/netcdf-4/"],
+                                             ["_nc4_32", "netcdf", "/netcdf-4_32bit/"]) %}
+
+    [[rose_ana_meto_linux_n48_ga7_amip_12hr{{extension}}_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_12HR, METO_LINUX, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr {{opt_conf}}
+            DIR0=$KGO_LINUX_N48_GA7_AMIP_12HR_DIR{{kgo_subdir}}
+            DIR1=../atmos_meto_linux_n48_ga7_amip_12hr{{extension}}_4x2
+            KGO=0
+
+  {%- endfor %}
+
+    [[rose_ana_meto_linux_n48_ga7_amip_12hr_atmos_thread]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_12HR, METO_LINUX, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=../atmos_meto_linux_n48_ga7_amip_12hr_4x2
+            DIR1=../atmos_meto_linux_n48_ga7_amip_12hr_4x2_1thread
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga7_amip_12hr_atmos_omp]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_12HR, METO_LINUX, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=../atmos_meto_linux_n48_ga7_amip_12hr_4x2
+            DIR1=../atmos_meto_linux_n48_ga7_amip_12hr_4x2_noomp
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga7_amip_12hr_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_12HR, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_n48_ga7_amip_12hr_4x2
+            DIR1=../recon_meto_linux_n48_ga7_amip_12hr_2x4
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga7_amip_12hr_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_12HR, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GA7_AMIP_12HR_DIR
+            DIR1=../recon_meto_linux_n48_ga7_amip_12hr_4x2
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_linux_n48_ga7_amip_naming" in name_graphs_out -%}
+# N48 special configuration for testing file naming schemes
+
+    # Reconfiguration 
+    [[recon_meto_linux_n48_ga7_amip_naming_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_GA7_AMIP_NAMING, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA7_AMIP, RECON_2x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_naming_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS = naming-base
+        [[[directives]]]
+            --mem = 4096
+        [[[job]]]
+            execution time limit = PT6M
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_n48_ga7_amip_naming_2x4]]
+        inherit = METO_LINUX_N48_GA7_AMIP_NAMING, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA7_AMIP, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_naming_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS = n48 naming-base
+        [[[directives]]]
+            --mem = 32768
+        [[[job]]]
+            execution time limit = PT33M
+
+    [[rose_ana_meto_linux_n48_ga7_amip_naming_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_NAMING, METO_LINUX, ROSE_ANA_N48_GA7_AMIP_NAMING
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GA7_AMIP_NAMING_DIR
+            DIR1=../atmos_meto_linux_n48_ga7_amip_naming_2x4
+            KGO=0
+        [[[directives]]]
+            --mem = 2048
+
+    [[rose_ana_meto_linux_n48_ga7_amip_naming_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_NAMING, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GA7_AMIP_NAMING_DIR
+            DIR1=../recon_meto_linux_n48_ga7_amip_naming_2x4
+            KGO=0
+
+    # Namespaces for the install and archive tasks
+    [[LINUX_GA7_AMIP_NAMING_CRUN_INSTALL, LINUX_GA7_AMIP_NAMING_CRUN_ARCHIVE]]
+
+    # Atmosphere Model NRUN
+    [[atmos_meto_linux_n48_ga7_amip_naming_crun_2x4_0]]
+        inherit = METO_LINUX_N48_GA7_AMIP_NAMING, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA7_AMIP, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_naming_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 naming-base naming-nrun
+        [[[directives]]]
+            --mem = 32768
+        [[[job]]]
+            execution time limit = PT33M
+
+    {% for crun_no in range(1,4) -%}
+
+       # Atmosphere model CRUNs
+       [[atmos_meto_linux_n48_ga7_amip_naming_crun_2x4_{{crun_no}}]]
+           inherit = METO_LINUX_N48_GA7_AMIP_NAMING, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA7_AMIP, ATMOS_2x4, IOS_0
+           [[[environment]]]
+               ASTART=../recon_meto_linux_n48_ga7_amip_naming_2x4/atmos.astart
+               ROSE_APP_OPT_CONF_KEYS=n48 naming-base naming-crun{{crun_no}}
+               CONTINUE=true
+           [[[directives]]]
+               --mem = 32768
+        [[[job]]]
+            execution time limit = PT33M
+
+       # Task which moves results forwards
+       [[meto_linux_ga7_amip_naming_crun_install_{{crun_no}}]]
+           inherit = LINUX_GA7_AMIP_NAMING_CRUN_INSTALL, RUN_LINUX
+           script = """
+           $CYLC_SUITE_RUN_DIR/app/um_ga7_amip/bin/crun_install.sh
+           """
+           [[[environment]]]
+              ATMOS_PREV=atmos_meto_linux_n48_ga7_amip_naming_crun_2x4_{{crun_no - 1}}
+              ATMOS_NEW=atmos_meto_linux_n48_ga7_amip_naming_crun_2x4_{{crun_no}}
+
+    {%- endfor %}
+
+    {% for crun_no in range(0,4) -%}
+        # Task which moves files to "archive" folder
+        [[meto_linux_ga7_amip_naming_crun_archive_{{crun_no}}]]
+           inherit = LINUX_GA7_AMIP_NAMING_CRUN_ARCHIVE, RUN_LINUX
+           script = """
+           $CYLC_SUITE_RUN_DIR/app/um_ga7_amip/bin/crun_archive.sh
+           """
+           [[[environment]]]
+              ARCHIVE_DIR=$CYLC_SUITE_SHARE_DIR/N48_GA7_AMIP_NAMING_CRUN_LINUX
+              ATMOS_DIR=atmos_meto_linux_n48_ga7_amip_naming_crun_2x4_{{crun_no}}
+              CRUN_NO={{crun_no}}
+              
+    {%- endfor %}
+
+    # Comparison task for the final point of the CRUNs
+    [[rose_ana_meto_linux_n48_ga7_amip_naming_lrun_crun_atmos]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_NAMING, ROSE_ANA_N48_GA7_AMIP_NAMING
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_ga7_amip_naming_2x4
+            DIR1=$CYLC_SUITE_SHARE_DIR/N48_GA7_AMIP_NAMING_CRUN_LINUX
+            KGO=
+        [[[directives]]]
+            --mem = 2048
+
+{%- endif %}
+
+{% if "meto_linux_n48_ga_amip_exp_naming" in name_graphs_out -%}
+# N48 special configuration for testing file naming schemes
+
+    # Reconfiguration 
+    [[recon_meto_linux_n48_ga_amip_exp_naming_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_NAMING, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA_AMIP_EXP, RECON_2x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_naming_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS = naming-base
+        [[[directives]]]
+            --mem = 4096
+        [[[job]]]
+            execution time limit = PT6M
+
+    # Atmosphere Model Run
+    [[atmos_meto_linux_n48_ga_amip_exp_naming_2x4]]
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_NAMING, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA_AMIP_EXP, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_naming_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS = n48 naming-base
+        [[[directives]]]
+            --mem = 32768
+        [[[job]]]
+            execution time limit = PT33M
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_naming_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_NAMING, METO_LINUX, ROSE_ANA_N48_GA_AMIP_EXP_NAMING
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GA_AMIP_EXP_NAMING_DIR
+            DIR1=../atmos_meto_linux_n48_ga_amip_exp_naming_2x4
+            KGO=0
+        [[[directives]]]
+            --mem = 2048
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_naming_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_NAMING, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GA_AMIP_EXP_NAMING_DIR
+            DIR1=../recon_meto_linux_n48_ga_amip_exp_naming_2x4
+            KGO=0
+
+    # Namespaces for the install and archive tasks
+    [[LINUX_GA_AMIP_EXP_NAMING_CRUN_INSTALL, LINUX_GA_AMIP_EXP_NAMING_CRUN_ARCHIVE]]
+
+    # Atmosphere Model NRUN
+    [[atmos_meto_linux_n48_ga_amip_exp_naming_crun_2x4_0]]
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_NAMING, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA_AMIP_EXP, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_naming_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 naming-base naming-nrun
+        [[[directives]]]
+            --mem = 32768
+        [[[job]]]
+            execution time limit = PT33M
+
+    {% for crun_no in range(1,4) -%}
+
+       # Atmosphere model CRUNs
+       [[atmos_meto_linux_n48_ga_amip_exp_naming_crun_2x4_{{crun_no}}]]
+           inherit = METO_LINUX_N48_GA_AMIP_EXP_NAMING, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA_AMIP_EXP, ATMOS_2x4, IOS_0
+           [[[environment]]]
+               ASTART=../recon_meto_linux_n48_ga_amip_exp_naming_2x4/atmos.astart
+               ROSE_APP_OPT_CONF_KEYS=n48 naming-base naming-crun{{crun_no}}
+               CONTINUE=true
+           [[[directives]]]
+               --mem = 32768
+        [[[job]]]
+            execution time limit = PT33M
+
+       # Task which moves results forwards
+       [[meto_linux_ga_amip_exp_naming_crun_install_{{crun_no}}]]
+           inherit = LINUX_GA_AMIP_EXP_NAMING_CRUN_INSTALL, RUN_LINUX
+           script = """
+           $CYLC_SUITE_RUN_DIR/app/um_ga_amip_exp/bin/crun_install.sh
+           """
+           [[[environment]]]
+              ATMOS_PREV=atmos_meto_linux_n48_ga_amip_exp_naming_crun_2x4_{{crun_no - 1}}
+              ATMOS_NEW=atmos_meto_linux_n48_ga_amip_exp_naming_crun_2x4_{{crun_no}}
+
+    {%- endfor %}
+
+    {% for crun_no in range(0,4) -%}
+        # Task which moves files to "archive" folder
+        [[meto_linux_ga_amip_exp_naming_crun_archive_{{crun_no}}]]
+           inherit = LINUX_GA_AMIP_EXP_NAMING_CRUN_ARCHIVE, RUN_LINUX
+           script = """
+           $CYLC_SUITE_RUN_DIR/app/um_ga_amip_exp/bin/crun_archive.sh
+           """
+           [[[environment]]]
+              ARCHIVE_DIR=$CYLC_SUITE_SHARE_DIR/N48_GA_AMIP_EXP_NAMING_CRUN_LINUX
+              ATMOS_DIR=atmos_meto_linux_n48_ga_amip_exp_naming_crun_2x4_{{crun_no}}
+              CRUN_NO={{crun_no}}
+              
+    {%- endfor %}
+
+    # Comparison task for the final point of the CRUNs
+    [[rose_ana_meto_linux_n48_ga_amip_exp_naming_lrun_crun_atmos]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_NAMING, ROSE_ANA_N48_GA_AMIP_EXP_NAMING
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_ga_amip_exp_naming_2x4
+            DIR1=$CYLC_SUITE_SHARE_DIR/N48_GA_AMIP_EXP_NAMING_CRUN_LINUX
+            KGO=
+        [[[directives]]]
+            --mem = 2048
+
+{%- endif %}
+
+{% if "meto_linux_n48_ga7_amip_12hr_comp_check" in name_graphs_out -%}
+# N48 GA7_AMIP "climate" configuration - 12 hour variant with rigorous compiler optimisations
+    # Reconfiguration
+    [[recon_meto_linux_n48_ga7_amip_12hr_comp_check_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_RIGOROUS_NOOMP }}"
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA7_AMIP, RECON_2x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_comp_check_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT6M
+
+    [[recon_meto_linux_n48_ga7_amip_12hr_comp_check_4x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_RIGOROUS_NOOMP }}"
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA7_AMIP, RECON_4x2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_comp_check_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT6M
+
+    [[atmos_meto_linux_n48_ga7_amip_12hr_comp_check_4x2]]
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA7_AMIP, ATMOS_4x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_comp_check_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT49M
+
+    [[atmos_meto_linux_n48_ga7_amip_12hr_comp_check_2x4]]
+        inherit = METO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA7_AMIP, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga7_amip_12hr_comp_check_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT49M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_n48_ga7_amip_12hr_comp_check_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=../atmos_meto_linux_n48_ga7_amip_12hr_comp_check_2x4
+            DIR1=../atmos_meto_linux_n48_ga7_amip_12hr_comp_check_4x2
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga7_amip_12hr_comp_check_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=$KGO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK_DIR
+            DIR1=../atmos_meto_linux_n48_ga7_amip_12hr_comp_check_4x2
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_ga7_amip_12hr_comp_check_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_n48_ga7_amip_12hr_comp_check_4x2
+            DIR1=../recon_meto_linux_n48_ga7_amip_12hr_comp_check_2x4
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga7_amip_12hr_comp_check_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK_DIR
+            DIR1=../recon_meto_linux_n48_ga7_amip_12hr_comp_check_4x2
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_linux_n48_ga_amip_exp_12hr" in name_graphs_out -%}
+# N48 GA_AMIP_EXP "climate" configuration - 12 hour variant
+    # Reconfiguration
+    [[recon_meto_linux_n48_ga_amip_exp_12hr_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA_AMIP_EXP, RECON_2x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT6M
+
+    [[recon_meto_linux_n48_ga_amip_exp_12hr_4x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA_AMIP_EXP, RECON_4x2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT6M
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf in (["",        ""], 
+                                 ["_nc3",    "netcdf netcdf3"],
+                                 ["_nc4",    "netcdf netcdf4"],
+                                 ["_nc4_32", "netcdf netcdf4-32b"]) %}
+
+    [[atmos_meto_linux_n48_ga_amip_exp_12hr{{extension}}_4x2]]
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA_AMIP_EXP, ATMOS_4x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr {{opt_conf}}
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT33M
+
+  {%- endfor %}
+
+    [[atmos_meto_linux_n48_ga_amip_exp_12hr_2x4]]
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA_AMIP_EXP, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT33M
+
+    [[atmos_meto_linux_n48_ga_amip_exp_12hr_4x2_1thread]]
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA_AMIP_EXP, ATMOS_4x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT66M
+
+    [[atmos_meto_linux_n48_ga_amip_exp_12hr_4x2_noomp]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_HIGH_NOOMP }}"
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA_AMIP_EXP, ATMOS_4x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT66M
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf, kgo_subdir in (["",        "",       ""], 
+                                             ["_nc3",    "netcdf", "/netcdf-3/"],
+                                             ["_nc4",    "netcdf", "/netcdf-4/"],
+                                             ["_nc4_32", "netcdf", "/netcdf-4_32bit/"]) %}
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_12hr{{extension}}_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_12HR, METO_LINUX, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr {{opt_conf}}
+            DIR0=$KGO_LINUX_N48_GA_AMIP_EXP_12HR_DIR{{kgo_subdir}}
+            DIR1=../atmos_meto_linux_n48_ga_amip_exp_12hr{{extension}}_4x2
+            KGO=0
+
+  {%- endfor %}
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_12hr_atmos_thread]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_12HR, METO_LINUX, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=../atmos_meto_linux_n48_ga_amip_exp_12hr_4x2
+            DIR1=../atmos_meto_linux_n48_ga_amip_exp_12hr_4x2_1thread
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_12hr_atmos_omp]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_12HR, METO_LINUX, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=../atmos_meto_linux_n48_ga_amip_exp_12hr_4x2
+            DIR1=../atmos_meto_linux_n48_ga_amip_exp_12hr_4x2_noomp
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_12hr_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_12HR, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_n48_ga_amip_exp_12hr_4x2
+            DIR1=../recon_meto_linux_n48_ga_amip_exp_12hr_2x4
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_12hr_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_12HR, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GA_AMIP_EXP_12HR_DIR
+            DIR1=../recon_meto_linux_n48_ga_amip_exp_12hr_4x2
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_linux_n48_ga_amip_exp_12hr_comp_check" in name_graphs_out -%}
+# N48 GA_AMIP_EXP "climate" configuration - 12 hour variant with rigorous compiler optimisations
+    # Reconfiguration
+    [[recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_RIGOROUS_NOOMP }}"
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA_AMIP_EXP, RECON_2x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT6M
+
+    [[recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_RIGOROUS_NOOMP }}"
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_8_TASKS, METO_LINUX_1_THREAD, UM_GA_AMIP_EXP, RECON_4x2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT6M
+
+    [[atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2]]
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA_AMIP_EXP, ATMOS_4x2, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT49M
+
+    [[atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4]]
+        inherit = METO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_8_TASKS, METO_LINUX_2_THREADS, UM_GA_AMIP_EXP, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+        [[[directives]]]
+            --mem=32768
+        [[[job]]]
+            execution time limit = PT49M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_n48_ga_amip_exp_12hr_comp_check_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=../atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4
+            DIR1=../atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_12hr_comp_check_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=$KGO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK_DIR
+            DIR1=../atmos_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_12hr_comp_check_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2
+            DIR1=../recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_2x4
+            KGO=
+
+    [[rose_ana_meto_linux_n48_ga_amip_exp_12hr_comp_check_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK_DIR
+            DIR1=../recon_meto_linux_n48_ga_amip_exp_12hr_comp_check_4x2
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_linux_n48_eg_omp_ios" in name_graphs_out -%}
+# N48 Linux EG OpenMP IO Server
+
+    # Reconfiguration 1x4
+    [[recon_meto_linux_n48_eg_omp_ios_1x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, RECON_1x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT11M
+
+    # Reconfiguration 4x1
+    [[recon_meto_linux_n48_eg_omp_ios_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, RECON_4x1
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_4x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT11M
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_n48_eg_omp_ios_1x4]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=output_all_pe
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Atmosphere Model Run 4x1
+    [[atmos_meto_linux_n48_eg_omp_ios_4x1]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_4x1, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_4x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT16M
+            
+    # Atmosphere Model Run 1x4 NRUN
+    [[atmos_meto_linux_n48_eg_omp_ios_1x4_nrun]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=nrun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_OMP_IOS
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_OMP_IOS
+        [[[job]]]
+            execution time limit = PT16M
+            
+    # Atmosphere Model Run 1x4 CRUN
+    [[atmos_meto_linux_n48_eg_omp_ios_1x4_crun]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=crun
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_OMP_IOS
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_OMP_IOS
+        [[[job]]]
+            execution time limit = PT16M
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_DIR
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_DIR
+            DIR1=../recon_meto_linux_n48_eg_omp_ios_1x4
+            KGO=0
+            
+    [[rose_ana_meto_linux_n48_eg_omp_ios_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_eg_omp_ios_4x1
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_1x4
+            KGO=
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_n48_eg_omp_ios_4x1
+            DIR1=../recon_meto_linux_n48_eg_omp_ios_1x4
+            KGO=
+
+
+    [[atmos_meto_linux_n48_eg_omp_ios_1x4_lrun]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ancilUpdate analysisOff alphaRelaxOff lrun 
+        [[[job]]]
+            execution time limit = PT22M
+
+    [[atmos_meto_linux_n48_eg_omp_ios_1x4_nrun1]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ancilUpdate analysisOff alphaRelaxOff nrun1 
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_NrunNrun
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_NrunNrun
+        [[[job]]]
+            execution time limit = PT22M
+
+    [[atmos_meto_linux_n48_eg_omp_ios_1x4_nrun2]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+# change astart to dump in shared
+            ASTART=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_NrunNrun/atmosa_da006
+            ROSE_APP_OPT_CONF_KEYS=ancilUpdate analysisOff alphaRelaxOff nrun2
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_NrunNrun_part2
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_NrunNrun_part2
+        [[[job]]]
+            execution time limit = PT22M
+
+    # Comparison task n48_eg nrun_nrun
+    [[rose_ana_meto_linux_n48_eg_omp_ios_nrun_nrun_atmos]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_N48_EG_NRUN_NRUN
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_eg_omp_ios_1x4_lrun
+            DIR1=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_NrunNrun_part2
+            KGO=
+            
+    [[rose_ana_meto_linux_n48_eg_norms]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_EG_NORMS
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_eg_omp_ios_1x4_lrun
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_1x4_nrun2
+            KGO=
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_lrun_crun_atmos]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_N48_EG_CRUN
+        [[[environment]]]
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/METO_LINUX_N48_EG_OMP_IOS
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_1x4
+            KGO=
+
+{%- if INTEGRATION_TESTING == true %}
+    # Atmosphere Model Run 2x4
+    [[atmos_meto_linux_n48_eg_omp_ios_2x4]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_10_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_2x4, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_1x4/atmos.astart
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT22M
+
+    # Atmosphere Model Run 4x2
+    [[atmos_meto_linux_n48_eg_omp_ios_4x2]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_10_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_4x2, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_1x4/atmos.astart
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT22M
+
+    # Comparison task 2x4
+    [[rose_ana_meto_linux_n48_eg_omp_ios_atmos_proc_2x4]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_eg_omp_ios_1x4
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_2x4
+            KGO=
+
+    # Comparison task 4x2
+    [[rose_ana_meto_linux_n48_eg_omp_ios_atmos_proc_4x2]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_eg_omp_ios_1x4
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_4x2
+            KGO=
+
+{%- endif %}
+
+
+{%- endif %}
+
+{% if "meto_linux_n48_eg_omp_ios_clang_ifort" in name_graphs_out -%}
+# N48 Linux EG OpenMP IO Server (clang compiler)
+
+    # Reconfiguration 1x4
+    [[recon_meto_linux_n48_eg_omp_ios_clang_ifort_1x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP_CLANG }}"
+        inherit = METO_LINUX_N48_EG_OMP_CLANG_IFORT, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, RECON_1x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_clang_ifort_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT11M
+
+    # Reconfiguration 4x1
+    [[recon_meto_linux_n48_eg_omp_ios_clang_ifort_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP_CLANG }}"
+        inherit = METO_LINUX_N48_EG_OMP_CLANG_IFORT, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, RECON_4x1
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_clang_ifort_4x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT11M
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_n48_eg_omp_ios_clang_ifort_1x4]]
+        inherit = METO_LINUX_N48_EG_OMP_CLANG_IFORT, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_clang_ifort_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Atmosphere Model Run 4x1
+    [[atmos_meto_linux_n48_eg_omp_ios_clang_ifort_4x1]]
+        inherit = METO_LINUX_N48_EG_OMP_CLANG_IFORT, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_4x1, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_clang_ifort_4x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT16M
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_clang_ifort_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP_CLANG_IFORT, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_CLANG_IFORT_DIR
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_clang_ifort_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_clang_ifort_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP_CLANG_IFORT, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_CLANG_IFORT_DIR
+            DIR1=../recon_meto_linux_n48_eg_omp_ios_clang_ifort_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_clang_ifort_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP_CLANG_IFORT, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_eg_omp_ios_clang_ifort_4x1
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_clang_ifort_1x4
+            KGO=
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_clang_ifort_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP_CLANG_IFORT, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_n48_eg_omp_ios_clang_ifort_4x1
+            DIR1=../recon_meto_linux_n48_eg_omp_ios_clang_ifort_1x4
+            KGO=
+
+{%- endif %}
+
+
+{% if "meto_linux_n48_eg_omp_noios" in name_graphs_out -%}
+# N48 Linux EG OpenMP without IO Server
+
+    # Reconfiguration 1x4
+    [[recon_meto_linux_n48_eg_omp_noios_1x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, RECON_1x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_noios_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT13M
+
+    # Reconfiguration 4x1
+    [[recon_meto_linux_n48_eg_omp_noios_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, RECON_4x1
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_noios_4x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux
+        [[[job]]]
+            execution time limit = PT13M
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_n48_eg_omp_noios_1x4]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_4_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_noios_1x4/atmos.astart
+
+    # Atmosphere Model Run 4x1
+    [[atmos_meto_linux_n48_eg_omp_noios_4x1]]
+        inherit = METO_LINUX_N48_EG_OMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_4_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_4x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_noios_4x1/atmos.astart
+
+    [[rose_ana_meto_linux_n48_eg_omp_noios_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_DIR
+            DIR1=../atmos_meto_linux_n48_eg_omp_noios_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_eg_omp_noios_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_DIR
+            DIR1=../recon_meto_linux_n48_eg_omp_noios_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_eg_omp_noios_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_eg_omp_noios_1x4
+            DIR1=../atmos_meto_linux_n48_eg_omp_noios_4x1
+            KGO=
+
+    [[rose_ana_meto_linux_n48_eg_omp_noios_recon_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_OMP, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_n48_eg_omp_noios_4x1
+            DIR1=../recon_meto_linux_n48_eg_omp_noios_1x4
+            KGO=
+
+
+{%- endif %}
+
+{%- if "meto_linux_n48_eg_omp_noios_drhook" in name_graphs_out %}
+
+    # Reconfiguration 1x4
+    [[recon_meto_linux_n48_eg_omp_noios_drhook]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP_DRHOOK }}"
+        inherit = METO_LINUX_N48_EG_DRHOOK, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, RECON_1x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_noios_drhook/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS= meto_linux drhook
+        [[[job]]]
+            execution time limit = PT11M
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_n48_eg_omp_noios_drhook_1x4]]
+        inherit = METO_LINUX_N48_EG_DRHOOK, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_4_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_noios_drhook/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=drhook
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT12M
+
+    [[rose_ana_meto_linux_n48_eg_omp_noios_drhook_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_DRHOOK, METO_LINUX, ROSE_ANA_DRHOOK
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_DRHOOK_DIR
+            DIR1=../recon_meto_linux_n48_eg_omp_noios_drhook
+            KGO=0
+
+
+    [[rose_ana_meto_linux_n48_eg_omp_noios_drhook_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_DRHOOK, METO_LINUX, ROSE_ANA_DRHOOK
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_DRHOOK_DIR
+            DIR1=../atmos_meto_linux_n48_eg_omp_noios_drhook_1x4
+            KGO=0
+
+{%- endif %}
+
+
+{% if "meto_linux_n48_eg_noomp" in name_graphs_out -%}
+# N48 no OpenMP Linux
+    # Reconfiguration
+    [[recon_meto_linux_n48_eg_noomp_1x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_NOOMP }}"
+        inherit = METO_LINUX_N48_EG_NOOMP, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_1_TASK, METO_LINUX_1_THREAD, UM_N48_EG, RECON_1x1 
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_noomp_1x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS= meto_linux
+        [[[directives]]]
+            --mem=256
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_n48_eg_noomp_1x4]]
+        inherit = METO_LINUX_N48_EG_NOOMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, ATMOS_1x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_noomp_1x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_n48_eg_noomp_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_NOOMP, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_DIR
+            DIR1=../atmos_meto_linux_n48_eg_noomp_1x4
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_eg_noomp_recon_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_NOOMP, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_DIR
+            DIR1=../recon_meto_linux_n48_eg_noomp_1x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # Atmosphere Model Run 4x1 
+    [[atmos_meto_linux_n48_eg_noomp_4x1]]
+        script = "{{TASK_RUN}} {{ UM_LINUX_IFORT_HIGH_NOOMP }}"
+        inherit = METO_LINUX_N48_EG_NOOMP, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, ATMOS_4x1, IOS_0 
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_noomp_1x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_n48_eg_noomp_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_NOOMP, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_eg_noomp_4x1
+            DIR1=../atmos_meto_linux_n48_eg_noomp_1x4
+            KGO=
+    
+{%- endif %}
+
+
+{%- endif %}
+
+
+# Linux Jobs: Reconfiguration: Global Configurations
+{% if "meto_linux_recon_n216_eg_interp_all_fields_basic" in name_graphs_out -%}
+#RECON N216 INTERPOLATION OF ALL FIELDS (BASIC)
+
+   # Reconfiguration
+    [[recon_meto_linux_recon_n216_eg_interp_all_fields_basic_1x4]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, RECON_1x4, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 4000000 -c unlimited
+        [[[directives]]]
+            --mem=2048
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n216_eg_interp_all_fields_basic_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_recon_n216_eg_interp_all_fields_basic/{{LINUX_RECON_N216_EG_INTERP_ALL_FIELDS_BASIC_KGO}}
+            DIR1=../recon_meto_linux_recon_n216_eg_interp_all_fields_basic_1x4/
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+   # Reconfiguration 2x2
+    [[recon_meto_linux_recon_n216_eg_interp_all_fields_basic_2x2]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, RECON_2x2, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 4000000 -c unlimited
+        [[[directives]]]
+            --mem=2048
+    
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n216_eg_interp_all_fields_basic_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_recon_n216_eg_interp_all_fields_basic_1x4/
+            DIR1=../recon_meto_linux_recon_n216_eg_interp_all_fields_basic_2x2/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib" in name_graphs_out -%}
+#RECON N216 INTERPOLATION OF ALL FIELDS (BASIC) (as above), using an executable
+# compiled without the GRIB_API macro
+
+   # Reconfiguration
+    [[recon_meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib_1x4]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, RECON_1x4, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        script = "{{TASK_RUN_RECON}} --verbose {{ RECON_LINUX_IFORT_HIGH_OMP_NOGRIB }}"
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 4000000 -c unlimited
+        [[[directives]]]
+            --mem=2048
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_recon_n216_eg_interp_all_fields_basic/{{LINUX_RECON_N216_EG_INTERP_ALL_FIELDS_BASIC_KGO}}
+            DIR1=../recon_meto_linux_recon_n216_eg_interp_all_fields_basic_nogrib_1x4/
+            KGO=0
+
+{%- endif %}
+
+
+{% if "meto_linux_recon_n216_eg_select_fields_from_namelist" in name_graphs_out -%}
+#RECON N216 SELECT OUTPUT FIELDS FROM NAMELIST ARRAY
+
+   # Reconfiguration
+    [[recon_meto_linux_recon_n216_eg_select_fields_from_namelist_1x4]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, RECON_1x4, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=filter-dump
+            ASTART=atmos.astart
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 4000000 -c unlimited
+        [[[directives]]]
+            --mem=2048
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n216_eg_select_fields_from_namelist_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_recon_n216_eg_select_fields_from_namelist/{{LINUX_RECON_N216_EG_INTERP_ALL_FIELDS_BASIC_KGO}}
+            DIR1=../recon_meto_linux_recon_n216_eg_select_fields_from_namelist_1x4/
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+   # Reconfiguration 2x2
+    [[recon_meto_linux_recon_n216_eg_select_fields_from_namelist_2x2]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, RECON_2x2, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=filter-dump
+            ASTART=atmos.astart
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 4000000 -c unlimited
+        [[[directives]]]
+            --mem=2048
+    
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n216_eg_select_fields_from_namelist_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_linux_recon_n216_eg_select_fields_from_namelist_1x4/
+            DIR1=../recon_meto_linux_recon_n216_eg_select_fields_from_namelist_2x2/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "meto_linux_recon_n108_nd_interp_all_fields" in name_graphs_out -%}
+#RECON N108 AREA WEIGHTED INTERPOLATION OF ALL FIELDS
+
+   # Reconfiguration
+    [[recon_meto_linux_recon_n108_nd_interp_all_fields_1x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON_EXTRA_MEM, METO_LINUX_1_TASK, METO_LINUX_1_THREAD, RECON_1x1, RECON_N108_ND_INTERP_ALL_FIELDS
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[job]]]
+            execution time limit = PT16M
+ 
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n108_nd_interp_all_fields_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_recon_n108_nd_interp_all_fields/{{LINUX_RECON_N108_ND_INTERP_ALL_FIELDS_KGO}}
+            DIR1=../recon_meto_linux_recon_n108_nd_interp_all_fields_1x1/
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_linux_recon_n108_nd_var_area_weight" in name_graphs_out -%}
+#RECON N108 ND RECON VAR AREA WEIGHTED INTERP LINUX
+
+   # Reconfiguration
+    [[recon_meto_linux_recon_n108_nd_var_area_weight_1x1]]
+        inherit = METO_LINUX_RECON_EXTRA_MEM, RUN_LINUX, METO_LINUX_1_TASK, METO_LINUX_1_THREAD, RECON_N108_ND_VAR_AREA_WEIGHT, RECON_1x1
+        script = "{{TASK_RUN_RECON}} --verbose {{ RECON_SERIAL_LINUX_IFORT_HIGH_OMP }}"
+        [[[job]]]
+            execution time limit = PT22M
+             
+     # Comparison tasks
+    [[rose_ana_meto_linux_recon_n108_nd_var_area_weight_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_n108_nd_var_area_weight/{{LINUX_RECON_N108_ND_VAR_AREA_WEIGHT_KGO}}
+            DIR1 = ../recon_meto_linux_recon_n108_nd_var_area_weight_1x1
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_linux_recon_n48_nd_grib1" in name_graphs_out -%}
+# RECON GRIB1 N48 New Dyn LINUX
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_n48_nd_grib1_1x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_1_TASK, METO_LINUX_1_THREAD, RECON_N48_ND_GRIB, RECON_1x1
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=grib1
+        [[[directives]]]
+            --mem=2048
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_nd_grib1_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_n48_nd_grib1/{{LINUX_RECON_N48_ND_GRIB1_KGO}}
+            DIR1 = ../recon_meto_linux_recon_n48_nd_grib1_1x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration Run 1x2
+    [[recon_meto_linux_recon_n48_nd_grib1_1x2]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, RECON_N48_ND_GRIB, RECON_1x2
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=grib1
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_nd_grib1_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_n48_nd_grib1_1x1
+            DIR1 = ../recon_meto_linux_recon_n48_nd_grib1_1x2
+            KGO=
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_n48_nd_grib2" in name_graphs_out -%}
+# RECON GRIB2 N48 New Dyn LINUX
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_n48_nd_grib2_1x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_1_TASK, METO_LINUX_1_THREAD, RECON_N48_ND_GRIB, RECON_1x1
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=grib2
+        [[[directives]]]
+            --mem=2048
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_nd_grib2_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_n48_nd_grib2/{{LINUX_RECON_N48_ND_GRIB2_KGO}}
+            DIR1 = ../recon_meto_linux_recon_n48_nd_grib2_1x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration Run 1x2
+    [[recon_meto_linux_recon_n48_nd_grib2_1x2]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, RECON_N48_ND_GRIB, RECON_1x2
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=grib2
+        [[[directives]]]
+            --mem=8192
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_nd_grib2_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_n48_nd_grib2_1x1
+            DIR1 = ../recon_meto_linux_recon_n48_nd_grib2_1x2
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_n48_eg_grib1" in name_graphs_out -%}
+# RECON GRIB1 N48 Endgame LINUX
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_n48_eg_grib1_1x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_1_TASK, METO_LINUX_1_THREAD, RECON_N48_EG_GRIB, RECON_1x1
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=grib1
+        [[[directives]]]
+            --mem=2048
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_eg_grib1_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_RECON_STANDALONE, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_n48_eg_grib1/{{LINUX_RECON_N48_EG_GRIB1_KGO}}
+            DIR1 = ../recon_meto_linux_recon_n48_eg_grib1_1x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration Run 1x2
+    [[recon_meto_linux_recon_n48_eg_grib1_1x2]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, RECON_N48_EG_GRIB, RECON_1x2
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=grib1
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_eg_grib1_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_RECON_STANDALONE, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_n48_eg_grib1_1x1
+            DIR1 = ../recon_meto_linux_recon_n48_eg_grib1_1x2
+            KGO=
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_n48_eg_grib2" in name_graphs_out -%}
+# RECON GRIB2 N48 Endgame LINUX
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_n48_eg_grib2_1x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_1_TASK, METO_LINUX_1_THREAD, RECON_N48_EG_GRIB, RECON_1x1
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=grib2
+        [[[directives]]]
+            --mem=2048
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_eg_grib2_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_n48_eg_grib2/{{LINUX_RECON_N48_EG_GRIB2_KGO}}
+            DIR1 = ../recon_meto_linux_recon_n48_eg_grib2_1x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration Run 1x2
+    [[recon_meto_linux_recon_n48_eg_grib2_1x2]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, RECON_N48_EG_GRIB, RECON_1x2
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=grib2
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_eg_grib2_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_n48_eg_grib2_1x1
+            DIR1 = ../recon_meto_linux_recon_n48_eg_grib2_1x2
+            KGO=
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_n96_nd_init_prog_ancil" in name_graphs_out -%}
+# RECON N48 ND initialise prognostics, add river routing
+# and configure ancils LINUX
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_n96_nd_init_prog_ancil_2x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, RECON_N96_ND_INIT_PROG_ANCIL, RECON_2x1
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS= meto_linux
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT13M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n96_nd_init_prog_ancil_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_n96_nd_init_prog_ancil/{{LINUX_RECON_N96_ND_INIT_PROG_ANCIL_KGO}}
+            DIR1 = ../recon_meto_linux_recon_n96_nd_init_prog_ancil_2x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration Run 1x2
+    [[recon_meto_linux_recon_n96_nd_init_prog_ancil_1x2]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, RECON_N96_ND_INIT_PROG_ANCIL, RECON_1x2
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS= meto_linux
+        [[[directives]]]
+            --mem=1024
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n96_nd_init_prog_ancil_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_n96_nd_init_prog_ancil_2x1
+            DIR1 = ../recon_meto_linux_recon_n96_nd_init_prog_ancil_1x2
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_LAM_fix_to_var_res" in name_graphs_out -%}
+# RECON fixed resolution LAM ND to variable resolution LAM EG
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_LAM_fix_to_var_res_4x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_4_TASKS, METO_LINUX_RECON, METO_LINUX_1_THREAD, UM_SEUKV_EG, RECON_4x1
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconeuro4
+        [[[directives]]]
+            --mem=16384
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_LAM_fix_to_var_res_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_LAM_fix_to_var_res/{{LINUX_RECON_LAM_FIX_TO_VAR_RES_KGO}}
+            DIR1 = ../recon_meto_linux_recon_LAM_fix_to_var_res_4x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration Run 1x4
+    [[recon_meto_linux_recon_LAM_fix_to_var_res_1x4]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_4_TASKS, METO_LINUX_RECON, METO_LINUX_1_THREAD, UM_SEUKV_EG, RECON_1x4
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconeuro4
+        [[[directives]]]
+            --mem=16384
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_LAM_fix_to_var_res_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_LAM_fix_to_var_res_4x1
+            DIR1 = ../recon_meto_linux_recon_LAM_fix_to_var_res_1x4
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_LAM_fix_to_fix_res" in name_graphs_out -%}
+# RECON fixed resolution LAM ND to fixed resolution LAM EG
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_LAM_fix_to_fix_res_4x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_4_TASKS, METO_LINUX_RECON, METO_LINUX_1_THREAD, UM_SEUKF_TKEBL, RECON_4x1
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconeuro4
+        [[[directives]]]
+            --mem=8092
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_LAM_fix_to_fix_res_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_LAM_fix_to_fix_res/{{LINUX_RECON_LAM_FIX_TO_FIX_RES_KGO}}
+            DIR1 = ../recon_meto_linux_recon_LAM_fix_to_fix_res_4x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration Run 1x4
+    [[recon_meto_linux_recon_LAM_fix_to_fix_res_1x4]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_4_TASKS, METO_LINUX_RECON, METO_LINUX_1_THREAD, UM_SEUKF_TKEBL, RECON_1x4
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconeuro4
+        [[[directives]]]
+            --mem=8092
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_LAM_fix_to_fix_res_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_LAM_fix_to_fix_res_4x1
+            DIR1 = ../recon_meto_linux_recon_LAM_fix_to_fix_res_1x4
+            KGO=
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_LAM_var_to_fix_res" in name_graphs_out -%}
+# RECON variable resolution LAM EG to fixed resolution LAM EG
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_LAM_var_to_fix_res_4x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON_EXTRA_MEM, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_SEUKF_TKEBL, RECON_4x1
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconukv
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_LAM_var_to_fix_res_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_LAM_var_to_fix_res/{{LINUX_RECON_LAM_VAR_TO_FIX_RES_KGO}}
+            DIR1 = ../recon_meto_linux_recon_LAM_var_to_fix_res_4x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration Run 1x4
+    [[recon_meto_linux_recon_LAM_var_to_fix_res_1x4]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON_EXTRA_MEM, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_SEUKF_TKEBL, RECON_1x4
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconukv
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_LAM_var_to_fix_res_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_LAM_var_to_fix_res_4x1
+            DIR1 = ../recon_meto_linux_recon_LAM_var_to_fix_res_1x4
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_LAM_var_to_var_res" in name_graphs_out -%}
+# RECON variable resolution LAM EG to fixed resolution LAM EG
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_LAM_var_to_var_res_4x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON_EXTRA_MEM, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_SEUKV_EG, RECON_4x1
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconukv
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_LAM_var_to_var_res_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_LAM_var_to_var_res/{{LINUX_RECON_LAM_VAR_TO_VAR_RES_KGO}}
+            DIR1 = ../recon_meto_linux_recon_LAM_var_to_var_res_4x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration Run 1x4
+    [[recon_meto_linux_recon_LAM_var_to_var_res_1x4]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON_EXTRA_MEM, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_SEUKV_EG, RECON_1x4
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconukv
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_LAM_var_to_var_res_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_LAM_var_to_var_res_4x1
+            DIR1 = ../recon_meto_linux_recon_LAM_var_to_var_res_1x4
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_n48_nd_2D_CCA_trans_bilinear" in name_graphs_out -%}
+# RECON N48 ND create 2d cca, transplant data into dump and bilinear interp
+
+    # Reconfiguration
+    [[recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_1_TASK, METO_LINUX_1_THREAD, RECON_1x1, RECON_N48_ND_2D_CCA_TRANS_BILINEAR
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS= meto_linux
+        [[[directives]]]
+            --mem=2048
+
+    # Reconfiguration with alternative namelist filenames
+    [[recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_specify_nl_1x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_1_TASK, METO_LINUX_1_THREAD, RECON_1x1, RECON_N48_ND_2D_CCA_TRANS_BILINEAR
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS= meto_linux specify-nl
+        [[[directives]]]
+            --mem=2048
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_RECON_STANDALONE, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_n48_nd_2D_CCA_trans_bilinear/{{LINUX_RECON_N48_ND_2D_CCA_TRANS_BILINEAR_KGO}}
+            DIR1 = ../recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x1
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # Reconfiguration Run 1x2
+    [[recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x2]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_2_TASKS, METO_LINUX_1_THREAD, RECON_1x2, RECON_N48_ND_2D_CCA_TRANS_BILINEAR
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS= meto_linux
+        [[[directives]]]
+            --mem=1024
+        [[[job]]]
+            execution time limit = PT12M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_RECON_STANDALONE, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x2
+            DIR1 = ../recon_meto_linux_recon_n48_nd_2D_CCA_trans_bilinear_1x1
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_linux_recon_nearest_neighbour_nz" in name_graphs_out -%}
+# High memory recon task - should only be run on high memory linux,
+# els server or LINUX
+    # Reconfiguration
+    [[recon_meto_linux_recon_nearest_neighbour_nz_1x4]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON_EXTRA_MEM, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, RECON_1x4, RECON_NEAREST_NEIGHBOUR
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            --mem=16384
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_nearest_neighbour_nz_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_RECON_STANDALONE, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_LINUX_ROOT_DIR}}/linux_recon_nearest_neighbour_nz/{{LINUX_RECON_NEAREST_NEIGHBOUR_NZ_KGO}}
+            DIR1 = ../recon_meto_linux_recon_nearest_neighbour_nz_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # Reconfiguration Run 2x1
+    [[recon_meto_linux_recon_nearest_neighbour_nz_4x1]]
+        inherit = METO_LINUX_RECON_STANDALONE, RUN_LINUX, METO_LINUX_RECON_EXTRA_MEM, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, RECON_4x1, RECON_NEAREST_NEIGHBOUR
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            --mem=16384
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_linux_recon_nearest_neighbour_nz_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_RECON_STANDALONE, METO_LINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_linux_recon_nearest_neighbour_nz_1x4
+            DIR1 = ../recon_meto_linux_recon_nearest_neighbour_nz_4x1
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+# Linux Jobs: Single Column Models
+
+{% if "meto_linux_scm_togacoare_ga6_omp" in name_graphs_out -%}
+# Single Column Model - TOGA-COARE case, GA6 configuration, Linux
+
+    # SCM Model Run - 1 thread
+    [[scm_meto_linux_scm_togacoare_ga6_omp_1_thread]]
+        inherit = METO_LINUX_SCM_TOGACOARE_GA6_OMP, RUN_LINUX, METO_LINUX_SCM, METO_LINUX_1_THREAD, SCM_TOGACOARE_GA6
+        [[[job]]]
+            execution time limit = PT5M
+
+    # SCM Model Run - 2 threads
+    [[scm_meto_linux_scm_togacoare_ga6_omp_2_threads]]
+        inherit = METO_LINUX_SCM_TOGACOARE_GA6_OMP, RUN_LINUX, METO_LINUX_SCM, METO_LINUX_2_THREADS, SCM_TOGACOARE_GA6
+        [[[job]]]
+            execution time limit = PT5M
+
+{%- endif %}
+
+{% if "meto_linux_scm_togacoare_ga6_noomp" in name_graphs_out -%}
+# Single Column Model - TOGA-COARE case, GA6 configuration, Linux
+
+    # SCM Model Run
+    [[scm_meto_linux_scm_togacoare_ga6_noomp]]
+        inherit = METO_LINUX_SCM_TOGACOARE_GA6_NOOMP, RUN_LINUX, METO_LINUX_SCM, METO_LINUX_1_THREAD, SCM_TOGACOARE_GA6
+        [[[job]]]
+            execution time limit = PT12M
+
+    # Comparison task
+    [[rose_ana_meto_linux_scm_togacoare_ga6_noomp_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_SCM_TOGACOARE_GA6_NOOMP, METO_LINUX, ROSE_ANA_SCM_TOGACOARE_GA6
+        [[[environment]]]
+            DIR0=$KGO_LINUX_SCM_TOGACOARE_GA6_DIR
+            DIR1=../scm_meto_linux_scm_togacoare_ga6_noomp
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_linux_scm_gabls3_ga6_omp" in name_graphs_out -%}
+# Single Column Model - GABLS3 case, GA6 configuration, Linux
+
+    # SCM Model Run - 1 thread
+    [[scm_meto_linux_scm_gabls3_ga6_omp_1_thread]]
+        inherit = METO_LINUX_SCM_GABLS3_GA6_OMP, RUN_LINUX, METO_LINUX_SCM, METO_LINUX_1_THREAD, SCM_GABLS3_GA6
+        [[[job]]]
+            execution time limit = PT4M
+
+    # SCM Model Run - 2 threads
+    [[scm_meto_linux_scm_gabls3_ga6_omp_2_threads]]
+        inherit = METO_LINUX_SCM_GABLS3_GA6_OMP, RUN_LINUX, METO_LINUX_SCM, METO_LINUX_2_THREADS, SCM_GABLS3_GA6
+        [[[job]]]
+            execution time limit = PT4M
+
+{%- endif %}
+
+{% if "meto_linux_scm_gabls3_ga6_noomp" in name_graphs_out -%}
+# Single Column Model - GABLS3 case, GA6 configuration, Linux
+
+    # SCM Model Run
+    [[scm_meto_linux_scm_gabls3_ga6_noomp]]
+        inherit = METO_LINUX_SCM_GABLS3_GA6_NOOMP, RUN_LINUX, METO_LINUX_SCM, METO_LINUX_1_THREAD, SCM_GABLS3_GA6
+        [[[job]]]
+            execution time limit = PT12M
+
+    # Comparison task
+    [[rose_ana_meto_linux_scm_gabls3_ga6_noomp_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_SCM_GABLS3_GA6_NOOMP, METO_LINUX, ROSE_ANA_SCM_GABLS3_GA6
+        [[[environment]]]
+            DIR0=$KGO_LINUX_SCM_GABLS3_GA6_DIR
+            DIR1=../scm_meto_linux_scm_gabls3_ga6_noomp
+            KGO=0
+
+{%- endif %}
+
+
+
+# Linux Jobs: UM Utils jobs
+
+{%- if "meto_linux_ifort_createbc_calcs" in name_graphs_out %}
+    # CreateBC calculation tests
+    
+    {%- set createbc_calcs_map_linux = {
+            "global_eg_fixed_nd_0dust0"        : [LINUX_IFORT_CREATEBC_GLOBAL_EG_FIXED_ND_0DUST0_KGO,   8192 ],
+            "global_eg_varres_nd_0dust0"       : [LINUX_IFORT_CREATEBC_GLOBAL_EG_VARRES_ND_0DUST0_KGO,  8192 ],
+            "fixed_eg_varres_nd_0dust0"        : [LINUX_IFORT_CREATEBC_FIXED_EG_VARRES_ND_0DUST0_KGO,   8192 ],
+            "fixed_eg_fixed_nd_0dust0"         : [LINUX_IFORT_CREATEBC_FIXED_EG_FIXED_ND_0DUST0_KGO,    8192 ],
+            "fixed_eg_fixed_eg_0dust0"         : [LINUX_IFORT_CREATEBC_FIXED_EG_FIXED_EG_0DUST0_KGO,    8192 ],
+            "varres_eg_frame_eg_0dust0"        : [LINUX_IFORT_CREATEBC_VARRES_EG_FRAME_EG_0DUST0_KGO,   8192 ],
+            "frame_eg_fixed_eg_0dust0"         : [LINUX_IFORT_CREATEBC_FRAME_EG_FIXED_EG_0DUST0_KGO,    8192 ],
+            "global_eg_varres_eg_2dust6"       : [LINUX_IFORT_CREATEBC_GLOBAL_EG_VARRES_EG_2DUST6_KGO, 12288 ],
+            "global_eg_frame_eg_2dust2"        : [LINUX_IFORT_CREATEBC_GLOBAL_EG_FRAME_EG_2DUST2_KGO,  12288 ],
+            "frame_eg_varres_eg_2dust6"        : [LINUX_IFORT_CREATEBC_FRAME_EG_VARRES_EG_2DUST6_KGO,  12288 ],
+            "global_eg_fixed_eg_2dust6"        : [LINUX_IFORT_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO,  12288 ],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_linux.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+
+        [[createbc_meto_linux_ifort_createbc_calcs_{{test_type}}]]
+            inherit = METO_LINUX_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_LINUX_IFORT_HIGH_OMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                FRAME_DIR=../createbc_meto_linux_ifort_createbc_calcs_global_eg_frame_eg_2dust2
+                FRAME_DIR2=../createbc_meto_linux_ifort_createbc_calcs_varres_eg_frame_eg_0dust0
+            [[[directives]]]
+                --mem={{ memory_allow }}
+
+        [[rose_ana_meto_linux_ifort_createbc_calcs_{{test_type}}_kgo]]
+            inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_UTILS, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_LINUX_ROOT_DIR}}/linux_createbc_ifort/{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_meto_linux_ifort_createbc_calcs_{{test_type}}
+                 KGO=0
+
+        {%- endfor %}
+
+
+    {%- set createbc_calcs_map_linux_compcheck = {
+            "global_eg_varres_eg_2dust6"       : LINUX_IFORT_CREATEBC_COMP_CHECK_GLOBAL_EG_VARRES_EG_2DUST6_KGO, 
+            }
+    %}
+
+    {%- for test_type, kgo_var in createbc_calcs_map_linux_compcheck.iteritems() %}
+
+        [[createbc_meto_linux_ifort_createbc_calcs_comp_check_{{test_type}}_omp]]
+            inherit = METO_LINUX_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_LINUX_IFORT_RIGOROUS_OMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                OMP_NUM_THREADS=1
+            [[[directives]]]
+                # Note: very spiky memory usage, big temporary high-water mark
+                --mem=16384
+
+        [[createbc_meto_linux_ifort_createbc_calcs_comp_check_{{test_type}}_noomp]]
+            inherit = METO_LINUX_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_LINUX_IFORT_RIGOROUS_NOOMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                OMP_NUM_THREADS=1
+            [[[directives]]]
+                --mem=16384
+        [[[job]]]
+            execution time limit = PT12M
+
+        [[rose_ana_meto_linux_ifort_createbc_calcs_comp_check_{{test_type}}_kgo]]
+            inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_UTILS, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_LINUX_ROOT_DIR}}/linux_createbc_ifort/comp_check_{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_meto_linux_ifort_createbc_calcs_comp_check_{{test_type}}_omp
+                 KGO=0
+
+        [[rose_ana_meto_linux_ifort_createbc_calcs_comp_check_{{test_type}}_omp]]
+            inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_UTILS, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0=../createbc_meto_linux_ifort_createbc_calcs_comp_check_{{test_type}}_omp
+                 DIR1=../createbc_meto_linux_ifort_createbc_calcs_comp_check_{{test_type}}_noomp
+                 KGO=
+
+    {%- endfor %}
+
+    {%- set createbc_calcs_map_linux_ompcheck = {
+            "global_eg_varres_eg_2dust6"       : LINUX_IFORT_CREATEBC_THREAD_CHECK_GLOBAL_EG_VARRES_EG_2DUST6_KGO, 
+            }
+    %}
+
+    {%- for test_type, kgo_var in createbc_calcs_map_linux_ompcheck.iteritems() %}
+
+        [[createbc_meto_linux_ifort_createbc_calcs_omp_check_{{test_type}}_omp]]
+            inherit = METO_LINUX_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_LINUX_IFORT_HIGH_OMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                OMP_NUM_THREADS=1
+            [[[directives]]]
+                # Note: very spiky memory usage, big temporary high-water mark
+                --mem=12288
+
+        [[createbc_meto_linux_ifort_createbc_calcs_omp_check_{{test_type}}_noomp]]
+            inherit = METO_LINUX_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_LINUX_IFORT_HIGH_NOOMP }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                OMP_NUM_THREADS=1
+            [[[directives]]]
+                --mem=12288
+        [[[job]]]
+            execution time limit = PT12M
+
+        [[rose_ana_meto_linux_ifort_createbc_calcs_omp_check_{{test_type}}_kgo]]
+            inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_UTILS, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_LINUX_ROOT_DIR}}/linux_createbc_ifort/omp_check_{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_meto_linux_ifort_createbc_calcs_omp_check_{{test_type}}_omp
+                 KGO=0
+
+        [[rose_ana_meto_linux_ifort_createbc_calcs_omp_check_{{test_type}}_omp]]
+            inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_UTILS, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0=../createbc_meto_linux_ifort_createbc_calcs_omp_check_{{test_type}}_omp
+                 DIR1=../createbc_meto_linux_ifort_createbc_calcs_omp_check_{{test_type}}_noomp
+                 KGO=
+
+    {%- endfor %}
+
+{%- endif %}
+
+
+{%- if "meto_linux_ifort_createbc_calcs_drhook" in name_graphs_out %}
+
+    {%- set createbc_calcs_map_linux_drhook = {
+            "global_eg_varres_eg_2dust6"       : LINUX_IFORT_CREATEBC_DRHOOK_GLOBAL_EG_VARRES_EG_2DUST6_KGO, 
+            }
+    %}
+
+    {%- for test_type, kgo_var in createbc_calcs_map_linux_drhook.iteritems() %}
+
+        [[createbc_meto_linux_ifort_createbc_calcs_{{test_type}}_drhook]]
+            inherit = METO_LINUX_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_LINUX_IFORT_HIGH_OMP_DRHOOK }}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_APP_OPT_CONF_KEYS={{test_type}} drhook
+                OMP_NUM_THREADS=4
+            [[[directives]]]
+                # Note: very spiky memory usage, big temporary high-water mark
+                --mem=12288
+
+
+        [[rose_ana_meto_linux_ifort_createbc_calcs_{{test_type}}_drhook_kgo]]
+            inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_UTILS, ROSE_ANA_DRHOOK
+             [[[environment]]]
+                 DIR0={{KGO_LINUX_ROOT_DIR}}/linux_createbc_ifort/{{test_type}}_drhook/{{kgo_var}}
+                 DIR1=../createbc_meto_linux_ifort_createbc_calcs_{{test_type}}_drhook
+                 KGO=0
+
+    {%- endfor %}
+
+{%- endif %}
+
+{%- if "meto_linux_pptoanc_calcs" in name_graphs_out %}
+     # pptoanc calculation tests
+    {%- set pptoanc_calcs_map_linux = {
+            "basic_test"      : LINUX_UTILS_PPTOANC_BASIC_TEST_KGO,
+            }
+    %}
+
+    {%- for test_type, kgo_var in pptoanc_calcs_map_linux.iteritems() %}
+
+        [[utils_meto_linux_pptoanc_calcs_{{test_type}}]]
+            inherit = METO_LINUX_UTILS, RUN_LINUX
+            script = $ULIMIT ; rose task-run --command-key={{test_type}}
+            [[[environment]]]
+                INPUT_FILE=$INPUT_DATA/pptoanc/{{test_type}}_input.pp
+                ROSE_TASK_APP=utils_pptoanc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                PPTOANC_OUT_DIR=$CYLC_TASK_WORK_PATH
+            [[[directives]]]
+                --mem=128
+        [[[job]]]
+            execution time limit = PT5M
+
+        [[rose_ana_meto_linux_utils_pptoanc_calcs_{{test_type}}_kgo]]
+            inherit = METO_LINUX_ROSE_ANA, RUN_LINUX
+             [[[environment]]]
+                 DIR0={{KGO_LINUX_ROOT_DIR}}/linux_utils_pptoanc/{{test_type}}/{{kgo_var}}
+                 DIR1=../utils_meto_linux_pptoanc_calcs_{{test_type}}
+                 ROSE_TASK_APP=rose_ana_pptoanc_calcs
+                 KGO=0
+
+        {%- endfor %}
+{%- endif %}
+
+{%- if "meto_linux_crmstyle_coarse_grid" in name_graphs_out %}
+# crmstyle_coarse_grid checking
+    [[utils_meto_linux_crmstyle_coarse_grid_whole]]
+        inherit = METO_LINUX_CRMSTYLE_COARSE_GRID, RUN_LINUX
+        [[[environment]]]
+            ROSE_TASK_APP=utils_crmstyle_coarse_grid
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_whole
+            NPROCX  =1
+            NPROCY  =1
+            NEWRES  =100
+        [[[job]]]
+            execution time limit = PT33M
+
+    [[utils_meto_linux_crmstyle_coarse_grid_part_1x2]]
+        inherit = UTILS_METO_LINUX_CRMSTYLE_COARSE_GRID_PART, RUN_LINUX
+        [[[environment]]]
+            ROSE_TASK_APP=utils_crmstyle_coarse_grid
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_part
+            NPROCX           =1
+            NPROCY           =2
+        [[[job]]]
+            execution time limit = PT16M
+
+    [[utils_meto_linux_crmstyle_coarse_grid_part_2x1]]
+        inherit = UTILS_METO_LINUX_CRMSTYLE_COARSE_GRID_PART, RUN_LINUX
+        [[[environment]]]
+            ROSE_TASK_APP=utils_crmstyle_coarse_grid
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_part
+            NPROCX           =2
+            NPROCY           =1
+        [[[job]]]
+            execution time limit = PT16M
+
+    [[rose_ana_meto_linux_utils_crmstyle_coarse_grid_whole_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_single
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_utils_crmstyle_coarse_grid/{{LINUX_UTILS_CRMSTYLE_COARSE_GRID_KGO}}
+            DIR1=../utils_meto_linux_crmstyle_coarse_grid_whole
+            NEWRES  =100
+            KGO=0
+        [[[directives]]]
+            --mem = 2048
+
+    [[rose_ana_meto_linux_utils_crmstyle_coarse_grid_part_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            DIR0=../utils_meto_linux_crmstyle_coarse_grid_part_1x2
+            DIR1=../utils_meto_linux_crmstyle_coarse_grid_part_2x1
+            NEWRES  =40
+            KGO=
+        [[[directives]]]
+            --mem = 2048
+
+    [[rose_ana_meto_linux_utils_crmstyle_coarse_grid_part_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            DIR0={{KGO_LINUX_ROOT_DIR}}/linux_utils_crmstyle_coarse_grid/{{LINUX_UTILS_CRMSTYLE_COARSE_GRID_KGO}}
+            DIR1=../utils_meto_linux_crmstyle_coarse_grid_part_2x1
+            NEWRES  =40
+            KGO=0
+        [[[directives]]]
+            --mem = 2048
+
+{%- endif %}
+
+{% if "meto_linux_pws_diag_test" in name_graphs_out -%}
+
+    # Reconfiguration 1x4
+    [[recon_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_LINUX_IFORT_HIGH_OMP }}"
+        inherit = METO_LINUX_N48_EG_PWS, RUN_LINUX, METO_LINUX_RECON, METO_LINUX_4_TASKS, METO_LINUX_1_THREAD, UM_N48_EG, RECON_1x4
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=meto_linux pwsdiag
+
+    # Atmosphere Model Run 1x4
+    [[atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4]]
+        inherit = METO_LINUX_N48_EG_PWS, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=pwsdiag
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT49M
+
+    # Atmosphere Model Run 4x1
+    [[atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_4x1]]
+        inherit = METO_LINUX_N48_EG_PWS, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_4x1, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=pwsdiag
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT49M
+
+    # Historically, some PWS diags have had prerequisite stash requests. These
+    # should no longer be necessary (but may still be output). In this test we
+    # remove the old dependencies.
+    [[atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_no_dependencies_1x4]]
+        inherit = METO_LINUX_N48_EG_PWS, RUN_LINUX, METO_LINUX_ATMOS, METO_LINUX_6_TASKS, METO_LINUX_2_THREADS, UM_N48_EG, ATMOS_1x4, IOS_2
+        [[[environment]]]
+            ASTART=../recon_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=pwsdiag pwsdiag-no-dep
+        [[[directives]]]
+            --mem=4096
+        [[[job]]]
+            execution time limit = PT49M
+
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_pws_diag_test_atmos_proc]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_PWS, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_4x1
+            ROSE_APP_OPT_CONF_KEYS=pwsdiag
+            KGO=
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_pws_diag_test_atmos_kgo]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_PWS, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_PWS_DIR
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_1x4
+            ROSE_APP_OPT_CONF_KEYS=pwsdiag
+            KGO=0
+
+    [[rose_ana_meto_linux_n48_eg_omp_ios_pws_diag_test_atmos_dependencies]]
+        inherit = METO_LINUX_ROSE_ANA, RUN_LINUX, METO_LINUX_N48_EG_PWS, METO_LINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=$KGO_LINUX_N48_EG_PWS_DIR
+            DIR1=../atmos_meto_linux_n48_eg_omp_ios_pws_diag_test_no_dependencies_1x4
+            ROSE_APP_OPT_CONF_KEYS=pwsdiag pwsdiag-no-dep
+            KGO=0
+
+{%- endif %}
+
+

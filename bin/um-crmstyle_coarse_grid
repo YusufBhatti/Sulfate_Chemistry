@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+## NAME
+#     um-crmstyle_coarse_grid
+#
+# SYNOPSIS
+#     um-crmstyle_coarse_grid [EXE ...]
+#
+# DESCRIPTION
+#     Set up the environment and trigger the crmstyle_coarse_grid executable
+#     with "rose mpi-launch".
+#
+#  Script: crmstyle_coarse_grid
+#
+#  Purpose: Research utility to process high-resolution (<1.5km) convection
+#           permitting output. Vesion for use in a rose task.
+#
+#  Code Owner: Please refer to the UM file CodeOwners.txt
+#  This file belongs in section: Rose scripts
+#
+#  External documentation:
+#    UMDP F60 - Utility Program CRMstyle_coarse_grid
+#
+# ENVIRONMENT VARIABLES
+#     NPROCX          - number of processors in the x direction
+#     NPROCY          - number of processors in the y direction
+#     OROG_FILE       - orography file matching input grid
+#     MASK_FILE       - land fraction file matching input grid
+#     VERT_NAMELIST   - Vertical namelist used in model run
+#     CRMSTYLE_INPUT  - Namelist controlling crmstyle_coarse_grid
+#     STDOUT_FILE     - Basename for standard output (PE) files
+#     PP_INPUT_FILE01 - Input pp/fieldsfile
+#     PP_INPUT_FILE02 - 2nd input pp/fieldsfile
+#       "    "    "   -  Up to a maximum
+#     PP_INPUT_FILE24 - 24th input pp/fieldsfile
+#     ALL_FILE        - Output fieldsfile means from all points 
+#     ACC_FILE        - Output fieldsfile means from cloudy points
+#     ACU_FILE        - Output fieldsfile means from cloudy points updraughts relative to w mean
+#     BCU_FILE        - Output fieldsfile means from buoyant cloudy points updraughts relative to w mean
+#     WG1_FILE        - Output fieldsfile means from buoyant cloudy strong updraughts relative to w mean
+#     PPD_FILE        - Output fieldsfile means from precipitating downdraughts relative to mean w
+#     NBD_FILE        - Output fieldsfile means from negatively buoyant precipitating downdraughts relative to mean w
+#     NID_FILE        - Output fieldsfile means from negatively buoyant precipitating with ice downdraughts relative to mean w
+#     ADU_FILE        - Output fieldsfile means from dry upward points
+#     ACW_FILE        - Output fieldsfile means from cloudy upward points 
+#     BCW_FILE        - Output fieldsfile means from buoyant cloudy upward points 
+#     SINGLE_FILE     - Output fieldsfile means from single level fields
+#     BCU_MASK        - Output fieldsfile on high res grid - points with buoyant cloudy updraughts  
+#
+# End of header -------------------------------------------------------
+set -eu
+
+# Source common UM script functions from file
+um_scripts=$(dirname "$0")/um_script_functions
+if [ -f "$um_scripts" ] ; then
+    . $um_scripts
+else
+    echo "[FAIL] UM script functions file not found: $um_scripts " 1>&2
+    echo "[FAIL] Ensure the UM file above is located in the same " 1>&2
+    echo "[FAIL] directory as this script                        " 1>&2
+    exit 1
+fi
+
+# Set defaults and export environment variables.
+export NPROCX=${NPROCX:-1}
+export NPROCY=${NPROCY:-1}
+
+# total number of processors required by crmstyle_coarse_grid
+NPROC=`expr ${NPROCX} \* ${NPROCY}`
+export NPROC
+
+# Input files - if less than 24 set extras to first
+export PP_INPUT_FILE02=${PP_INPUT_FILE02:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE03=${PP_INPUT_FILE03:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE04=${PP_INPUT_FILE04:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE05=${PP_INPUT_FILE05:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE06=${PP_INPUT_FILE06:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE07=${PP_INPUT_FILE07:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE08=${PP_INPUT_FILE08:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE09=${PP_INPUT_FILE09:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE10=${PP_INPUT_FILE10:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE11=${PP_INPUT_FILE11:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE12=${PP_INPUT_FILE12:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE13=${PP_INPUT_FILE13:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE14=${PP_INPUT_FILE14:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE15=${PP_INPUT_FILE15:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE16=${PP_INPUT_FILE16:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE17=${PP_INPUT_FILE17:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE18=${PP_INPUT_FILE18:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE19=${PP_INPUT_FILE19:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE20=${PP_INPUT_FILE20:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE21=${PP_INPUT_FILE21:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE22=${PP_INPUT_FILE22:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE23=${PP_INPUT_FILE23:-$PP_INPUT_FILE01}
+export PP_INPUT_FILE24=${PP_INPUT_FILE24:-$PP_INPUT_FILE01}
+
+export THREAD_LEVEL=MULTIPLE     # using openMP
+
+export STDOUT_FILE=${STDOUT_FILE:-pe_output/crmst.fort6.pe}
+mkdir -p $(dirname $STDOUT_FILE)
+# Delete any previous .pe* files:
+rm -f $STDOUT_FILE*
+
+COMMAND="${@:-${crmstyle_coarse_grid_exec:-$(dirname "$0")/um-crmstyle_coarse_grid.exe}}"
+usf_which $COMMAND
+usf_print_script_path
+
+# Since we need to process some data after the executable we can trap the EXIT 
+# signal to do this automatically whenever this script exits.  This also
+# catches times when this script is killed for any reason.
+
+cleanup () {
+
+  PE0_SUFFIX=$(echo $((NPROC - 1)) | sed s/./0/g)
+  PE0_STDOUT_FILE="${STDOUT_FILE}${PE0_SUFFIX}"
+  if [[ -f "$PE0_STDOUT_FILE" ]]; then
+    echo '%PE0 OUTPUT%'
+    cat "$PE0_STDOUT_FILE"
+  else
+    echo "Could not find PE0 output file: $PE0_STDOUT_FILE"
+  fi
+
+  # Leaves output from all PEs in case required for any form of checking
+
+  if [ ${ERR_STATE:-0} != 0 ]; then
+    usf_EReport "Problem with CRM-Style-Coarse-Grid program"
+  else
+    echo "[ OK ] CRM-Style-Coarse-Grid successful"
+  fi
+}
+##########################################################################
+# Setup Error traps and cleanup routine to perfom on exit
+#
+usf_Set_Err_Traps
+
+# If $UM_UTIL_LAUNCHER is set, use the contents of that variable as the 
+# launcher; if it's unset or null, invoke the exec using rose mpi-launch 
+# (as null will be substituted in the if condition).
+if [ ${UM_UTIL_LAUNCHER+1} ]; then
+  # Run defined launcher. Caters for not running with any launcher.
+  usf_Print "$UM_UTIL_LAUNCHER $COMMAND"
+  $UM_UTIL_LAUNCHER $COMMAND
+else
+  rose mpi-launch -v $COMMAND
+fi

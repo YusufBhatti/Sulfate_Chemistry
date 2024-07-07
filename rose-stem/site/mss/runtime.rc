@@ -1,0 +1,181 @@
+# MSS HPC Jobs: Compilations
+
+# UM high OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_mss_um_high_omp]]
+        inherit = MSS_CRAY_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_MSS_ROOT_DIR }}/fcm_make_mss_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high no OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_mss_um_high_noomp]]
+        inherit = MSS_CRAY_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_MSS_ROOT_DIR }}/fcm_make_mss_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# Reconfiguration-only high OpenMP
+    # Extract, Pre-process-recon, Build-recon
+    [[fcm_make_mss_recon_high_omp]]
+        inherit = MSS_CRAY_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_MSS_ROOT_DIR }}/fcm_make_mss_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+            
+# UM Utils Serial recon build
+    # Extract, Pre-process, Build
+    [[fcm_make_mss_recon_serial_high_omp]]
+        inherit = MSS_CRAY_BUILD, MAKE_RECON_SERIAL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_MSS_ROOT_DIR }}/fcm_make_mss_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+            
+# Reconfiguration-only high no OpenMP
+    # Extract, Pre-process-recon, Build-recon
+    [[fcm_make_mss_recon_serial_high_noomp]]
+        inherit = MSS_CRAY_BUILD, MAKE_RECON_SERIAL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_MSS_ROOT_DIR }}/fcm_make_mss_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM Utils mpp build
+    # Extract, Pre-process, Build
+    [[fcm_make_mss_utils_mpp_high_omp]]
+        inherit = MSS_CRAY_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPENMP=true
+            OPTIMISATION=high
+            PREBUILD =
+
+# UM Utils serial build
+    # Extract, Pre-process, Build
+    [[fcm_make_mss_utils_serial_high_noomp]]
+        inherit = MSS_CRAY_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_MSS_ROOT_DIR }}/fcm_make_mss_utils_serial_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+#Createbc - cce version
+   [[fcm_make_mss_cray_createbc_high_omp]]
+        inherit = MSS_CRAY_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=high
+            PLATFORM=mss-xc30-cce
+
+#UM libraries build
+    # cce version
+    # Extract, Preprocess, Build
+    [[fcm_make_mss_cray_libs]]
+        inherit = MSS_CRAY_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+            PLATFORM=mss-xc30-cce
+
+    # gnu version
+    # Extract, Preprocess, Build
+    [[fcm_make_mss_gnu_libs]]
+        inherit = MSS_GNU_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+            PLATFORM=mss-xc30-gnu
+
+## INTEL BUILDS ##########################################
+
+# UM Utils mpp build
+    # Extract, Pre-process, Build
+    [[fcm_make_mss_ifort_utils_mpp_high_omp]]
+        inherit = MSS_INTEL_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPENMP=true
+            OPTIMISATION=high
+            PLATFORM=mss-xc30-ifort
+            PREBUILD =
+
+# UM Utils serial build
+    # Extract, Pre-process, Build
+    [[fcm_make_mss_ifort_utils_serial_high_noomp]]
+        inherit = MSS_INTEL_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPENMP=false
+            OPTIMISATION=high
+            PLATFORM=mss-xc30-ifort
+            PREBUILD =
+
+#Createbc - OpenMP
+   [[fcm_make_mss_ifort_createbc_high_omp]]
+       inherit = MSS_INTEL_BUILD
+       [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=high
+            PLATFORM=mss-xc30-ifort
+
+#Createbc - no OpenMP
+   [[fcm_make_mss_ifort_createbc_high_noomp]]
+       inherit = MSS_INTEL_BUILD
+       [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=false
+            OPTIMISATION=high
+            PLATFORM=mss-xc30-ifort
+
+#Createbc - OpenMP, rigorous
+   [[fcm_make_mss_ifort_createbc_rigorous_omp]]
+       inherit = MSS_INTEL_BUILD
+       [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=rigorous
+            PLATFORM=mss-xc30-ifort
+
+#Createbc - OpenMP, rigorous
+   [[fcm_make_mss_ifort_createbc_rigorous_noomp]]
+       inherit = MSS_INTEL_BUILD
+       [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=false
+            OPTIMISATION=rigorous
+            PLATFORM=mss-xc30-ifort

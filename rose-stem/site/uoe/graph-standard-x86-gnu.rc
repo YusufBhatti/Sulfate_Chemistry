@@ -1,0 +1,49 @@
+{%- set name_graphs_x86_gnu = {
+
+    "uoe_x86_gnu_install" : " fcm_make_uoe_x86_install_ctldata => uoe_x86_install_ctldata
+                              fcm_make_uoe_x86_gnu_libs => uoe_x86_gnu_install_libs",
+
+
+    "uoe_x86_gnu_exo_iso"  : " fcm_make_uoe_x86_gfortran_um_safe_noomp => \
+                               recon_uoe_x86_gfortran_exo_iso => atmos_uoe_x86_gfortran_exo_iso_1x12",
+
+    "uoe_x86_gnu_exo_hs" : " fcm_make_uoe_x86_gfortran_um_safe_noomp => \
+                             recon_uoe_x86_gfortran_exo_hs => atmos_uoe_x86_gfortran_exo_hs_1x12",
+
+    "uoe_x86_gnu_exo_tle": " fcm_make_uoe_x86_gfortran_um_safe_noomp => \
+                             recon_uoe_x86_gfortran_exo_tle => atmos_uoe_x86_gfortran_exo_tle_1x12",
+
+    "uoe_x86_gnu_exo_el" : " fcm_make_uoe_x86_gfortran_um_safe_noomp => \
+                             recon_uoe_x86_gfortran_exo_el => atmos_uoe_x86_gfortran_exo_el_1x12",
+
+    "uoe_x86_gnu_exo_el_rt" : " fcm_make_uoe_x86_gfortran_um_safe_noomp => \
+                                recon_uoe_x86_gfortran_exo_el_rt => atmos_uoe_x86_gfortran_exo_el_rt_1x12",
+
+    "uoe_x86_gnu_exo_shj" : " fcm_make_uoe_x86_gfortran_um_safe_noomp => \
+                              recon_uoe_x86_gfortran_exo_shj => atmos_uoe_x86_gfortran_exo_shj_1x12",
+
+    "uoe_x86_gnu_exo_iso_hd209" : " fcm_make_uoe_x86_gfortran_um_safe_noomp =>  \
+                                    recon_uoe_x86_gfortran_exo_iso_hd209 => atmos_uoe_x86_gfortran_exo_iso_hd209_1x12",
+
+    "uoe_x86_gnu_exo_hd209" : " fcm_make_uoe_x86_gfortran_um_safe_noomp => \
+                                recon_uoe_x86_gfortran_exo_hd209 => atmos_uoe_x86_gfortran_exo_hd209_1x12",
+
+    "uoe_x86_gnu_exo_earth_all" : " fcm_make_uoe_x86_gfortran_um_safe_noomp => \
+                                    recon_uoe_x86_gfortran_exo_iso   => atmos_uoe_x86_gfortran_exo_iso_1x12 => \
+                                    recon_uoe_x86_gfortran_exo_hs    => atmos_uoe_x86_gfortran_exo_hs_1x12 => \
+			            recon_uoe_x86_gfortran_exo_tle   => atmos_uoe_x86_gfortran_exo_tle_1x12 => \
+			            recon_uoe_x86_gfortran_exo_el    => atmos_uoe_x86_gfortran_exo_el_1x12 => \
+                                    recon_uoe_x86_gfortran_exo_el_rt => atmos_uoe_x86_gfortran_exo_el_rt_1x12",
+
+    "uoe_x86_gnu_exo_all" : " fcm_make_uoe_x86_gfortran_um_safe_noomp => \
+                              recon_uoe_x86_gfortran_exo_iso       => atmos_uoe_x86_gfortran_exo_iso_1x12 => \
+                              recon_uoe_x86_gfortran_exo_hs        => atmos_uoe_x86_gfortran_exo_hs_1x12 => \
+                              recon_uoe_x86_gfortran_exo_tle       => atmos_uoe_x86_gfortran_exo_tle_1x12 => \
+                              recon_uoe_x86_gfortran_exo_el        => atmos_uoe_x86_gfortran_exo_el_1x12 => \
+                              recon_uoe_x86_gfortran_exo_el_rt     => atmos_uoe_x86_gfortran_exo_el_rt_1x12 => \
+                              recon_uoe_x86_gfortran_exo_shj       => atmos_uoe_x86_gfortran_exo_shj_1x12 => \
+			      recon_uoe_x86_gfortran_exo_iso_hd209 => atmos_uoe_x86_gfortran_exo_iso_hd209_1x12 => \
+			      recon_uoe_x86_gfortran_exo_hd209     => atmos_uoe_x86_gfortran_exo_hd209_1x12",
+
+    }
+-%}

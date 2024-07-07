@@ -1,0 +1,168 @@
+#!/bin/bash -eu
+# *****************************COPYRIGHT*******************************
+# (C) Crown copyright Met Office. All rights reserved. 
+# For further details please refer to the file COPYRIGHT.txt 
+# which you should have received as part of this distribution. 
+# *****************************COPYRIGHT******************************* 
+
+# This script may be used to migrate branches from one repository to 
+# another, provided the trunk of the project in question was migrated
+# at a fixed revision with a shared keyword.  
+#
+# The script works by performing some initial checks to try and ensure
+# that the outgoing branch is suitable for migration, then it checks 
+# out a copy of the external trunk at its migrated revision.  It creates 
+# a patch from the users internal branch and patches the trunk with it,
+# and finally switches these changes into their new branch at the same
+# time as its creation
+#
+# It defaults to migrating a UM branch from vn9.2 (r75183) of the 
+# internal repository at the Met Office, but this can be overridden
+# if required via the environment variables below 
+
+INTERNAL_REPOS=${INTERNAL_REPOS:-fcm:um}    # Internal repository location
+EXTERNAL_REPOS=${EXTERNAL_REPOS:-fcm:um.x}  # External repository location
+MIGRATE_KEYWORD=${MIGRATE_KEYWORD:-vn9.2}   # Keyword of shared revision
+MIGRATE_REVISION=${MIGRATE_REVISION:-75183} # Internal shared revision number 
+
+# Both arguments are mandatory (the user must create a ticket on the external 
+# repository before migrating and provide its number here)
+if [[ $# -lt 2 ]] ; then
+    echo "Usage: "
+    echo "  $(basename $0) <internal_branch_url> <external_ticket_number>"
+    echo ""
+    echo "  This script may be used to migrate an existing branch to an"
+    echo "  identically named branch on the external repository.  Note"
+    echo "  that the internal branch *must* be a $MIGRATE_KEYWORD /dev/ branch"
+    echo ""
+    echo "  You also *must* create a ticket on the external repository"
+    echo "  and provide its number, to be used in the log messages"
+    exit 1
+fi
+
+# The branch url must contain the keyword of the internal repository and
+# may only be a branch from the /dev/ folder
+branch_url=$1
+if ! grep "^${INTERNAL_REPOS}_br/dev/" <<< $branch_url > /dev/null 2>&1 ; then
+    echo "ERROR: Can only migrate from: ${INTERNAL_REPOS}_br/dev/*"
+    exit 1
+fi
+
+# The supplied ticket number must look like a valid number
+ticket_number=$2
+if [[ ! $ticket_number =~ ^[0-9]+$ ]] ; then
+    echo "ERROR: External ticket number required"
+    echo "       Don't understand: $ticket_number"
+    exit 1
+fi
+
+# Query the user's branch to retrieve the revision it was created, this 
+# should match the revision of the shared keyword to enable migration
+if branch_rev=$(fcm binfo $branch_url | grep "^Branch Parent:") ; then
+    branch_rev=$(cut -d@ -f2- <<< $branch_rev)
+
+    echo "Found internal branch: $branch_url"
+    if [[ "$branch_rev" != "$MIGRATE_REVISION" ]] ; then
+        echo "ERROR: Must migrate from a $MIGRATE_KEYWORD branch"
+        echo "       $MIGRATE_KEYWORD = r$MIGRATE_REVISION"
+        echo "       this branch = $branch_rev"
+        exit 1
+    fi
+else
+    echo "ERROR: Cannot find internal branch ($branch_url)"
+    exit 1
+fi
+
+# Check if the branch is a Share branch; if it is setup the flags for the
+# branch creation command to ensure the resulting branch is also in Share
+if grep "/dev/Share/" <<< $branch_url > /dev/null 2>&1 ; then
+    share_flags="-t share"
+fi
+
+# Extract the name of the branch folder, stripping off the keyword or revision 
+# number if present
+branch_folder=$(basename $branch_url)
+branch_name=${branch_folder#${MIGRATE_KEYWORD}_}
+branch_name=${branch_name#r${MIGRATE_REVISION}_}
+
+# Create a temporary working directory
+tempdir=$(mktemp -d --suffix=_migrate_branch)
+
+# Use fcm bdiff to create a patch from the users out-going branch
+if ! fcm bdiff $branch_url > $tempdir/migrate.patch ; then
+    echo "ERROR: Failed to create patch from branch"
+    rm -rf $tempdir
+    exit 1
+else
+    echo "Created patch from branch at: $tempdir/migrate.patch"
+fi
+
+# Checkout a temporary copy of the external trunk at the revision used
+# to migrate it
+echo "Checking out $MIGRATE_KEYWORD trunk to: $tempdir/${MIGRATE_KEYWORD}_trunk"
+if ! fcm co -q ${EXTERNAL_REPOS}_tr@$MIGRATE_KEYWORD \
+    $tempdir/${MIGRATE_KEYWORD}_trunk ; then
+    echo "ERROR: Failed to checkout $MIGRATE_KEYWORD trunk from"
+    echo "       external repository"
+    rm -rf $tempdir
+    exit 1
+fi
+
+# Patch the working copy of the trunk using the previously created patchfile
+cd $tempdir/${MIGRATE_KEYWORD}_trunk
+echo "Patching $MIGRATE_KEYWORD trunk with patch-file"
+if ! svn patch $tempdir/migrate.patch ; then
+    echo "ERROR: Failed to apply patch to $MIGRATE_KEYWORD trunk"
+    cd - > /dev/null
+    rm -rf $tempdir
+    exit 1
+fi
+
+# Override the user's editor so that instead of popping open a real editor it 
+# actually just writes in an automated message for the branch creation
+SVN_EDITOR_OLD=${SVN_EDITOR:-}
+export SVN_EDITOR=\
+"sed -i '1i\#$ticket_number - Migration from internal repository'"
+
+# Now create a new branch with the same name as the old branch, from the
+# migration revision of the trunk.  Since the current working directory is
+# the patched temporary copy of the trunk at that revision the command will
+# simultaneously create the branch and switch to it (moving the patched changes 
+# into the new branch ready to be committed below)
+echo "Creating \"$branch_name\" from: ${EXTERNAL_REPOS}_tr@$MIGRATE_KEYWORD"
+if ! fcm bc --switch $branch_name ${EXTERNAL_REPOS}_tr@$MIGRATE_KEYWORD \
+    ${share_flags:-} -k $ticket_number ; then
+    echo "ERROR: Failed to create branch"
+    cd - > /dev/null
+    rm -rf $tempdir
+    exit 1
+fi
+
+# Reset the users editor to whatever it was before
+export SVN_EDITOR=$SVN_EDITOR_OLD
+
+# Check that the branch now exists (if the user responded negatively to the
+# prompts above the fcm command will still exit as a success but the working
+# copy will still be pointing at the trunk)
+branch_name=$(fcm binfo . | grep "^URL:" | cut -d: -f2-)
+if [[ $(basename $branch_name) == "trunk" ]] ; then
+    echo "ERROR: Cannot continue (previous command aborted or failed)"
+    cd - > /dev/null
+    rm -rf $tempdir
+    exit 1
+fi
+
+# Now fill out the ticket number in the first part of the commit message 
+# for the user and commit
+echo "#$ticket_number - " > \#commit_message\#
+if ! fcm ci ; then
+    echo "ERROR: Failed to commit patched changes to new branch"
+    cd - > /dev/null
+    rm -rf $tempdir
+    exit 1
+fi
+
+# Remove the temporary working folder
+cd - > /dev/null
+rm -rf $tempdir
+echo "Branch migrated successfully"

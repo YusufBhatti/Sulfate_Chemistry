@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+#-----------------------------------------------------------------------
+# Code Owner: Please refer to the UM file CodeOwners.txt
+#-----------------------------------------------------------------------
+# When triggered this app will locate any running UM atmos apps and 
+# attempt to communicate the progress of the app using cylc's messaging 
+# functionality
+
+function calc_timesteps() {(
+    rose_app_conf=$1
+
+    # Return the 2 periodim lines at once
+    periodim=$(grep periodim $rose_app_conf)
+
+    # Extract the secs and steps per period
+    sec_per_periodim=$(cut -d" " -f1 <<< $periodim | cut -d= -f2)
+    steps_per_periodim=$(cut -d" " -f2 <<< $periodim | cut -d= -f2)
+
+    # Get the relative run-target datetime like array
+    run_target_end=$(grep run_target_end $rose_app_conf | cut -d= -f2)
+
+    # Split it into its component parts
+    run_target_y=$(cut -d, -f1 <<< $run_target_end)
+    run_target_mo=$(cut -d, -f2 <<< $run_target_end)
+    run_target_d=$(cut -d, -f3 <<< $run_target_end)
+    run_target_h=$(cut -d, -f4 <<< $run_target_end)
+    run_target_mi=$(cut -d, -f5 <<< $run_target_end)
+    run_target_s=$(cut -d, -f6 <<< $run_target_end)
+
+    # Now assuming a 360 day calendar calculate the total length of the
+    # run in seconds
+    run_seconds=$(($run_target_y*360*24*60*60 + \
+                   $run_target_mo*30*24*60*60 + \
+                   $run_target_d*24*60*60 + \
+                   $run_target_h*60*60 + \
+                   $run_target_mi*60 + \
+                   $run_target_s))
+
+    # Now calculate the number of timesteps, protect against the case where
+    # secs per period is equal to zero just in case
+    if [ $sec_per_periodim -eq 0 ] ; then
+        timesteps=0
+    else
+        timesteps=$(awk "BEGIN \
+                     { printf(\"%0.17g\", \
+                       $run_seconds/$sec_per_periodim*$steps_per_periodim) }")
+    fi
+
+    echo $timesteps
+)}
+
+# Temporary file to store the time of the last poll
+modified=lastpoll.tmp
+
+# Get names of all the apps which represent UM atmos type runs
+atmos_appnames="$(ls ../ | egrep "^atmos|^coupled")"
+
+for atmos_app in $atmos_appnames ; do
+
+    # The pe0 file of interest should be the first one returned
+    # by a listing (it may end in 0, 00, 000 etc)
+    pe0_file=$(\
+     ls ../$atmos_app/pe_output/*.fort6.pe*0 2> /dev/null | head -n 1)
+
+    # Assuming it exists only continue if it has changed since the time
+    # of the last poll
+    if [ -n "$pe0_file" ] ; then
+        if [ $pe0_file -nt $modified ] ; then
+
+            # Get the latest line which reports the timestep
+            tstep="$(tac $pe0_file 2> /dev/null | awk '/Atm_Step.*Timestep/ {print ; exit}')"
+            if [ -n "$tstep" ] ; then
+
+                # Reformat it to make it a little shorter and nicer
+                tstep=$(sed "s/.*Timestep[ ]*\([0-9][0-9]*\)[ ]*Model.*/\1/" <<< $tstep)
+
+                # If a cache file exists for this app read the previously
+                # calculated total timesteps from it
+                if [ -f $atmos_app.tsteps ] ; then
+                    tsteps=$(cat $atmos_app.tsteps)
+                else
+                    # Get the total number of timesteps to put it in context
+                    tsteps=$(calc_timesteps ../$atmos_app/rose-app-run.conf)
+                    echo $tsteps > $atmos_app.tsteps
+                fi
+
+                # Append the total number of timesteps to the message if 
+                # available
+                line="Timestep $tstep"
+                if [ -n "$tsteps" ] ; then
+                    line="$line of $tsteps"
+                fi
+
+                # Now send the cylc message, masquerading as the given
+                # app by supplying its task ID
+                CYLC_TASK_ID=$atmos_app.1 cylc task message $line
+            fi
+        fi
+    fi
+done
+
+# Update the modification time 
+touch $modified

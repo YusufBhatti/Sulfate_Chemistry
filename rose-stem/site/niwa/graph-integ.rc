@@ -1,0 +1,3 @@
+%include 'site/niwa/graph-integ-xc50.rc'
+
+{%- set integ_graphs = integ_graphs_xc50 %}

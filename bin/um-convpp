@@ -1,0 +1,190 @@
+#!/usr/bin/env bash 
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+#
+#  Script: convpp
+#
+#  Purpose: Converts UM atmosphere,  fieldsfile or
+#           ancillary file to sequential PP format.
+#
+#  Interface: See "usage" function below and "usf_Print_Common_Args"
+#             function from UM script functions file for arguments
+#             and UMDP-F5 for full descriptions
+#
+#  Code Owner: Please refer to the UM file CodeOwners.txt
+#  This file belongs in section: Rose scripts
+#
+# End of header -------------------------------------------------------
+set -eu
+
+# Source common UM script functions from file
+um_scripts=$(dirname "$0")/um_script_functions
+if [ -f "$um_scripts" ] ; then
+    . $um_scripts
+else
+    echo "[FAIL] UM script functions file not found: $um_scripts " 1>&2
+    echo "[FAIL] Ensure the UM file above is located in the same " 1>&2
+    echo "[FAIL] directory as this script                        " 1>&2
+    exit 1
+fi
+
+########################################################################
+# Setup Error traps and cleanup routine to perfom on exit
+#
+usf_Set_Err_Traps
+
+function cleanup {
+
+    # Delete temporary files and exit unless running in Rose Stem
+    if usf_Running_As_Suite ; then
+        if [ -f "${NAMELIST:-}" ] ; then
+            rm -f $NAMELIST
+        fi
+    fi
+
+    if [ ${ERR_STATE:-0} != 0 ]; then
+        usf_EReport "Problem with CONVPP program"
+    else
+        echo '[ OK ] CONVPP successful'
+    fi
+
+    exit ${ERR_STATE:-0}
+}
+
+#######################################################################
+# Print usage message for use on error
+function usage
+{
+usf_Print "Usage:                                                        " 1>&2
+usf_Print "  um-convpp [common-args] [-I] [-w] [-z] file1 file2          " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print "Arguments:                                                    " 1>&2
+usf_Print "  -I  to use IBM format numbers                               " 1>&2
+usf_Print "  -w  to overwrite existing output (file2)                    " 1>&2
+usf_Print "  -z  to set LBEGIN in pp header = 0                          " 1>&2
+usf_Print "                                                              " 1>&2
+usf_Print_Common_Args
+}
+
+#######################################################################
+# Handling of command line arguments
+function process_cmd_args
+{
+    # There are 2 mandatory arguments
+    if [ $# -lt 2 ] ; then
+        usf_EReport "Incorrect number of arguments" usage
+    fi
+
+    # Process optional arguments
+    IBM=".FALSE."
+    ZERO=".FALSE."
+    OVERWRITE=0
+    while [ $# -gt 2 ] ; do
+        case "$1" in
+            -I)  IBM=".TRUE." ; usf_Print "IBM format numbers ON" ;;
+            -w)  OVERWRITE=1 ; usf_Print "Overwriting any existing output" ;;
+            -z)  ZERO=".TRUE." ; usf_Print "Zero LBEGIN in Headers ON" ;;
+            # Pass any unrecognised optional arguments to the common
+            # argument handler (note that it returns the updated
+            # argument list which is then re-set in this routine)
+            *) usf_Handle_Common_Arg args $@
+               set -- $args 
+               continue ;;
+        esac
+        shift
+    done
+    
+    # If there aren't 2 arguments then something is wrong
+    if [ $# -lt 2 ] ; then
+        usf_EReport "Please specify 2 filenames" usage
+    else
+        FILE1=$1
+        FILE2=$2
+    fi
+
+    # Check that the first file exists
+    if [ ! -f "$FILE1" ] ; then
+        usf_EReport "File(1) not found: $FILE1" usage
+    else
+        usf_Print "File(1): $FILE1"
+    fi
+
+    # ... and that the second file doesn't
+    if [ -f "$FILE2" ] ; then
+        if usf_Running_As_Suite ; then
+            usf_Print "Removing existing File(2): $FILE2"
+            rm -f $FILE2
+        elif [[ $OVERWRITE == 1 ]] ; then
+            usf_Print "Removing existing File(2): $FILE2"
+            rm -f $FILE2
+        else
+            usf_EReport "File(2) already exists: $FILE2" usage
+        fi
+    fi
+}
+
+#######################################################################
+# Write namelist file
+function setup_namelist
+{
+  NAMELIST=$out_dir/ConvPP.NL
+  cat > $NAMELIST <<EOF
+ &PPHEADER
+ IBM = $IBM, ZERO_DIRACCESS = $ZERO
+ /
+EOF
+}
+
+########################################################################
+# Start of script
+process_cmd_args $@
+
+#Set default Print Status
+usf_set_print_status
+
+# Set environment variable $VN to the current UM version
+usf_set_um_vn
+
+# Directory for intermediate files
+usf_Set_Out_Dir "" "convpp_out" "${CONVPP_OUT_DIR:-}"
+
+# Set the default STASHmaster path if not provided
+usf_Set_STASHmaster
+
+# Set the number of OpenMP threads to 1 if not provided
+usf_set_omp_threads
+
+# Write the User Stash dummy namelist 
+setup_namelist
+
+# Export environment variables
+export STASHMASTER
+export FILE1
+export FILE2
+export NAMELIST
+
+usf_print_script_path
+
+# Run the executable
+convpp_exec=$(dirname "$0")/${CONVPP_EXEC:-um-convpp.exe}
+if [ -x $convpp_exec ] ; then
+    usf_Print "Using executable: $convpp_exec"
+
+# If $UM_UTIL_LAUNCHER is set, use the contents of that variable as the 
+# launcher; if it's unset or null, invoke the exec directly (as null will
+# be substituted in the if condition).
+if [ ${UM_UTIL_LAUNCHER+1} ]; then
+    usf_Print "$UM_UTIL_LAUNCHER $convpp_exec"
+    $UM_UTIL_LAUNCHER $convpp_exec
+else 
+    $convpp_exec
+fi
+
+else
+    usf_EReport "CONVPP Executable not found: $convpp_exec"
+fi
+
+exit 0

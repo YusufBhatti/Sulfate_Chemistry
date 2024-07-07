@@ -1,0 +1,1115 @@
+# Compilations
+
+# UM fast OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_fast_omp]]
+{%- if MAKE_PREBUILDS %}
+        inherit = METO_XC40_BUILD_NORAMDISK, METO_XC40_CCE_HASWELL
+{%- else %}
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+{%- endif %}
+        [[[environment]]]
+            # incremental builds are unsafe with the fast + ramdisk combination, so add --new
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--new --archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=--new
+{% endif %}
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=fast
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_fast_omp
+{%- else %}
+            PREBUILD =
+{%- if MAKE_PREBUILDS %}
+            ipa_path = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_fast_omp
+{%- else %}
+            ipa_path = ..
+{%- endif %}
+{%- endif %}
+
+# UM high OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_high_omp]]
+{%- if MAKE_PREBUILDS %}
+        inherit = METO_XC40_BUILD_NORAMDISK, METO_XC40_CCE_HASWELL
+{%- else %}
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+{%- endif %}
+        [[[environment]]]
+            # incremental builds are unsafe with the high + ramdisk combination, so add --new
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--new --archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=--new
+{% endif %}
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- if MAKE_PREBUILDS %}
+            ipa_path = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_high_omp
+{%- else %}
+            ipa_path = ..
+{%- endif %}
+{%- endif %}
+
+# UM high OpenMP with the Intel compiler
+    [[gatekeeper_fcm_make_meto_xc40_ifort_um_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_ifort_um_high_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_INTEL_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_ifort_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+# UM safe OpenMP with the GNU compiler
+    [[gatekeeper_fcm_make_meto_xc40_gnu_um_safe_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_um_safe_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+            PREBUILD =
+
+# UM safe OpenMP with the GNU compiler,
+# single precision solver, single precision physics
+    [[gatekeeper_fcm_make_meto_xc40_gnu_um_safe_omp_single]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_um_safe_omp_single]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            ROSE_APP_OPT_CONF_KEYS=single_precision sp_physics
+            OPTIMISATION=safe
+            PREBUILD =
+
+# UM safe no OpenMP with the GNU compiler
+    [[gatekeeper_fcm_make_meto_xc40_gnu_um_safe_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_um_safe_noomp]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+            OPENMP=false
+            PREBUILD =
+
+# UM rigorous OpenMP with the GNU compiler
+    [[gatekeeper_fcm_make_meto_xc40_gnu_um_rigorous_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_um_rigorous_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=rigorous
+            PREBUILD = 
+
+# UM fast OpenMP, single precision solver
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp_single_precis]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_fast_omp_single_precis]]
+{%- if MAKE_PREBUILDS %}
+        inherit = METO_XC40_BUILD_NORAMDISK, METO_XC40_CCE_HASWELL
+{%- else %}
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+{%- endif %}
+        [[[environment]]]
+            # incremental builds are unsafe with the fast + ramdisk combination, so add --new
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--new --archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=--new
+{% endif %}
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=fast
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_fast_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- if MAKE_PREBUILDS %}
+            ipa_path = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_fast_omp_single_precis
+{%- else %}
+            ipa_path = ..
+{%- endif %}
+{%- endif %}
+
+# UM high OpenMP, single precision solver
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_high_omp_single_precis]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_high_omp_single_precis]]
+{%- if MAKE_PREBUILDS %}
+        inherit = METO_XC40_BUILD_NORAMDISK, METO_XC40_CCE_HASWELL
+{%- else %}
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+{%- endif %}
+        [[[environment]]]
+            # incremental builds are unsafe with the high + ramdisk combination, so add --new
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--new --archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=--new
+{% endif %}
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_high_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- if MAKE_PREBUILDS %}
+            ipa_path = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_high_omp_single_precis
+{%- else %}
+            ipa_path = ..
+{%- endif %}
+{%- endif %}
+
+# UM safe OpenMP, single precision solver
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_single_precis]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_safe_omp_single_precis]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_safe_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high OpenMP, single precision physics
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_high_omp_sp_physics]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_high_omp_sp_physics]]
+{%- if MAKE_PREBUILDS %}
+        inherit = METO_XC40_BUILD_NORAMDISK, METO_XC40_CCE_HASWELL
+{%- else %}
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+{%- endif %}
+        [[[environment]]]
+            # incremental builds are unsafe with the high + ramdisk combination, so add --new
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--new --archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=--new
+{% endif %}
+            ROSE_APP_OPT_CONF_KEYS=sp_physics
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_high_omp_sp_physics
+{%- else %}
+            PREBUILD =
+{%- if MAKE_PREBUILDS %}
+            ipa_path = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_high_omp_sp_physics
+{%- else %}
+            ipa_path = ..
+{%- endif %}
+{%- endif %}
+
+# UM safe OpenMP, single precision physics
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_sp_physics]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_safe_omp_sp_physics]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=sp_physics
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_safe_omp_sp_physics
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM fast no OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_fast_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_fast_noomp]]
+{%- if MAKE_PREBUILDS %}
+        inherit = METO_XC40_BUILD_NORAMDISK, METO_XC40_CCE_HASWELL
+{%- else %}
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+{%- endif %}
+        [[[environment]]]
+            # incremental builds are unsafe with the fast + ramdisk combination, so add --new
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--new --archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=--new
+{% endif %}
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=fast
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_fast_noomp
+{%- else %}
+            PREBUILD =
+{%- if MAKE_PREBUILDS %}
+            ipa_path = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_fast_noomp
+{%- else %}
+            ipa_path = ..
+{%- endif %}
+{%- endif %}
+
+# UM high no OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_high_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_high_noomp]]
+{%- if MAKE_PREBUILDS %}
+        inherit = METO_XC40_BUILD_NORAMDISK, METO_XC40_CCE_HASWELL
+{%- else %}
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+{%- endif %}
+        [[[environment]]]
+            # incremental builds are unsafe with the high + ramdisk combination, so add --new
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--new --archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=--new
+{% endif %}
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- if MAKE_PREBUILDS %}
+            ipa_path = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_high_noomp
+{%- else %}
+            ipa_path = ..
+{%- endif %}
+{%- endif %}
+
+# UM safe OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_safe_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_safe_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+# UM safe OpenMP, with DrHook
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_drhook]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_safe_omp_drhook]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+            DRHOOK=true
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_safe_omp_drhook
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+# UM safe no OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_safe_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_safe_noomp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_safe_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+# UM debug OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_debug_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_debug_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_debug_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[directives]]]
+            -l tmpsize = 4GB
+
+# UM debug no OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_debug_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_debug_noomp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[directives]]]
+            -l tmpsize = 4GB
+
+
+# UM rigorous OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_rigorous_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_rigorous_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[directives]]]
+            -l tmpsize = 4GB
+        [[[job]]]
+            execution time limit = PT99M
+
+
+# UM rigorous no OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_um_rigorous_noomp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_um_rigorous_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[directives]]]
+            -l tmpsize = 4GB
+        [[[job]]]
+            execution time limit = PT99M
+
+
+# Reconfiguration-only safe OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess-recon, Build-recon
+    [[fcm_make_meto_xc40_cce_recon_safe_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            OPTIMISATION=safe
+            PREBUILD =
+        [[[directives]]]
+            -l mem = 1GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT22M
+
+# Reconfiguration-only safe OpenMP no-GRIB
+    [[gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp_nogrib]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess-recon, Build-recon
+    [[fcm_make_meto_xc40_cce_recon_safe_omp_nogrib]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            ROSE_APP_OPT_CONF_KEYS=xc40_cce_nogrib
+            OPTIMISATION=safe
+            PREBUILD =
+        [[[directives]]]
+            -l mem = 2GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT22M
+
+# Reconfiguration-only high OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_recon_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess-recon, Build-recon
+    [[fcm_make_meto_xc40_cce_recon_high_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            # incremental builds are unsafe with the high + ramdisk combination, so add --new
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--new --archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=--new
+{% endif %}
+            ROSE_TASK_APP=fcm_make_recon
+            OPTIMISATION=high
+            PREBUILD =
+            ipa_path = ..
+        [[[directives]]]
+            -l mem = 1GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT22M
+
+# Reconfiguration-only two-step build
+    [[gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp_mirror]]
+        inherit = GATEKEEPER
+
+    # Extract, Mirror
+    [[fcm_make_meto_xc40_cce_recon_safe_omp_mirror]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = DESKTOP, METO_XC40, EXTRACT_SOURCE, METO_XC40_CCE_HASWELL
+        pre-script = ""
+        script = """
+rose task-run --verbose --define='args=$ARCHIVE_FCM_MAKE_CMD --config-file=$CYLC_TASK_WORK_DIR/single_host_mirror.cfg'
+"""
+        [[[environment]]]
+            DRHOOK=false
+            OPENMP=true
+{% else %}
+        inherit = METO_XC40_EXTRACT, METO_XC40_CCE_HASWELL
+        pre-script = ""
+{% endif %}
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            ROSE_APP_OPT_CONF_KEYS=mirror
+            OPTIMISATION=safe
+            PREBUILD =
+
+    # Preprocess, Build
+    [[fcm_make2_meto_xc40_cce_recon_safe_omp_mirror]]
+        inherit = METO_XC40_MIRROR_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            OPTIMISATION=safe
+            PREBUILD =
+        [[[directives]]]
+            -l mem = 2GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT22M
+
+
+# SCM debug OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_scm_debug_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_scm_debug_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=true
+            OPTIMISATION=debug
+        [[[directives]]]
+            -l mem = 4GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT33M
+
+# SCM debug no-OpenMP
+    [[gatekeeper_fcm_make_meto_xc40_cce_scm_debug_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_scm_debug_noomp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=false
+            OPTIMISATION=debug
+        [[[directives]]]
+            -l mem = 4GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT33M
+
+# SCM rigorous OpenMP with GNU compiler
+    [[gatekeeper_fcm_make_meto_xc40_gnu_scm_rigorous_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_scm_rigorous_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=true
+            OPTIMISATION=rigorous
+        [[[directives]]]
+            -l mem = 4GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT33M
+
+# SCM rigorous OpenMP with GNU compiler
+    [[gatekeeper_fcm_make_meto_xc40_gnu_scm_rigorous_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_scm_rigorous_noomp]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=false
+            OPTIMISATION=rigorous
+        [[[directives]]]
+            -l mem = 4GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT33M
+
+# SCM debug OpenMP with GNU compiler
+    [[gatekeeper_fcm_make_meto_xc40_gnu_scm_debug_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_scm_debug_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=true
+            OPTIMISATION=debug
+        [[[directives]]]
+            -l mem = 4GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT33M
+
+# SCM debug OpenMP with GNU compiler
+    [[gatekeeper_fcm_make_meto_xc40_gnu_scm_debug_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_scm_debug_noomp]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=false
+            OPTIMISATION=debug
+        [[[directives]]]
+            -l mem = 4GB
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT33M
+
+# Coupled safe N96 (UKESM configuration) with MCT
+    [[gatekeeper_fcm_make_meto_xc40_cce_ukesm_coupled_um_safe_n96_mct]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_ukesm_coupled_um_safe_n96_mct]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        pre-script = """
+                                module unload cray-netcdf-hdf5parallel/4.3.2
+                                module load GC3-PrgEnv/2.0/24708
+                                module list 2>&1
+                                export FLEXLM_DIAGNOSTICS=2
+                                export FNP_IP_ENV=1
+                                """
+        script = """
+rose task-run --verbose --define=fast-dest-root-orig=$RAMTMP --define='args=$ARCHIVE_FCM_MAKE_CMD --config-file=$CYLC_TASK_WORK_DIR/mct.cfg'
+"""
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_coupled_um_safe
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct
+{%- else %}
+            PREBUILD=
+{%- endif %}
+        [[[directives]]]
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT66M
+{% endif %}
+
+# Coupled safe N96 (GC3 configuration) with MCT
+    [[gatekeeper_fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        pre-script = """
+                                module unload cray-netcdf-hdf5parallel/4.3.2
+                                module load GC3-PrgEnv/1.0/24791
+                                module list 2>&1
+                                export FLEXLM_DIAGNOSTICS=2
+                                export FNP_IP_ENV=1
+                                """
+        script = """
+rose task-run --verbose --define=fast-dest-root-orig=$RAMTMP --define='args=$ARCHIVE_FCM_MAKE_CMD --config-file=$CYLC_TASK_WORK_DIR/mct.cfg'
+"""
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_coupled_um_safe
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[directives]]]
+            -l tmpsize = 2560MB
+        [[[job]]]
+            execution time limit = PT66M
+{% endif %}
+
+# CreateBC builds - Intel
+    [[XC40_CREATEBC_IFORT_BUILD]]
+        inherit = METO_XC40_INTEL_IVYBRIDGE
+            [[[directives]]]
+               -l tmpsize = 2560MB
+
+# CreateBC high OpenMP - ifort
+    [[gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_ifort_createbc_high_omp]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_IFORT_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=high
+
+
+# CreateBC high without OpenMP - ifort
+    [[gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_ifort_createbc_high_noomp]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_IFORT_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=false
+            OPTIMISATION=high
+
+
+# CreateBC rigorous no-OpenMP - ifort
+    [[gatekeeper_fcm_make_meto_xc40_ifort_createbc_rigorous_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_ifort_createbc_rigorous_noomp]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_IFORT_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=false
+            OPTIMISATION=rigorous
+
+# CreateBC rigorous OpenMP - ifort
+    [[gatekeeper_fcm_make_meto_xc40_ifort_createbc_rigorous_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_ifort_createbc_rigorous_omp]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_IFORT_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=rigorous
+
+
+# CreateBC builds - CCE
+    [[XC40_CREATEBC_CCE_BUILD]]
+        inherit = METO_XC40_CCE_IVYBRIDGE
+        [[[directives]]]
+            -l tmpsize = 2560MB
+
+# CreateBC high OpenMP - CCE
+    [[gatekeeper_fcm_make_meto_xc40_cce_createbc_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_createbc_high_omp]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_CCE_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=high
+
+# CreateBC high OpenMP with drhook - CCE
+    [[gatekeeper_fcm_make_meto_xc40_cce_createbc_high_omp_drhook]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_createbc_high_omp_drhook]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_CCE_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            DRHOOK=true
+            OPENMP=true
+            OPTIMISATION=high
+
+# CreateBC high no-OpenMP - CCE
+    [[gatekeeper_fcm_make_meto_xc40_cce_createbc_high_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_createbc_high_noomp]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_CCE_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=false
+            OPTIMISATION=high
+
+# CreateBC rigorous no-OpenMP - CCE
+    [[gatekeeper_fcm_make_meto_xc40_cce_createbc_rigorous_noomp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_createbc_rigorous_noomp]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_CCE_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=false
+            OPTIMISATION=rigorous
+
+# CreateBC rigorous OpenMP - CCE
+    [[gatekeeper_fcm_make_meto_xc40_cce_createbc_rigorous_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_createbc_rigorous_omp]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_CCE_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=rigorous
+
+# CreateBC builds - GNU
+    [[XC40_CREATEBC_GNU_BUILD]]
+        inherit = METO_XC40_GNU_IVYBRIDGE
+        [[[directives]]]
+            -l tmpsize = 2560MB
+
+# CreateBC high OpenMP - GNU
+    [[gatekeeper_fcm_make_meto_xc40_gnu_createbc_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_createbc_high_omp]]
+        inherit = METO_XC40_BUILD, XC40_CREATEBC_GNU_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=high
+
+
+# UM Utils Serial high build
+    [[gatekeeper_fcm_make_meto_xc40_cce_utils_serial_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_utils_serial_high_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_IVYBRIDGE
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            PREBUILD =
+
+
+# UM Utils Serial high build - GNU
+    [[gatekeeper_fcm_make_meto_xc40_gnu_utils_serial_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_utils_serial_high_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_IVYBRIDGE
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            PREBUILD =
+
+
+# UM Utils Serial recon high build
+    [[gatekeeper_fcm_make_meto_xc40_cce_recon_serial_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_recon_serial_high_omp]]
+        inherit = METO_XC40_BUILD, MAKE_RECON_SERIAL, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            # incremental builds are unsafe with the high + ramdisk combination, so add --new
+{% if ARCHIVE_FCM_MAKE == true %}
+            ARCHIVE_FCM_MAKE_CMD=--new --archive
+{% else %}
+            ARCHIVE_FCM_MAKE_CMD=--new
+{% endif %}
+            OPTIMISATION=high
+            PREBUILD =
+            ipa_path = ..
+        [[[directives]]]
+            -l tmpsize = 2560MB
+
+# UM Utils Serial recon safe build
+    [[gatekeeper_fcm_make_meto_xc40_cce_recon_serial_safe_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_recon_serial_safe_omp]]
+        inherit = METO_XC40_BUILD, MAKE_RECON_SERIAL, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            OPTIMISATION=safe
+            PREBUILD =
+        [[[directives]]]
+            -l tmpsize = 2560MB
+
+
+# UM Utils Serial recon high build - GNU
+    [[gatekeeper_fcm_make_meto_xc40_gnu_recon_serial_safe_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_recon_serial_safe_omp]]
+        inherit = METO_XC40_BUILD, MAKE_RECON_SERIAL, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            OPTIMISATION=safe
+            PREBUILD =
+        [[[directives]]]
+            -l tmpsize = 2560MB
+
+
+# UM Utils mpp build
+    [[gatekeeper_fcm_make_meto_xc40_cce_utils_mpp_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_xc40_cce_utils_mpp_high_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            PREBUILD=
+        [[[directives]]]
+            -l mem = 2GB
+        [[[job]]]
+            execution time limit = PT22M
+
+# UM Utils mpp build - GNU
+    [[gatekeeper_fcm_make_meto_xc40_gnu_utils_mpp_high_omp]]
+        inherit = GATEKEEPER
+
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_xc40_gnu_utils_mpp_high_omp]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            PREBUILD=
+        [[[directives]]]
+            -l mem = 2GB
+        [[[job]]]
+            execution time limit = PT22M
+
+
+# UM library builds
+    [[gatekeeper_fcm_make_meto_xc40_cce_libs]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_libs]]
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_IVYBRIDGE
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+        [[[directives]]]
+            -l tmpsize = 2GB
+
+    [[gatekeeper_fcm_make_meto_xc40_ifort_libs]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_ifort_libs]]
+        inherit = METO_XC40_BUILD, METO_XC40_INTEL_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+        [[[directives]]]
+            -l tmpsize = 2GB
+
+    [[gatekeeper_fcm_make_meto_xc40_gnu_libs]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_gnu_libs]]
+        inherit = METO_XC40_BUILD, METO_XC40_GNU_HASWELL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+        [[[directives]]]
+            -l tmpsize = 2GB
+
+##############
+# Ocean builds
+##############
+# UKESM ORCA1 MCT Ocean
+    [[gatekeeper_fcm_make_meto_xc40_cce_coupled_ocean_ukesm]]
+        inherit = GATEKEEPER
+    
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_coupled_ocean_ukesm]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        pre-script = """
+                                module unload cray-netcdf-hdf5parallel/4.3.2
+                                module load GC3-PrgEnv/2.0/24708
+                                module list 2>&1
+                                """
+        [[[directives]]]
+            -l mem = 6GB
+            -l tmpsize = 2GB
+        [[[job]]]
+            execution time limit = PT26M
+        [[[environment]]]
+            OPTIMISATION=safe
+            ROSE_TASK_APP=fcm_make_coupled_ocean_ukesm
+            ROSE_APP_OPT_CONF_KEYS=remote_extract
+{%- if HOST_SOURCE_CICE is defined %}
+            HOST_SOURCE_CICE= {{ HOST_SOURCE_CICE }}
+{%- else %}
+            HOST_SOURCE_CICE='fcm:cice_tr@vn5.1.2'
+{%- endif %}
+{%- if HOST_SOURCE_NEMO is defined %}
+            HOST_SOURCE_NEMO= {{ HOST_SOURCE_NEMO }}
+{%- else %}
+            HOST_SOURCE_NEMO='fcm:nemo_tr@5518'
+{%- endif %}
+{% endif %}
+
+
+# Proto-GC3 ORCA025 MCT Ocean
+    [[gatekeeper_fcm_make_meto_xc40_cce_coupled_ocean_orca025_mct_technical_gc3]]
+        inherit = GATEKEEPER
+
+    # Extract, Preprocess, Build
+    [[fcm_make_meto_xc40_cce_coupled_ocean_orca025_mct_technical_gc3]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+        inherit = METO_XC40_BUILD, METO_XC40_CCE_HASWELL
+        pre-script = """
+                                module unload cray-netcdf-hdf5parallel/4.3.2
+                                module load GC3-PrgEnv/1.0/24791
+                                module list 2>&1
+                                export FLEXLM_DIAGNOSTICS=2
+                                export FNP_IP_ENV=1
+                                """
+        [[[directives]]]
+            -l mem = 6GB
+            -l tmpsize = 2GB
+        [[[job]]]
+            execution time limit = PT33M
+        [[[environment]]]
+            OPTIMISATION=safe
+            ROSE_TASK_APP=fcm_make_coupled_ocean_orca025_mct_technical_gc3
+            ROSE_APP_OPT_CONF_KEYS=remote_extract
+{%- if HOST_SOURCE_CICE is defined %}
+            HOST_SOURCE_CICE= {{ HOST_SOURCE_CICE }}
+{%- else %}
+            HOST_SOURCE_CICE='fcm:cice_tr@vn5.1.2'
+{%- endif %}
+{%- if HOST_SOURCE_NEMO is defined %}
+            HOST_SOURCE_NEMO= {{ HOST_SOURCE_NEMO }}
+{%- else %}
+            HOST_SOURCE_NEMO='fcm:nemo_tr@5518'
+{%- endif %}
+{% endif %}
+
+
+######################
+# Coupled Driver build
+######################
+
+    [[gatekeeper_fcm_make_drivers]]
+        inherit = GATEKEEPER
+
+    [[fcm_make_drivers]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = UNAVAILABLE
+        script = "echo Coupled model unavailable on XCS-C"
+{% else %}    
+        inherit = METO_XC40_BUILD
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 1
+        [[[job]]]
+            execution time limit = PT10M
+        [[[directives]]]
+            -l mem = 500MB
+{% endif %}

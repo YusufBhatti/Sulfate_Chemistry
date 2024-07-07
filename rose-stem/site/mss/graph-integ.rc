@@ -1,0 +1,14 @@
+# Groups named below must match those named in graph-standard.rc
+{%- set integ_graphs = {
+
+    "mss_install"  :  "",
+
+    "mss_fcm_make" :  "",
+
+    "mss_utils"    :  "",
+
+    "mss_utils_ifort" :  "",
+
+    "mss_fcm_make_createbc" :  "",
+    }
+-%}

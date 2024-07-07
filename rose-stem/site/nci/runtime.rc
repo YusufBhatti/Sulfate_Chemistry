@@ -1,0 +1,1639 @@
+# NCI Jobs
+{% set CREATEBC_NCI_HIGH_OMP_PATH = "--path= --path='share/fcm_make_nci_createbc_high_omp/build-*/bin'" %}
+{% set UM_NCI_HIGH_NOOMP_PATH = "--path= --path='share/fcm_make_nci_um_high_noomp/build-*/bin'" %}
+{% set UM_NCI_HIGH_OMP_DRHOOK_PATH = "--path= --path='share/fcm_make_nci_um_high_omp_drhook/build-*/bin'" %}
+{% set UM_NCI_HIGH_OMP_PATH = "--path= --path='share/fcm_make_nci_um_high_omp/build-*/bin'" %}
+{% set UM_NCI_HIGH_OMP_SINGLE_PRECIS_PATH = "--path= --path='share/fcm_make_nci_um_high_omp_single_precis/build-*/bin'" %}
+{% set UM_NCI_RIGOROUS_NOOMP_PATH = "--path= --path='share/fcm_make_nci_um_rigorous_noomp/build-*/bin'" %}
+{% set UM_NCI_RIGOROUS_OMP_PATH = "--path= --path='share/fcm_make_nci_um_rigorous_omp/build-*/bin'" %}
+{% set UM_NCI_SAFE_OMP_PATH = "--path= --path='share/fcm_make_nci_um_safe_omp/build-*/bin'" %}
+{% set SCM_NCI_DEBUG_NOOMP_PATH = "--path= --path='share/fcm_make_nci_scm_debug_noomp/build-*/bin'" %}
+{% set SCM_NCI_RIGOROUS_NOOMP_PATH = "--path= --path='share/fcm_make_nci_scm_rigorous_noomp/build-*/bin'" %}
+
+# UM high OpenMP
+    # Extract, Mirror
+    [[fcm_make_nci_um_high_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_nci_um_high_omp]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high OpenMP, with DrHook
+    # Extract, Mirror
+    [[fcm_make_nci_um_high_omp_drhook]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+            DRHOOK=true
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_high_omp_drhook
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Preprocess, Build
+    [[fcm_make2_nci_um_high_omp_drhook]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+            DRHOOK=true
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_high_omp_drhook
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high OpenMP, single precision solver
+    # Extract, Mirror
+    [[fcm_make_nci_um_high_omp_single_precis]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_high_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_nci_um_high_omp_single_precis]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_high_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high no OpenMP
+    # Extract, Mirror
+    [[fcm_make_nci_um_high_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_nci_um_high_noomp]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe OpenMP
+    # Extract, Mirror
+    [[fcm_make_nci_um_safe_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            OPTIMISATION=safe
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{PREBUILD_NCI_ROOT_DIR}}/fcm_make_nci_um_safe_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_nci_um_safe_omp]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            OPTIMISATION=safe
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_safe_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe no OpenMP
+    # Extract, Mirror
+    [[fcm_make_nci_um_safe_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            OPTIMISATION=safe
+	    OPENMP=false
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{PREBUILD_NCI_ROOT_DIR}}/fcm_make_nci_um_safe_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_nci_um_safe_noomp]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            OPTIMISATION=safe
+            OPENMP=false
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_safe_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM debug  OpenMP
+    # Extract, Mirror
+    [[fcm_make_nci_um_debug_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            OPTIMISATION=debug
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{PREBUILD_NCI_ROOT_DIR}}/fcm_make_nci_um_debug_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_nci_um_debug_omp]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            OPTIMISATION=safe
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_debug_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM debug no OpenMP
+    # Extract, Mirror
+    [[fcm_make_nci_um_debug_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            OPTIMISATION=debug
+	    OPENMP=false
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{PREBUILD_NCI_ROOT_DIR}}/fcm_make_nci_um_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_nci_um_debug_noomp]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            OPTIMISATION=safe
+	    OPENMP=false
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM rigorous  OpenMP
+    # Extract, Mirror
+    [[fcm_make_nci_um_rigorous_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            OPTIMISATION=rigorous
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{PREBUILD_NCI_ROOT_DIR}}/fcm_make_nci_um_rigorous_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_nci_um_rigorous_omp]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            OPTIMISATION=rigorous
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_rigorous_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM rigorous no OpenMP
+    # Extract, Mirror
+    [[fcm_make_nci_um_rigorous_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            OPTIMISATION=rigorous
+	    OPENMP=false
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{PREBUILD_NCI_ROOT_DIR}}/fcm_make_nci_um_rigorous_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_nci_um_rigorous_noomp]]
+        inherit = NCI_BUILD
+	# Can only use ifort 16 w/o OpenMP
+        pre-script = """
+           module use ~access/modules
+           module load intel-cc/16.0.3.210
+           module load intel-fc/16.0.3.210
+           module load openmpi/1.10.2
+           module load gcom/6.6_ompi.1.10.2
+           module load shumlib/2018.06.1
+           module unload netcdf
+           module load netcdf/4.3.0
+           module load grib-api/1.10.4
+           module load drhook
+           module load fcm
+           """
+        [[[environment]]]
+            OPTIMISATION=rigorous
+	    OPENMP=false
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_NCI_ROOT_DIR }}/fcm_make_nci_um_rigorous_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# SCM debug OpenMP
+    # Extract, Mirror
+    [[fcm_make_nci_scm_debug_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            OPTIMISATION=debug
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=false
+
+    # Pre-process, Build
+    [[fcm_make2_nci_scm_debug_noomp]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            OPTIMISATION=debug
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=false
+
+# SCM comp check
+    # Extract, Mirror
+    [[fcm_make_nci_scm_rigorous_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            OPTIMISATION=rigorous
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=false
+
+    # Pre-process, Build
+    [[fcm_make2_nci_scm_rigorous_noomp]]
+        inherit = NCI_BUILD
+	# Can only use ifort 16 w/o OpenMP
+        pre-script = """
+           module use ~access/modules
+           module load intel-cc/16.0.3.210
+           module load intel-fc/16.0.3.210
+           module load openmpi/1.10.2
+           module load gcom/6.6_ompi.1.10.2
+           module load shumlib/2018.06.1
+           module unload netcdf
+           module load netcdf/4.3.0
+           module load grib-api/1.10.4
+           module load drhook
+           module load fcm
+           """
+        [[[environment]]]
+            OPTIMISATION=rigorous
+            ROSE_TASK_APP=fcm_make_scm
+            OPENMP=false
+
+# UM libraries build
+    # Extract, Mirror
+    [[fcm_make_nci_libs]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+    # Preprocess, Build
+    [[fcm_make2_nci_libs]]
+        inherit = NCI_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+# Housekeeping - the / is important as $CYLC_SUITE_WORK_DIR may be a symlink!
+    [[housekeep_nci]]
+        inherit = NCI_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=$CYLC_SUITE_WORK_DIR/
+
+# Endgame: Global Configurations
+
+{% if "nci_n48_ga7_amip_2day" in name_graphs_out -%}
+# N48 GA7_AMIP "climate" configuration - 2 day variant
+    [[NCI_N48_GA7_AMIP_2DAY]]
+        script = "{{TASK_RUN}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA_COMMON
+        [[[environment]]]
+            KGO_NCI_N48_GA7_AMIP_2DAY_DIR={{KGO_NCI_ROOT_DIR}}/nci_n48_ga7_amip_2day/{{NCI_N48_GA7_AMIP_2DAY_KGO}}
+
+    # Reconfiguration
+    [[recon_nci_n48_ga7_amip_2day_4x8]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA7_AMIP_2DAY, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_4x8, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_2day_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_nci_n48_ga7_amip_2day_8x4]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA7_AMIP_2DAY, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_8x4, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_2day_8x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+        [[[job]]]
+            execution time limit = PT4M
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf in (["",        ""], 
+                                 ["_nc3",    "netcdf netcdf3"],
+                                 ["_nc4",    "netcdf netcdf4"],
+                                 ["_nc4_32", "netcdf netcdf4-32b"]) %}
+
+    [[atmos_nci_n48_ga7_amip_2day{{extension}}_8x4]]
+        inherit = NCI_N48_GA7_AMIP_2DAY, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x4, IOS_0, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_2day_8x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day {{opt_conf}}
+        [[[job]]]
+            execution time limit = PT15M
+  {%- endfor %}
+
+    [[atmos_nci_n48_ga7_amip_2day_4x8]]
+        inherit = NCI_N48_GA7_AMIP_2DAY, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x8, IOS_0, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_2day_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+        [[[job]]]
+            execution time limit = PT15M
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf in (["",        ""], 
+                                 ["_nc3",    "netcdf netcdf3"],
+                                 ["_nc4",    "netcdf netcdf4"],
+                                 ["_nc4_32", "netcdf netcdf4-32b"]) %}
+
+    # CRUN test
+    [[atmos_nci_n48_ga7_amip_1day_NRUN{{extension}}_8x4]]
+        inherit = NCI_N48_GA7_AMIP_2DAY, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x4, IOS_0, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_2day_8x4/atmos.astart
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA7_AMIP_2DAY{{extension}}
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA7_AMIP_2DAY{{extension}}
+            ROSE_APP_OPT_CONF_KEYS=n48 nrun {{opt_conf}}
+        [[[job]]]
+            execution time limit = PT8M
+
+    [[atmos_nci_n48_ga7_amip_1day_CRUN{{extension}}_8x4]]
+        inherit = NCI_N48_GA7_AMIP_2DAY, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x4, IOS_0, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA7_AMIP_2DAY{{extension}}
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA7_AMIP_2DAY{{extension}}
+            # Optional configurations for "n48 2day" is the default
+            ROSE_APP_OPT_CONF_KEYS=n48 2day {{opt_conf}}
+        [[[job]]]
+            execution time limit = PT8M
+
+  {%- endfor %}
+
+    # Comparison tasks
+    [[rose_ana_nci_n48_ga7_amip_2day_atmos_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_2DAY, NCI, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=2day
+            DIR0=../atmos_nci_n48_ga7_amip_2day_4x8
+            DIR1=../atmos_nci_n48_ga7_amip_2day_8x4
+            KGO=
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf, kgo_subdir in (["",        "",       ""], 
+                                             ["_nc3",    "netcdf", "/netcdf-3/"],
+                                             ["_nc4",    "netcdf", "/netcdf-4/"],
+                                             ["_nc4_32", "netcdf", "/netcdf-4_32bit/"]) %}
+
+    [[rose_ana_nci_n48_ga7_amip_2day{{extension}}_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_2DAY, NCI, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=2day {{opt_conf}}
+            DIR0=$KGO_NCI_N48_GA7_AMIP_2DAY_DIR{{kgo_subdir}}
+            DIR1=../atmos_nci_n48_ga7_amip_2day{{extension}}_8x4
+            KGO=0
+
+  {%- endfor %}
+	    
+    [[rose_ana_nci_n48_ga7_amip_2day_recon_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON , NCI_N48_GA7_AMIP_2DAY, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_nci_n48_ga7_amip_2day_8x4
+            DIR1=../recon_nci_n48_ga7_amip_2day_4x8
+            KGO=
+
+    [[rose_ana_nci_n48_ga7_amip_2day_recon_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_2DAY, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_N48_GA7_AMIP_2DAY_DIR
+            DIR1=../recon_nci_n48_ga7_amip_2day_8x4
+            KGO=0
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf in (["",        ""], 
+                                 ["_nc3",    "netcdf"],
+                                 ["_nc4",    "netcdf"],
+                                 ["_nc4_32", "netcdf"]) %}
+
+    [[rose_ana_nci_n48_ga7_amip_2day{{extension}}_atmos_nruncrun_lrun]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_2DAY, NCI, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=2day
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA7_AMIP_2DAY{{extension}}
+            DIR1=../atmos_nci_n48_ga7_amip_2day{{extension}}_8x4
+            KGO=
+            ROSE_APP_OPT_CONF_KEYS=nruncrun_lrun 2day {{opt_conf}}
+
+  {%- endfor %}
+
+{%- endif %}
+
+{% if "nci_n48_ga7_amip_12hr_comp_check" in name_graphs_out -%}
+# N48 GA7_AMIP "climate" configuration - 12-hour variant with rigorous compiler optimisation
+    [[NCI_N48_GA7_AMIP_12HR_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{UM_NCI_RIGOROUS_NOOMP_PATH}}"
+        inherit = NCI_N48_GA_COMMON
+        [[[environment]]]
+            KGO_NCI_N48_GA7_AMIP_12HR_COMP_CHECK_DIR={{KGO_NCI_ROOT_DIR}}/nci_n48_ga7_amip_12hr_comp_check/{{NCI_N48_GA7_AMIP_12HR_COMP_CHECK_KGO}}
+
+    # Reconfiguration
+    [[recon_nci_n48_ga7_amip_12hr_comp_check_4x8]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_RIGOROUS_NOOMP_PATH}}"
+        inherit = NCI_N48_GA7_AMIP_12HR_COMP_CHECK, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_4x8, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_12hr_comp_check_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+
+    [[atmos_nci_n48_ga7_amip_12hr_comp_check_4x8]]
+        inherit = NCI_N48_GA7_AMIP_12HR_COMP_CHECK, NCI_IOS_OFF, NCI_CORES_32, NCI_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_4x8, IOS_0, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_12hr_comp_check_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+
+    # Comparison tasks
+    [[rose_ana_nci_n48_ga7_amip_12hr_comp_check_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_12HR_COMP_CHECK, NCI, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=$KGO_NCI_N48_GA7_AMIP_12HR_COMP_CHECK_DIR
+            DIR1=../atmos_nci_n48_ga7_amip_12hr_comp_check_4x8
+            KGO=0
+
+    [[rose_ana_nci_n48_ga7_amip_12hr_comp_check_recon_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_12HR_COMP_CHECK, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_N48_GA7_AMIP_12HR_COMP_CHECK_DIR
+            DIR1=../recon_nci_n48_ga7_amip_12hr_comp_check_4x8
+            KGO=0
+
+{%- endif %}
+
+{% if "nci_n48_ga7_amip_10day" in name_graphs_out -%}
+# N48 GA7_AMIP "climate" configuration - 10-day variant using 'safe'
+    [[NCI_N48_GA7_AMIP_10DAY]]
+        script = "{{TASK_RUN}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA_COMMON
+        [[[environment]]]
+            KGO_NCI_N48_GA7_AMIP_10DAY_DIR={{KGO_NCI_ROOT_DIR}}/nci_n48_ga7_amip_10day/{{NCI_N48_GA7_AMIP_10DAY_KGO}}
+
+    # Reconfiguration
+    [[recon_nci_n48_ga7_amip_10day_4x8]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA7_AMIP_10DAY, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_4x8, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_10day_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 10day
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_nci_n48_ga7_amip_10day_8x4]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA7_AMIP_10DAY, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_8x4, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_10day_8x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 10day
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[atmos_nci_n48_ga7_amip_10day_8x14]]
+        inherit = NCI_N48_GA7_AMIP_10DAY, NCI_IOS_OFF, NCI_CORES_224, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x14, IOS_0, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_10day_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 10day
+        [[[job]]]
+            execution time limit = PT60M
+
+    [[atmos_nci_n48_ga7_amip_10day_16x8]]
+        inherit = NCI_N48_GA7_AMIP_10DAY, NCI_IOS_OFF, NCI_CORES_256, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_16x8, IOS_0, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_10day_8x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 10day
+        [[[job]]]
+            execution time limit = PT60M
+
+    # Comparison tasks
+    [[rose_ana_nci_n48_ga7_amip_10day_atmos_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_10DAY, NCI, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=10day
+            DIR0=../atmos_nci_n48_ga7_amip_10day_16x8
+            DIR1=../atmos_nci_n48_ga7_amip_10day_8x14
+            KGO=
+
+    [[rose_ana_nci_n48_ga7_amip_10day_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_10DAY, NCI, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=10day
+            DIR0=$KGO_NCI_N48_GA7_AMIP_10DAY_DIR
+            DIR1=../atmos_nci_n48_ga7_amip_10day_8x14
+            KGO=0
+
+    [[rose_ana_nci_n48_ga7_amip_10day_recon_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_10DAY, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_nci_n48_ga7_amip_10day_8x4
+            DIR1=../recon_nci_n48_ga7_amip_10day_4x8
+            KGO=
+
+    [[rose_ana_nci_n48_ga7_amip_10day_recon_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_10DAY, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_N48_GA7_AMIP_10DAY_DIR
+            DIR1=../recon_nci_n48_ga7_amip_10day_4x8
+            KGO=0
+
+{%- endif %}
+
+
+{% if "nci_n48_ga7_amip_30day" in name_graphs_out -%}
+# N48 GA7_AMIP "climate" configuration - 30-day variant
+    [[NCI_N48_GA7_AMIP_30DAY]]
+        script = "{{TASK_RUN}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA_COMMON
+        [[[environment]]]
+            KGO_NCI_N48_GA7_AMIP_30DAY_DIR={{KGO_NCI_ROOT_DIR}}/nci_n48_ga7_amip_30day/{{NCI_N48_GA7_AMIP_30DAY_KGO}}
+
+    # Reconfiguration
+    [[recon_nci_n48_ga7_amip_30day_4x8]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA7_AMIP_30DAY, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_4x8, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_30day_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 30day
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_nci_n48_ga7_amip_30day_8x4]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA7_AMIP_30DAY, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_8x4, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_30day_8x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 30day
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[atmos_nci_n48_ga7_amip_30day_8x14]]
+        inherit = NCI_N48_GA7_AMIP_30DAY, NCI_IOS_OFF, NCI_CORES_224, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x14, IOS_0, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_30day_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 30day
+        [[[job]]]
+            execution time limit = PT90M
+
+    [[atmos_nci_n48_ga7_amip_30day_16x8]]
+        inherit = NCI_N48_GA7_AMIP_30DAY, NCI_IOS_OFF, NCI_CORES_256, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_16x8, IOS_0, UM_GA7_AMIP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga7_amip_30day_8x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 30day
+        [[[job]]]
+            execution time limit = PT90M
+
+    # Comparison tasks
+    [[rose_ana_nci_n48_ga7_amip_30day_atmos_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_30DAY, NCI, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=30day
+            DIR0=../atmos_nci_n48_ga7_amip_30day_16x8
+            DIR1=../atmos_nci_n48_ga7_amip_30day_8x14
+            KGO=
+
+    [[rose_ana_nci_n48_ga7_amip_30day_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_30DAY, NCI, ROSE_ANA_N48_GA7_AMIP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=30day
+            DIR0=$KGO_NCI_N48_GA7_AMIP_30DAY_DIR
+            DIR1=../atmos_nci_n48_ga7_amip_30day_8x14
+            KGO=0
+
+    [[rose_ana_nci_n48_ga7_amip_30day_recon_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_30DAY, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_nci_n48_ga7_amip_30day_8x4
+            DIR1=../recon_nci_n48_ga7_amip_30day_4x8
+            KGO=
+
+    [[rose_ana_nci_n48_ga7_amip_30day_recon_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA7_AMIP_30DAY, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_N48_GA7_AMIP_30DAY_DIR
+            DIR1=../recon_nci_n48_ga7_amip_30day_4x8
+            KGO=0
+
+{%- endif %}
+
+{% if "nci_n48_ga_amip_exp_2day" in name_graphs_out -%}
+# N48 GA_AMIP_EXP "climate" configuration - 2 day variant
+    [[NCI_N48_GA_AMIP_EXP_2DAY]]
+        script = "{{TASK_RUN}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA_COMMON
+        [[[environment]]]
+            KGO_NCI_N48_GA_AMIP_EXP_2DAY_DIR={{KGO_NCI_ROOT_DIR}}/nci_n48_ga_amip_exp_2day/{{NCI_N48_GA_AMIP_EXP_2DAY_KGO}}
+            
+
+    # Reconfiguration
+    [[recon_nci_n48_ga_amip_exp_2day_4x8]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA_AMIP_EXP_2DAY, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_4x8, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga_amip_exp_2day_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_nci_n48_ga_amip_exp_2day_8x4]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N48_GA_AMIP_EXP_2DAY, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_8x4, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga_amip_exp_2day_8x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+        [[[job]]]
+            execution time limit = PT4M
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf in (["",        ""], 
+                                 ["_nc3",    "netcdf netcdf3"],
+                                 ["_nc4",    "netcdf netcdf4"],
+                                 ["_nc4_32", "netcdf netcdf4-32b"]) %}
+
+    [[atmos_nci_n48_ga_amip_exp_2day{{extension}}_8x4]]
+        inherit = NCI_N48_GA_AMIP_EXP_2DAY, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x4, IOS_0, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga_amip_exp_2day_8x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day {{opt_conf}}
+        [[[job]]]
+            execution time limit = PT15M
+
+   {%- endfor %}
+
+    [[atmos_nci_n48_ga_amip_exp_2day_4x8]]
+        inherit = NCI_N48_GA_AMIP_EXP_2DAY, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x8, IOS_0, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga_amip_exp_2day_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+        [[[job]]]
+            execution time limit = PT15M
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf in (["",        ""], 
+                                 ["_nc3",    "netcdf netcdf3"],
+                                 ["_nc4",    "netcdf netcdf4"],
+                                 ["_nc4_32", "netcdf netcdf4-32b"]) %}
+
+    # CRUN test
+    [[atmos_nci_n48_ga_amip_exp_1day_NRUN{{extension}}_8x4]]
+        inherit = NCI_N48_GA_AMIP_EXP_2DAY, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x4, IOS_0, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga_amip_exp_2day_8x4/atmos.astart
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA_AMIP_EXP_2DAY{{extension}}
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA_AMIP_EXP_2DAY{{extension}}
+            ROSE_APP_OPT_CONF_KEYS=n48 nrun {{opt_conf}}
+        [[[job]]]
+            execution time limit = PT8M
+
+    [[atmos_nci_n48_ga_amip_exp_1day_CRUN{{extension}}_8x4]]
+        inherit = NCI_N48_GA_AMIP_EXP_2DAY, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x4, IOS_0, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA_AMIP_EXP_2DAY{{extension}}
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA_AMIP_EXP_2DAY{{extension}}
+            # Optional configurations for "n48 2day" is the default
+            ROSE_APP_OPT_CONF_KEYS=n48 2day {{opt_conf}}
+        [[[job]]]
+            execution time limit = PT8M
+
+  {%- endfor %}
+
+    # Comparison tasks
+    [[rose_ana_nci_n48_ga_amip_exp_2day_atmos_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA_AMIP_EXP_2DAY, NCI, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=2day
+            DIR0=../atmos_nci_n48_ga_amip_exp_2day_4x8
+            DIR1=../atmos_nci_n48_ga_amip_exp_2day_8x4
+	    KGO=
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf, kgo_subdir in (["",        "",       ""], 
+                                             ["_nc3",    "netcdf", "/netcdf-3/"],
+                                             ["_nc4",    "netcdf", "/netcdf-4/"],
+                                             ["_nc4_32", "netcdf", "/netcdf-4_32bit/"]) %}
+
+    [[rose_ana_nci_n48_ga_amip_exp_2day{{extension}}_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA_AMIP_EXP_2DAY, NCI, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=2day {{opt_conf}}
+            DIR0=$KGO_NCI_N48_GA_AMIP_EXP_2DAY_DIR{{kgo_subdir}}
+            DIR1=../atmos_nci_n48_ga_amip_exp_2day{{extension}}_8x4
+	    KGO=0
+
+  {%- endfor %}
+
+    [[rose_ana_nci_n48_ga_amip_exp_2day_recon_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA_AMIP_EXP_2DAY, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_nci_n48_ga_amip_exp_2day_8x4
+            DIR1=../recon_nci_n48_ga_amip_exp_2day_4x8
+	    KGO=
+
+    [[rose_ana_nci_n48_ga_amip_exp_2day_recon_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA_AMIP_EXP_2DAY, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_N48_GA_AMIP_EXP_2DAY_DIR
+            DIR1=../recon_nci_n48_ga_amip_exp_2day_8x4
+	    KGO=0
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf in (["",        ""], 
+                                 ["_nc3",    "netcdf"],
+                                 ["_nc4",    "netcdf"],
+                                 ["_nc4_32", "netcdf"]) %}
+
+    [[rose_ana_nci_n48_ga_amip_exp_2day{{extension}}_atmos_nruncrun_lrun]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA_AMIP_EXP_2DAY, NCI, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/NCI_N48_GA_AMIP_EXP_2DAY{{extension}}
+            DIR1=../atmos_nci_n48_ga_amip_exp_2day{{extension}}_8x4
+            ROSE_APP_OPT_CONF_KEYS=nruncrun_lrun 2day {{opt_conf}}
+	    KGO=
+
+  {%- endfor %}
+            
+{%- endif %}
+
+{% if "nci_n48_ga_amip_exp_12hr_comp_check" in name_graphs_out -%}
+# N48 GA_AMIP_EXP "climate" configuration - 12-hour variant with rigorous compiler optimisation
+    [[NCI_N48_GA_AMIP_EXP_12HR_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{UM_NCI_RIGOROUS_NOOMP_PATH}}"
+        inherit = NCI_N48_GA_COMMON
+        [[[environment]]]
+            KGO_NCI_N48_GA_AMIP_EXP_12HR_COMP_CHECK_DIR={{KGO_NCI_ROOT_DIR}}/nci_n48_ga_amip_exp_12hr_comp_check/{{NCI_N48_GA_AMIP_EXP_12HR_COMP_CHECK_KGO}}
+
+    # Reconfiguration
+    [[recon_nci_n48_ga_amip_exp_12hr_comp_check_4x8]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_RIGOROUS_NOOMP_PATH}}"
+        inherit = NCI_N48_GA_AMIP_EXP_12HR_COMP_CHECK, NCI_CORES_32, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_4x8, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga_amip_exp_12hr_comp_check_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+
+    [[atmos_nci_n48_ga_amip_exp_12hr_comp_check_4x8]]
+        inherit = NCI_N48_GA_AMIP_EXP_12HR_COMP_CHECK, NCI_IOS_OFF, NCI_CORES_32, NCI_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_4x8, IOS_0, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_nci_n48_ga_amip_exp_12hr_comp_check_4x8/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 12hr
+
+    # Comparison tasks
+    [[rose_ana_nci_n48_ga_amip_exp_12hr_comp_check_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA_AMIP_EXP_12HR_COMP_CHECK, NCI, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=12hr
+            DIR0=$KGO_NCI_N48_GA_AMIP_EXP_12HR_COMP_CHECK_DIR
+            DIR1=../atmos_nci_n48_ga_amip_exp_12hr_comp_check_4x8
+	    KGO=0
+
+    [[rose_ana_nci_n48_ga_amip_exp_12hr_comp_check_recon_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_GA_AMIP_EXP_12HR_COMP_CHECK, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_N48_GA_AMIP_EXP_12HR_COMP_CHECK_DIR
+            DIR1=../recon_nci_n48_ga_amip_exp_12hr_comp_check_4x8
+	    KGO=0
+
+{%- endif %}
+
+{% if "nci_n512_eg" in name_graphs_out or "nci_global_to_lam_eg" in name_graphs_out -%}
+# N512 Endgame 
+    [[NCI_N512_EG]]
+        script = "{{TASK_RUN}} {{UM_NCI_HIGH_OMP_SINGLE_PRECIS_PATH}}"
+        [[[environment]]]
+            KGO_NCI_N512_EG_DIR={{KGO_NCI_ROOT_DIR}}/nci_n512_eg/{{NCI_N512_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_nci_n512_eg]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_HIGH_OMP_SINGLE_PRECIS_PATH}}"
+        inherit = NCI_N512_EG, NCI_CORES_16, NCI_PARALLEL_THREADS_1, RECON_MPI, UM_N512_EG, RECON_4x4
+        [[[environment]]]
+            ASTART=../recon_nci_n512_eg/atmos.astart
+        [[[job]]]
+ 	    execution time limit = PT10M
+
+    # Atmosphere Model Run 4x62 + (2*4) io servers
+    [[atmos_nci_n512_eg_4x62]]
+        inherit = NCI_N512_EG, NCI_CORES_512, NCI_PARALLEL_THREADS_2, UM_N512_EG, ATMOS_MPI, ATMOS_4x62, IOS_8
+        [[[environment]]]
+            ASTART=../recon_nci_n512_eg/atmos.astart
+        [[[job]]]
+ 	    execution time limit = PT20M
+
+    # Comparison tasks
+    [[rose_ana_nci_n512_eg_recon_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N512_EG, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_N512_EG_DIR
+            DIR1=../recon_nci_n512_eg
+            KGO=0
+
+    [[rose_ana_nci_n512_eg_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N512_EG, NCI, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0=$KGO_NCI_N512_EG_DIR
+            DIR1=../atmos_nci_n512_eg_4x62
+            KGO=0
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+ 	    execution time limit = PT10M
+
+    [[rose_ana_nci_n512_eg_wallclock_kgo]]
+        inherit = NCI_ROSE_ANA_WALLCLOCK_COMPARISON, NCI_N512_EG, NCI
+        [[[environment]]]
+            DIR0=../atmos_nci_n512_eg_4x62
+            DIR1=$KGO_NCI_N512_EG_DIR
+            KGO=1
+	    ROSE_APP_OPT_CONF_KEYS=ten_percent
+
+{%- endif %}
+
+{% if "nci_n96_amip_eg" in name_graphs_out -%}
+# N96 Endgame AMIP
+
+    [[NCI_N96_AMIP_EG]]
+        script = "{{TASK_RUN}} {{UM_NCI_SAFE_OMP_PATH}}"
+        [[[environment]]]
+            KGO_NCI_N96_AMIP_EG_DIR={{KGO_NCI_ROOT_DIR}}/nci_n96_amip_eg/{{NCI_N96_AMIP_EG_KGO}}
+
+    # Reconfiguration 1x4
+    [[recon_nci_n96_amip_eg_1x4]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N96_AMIP_EG, NCI_CORES_4, NCI_PARALLEL_THREADS_1, RECON_MPI, UM_N96_AMIP_EG, RECON_1x4
+        [[[environment]]]
+            ASTART=../recon_nci_n96_amip_eg_1x4/atmos.astart
+
+    # Reconfiguration 4x1
+    [[recon_nci_n96_amip_eg_4x1]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_N96_AMIP_EG, NCI_CORES_4, NCI_PARALLEL_THREADS_1, RECON_MPI, UM_N96_AMIP_EG, RECON_4x1
+        [[[environment]]]
+            ASTART=../recon_nci_n96_amip_eg_4x1/atmos.astart
+
+    # Atmosphere Model Run 4x8
+    [[atmos_nci_n96_amip_eg_4x8]]
+        # Note that Met Office test uses PARALLEL_THREADS_2 with 32 cores.
+        inherit = NCI_N96_AMIP_EG, NCI_CORES_64, NCI_PARALLEL_THREADS_2, UM_N96_AMIP_EG, ATMOS_MPI, ATMOS_4x8, IOS_0
+        [[[environment]]]
+           ASTART=../recon_nci_n96_amip_eg_1x4/atmos.astart
+
+    # Atmosphere Model Run 6x5
+    [[atmos_nci_n96_amip_eg_6x5]]
+        # Need to request a full node at NCI
+        inherit = NCI_N96_AMIP_EG, NCI_CORES_64, NCI_PARALLEL_THREADS_2, UM_N96_AMIP_EG, ATMOS_MPI, ATMOS_6x5, IOS_0
+        [[[environment]]]
+            ASTART=../recon_nci_n96_amip_eg_4x1/atmos.astart
+
+    [[rose_ana_nci_n96_amip_eg_atmos_kgo]]  
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N96_AMIP_EG, NCI, ROSE_ANA_N96_AMIP_EG
+        [[[environment]]]
+            DIR0=$KGO_NCI_N96_AMIP_EG_DIR
+            DIR1=../atmos_nci_n96_amip_eg_4x8
+            KGO=0
+
+    [[rose_ana_nci_n96_amip_eg_recon_kgo]]  
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N96_AMIP_EG, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_N96_AMIP_EG_DIR
+            DIR1=../recon_nci_n96_amip_eg_1x4
+            KGO=0
+
+    [[rose_ana_nci_n96_amip_eg_atmos_proc]] 
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N96_AMIP_EG, NCI, ROSE_ANA_N96_AMIP_EG
+        [[[environment]]]
+            DIR0=../atmos_nci_n96_amip_eg_6x5
+            DIR1=../atmos_nci_n96_amip_eg_4x8
+            KGO=
+
+    [[rose_ana_nci_n96_amip_eg_recon_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N96_AMIP_EG, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_nci_n96_amip_eg_4x1
+            DIR1=../recon_nci_n96_amip_eg_1x4
+            KGO=
+
+{%- endif %}
+
+{%- if "nci_n96_amip_eg_drhook" in name_graphs_out %}
+
+    [[NCI_N96_AMIP_EG_DRHOOK]]
+        script = "{{TASK_RUN}} {{UM_NCI_HIGH_OMP_DRHOOK_PATH}}"
+        [[[environment]]]
+            KGO_NCI_N96_AMIP_EG_DRHOOK_DIR={{KGO_NCI_ROOT_DIR}}/nci_drhook/{{NCI_N96_AMIP_EG_DRHOOK_KGO}}
+
+    # Reconfiguration 1x4
+    [[recon_nci_n96_amip_eg_drhook]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_HIGH_OMP_DRHOOK_PATH}}"
+        inherit = NCI_N96_AMIP_EG_DRHOOK, NCI_CORES_4, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_N96_AMIP_EG
+        [[[environment]]]
+            ASTART=../recon_nci_n96_amip_eg_drhook/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=drhook
+
+    # Atmosphere Model Run 4x8
+    [[atmos_nci_n96_amip_eg_drhook_4x8]]
+        inherit = NCI_N96_AMIP_EG_DRHOOK, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x8, IOS_0, UM_N96_AMIP_EG
+        [[[environment]]]
+            ASTART=../recon_nci_n96_amip_eg_drhook/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=drhook
+
+    [[rose_ana_nci_n96_amip_eg_drhook_recon_kgo]]  
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N96_AMIP_EG_DRHOOK, NCI, ROSE_ANA_DRHOOK
+        [[[environment]]]
+            DIR0=$KGO_NCI_N96_AMIP_EG_DRHOOK_DIR
+            DIR1=../recon_nci_n96_amip_eg_drhook
+            KGO=0
+
+    # Comparison tasks; VARIANT required for atmos_proc comparison
+    [[rose_ana_nci_n96_amip_eg_drhook_atmos_kgo]]  
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N96_AMIP_EG_DRHOOK, NCI, ROSE_ANA_DRHOOK
+        [[[environment]]]
+            DIR0=$KGO_NCI_N96_AMIP_EG_DRHOOK_DIR
+            DIR1=../atmos_nci_n96_amip_eg_drhook_4x8
+            KGO=0
+
+{%- endif %}
+
+{% if "nci_ukca_eg_strattrop" in name_graphs_out -%}
+# HadGEM UKCA EG STRATTROP
+    [[NCI_UKCA_EG_STRATTROP]]
+        script = "{{TASK_RUN}} {{UM_NCI_SAFE_OMP_PATH}}"
+        [[[environment]]]
+            KGO_NCI_UKCA_EG_STRATTROP_DIR={{KGO_NCI_ROOT_DIR}}/nci_ukca_eg_strattrop/{{NCI_UKCA_EG_STRATTROP_KGO}}
+
+    # Reconfiguration
+    [[recon_nci_ukca_eg_strattrop]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_SAFE_OMP_PATH}}"
+        inherit = NCI_UKCA_EG_STRATTROP, NCI_CORES_16, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_4x4, UM_UKCA_EG
+        [[[environment]]]
+            ASTART=../recon_nci_ukca_eg_strattrop/atmos.astart
+
+    # Atmosphere Model Run 16x8- 1 thread
+    [[atmos_nci_ukca_eg_strattrop_16x8]]
+        inherit = NCI_UKCA_EG_STRATTROP, NCI_CORES_128, NCI_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_16x8, IOS_0, UM_UKCA_EG        
+        [[[environment]]]
+            ASTART=../recon_nci_ukca_eg_strattrop/atmos.astart
+        [[[job]]]
+            execution time limit = PT30M
+
+    # Atmosphere Model Run 16x8- 2 OpenMP threads
+    [[atmos_nci_ukca_strattrop_16x8_2omp]]
+        inherit = NCI_UKCA_EG_STRATTROP, NCI_CORES_256, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_16x8, IOS_0, UM_UKCA_EG        
+        [[[environment]]]
+            ASTART=../recon_nci_ukca_eg_strattrop/atmos.astart
+        [[[job]]]
+            execution time limit = PT30M
+
+    # Atmosphere Model 1-day NRUN 
+    [[atmos_nci_ukca_strattrop_nrun_16x8]]
+        inherit = NCI_UKCA_EG_STRATTROP, NCI_CORES_128, NCI_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_16x8, IOS_0, UM_UKCA_EG        
+        [[[environment]]]
+            ASTART=../recon_nci_ukca_eg_strattrop/atmos.astart
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCI_XC40_UKCA_STRATTROP
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCI_XC40_UKCA_STRATTROP
+            ROSE_APP_OPT_CONF_KEYS= nrun
+        [[[job]]]
+   	   execution time limit = PT20M
+
+    # Atmosphere Model 1-day CRUN 
+    [[atmos_nci_ukca_strattrop_crun_16x8]]
+        inherit = NCI_UKCA_EG_STRATTROP, NCI_CORES_128, NCI_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_16x8, IOS_0, UM_UKCA_EG        
+        [[[environment]]]
+            ASTART=
+            CONTINUE = true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCI_XC40_UKCA_STRATTROP
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCI_XC40_UKCA_STRATTROP
+        [[[job]]]
+   	   execution time limit = PT20M
+
+    # Comparison tasks
+    [[rose_ana_nci_ukca_eg_strattrop_recon_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_UKCA_EG_STRATTROP, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_UKCA_EG_STRATTROP_DIR
+            DIR1=../recon_nci_ukca_eg_strattrop
+            KGO=0
+            
+    [[rose_ana_nci_ukca_eg_strattrop_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_UKCA_EG_STRATTROP, NCI, ROSE_ANA_UKCA_EG
+        [[[environment]]]
+            DIR0=$KGO_NCI_UKCA_EG_STRATTROP_DIR
+            DIR1=../atmos_nci_ukca_eg_strattrop_16x8
+            KGO=0
+    
+    [[rose_ana_nci_ukca_strattrop_atmos_omp_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_UKCA_EG_STRATTROP, NCI, ROSE_ANA_UKCA_EG
+        [[[environment]]]
+            DIR0=../atmos_nci_ukca_strattrop_16x8_2omp
+            DIR1=../atmos_nci_ukca_eg_strattrop_16x8
+            KGO=0
+    
+    # NRUN-CRUN test        
+    [[rose_ana_nci_ukca_strattrop_atmos_nruncrun]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_UKCA_EG_STRATTROP, NCI, ROSE_ANA_UKCA_EG
+        [[[environment]]]
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/NCI_XC40_UKCA_STRATTROP
+            DIR1=../atmos_nci_ukca_eg_strattrop_16x8
+            KGO=0
+            ROSE_APP_OPT_CONF_KEYS= nruncrun
+            
+{%- endif %}
+
+{% if "nci_n48_eg_noomp" in name_graphs_out -%}
+# N48 No OpenMP NCI
+    [[NCI_N48_EG_NOOMP]]
+        script = "{{TASK_RUN}} {{UM_NCI_HIGH_NOOMP_PATH}}"
+        [[[environment]]]
+            KGO_NCI_N48_EG_DIR={{KGO_NCI_ROOT_DIR}}/nci_n48_eg/{{NCI_N48_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_nci_n48_eg_noomp_1x2]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_HIGH_NOOMP_PATH}}"
+        inherit = NCI_N48_EG_NOOMP, NCI_CORES_2,  NCI_PARALLEL_THREADS_1, UM_N48_EG, RECON_MPI, RECON_1x2
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_noomp_1x2/atmos.astart
+
+    [[recon_nci_n48_eg_noomp_2x1]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_HIGH_NOOMP_PATH}}"
+        inherit = NCI_N48_EG_NOOMP, NCI_CORES_2,  NCI_PARALLEL_THREADS_1, UM_N48_EG, RECON_MPI, RECON_2x1
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_noomp_2x1/atmos.astart
+
+    # Atmosphere Model Run 4x4
+    [[atmos_nci_n48_eg_noomp_4x4]]
+        inherit = NCI_N48_EG_NOOMP, NCI_CORES_16, NCI_PARALLEL_THREADS_1, UM_N48_EG, ATMOS_MPI, ATMOS_4x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_noomp_1x2/atmos.astart
+
+    # Atmosphere Model Run 2x8
+    [[atmos_nci_n48_eg_noomp_2x8]]
+        inherit = NCI_N48_EG_NOOMP, NCI_CORES_16, NCI_PARALLEL_THREADS_1, UM_N48_EG, ATMOS_MPI, ATMOS_2x8, IOS_0
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_noomp_2x1/atmos.astart
+
+    # Comparison tasks
+    [[rose_ana_nci_n48_eg_noomp_atmos_kgo]]
+        inherit =  NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_NOOMP, NCI, ROSE_ANA_N48_EG 
+        [[[environment]]]
+            DIR0 = $KGO_NCI_N48_EG_DIR
+            DIR1 = ../atmos_nci_n48_eg_noomp_4x4
+            KGO=0
+
+    [[rose_ana_nci_n48_eg_noomp_atmos_proc]]
+        inherit =  NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_NOOMP, NCI, ROSE_ANA_N48_EG 
+        [[[environment]]]
+            DIR0 = ../atmos_nci_n48_eg_noomp_2x8
+            DIR1 = ../atmos_nci_n48_eg_noomp_4x4
+            KGO=
+
+    [[rose_ana_nci_n48_eg_noomp_recon_kgo]]
+        inherit =  NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_NOOMP, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = $KGO_NCI_N48_EG_DIR
+            DIR1 = ../recon_nci_n48_eg_noomp_1x2
+            KGO=0
+
+    [[rose_ana_nci_n48_eg_noomp_recon_proc]]
+        inherit =  NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_NOOMP, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_nci_n48_eg_noomp_2x1
+            DIR1 = ../recon_nci_n48_eg_noomp_1x2
+            KGO=
+
+{%- endif %}
+
+{% if "nci_n48_eg_omp_ios" in name_graphs_out 
+   or "nci_n48_eg_omp_noios" in name_graphs_out -%}
+# Same family and make task used by both OpenMP IOS and OpenMP no-IOS jobs
+
+    [[NCI_N48_EG_OMP]]
+        script = "{{TASK_RUN}} {{UM_NCI_HIGH_OMP_PATH}}"
+        [[[environment]]]
+            KGO_NCI_N48_EG_DIR={{KGO_NCI_ROOT_DIR}}/nci_n48_eg/{{NCI_N48_EG_KGO}}
+
+{%- endif %}
+
+{% if "nci_n48_eg_noomp_comp_check" in name_graphs_out %}
+
+    [[NCI_N48_EG_NOOMP_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{UM_NCI_RIGOROUS_NOOMP_PATH}}"
+
+    [[recon_nci_n48_eg_noomp_comp_check]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_RIGOROUS_NOOMP_PATH}}"
+        inherit = NCI_N48_EG_NOOMP_COMP_CHECK, NCI_CORES_2, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_1x2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_noomp_comp_check/atmos.astart
+
+    [[atmos_nci_n48_eg_noomp_comp_check]]
+        inherit = NCI_N48_EG_NOOMP_COMP_CHECK, NCI_CORES_16, NCI_PARALLEL_THREADS_1, UM_N48_EG, ATMOS_MPI, ATMOS_4x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_noomp_comp_check/atmos.astart
+
+{%- endif %}
+
+{% if "nci_n48_eg_omp_ios" in name_graphs_out -%}
+# N48 EG job
+
+    # Reconfiguration 1x2
+    [[recon_nci_n48_eg_omp_ios_1x2]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_HIGH_OMP_PATH}}"
+        inherit = NCI_N48_EG_OMP, NCI_CORES_2, NCI_PARALLEL_THREADS_1, UM_N48_EG, RECON_MPI, RECON_1x2
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_ios_1x2/atmos.astart
+
+    # Reconfiguration 2x1
+    [[recon_nci_n48_eg_omp_ios_2x1]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_HIGH_OMP_PATH}}"
+        inherit = NCI_N48_EG_OMP, NCI_CORES_2, NCI_PARALLEL_THREADS_1, UM_N48_EG, RECON_MPI, RECON_2x1
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_ios_2x1/atmos.astart
+
+    # Atmosphere Model Run 1x6
+    [[atmos_nci_n48_eg_omp_ios_1x6]]
+        inherit = NCI_N48_EG_OMP, NCI_CORES_16, NCI_PARALLEL_THREADS_2, UM_N48_EG, ATMOS_MPI, ATMOS_1x6, IOS_2
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_ios_1x2/atmos.astart
+
+    # Atmosphere Model Run 2x3
+    [[atmos_nci_n48_eg_omp_ios_2x3]]
+        inherit = NCI_N48_EG_OMP, NCI_CORES_16, NCI_PARALLEL_THREADS_2, UM_N48_EG, ATMOS_MPI, ATMOS_2x3, IOS_2
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_ios_2x1/atmos.astart
+
+    [[rose_ana_nci_n48_eg_omp_ios_atmos_kgo]]  
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_OMP, NCI, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=$KGO_NCI_N48_EG_DIR
+            DIR1=../atmos_nci_n48_eg_omp_ios_1x6
+            KGO=0
+
+    [[rose_ana_nci_n48_eg_omp_ios_recon_kgo]]  
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_OMP, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = $KGO_NCI_N48_EG_DIR
+            DIR1=../recon_nci_n48_eg_omp_ios_1x2
+            KGO=0
+
+    [[rose_ana_nci_n48_eg_omp_ios_atmos_proc]] 
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_OMP, NCI, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_nci_n48_eg_omp_ios_2x3
+            DIR1=../atmos_nci_n48_eg_omp_ios_1x6
+            KGO=
+
+    [[rose_ana_nci_n48_eg_omp_ios_recon_proc]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_OMP, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_nci_n48_eg_omp_ios_2x1
+            DIR1=../recon_nci_n48_eg_omp_ios_1x2
+            KGO=
+
+{%- endif %}
+
+{% if "nci_n48_eg_omp_ios_comp_check" in name_graphs_out %}
+
+    [[NCI_N48_EG_OMP_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{UM_NCI_RIGOROUS_OMP_PATH}}"
+
+    [[recon_nci_n48_eg_omp_ios_comp_check]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_RIGOROUS_OMP_PATH}}"
+        inherit = NCI_N48_EG_OMP_COMP_CHECK, NCI_CORES_2, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_1x2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_ios_comp_check/atmos.astart
+
+    [[atmos_nci_n48_eg_omp_ios_comp_check]]
+        inherit = NCI_N48_EG_OMP_COMP_CHECK, NCI_CORES_16, NCI_PARALLEL_THREADS_2, UM_N48_EG, ATMOS_MPI, ATMOS_2x3, IOS_2
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_ios_comp_check/atmos.astart
+
+{%- endif %}
+
+{% if "nci_n48_eg_omp_noios" in name_graphs_out -%}
+# N48 EG OMP No IOS
+
+    # Reconfiguration
+    [[recon_nci_n48_eg_omp_noios_1x2]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_HIGH_OMP_PATH}}"
+        inherit = NCI_N48_EG_OMP, NCI_CORES_2,  NCI_PARALLEL_THREADS_1, RECON_MPI, UM_N48_EG, RECON_1x2
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_noios_1x2/atmos.astart
+
+    [[recon_nci_n48_eg_omp_noios_2x1]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_HIGH_OMP_PATH}}"
+        inherit = NCI_N48_EG_OMP, NCI_CORES_2, NCI_PARALLEL_THREADS_1, UM_N48_EG, RECON_MPI, RECON_2x1
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_noios_2x1/atmos.astart
+
+    # Atmosphere Model Run 4x4
+    [[atmos_nci_n48_eg_omp_noios_2x4]]
+        inherit = NCI_N48_EG_OMP, NCI_CORES_16, NCI_PARALLEL_THREADS_2, UM_N48_EG, ATMOS_MPI, ATMOS_2x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_noios_1x2/atmos.astart
+
+    # Atmosphere Model Run 2x8
+    [[atmos_nci_n48_eg_omp_noios_1x8]]
+        inherit = NCI_N48_EG_OMP, NCI_CORES_16, NCI_PARALLEL_THREADS_2, UM_N48_EG, ATMOS_MPI, ATMOS_1x8, IOS_0
+        [[[environment]]]
+            ASTART=../recon_nci_n48_eg_omp_noios_2x1/atmos.astart
+
+    # Comparison tasks
+    [[rose_ana_nci_n48_eg_omp_noios_atmos_kgo]]
+        inherit =  NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_OMP, NCI, ROSE_ANA_N48_EG 
+        [[[environment]]]
+            DIR0 = $KGO_NCI_N48_EG_DIR
+            DIR1 = ../atmos_nci_n48_eg_omp_noios_2x4
+            KGO=0
+
+    [[rose_ana_nci_n48_eg_omp_noios_atmos_proc]]
+        inherit =  NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_OMP, NCI, ROSE_ANA_N48_EG 
+        [[[environment]]]
+            DIR0 = ../atmos_nci_n48_eg_omp_noios_1x8
+            DIR1 = ../atmos_nci_n48_eg_omp_noios_2x4
+            KGO=
+
+    [[rose_ana_nci_n48_eg_omp_noios_recon_kgo]]
+        inherit =  NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_OMP, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = $KGO_NCI_N48_EG_DIR
+            DIR1 = ../recon_nci_n48_eg_omp_noios_1x2
+            KGO=0
+
+    [[rose_ana_nci_n48_eg_omp_noios_recon_proc]]
+        inherit =  NCI_ROSE_ANA_COMPARISON, NCI_N48_EG_OMP, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_nci_n48_eg_omp_noios_2x1
+            DIR1 = ../recon_nci_n48_eg_omp_noios_1x2
+            KGO=
+
+{%- endif %}
+
+# NCI Jobs: Single Column Models
+
+{% if "nci_scm_togacoare_ga6" in name_graphs_out -%}
+# Single Column Model - TOGA-COARE case, GA6 configuration, NCI
+
+    [[NCI_SCM_TOGACOARE_GA6]]
+        script = "{{TASK_RUN}} {{SCM_NCI_DEBUG_NOOMP_PATH}}"
+        [[[environment]]]
+            KGO_NCI_SCM_TOGACOARE_GA6_DIR={{KGO_NCI_ROOT_DIR}}/nci_scm_togacoare_ga6/{{NCI_SCM_TOGACOARE_GA6_KGO}}
+
+    # SCM Model Run
+    [[scm_nci_scm_togacoare_ga6]]
+        inherit = NCI_SCM_TOGACOARE_GA6, NCI_CORES_1, NCI_PARALLEL_THREADS_1, SCM_TOGACOARE_GA6
+    [[[job]]]
+ 	execution time limit = PT5M
+
+    # Comparison task
+    [[rose_ana_nci_scm_togacoare_ga6_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_SCM_TOGACOARE_GA6, NCI, ROSE_ANA_SCM_TOGACOARE_GA6
+        [[[environment]]]
+            DIR0=$KGO_NCI_SCM_TOGACOARE_GA6_DIR
+            DIR1=../scm_nci_scm_togacoare_ga6
+            KGO=0
+
+{%- endif %}
+
+{% if "nci_scm_gabls3_ga6" in name_graphs_out -%}
+# Single Column Model - GABLS3 case, GA6 configuration, NCI
+
+    [[NCI_SCM_GABLS3_GA6]]
+        script = "{{TASK_RUN}} {{SCM_NCI_DEBUG_NOOMP_PATH}}"
+        [[[environment]]]
+            KGO_NCI_SCM_GABLS3_GA6_DIR={{KGO_NCI_ROOT_DIR}}/nci_scm_gabls3_ga6/{{NCI_SCM_GABLS3_GA6_KGO}}
+
+    # SCM Model Run
+    [[scm_nci_scm_gabls3_ga6]]
+        inherit = NCI_SCM_GABLS3_GA6, NCI_CORES_1, NCI_PARALLEL_THREADS_1, SCM_GABLS3_GA6
+    [[[job]]]
+ 	execution time limit = PT5M
+
+    # Comparison task
+    [[rose_ana_nci_scm_gabls3_ga6_atmos_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_SCM_GABLS3_GA6, NCI, ROSE_ANA_SCM_GABLS3_GA6
+        [[[environment]]]
+            DIR0={{KGO_NCI_ROOT_DIR}}/nci_scm_gabls3_ga6/{{NCI_SCM_GABLS3_GA6_KGO}}
+            DIR1=../scm_nci_scm_gabls3_ga6
+            KGO=0
+
+{%- endif %}
+
+{% if "nci_scm_gabls3_ga6_comp_check" in name_graphs_out -%}
+# Single Column Model - GABLS3 case, GA6 configuration, NCI
+
+    [[NCI_SCM_GABLS3_GA6_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{SCM_NCI_RIGOROUS_NOOMP_PATH}}"
+        [[[environment]]]
+            KGO_NCI_SCM_GABLS3_GA6_COMP_CHECK_DIR={{KGO_NCI_ROOT_DIR}}/nci_scm_gabls3_ga6_comp_check/{{NCI_SCM_GABLS3_GA6_KGO}}
+
+    # SCM Model Run
+    [[scm_nci_scm_gabls3_ga6_comp_check]]
+        inherit = NCI_SCM_GABLS3_GA6_COMP_CHECK, NCI_CORES_1, NCI_PARALLEL_THREADS_1, SCM_GABLS3_GA6
+
+    # Comparison task
+    [[rose_ana_nci_scm_gabls3_ga6_atmos_comp_check_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_SCM_GABLS3_GA6_COMP_CHECK, NCI, ROSE_ANA_SCM_GABLS3_GA6
+        [[[environment]]]
+            DIR0={{KGO_NCI_ROOT_DIR}}/nci_scm_gabls3_ga6_comp_check/{{NCI_SCM_GABLS3_GA6_KGO}}
+            DIR1=../scm_nci_scm_gabls3_ga6_comp_check
+            KGO=0
+
+{%- endif %}
+
+
+# NCI jobs
+# UM Utils build
+
+   [[fcm_make_nci_createbc_high_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+	    OPENMP=true
+            OPTIMISATION=high
+
+    [[fcm_make2_nci_createbc_high_omp]]
+        inherit = NCI_BUILD
+	# Load the serial GCOM module
+        pre-script = """
+           module use ~access/modules
+           module load intel-cc/15.0.1.133
+           module load intel-fc/15.0.1.133
+           module load gcom/6.6_serial
+           module load shumlib/2018.06.1
+           module unload netcdf
+           module load netcdf/4.3.0
+           module load grib-api/1.10.4
+           module load fcm
+           module load um
+           """
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+	    OPENMP=true
+            OPTIMISATION=high
+
+    # Extract, Mirror
+    [[fcm_make_nci_utils_serial_high_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            PREBUILD =
+
+    # Pre-process, Build
+    [[fcm_make2_nci_utils_serial_high_omp]]
+        inherit = NCI_BUILD
+	# Load the serial GCOM module
+        pre-script = """
+           module use ~access/modules
+           module load intel-cc/15.0.1.133
+           module load intel-fc/15.0.1.133
+           module load gcom/6.6_serial
+           module load shumlib/2018.06.1
+           module unload netcdf
+           module load netcdf/4.3.0
+           module load grib-api/1.10.4
+           module load fcm
+           module load um
+           """
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            PREBUILD =
+
+{%- if "nci_global_to_lam_eg" in name_graphs_out or "nci_createbc_calcs" in name_graphs_out %}
+
+    [[NCI_CREATEBC]]
+        inherit = NCI_CORES_4, NCI_PARALLEL_THREADS_4
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[environment]]]
+            ULIMIT = ulimit -s unlimited -c unlimited
+        [[[directives]]]
+            -l mem = 100MB
+        [[[job]]]
+            execution time limit = PT14M
+
+{%- endif %}
+
+{%- if "nci_createbc_calcs" in name_graphs_out %}
+    # CreateBC calculation tests
+    
+    # Note the "global_eg_varres_eg_2dust6" test should use a rigorous optimisation build!
+    
+    {%- set createbc_calcs_map_nci = {
+            "global_nd_fixed_nd_2dust2"        : [NCI_CREATEBC_GLOBAL_ND_FIXED_ND_2DUST2_KGO,     "5GB", "PT5M"],
+            "global_nd_fixed_eg_0dust0"        : [NCI_CREATEBC_GLOBAL_ND_FIXED_EG_0DUST0_KGO,     "5GB", "PT10M"],
+            "global_eg_fixed_nd_0dust0"        : [NCI_CREATEBC_GLOBAL_EG_FIXED_ND_0DUST0_KGO,     "5GB", "PT5M"],
+            "global_eg_fixed_eg_2dust6"        : [NCI_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO,    "15GB", "PT5M"],
+            "global_eg_varres_nd_0dust0"       : [NCI_CREATEBC_GLOBAL_EG_VARRES_ND_0DUST0_KGO,    "5GB", "PT5M"],
+            "global_eg_varres_eg_2dust6"       : [NCI_CREATEBC_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "15GB", "PT5M"],
+            "fixed_eg_varres_nd_0dust0"        : [NCI_CREATEBC_FIXED_EG_VARRES_ND_0DUST0_KGO,     "5GB", "PT5M"],
+            "fixed_eg_fixed_nd_0dust0"         : [NCI_CREATEBC_FIXED_EG_FIXED_ND_0DUST0_KGO,     "10GB", "PT5M"],
+            "fixed_eg_fixed_eg_0dust0"         : [NCI_CREATEBC_FIXED_EG_FIXED_EG_0DUST0_KGO,      "5GB", "PT5M"],
+            "varres_eg_fixed_eg_0dust0"        : [NCI_CREATEBC_VARRES_EG_FIXED_EG_0DUST0_KGO,     "5GB", "PT5M"],
+            "varres_eg_fixed_nd_0dust0"        : [NCI_CREATEBC_VARRES_EG_FIXED_ND_0DUST0_KGO,    "5GB", "PT5M"],
+            "global_eg_frame_eg_2dust2"        : [NCI_CREATEBC_GLOBAL_EG_FRAME_EG_2DUST2_KGO,    "5GB", "PT5M"],
+            "frame_eg_varres_eg_2dust6"        : [NCI_CREATEBC_FRAME_EG_VARRES_EG_2DUST6_KGO,    "5GB", "PT5M"],
+            "global_nd_fixed_eg_freetracer"    : [NCI_CREATEBC_GLOBAL_ND_FIXED_EG_FREETRACER_KGO,"5GB", "PT5M"],
+            "global_eg_fixed_nd_aqumtracer"    : [NCI_CREATEBC_GLOBAL_EG_FIXED_ND_AQUMTRACER_KGO,"5GB", "PT15M"],
+            "varres_eg_frame_eg_0dust0"        : [NCI_CREATEBC_VARRES_EG_FRAME_EG_0DUST0_KGO,     "5GB", "PT5M"],
+            "frame_eg_fixed_eg_0dust0"         : [NCI_CREATEBC_FRAME_EG_FIXED_EG_0DUST0_KGO,      "5GB", "PT18M"],
+            "global_eg_fixed_eg_timecontrol"   : [NCI_CREATEBC_GLOBAL_EG_FIXED_EG_TIMECONTROL_KGO,"15GB","PT5M"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_nci.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_nci_createbc_calcs_{{test_type}}]]
+            inherit = NCI_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} {{CREATEBC_NCI_HIGH_OMP_PATH}}"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_TASK_APP=createbc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                FRAME_DIR=../createbc_nci_createbc_calcs_global_eg_frame_eg_2dust2
+                FRAME_DIR2=../createbc_nci_createbc_calcs_varres_eg_frame_eg_0dust0
+            [[[directives]]]
+                -l mem = {{memory_allow}}
+            [[[job]]]
+                execution time limit = {{wall_clock}}
+
+        [[rose_ana_nci_createbc_calcs_{{test_type}}_kgo]]
+            inherit = NCI_ROSE_ANA_COMPARISON, NCI
+             [[[environment]]]
+                 DIR0={{KGO_NCI_ROOT_DIR}}/nci_createbc/{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_nci_createbc_calcs_{{test_type}}
+                 KGO=0
+                 ROSE_TASK_APP=rose_ana_createbc_calcs
+             [[[directives]]]
+                -l mem = 1GB
+             [[[job]]]
+	        execution time limit = PT2M
+
+        {%- endfor %}
+
+{%- endif %}
+
+{%- if "nci_global_to_lam_eg" in name_graphs_out %}
+
+  [[NCI_GLOBAL_TO_LAM]]
+      [[[environment]]]
+          KGO_NCI_GLOBAL_TO_LAM_EG_DIR={{KGO_NCI_ROOT_DIR}}/nci_global_to_lam_eg/{{NCI_GLOBAL_TO_LAM_EG_KGO}}
+
+  [[createbc_nci_global_to_lam_frame_seukv_eg]]
+        script = "$ULIMIT ; {{TASK_RUN}} {{CREATEBC_NCI_HIGH_OMP_PATH}}"
+        inherit = NCI_GLOBAL_TO_LAM, NCI_CREATEBC
+        [[[environment]]]
+            ROSE_TASK_APP = createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS = global_to_lam_seukv_eg_frame
+            MBC_INPUT = ../atmos_nci_n512_eg_4x62
+            PREV_TASK=atmos_nci_n512_eg_4x62
+        [[[directives]]]
+            -l mem = 10GB
+
+  [[createbc_nci_global_to_lam_createbc_seukv_eg]]
+        inherit = NCI_GLOBAL_TO_LAM, NCI_CREATEBC
+        script = "$ULIMIT ; {{TASK_RUN}} {{CREATEBC_NCI_HIGH_OMP_PATH}}"
+        [[[environment]]]
+            ROSE_TASK_APP = createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS = global_to_lam_seukv_eg
+            MBC_INPUT = ../atmos_nci_n512_eg_4x62
+            PREV_TASK=createbc_nci_global_to_lam_frame_seukv_eg
+        [[[directives]]]
+            -l mem = 10GB
+
+  [[recon_nci_global_to_lam_seukv_eg]]
+        script = "{{TASK_RUN_RECON}} {{UM_NCI_HIGH_OMP_PATH}}"
+        inherit = NCI_GLOBAL_TO_LAM, NCI_CORES_4, NCI_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_nci_global_to_lam_seukv_eg/atmos.astart
+            AINITIAL=../atmos_nci_n512_eg_4x62/atmosa_da003
+            ALABCIN1=../createbc_nci_global_to_lam_createbc_seukv_eg/output.lbc
+            ROSE_APP_OPT_CONF_KEYS=globaltolam
+        [[[job]]]
+            execution time limit = PT3M
+
+  [[atmos_nci_global_to_lam_seukv_eg_4x8]]
+        script = "{{TASK_RUN}} {{UM_NCI_HIGH_OMP_PATH}}"
+        inherit = NCI_GLOBAL_TO_LAM, NCI_IOS_OFF, NCI_CORES_64, NCI_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x8, IOS_0, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_nci_global_to_lam_seukv_eg/atmos.astart
+            AINITIAL=../atmos_nci_global_to_lam_n512_eg_4x62/atmosa_da003
+            ALABCIN1=../createbc_nci_global_to_lam_createbc_seukv_eg/output.lbc
+            ROSE_APP_OPT_CONF_KEYS=globaltolam
+        [[[job]]]
+            execution time limit = PT36M
+
+  [[rose_ana_nci_global_to_lam_seukv_eg_4x8_atmos_kgo]]  
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_GLOBAL_TO_LAM, NCI, ROSE_ANA_SEUKV_EG_NODA
+        [[[environment]]]
+            DIR0=$KGO_NCI_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../atmos_nci_global_to_lam_seukv_eg_4x8
+            KGO=0
+
+  [[rose_ana_nci_global_to_lam_seukv_eg_recon_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_GLOBAL_TO_LAM, NCI, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_NCI_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../recon_nci_global_to_lam_seukv_eg
+            KGO=0
+  
+  
+  [[rose_ana_nci_global_to_lam_seukv_eg_frame_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_GLOBAL_TO_LAM, NCI
+        [[[environment]]]
+            DIR0=$KGO_NCI_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../createbc_nci_global_to_lam_frame_seukv_eg
+            KGO=0
+            ROSE_TASK_APP=rose_ana_createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS=frame
+  
+  [[rose_ana_nci_global_to_lam_seukv_eg_createbc_kgo]]
+        inherit = NCI_ROSE_ANA_COMPARISON, NCI_GLOBAL_TO_LAM, NCI
+        [[[environment]]]
+            DIR0=$KGO_NCI_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../createbc_nci_global_to_lam_createbc_seukv_eg
+            KGO=0
+            ROSE_TASK_APP=rose_ana_createbc_calcs
+
+{%- endif %}

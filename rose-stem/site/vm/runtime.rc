@@ -1,0 +1,994 @@
+{# When running integration tests, raise an error #}
+{# if the resulting processor decomposition will not run. #}
+{%- if INTEGRATION_TESTING == true %}
+  {%- if MPI_TASKS % 2 == 1 and MPI_TASKS != 1 %}
+    {{ raise('MPI_TASKS must be even or 1 to run integration tests.') }}
+  {%- endif %}
+{%- endif %}
+
+# Compilation tasks:
+
+# UM safe OpenMP
+    [[fcm_make_vm_gnu_um_safe_omp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+
+# UM safe no OpenMP
+    [[fcm_make_vm_gnu_um_safe_noomp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=safe
+
+# UM debug OpenMP
+    [[fcm_make_vm_gnu_um_debug_omp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=debug
+
+# UM rigorous OpenMP
+    [[fcm_make_vm_gnu_um_rigorous_omp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=rigorous
+
+# SCM debug OpenMP
+    [[fcm_make_vm_gnu_scm_debug_omp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPTIMISATION=debug
+            OPENMP=true
+
+# SCM debug no-OpenMP
+    [[fcm_make_vm_gnu_scm_debug_noomp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPTIMISATION=debug
+            OPENMP=false
+
+# SCM rigorous OpenMP
+    [[fcm_make_vm_gnu_scm_rigorous_omp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPTIMISATION=rigorous
+            OPENMP=true
+
+# SCM rigorous no-OpenMP
+    [[fcm_make_vm_gnu_scm_rigorous_noomp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPTIMISATION=rigorous
+            OPENMP=false
+
+# CreateBC rigorous OpenMP
+    [[fcm_make_vm_gnu_createbc_rigorous_omp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPTIMISATION=rigorous
+            OPENMP=true
+
+# CreateBC rigorous no-OpenMP
+    [[fcm_make_vm_gnu_createbc_rigorous_noomp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPTIMISATION=rigorous
+            OPENMP=false
+
+# CreateBC high OpenMP
+    [[fcm_make_vm_gnu_createbc_high_omp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPTIMISATION=high
+            OPENMP=true
+
+# CreateBC high no-OpenMP
+    [[fcm_make_vm_gnu_createbc_high_noomp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPTIMISATION=high
+            OPENMP=false
+
+# Serial utils
+    [[fcm_make_vm_gnu_utils_serial_high_omp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            OPENMP=true
+
+# Parallel utils
+    [[fcm_make_vm_gnu_utils_mpp_high_omp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            OPENMP=true
+
+# Serial reconfiguration
+    [[fcm_make_vm_gnu_recon_serial_high_omp]]
+        inherit = BUILD, MAKE_RECON_SERIAL
+        [[[environment]]]
+            OPTIMISATION=high
+            OPENMP=true
+
+# Libraries
+    [[fcm_make_vm_gnu_libs_high_noomp]]
+        inherit = BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+            OPTIMISATION=high
+            OPENMP=false
+
+
+{% if "vm_n48_eg_omp_ios" in name_graphs_out -%}
+# N48 OpenMP IO Server
+    [[VM_N48_EG_OMP_IOS]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_VM_N48_EG_DIR={{KGO_VM_ROOT_DIR}}/vm_n48_eg/{{VM_N48_EG_KGO}}
+
+    # Reconfiguration 1x{{MPI_TASKS}}
+    [[recon_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_N48_EG_OMP_IOS, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, RECON_1x{{MPI_TASKS}}
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run 1x{{MPI_TASKS}}
+    [[atmos_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}]]
+        inherit = VM_N48_EG_OMP_IOS, VM, VM_MPI, VM_2_THREADS, UM_N48_EG, ATMOS_1x{{MPI_TASKS}}, IOS_2
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm output_all_pe
+
+    # Check recon KGO
+    [[rose_ana_vm_n48_eg_omp_ios_recon_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_EG_OMP_IOS, ROSE_ANA_RECON, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_EG_DIR
+            DIR1=../recon_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}
+            KGO=0
+
+    # Check atmos KGO
+    [[rose_ana_vm_n48_eg_omp_ios_atmos_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_EG_OMP_IOS, ROSE_ANA_N48_EG, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_EG_DIR
+            DIR1=../atmos_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}
+            KGO=0
+            
+    [[housekeep_recon_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}
+
+    [[housekeep_atmos_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration {{MPI_TASKS}}x1
+    [[recon_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_N48_EG_OMP_IOS, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, RECON_{{MPI_TASKS}}x1
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run {{MPI_TASKS}}x1
+    [[atmos_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1]]
+        inherit = VM_N48_EG_OMP_IOS, VM, VM_MPI, VM_2_THREADS, UM_N48_EG, ATMOS_{{MPI_TASKS}}x1, IOS_2
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm output_all_pe
+
+    [[rose_ana_vm_n48_eg_omp_ios_recon_proc]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}
+            DIR1=../recon_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1
+            KGO=
+
+    [[rose_ana_vm_n48_eg_omp_ios_atmos_proc]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_vm_n48_eg_omp_ios_1x{{MPI_TASKS}}
+            DIR1=../atmos_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1
+            KGO=
+
+    [[housekeep_recon_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1
+
+    [[housekeep_atmos_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_eg_omp_ios_{{MPI_TASKS}}x1
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "vm_n48_eg_omp_noios" in name_graphs_out -%}
+# N48 OpenMP no IO Server
+    [[VM_N48_EG_OMP_NOIOS]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_VM_N48_EG_DIR={{KGO_VM_ROOT_DIR}}/vm_n48_eg/{{VM_N48_EG_KGO}}
+
+    # Reconfiguration 1x{{MPI_TASKS}}
+    [[recon_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_N48_EG_OMP_NOIOS, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, RECON_1x{{MPI_TASKS}}
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run 1x{{MPI_TASKS}}
+    [[atmos_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}]]
+        inherit = VM_N48_EG_OMP_NOIOS, VM, VM_MPI, VM_2_THREADS, UM_N48_EG, ATMOS_1x{{MPI_TASKS}}, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm output_all_pe
+
+    # Check recon KGO
+    [[rose_ana_vm_n48_eg_omp_noios_recon_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_EG_OMP_NOIOS, ROSE_ANA_RECON, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_EG_DIR
+            DIR1=../recon_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}
+            KGO=0
+
+    # Check atmos KGO
+    [[rose_ana_vm_n48_eg_omp_noios_atmos_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_EG_OMP_NOIOS, ROSE_ANA_N48_EG, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_EG_DIR
+            DIR1=../atmos_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}
+            KGO=0
+
+    [[housekeep_recon_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}
+
+    [[housekeep_atmos_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration {{MPI_TASKS}}x1
+    [[recon_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_N48_EG_OMP_NOIOS, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, RECON_{{MPI_TASKS}}x1
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run {{MPI_TASKS}}x1
+    [[atmos_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1]]
+        inherit = VM_N48_EG_OMP_NOIOS, VM, VM_MPI, VM_2_THREADS, UM_N48_EG, ATMOS_{{MPI_TASKS}}x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm output_all_pe
+
+    [[rose_ana_vm_n48_eg_omp_noios_recon_proc]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}
+            DIR1=../recon_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1
+            KGO=
+
+    [[rose_ana_vm_n48_eg_omp_noios_atmos_proc]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_vm_n48_eg_omp_noios_1x{{MPI_TASKS}}
+            DIR1=../atmos_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1
+            KGO=
+
+    [[housekeep_recon_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1
+
+    [[housekeep_atmos_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_eg_omp_noios_{{MPI_TASKS}}x1
+{%- endif %}
+
+{%- endif %}
+
+
+{% if ( ( "vm_n48_eg_noomp" in name_graphs_out ) or
+        ( ( GENERATE_KGO == true ) and
+          ( "vm_n48_eg_omp_ios" in name_graphs_out ) ) or
+        ( ( GENERATE_KGO == true ) and
+          ( "vm_n48_eg_omp_noios" in name_graphs_out ) ) ) -%}
+# N48 no-OpenMP
+    [[VM_N48_EG_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_um_safe_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_VM_N48_EG_DIR={{KGO_VM_ROOT_DIR}}/vm_n48_eg/{{VM_N48_EG_KGO}}
+
+    # Reconfiguration 1x{{MPI_TASKS}}
+    [[recon_vm_n48_eg_noomp_1x{{MPI_TASKS}}]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_noomp/build-*/bin'"
+        inherit = VM_N48_EG_NOOMP, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, RECON_1x{{MPI_TASKS}}
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_noomp_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run 1x{{MPI_TASKS}}
+    [[atmos_vm_n48_eg_noomp_1x{{MPI_TASKS}}]]
+        inherit = VM_N48_EG_NOOMP, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, ATMOS_1x{{MPI_TASKS}}, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_noomp_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm output_all_pe
+
+    # Check recon KGO
+    [[rose_ana_vm_n48_eg_noomp_recon_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_EG_NOOMP, ROSE_ANA_RECON, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_EG_DIR
+            DIR1=../recon_vm_n48_eg_noomp_1x{{MPI_TASKS}}
+            KGO=0
+
+    # Check atmos KGO
+    [[rose_ana_vm_n48_eg_noomp_atmos_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_EG_NOOMP, ROSE_ANA_N48_EG, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_EG_DIR
+            DIR1=../atmos_vm_n48_eg_noomp_1x{{MPI_TASKS}}
+            KGO=0
+            
+    [[housekeep_recon_vm_n48_eg_noomp_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_eg_noomp_1x{{MPI_TASKS}}
+
+    [[housekeep_atmos_vm_n48_eg_noomp_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_eg_noomp_1x{{MPI_TASKS}}
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration {{MPI_TASKS}}x1
+    [[recon_vm_n48_eg_noomp_{{MPI_TASKS}}x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_noomp/build-*/bin'"
+        inherit = VM_N48_EG_NOOMP, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, RECON_{{MPI_TASKS}}x1
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_noomp_{{MPI_TASKS}}x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run {{MPI_TASKS}}x1
+    [[atmos_vm_n48_eg_noomp_{{MPI_TASKS}}x1]]
+        inherit = VM_N48_EG_NOOMP, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, ATMOS_{{MPI_TASKS}}x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_noomp_{{MPI_TASKS}}x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm output_all_pe
+
+    [[rose_ana_vm_n48_eg_noomp_recon_proc]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_vm_n48_eg_noomp_1x{{MPI_TASKS}}
+            DIR1=../recon_vm_n48_eg_noomp_{{MPI_TASKS}}x1
+            KGO=
+
+    [[rose_ana_vm_n48_eg_noomp_atmos_proc]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_vm_n48_eg_noomp_1x{{MPI_TASKS}}
+            DIR1=../atmos_vm_n48_eg_noomp_{{MPI_TASKS}}x1
+            KGO=
+
+    [[housekeep_recon_vm_n48_eg_noomp_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_eg_noomp_{{MPI_TASKS}}x1
+
+    [[housekeep_atmos_vm_n48_eg_noomp_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_eg_noomp_{{MPI_TASKS}}x1
+{%- endif %}
+
+{%- endif %}
+
+{% if "vm_n48_eg_omp_ios_comp_check" in name_graphs_out -%}
+# N48 OpenMP IO Server compiler checking
+    [[VM_N48_EG_OMP_IOS_COMP_CHECK]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_um_rigorous_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_VM_N48_EG_COMP_CHECK_DIR={{KGO_VM_ROOT_DIR}}/vm_n48_eg_comp_check/{{VM_N48_EG_COMP_CHECK_KGO}}
+
+    # Reconfiguration 1x{{MPI_TASKS}}
+    [[recon_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_rigorous_omp/build-*/bin'"
+        inherit = VM_N48_EG_OMP_IOS_COMP_CHECK, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, RECON_1x{{MPI_TASKS}}
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run 1x{{MPI_TASKS}}
+    [[atmos_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}]]
+        inherit = VM_N48_EG_OMP_IOS_COMP_CHECK, VM, VM_MPI, VM_2_THREADS, UM_N48_EG, ATMOS_1x{{MPI_TASKS}}, IOS_2
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Check recon KGO
+    [[rose_ana_vm_n48_eg_omp_ios_comp_check_recon_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_EG_OMP_IOS_COMP_CHECK, ROSE_ANA_RECON, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_EG_COMP_CHECK_DIR
+            DIR1=../recon_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}
+            KGO=0
+
+    # Check atmos KGO
+    [[rose_ana_vm_n48_eg_omp_ios_comp_check_atmos_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_EG_OMP_IOS_COMP_CHECK, ROSE_ANA_N48_EG, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_EG_COMP_CHECK_DIR
+            DIR1=../atmos_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}
+            KGO=0
+            
+    [[housekeep_recon_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}
+
+    [[housekeep_atmos_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration {{MPI_TASKS}}x1
+    [[recon_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_rigorous_omp/build-*/bin'"
+        inherit = VM_N48_EG_OMP_IOS_COMP_CHECK, VM, VM_MPI, VM_1_THREAD, UM_N48_EG, RECON_{{MPI_TASKS}}x1
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run {{MPI_TASKS}}x1
+    [[atmos_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1]]
+        inherit = VM_N48_EG_OMP_IOS_COMP_CHECK, VM, VM_MPI, VM_2_THREADS, UM_N48_EG, ATMOS_{{MPI_TASKS}}x1, IOS_2
+        [[[environment]]]
+            ASTART=../recon_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    [[rose_ana_vm_n48_eg_omp_ios_comp_check_recon_proc]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}
+            DIR1=../recon_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1
+            KGO=
+
+    [[rose_ana_vm_n48_eg_omp_ios_comp_check_atmos_proc]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_vm_n48_eg_omp_ios_comp_check_1x{{MPI_TASKS}}
+            DIR1=../atmos_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1
+            KGO=
+
+    [[housekeep_recon_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1
+
+    [[housekeep_atmos_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_eg_omp_ios_comp_check_{{MPI_TASKS}}x1
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "vm_idealised_bicyclic_lam_rce" in name_graphs_out -%}
+# Idealised bicyclic lam : radiative-convective equilibrium
+    [[VM_IDEALISED_BICYCLIC_LAM_RCE]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_VM_IDEALISED_BICYCLIC_LAM_RCE_DIR={{KGO_VM_ROOT_DIR}}/vm_idealised_bicyclic_lam_rce/{{VM_IDEALISED_BICYCLIC_LAM_RCE_KGO}}
+            
+    # Reconfiguration
+    [[recon_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_IDEALISED_BICYCLIC_LAM_RCE, VM, VM_MPI, VM_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, RECON_1x{{MPI_TASKS}}
+        [[[environment]]]
+            ASTART=../recon_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run
+    [[atmos_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}]]
+        inherit = VM_IDEALISED_BICYCLIC_LAM_RCE, VM, VM_MPI, VM_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, ATMOS_1x{{MPI_TASKS}}, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}/atmos.astart
+            
+    # Check recon KGO
+    [[rose_ana_vm_idealised_bicyclic_lam_rce_recon_kgo]]
+        inherit = VM_ROSE_ANA, VM_IDEALISED_BICYCLIC_LAM_RCE, ROSE_ANA_RECON, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_IDEALISED_BICYCLIC_LAM_RCE_DIR
+            DIR1=../recon_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}
+            KGO=0
+            
+    # Check atmos KGO
+    [[rose_ana_vm_idealised_bicyclic_lam_rce_atmos_kgo]]
+        inherit = VM_ROSE_ANA, VM_IDEALISED_BICYCLIC_LAM_RCE, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_IDEALISED_BICYCLIC_LAM_RCE_DIR
+            DIR1=../atmos_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}
+            KGO=0
+
+    [[housekeep_recon_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}
+
+    [[housekeep_atmos_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration
+    [[recon_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_IDEALISED_BICYCLIC_LAM_RCE, VM, VM_MPI, VM_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, RECON_{{MPI_TASKS}}x1
+        [[[environment]]]
+            ASTART=../recon_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=vm
+
+    # Atmosphere Model Run
+    [[atmos_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1]]
+        inherit = VM_IDEALISED_BICYCLIC_LAM_RCE, VM, VM_MPI, VM_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, ATMOS_{{MPI_TASKS}}x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1/atmos.astart
+
+    [[rose_ana_vm_idealised_bicyclic_lam_rce_recon_proc]]
+        inherit = VM_ROSE_ANA, VM_IDEALISED_BICYCLIC_LAM_RCE, ROSE_ANA_RECON, VM
+        [[[environment]]]
+            DIR0=../recon_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}
+            DIR1=../recon_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1
+            KGO=
+            
+    [[rose_ana_vm_idealised_bicyclic_lam_rce_atmos_proc]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=../atmos_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}
+            DIR1=../atmos_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1
+            KGO=
+
+    [[housekeep_recon_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1
+
+    [[housekeep_atmos_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_idealised_bicyclic_lam_rce_{{MPI_TASKS}}x1
+
+    # Atmosphere Model Run NRUN-CRUN
+    [[atmos_vm_idealised_bicyclic_lam_rce_nrun_1x{{MPI_TASKS}}]]
+        inherit = VM_IDEALISED_BICYCLIC_LAM_RCE, VM, VM_MPI, VM_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, ATMOS_1x{{MPI_TASKS}}, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=nrun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/VM_IDEALISED_BICYCLIC_LAM_RCE
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/VM_IDEALISED_BICYCLIC_LAM_RCE
+
+    # Atmosphere Model Run NRUN-CRUN
+    [[atmos_vm_idealised_bicyclic_lam_rce_crun_1x{{MPI_TASKS}}]]
+        inherit = VM_IDEALISED_BICYCLIC_LAM_RCE, VM, VM_MPI, VM_1_THREAD, UM_IDEALISED_BICYCLIC_LAM_RCE, ATMOS_1x{{MPI_TASKS}}, IOS_0
+        [[[environment]]]
+            ASTART=
+            CONTINUE=true
+            ROSE_APP_OPT_CONF_KEYS=crun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/VM_IDEALISED_BICYCLIC_LAM_RCE
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/VM_IDEALISED_BICYCLIC_LAM_RCE
+
+    [[rose_ana_vm_idealised_bicyclic_lam_rce_atmos_nruncrun]]
+        inherit = VM_ROSE_ANA, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=../atmos_vm_idealised_bicyclic_lam_rce_1x{{MPI_TASKS}}
+            DIR1=$CYLC_SUITE_SHARE_DIR/data/VM_IDEALISED_BICYCLIC_LAM_RCE
+            ROSE_APP_OPT_CONF_KEYS=nruncrun
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "vm_n48_ukca_eg_omp_noios" in name_graphs_out -%}
+# N48 UKCA GA7+StratTrop OpenMP no IO Server safe
+    [[VM_N48_UKCA_EG_OMP_NOIOS]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        [[[environment]]]
+            # UKCA output will be decomposition dependent, so
+            # include this information in the KGO directory name
+            KGO_VM_N48_UKCA_EG_DIR={{KGO_VM_ROOT_DIR}}/vm_n48_ukca_eg/{{VM_N48_UKCA_EG_KGO}}
+
+    # Reconfiguration 1x{{MPI_TASKS}}
+    [[recon_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_N48_UKCA_EG_OMP_NOIOS, VM, VM_MPI, VM_1_THREAD, UM_N48_UKCA_EG, RECON_1x{{MPI_TASKS}}
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}/atmos.astart
+
+    # Atmosphere Model Run 1x{{MPI_TASKS}}
+    [[atmos_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}]]
+        inherit = VM_N48_UKCA_EG_OMP_NOIOS, VM, VM_MPI, VM_2_THREADS, UM_N48_UKCA_EG, ATMOS_1x{{MPI_TASKS}}, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}/atmos.astart
+
+    # Check recon KGO
+    [[rose_ana_vm_n48_ukca_eg_omp_noios_recon_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_OMP_NOIOS, VM, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_UKCA_EG_DIR
+            DIR1=../recon_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}
+            KGO=0
+
+    # Check atmos KGO
+    [[rose_ana_vm_n48_ukca_eg_omp_noios_atmos_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_OMP_NOIOS, VM, ROSE_ANA_N48_UKCA_EG
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_UKCA_EG_DIR
+            DIR1=../atmos_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}
+            KGO=0
+
+    [[housekeep_recon_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}
+
+    [[housekeep_atmos_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration {{MPI_TASKS}}x1
+    [[recon_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_N48_UKCA_EG_OMP_NOIOS, VM, VM_MPI, VM_1_THREAD, UM_N48_UKCA_EG, RECON_{{MPI_TASKS}}x1
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1/atmos.astart
+
+    # Atmosphere Model Run {{MPI_TASKS}}x1
+    [[atmos_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1]]
+        inherit = VM_N48_UKCA_EG_OMP_NOIOS, VM, VM_MPI, VM_2_THREADS, UM_N48_UKCA_EG, ATMOS_{{MPI_TASKS}}x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1/atmos.astart
+
+    [[rose_ana_vm_n48_ukca_eg_omp_noios_recon_proc]]
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_OMP_NOIOS, VM, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}
+            DIR1=../recon_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1
+            KGO=
+
+    [[rose_ana_vm_n48_ukca_eg_omp_noios_atmos_proc]]
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_OMP_NOIOS, VM, ROSE_ANA_N48_UKCA_EG
+        [[[environment]]]
+            DIR0=../atmos_vm_n48_ukca_eg_omp_noios_1x{{MPI_TASKS}}
+            DIR1=../atmos_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1
+            KGO=
+
+    [[housekeep_recon_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1
+
+    [[housekeep_atmos_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_ukca_eg_omp_noios_{{MPI_TASKS}}x1
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "vm_n48_ukca_eg_omp_noios_comp_check" in name_graphs_out -%}
+# N48 UKCA GA7+StratTrop OpenMP no IO Server compiler checking
+    [[VM_N48_UKCA_EG_OMP_NOIOS_COMP_CHECK]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_um_rigorous_omp/build-*/bin'"
+        [[[environment]]]
+            # UKCA output will be decomposition dependent, so
+            # include this information in the KGO directory name
+            KGO_VM_N48_UKCA_EG_COMP_CHECK_DIR={{KGO_VM_ROOT_DIR}}/vm_n48_ukca_eg_comp_check/{{VM_N48_UKCA_EG_COMP_CHECK_KGO}}
+
+    # Reconfiguration 1x{{MPI_TASKS}}
+    [[recon_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_rigorous_omp/build-*/bin'"
+        inherit = VM_N48_UKCA_EG_OMP_NOIOS_COMP_CHECK, VM, VM_MPI, VM_1_THREAD, UM_N48_UKCA_EG, RECON_1x{{MPI_TASKS}}
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}/atmos.astart
+
+    # Atmosphere Model Run 1x{{MPI_TASKS}}
+    [[atmos_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}]]
+        inherit = VM_N48_UKCA_EG_OMP_NOIOS_COMP_CHECK, VM, VM_MPI, VM_2_THREADS, UM_N48_UKCA_EG, ATMOS_1x{{MPI_TASKS}}, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}/atmos.astart
+
+    # Check recon KGO
+    [[rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_recon_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_OMP_NOIOS_COMP_CHECK, VM, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_UKCA_EG_COMP_CHECK_DIR
+            DIR1=../recon_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}
+            KGO=0
+
+    # Check atmos KGO
+    [[rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_atmos_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_OMP_NOIOS_COMP_CHECK, VM, ROSE_ANA_N48_UKCA_EG
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_UKCA_EG_COMP_CHECK_DIR
+            DIR1=../atmos_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}
+            KGO=0
+
+    [[housekeep_recon_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}
+
+    [[housekeep_atmos_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration {{MPI_TASKS}}x1
+    [[recon_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_N48_UKCA_EG_OMP_NOIOS_COMP_CHECK, VM, VM_MPI, VM_1_THREAD, UM_N48_UKCA_EG, RECON_{{MPI_TASKS}}x1
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1/atmos.astart
+
+    # Atmosphere Model Run {{MPI_TASKS}}x1
+    [[atmos_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1]]
+        inherit = VM_N48_UKCA_EG_OMP_NOIOS_COMP_CHECK, VM, VM_MPI, VM_2_THREADS, UM_N48_UKCA_EG, ATMOS_{{MPI_TASKS}}x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1/atmos.astart
+
+    [[rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_recon_proc]]
+        inherit =  VM_ROSE_ANA, VM_N48_UKCA_EG_OMP_NOIOS_COMP_CHECK, VM, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}
+            DIR1=../recon_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1
+            KGO=
+
+    [[rose_ana_vm_n48_ukca_eg_omp_noios_comp_check_atmos_proc]]
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_OMP_NOIOS_COMP_CHECK, VM, ROSE_ANA_N48_UKCA_EG
+        [[[environment]]]
+            DIR0=../atmos_vm_n48_ukca_eg_omp_noios_comp_check_1x{{MPI_TASKS}}
+            DIR1=../atmos_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1
+            KGO=
+
+    [[housekeep_recon_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1
+
+    [[housekeep_atmos_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_ukca_eg_omp_noios_comp_check_{{MPI_TASKS}}x1
+{%- endif %}
+
+{%- endif %}
+
+
+{% if ( ( "vm_n48_ukca_eg_noomp" in name_graphs_out ) or
+        ( ( GENERATE_KGO == true ) and
+          ( "vm_n48_ukca_eg_omp_noios" in name_graphs_out ) ) ) -%}
+# N48 UKCA GA7+StratTrop no OpenMP no IO Server safe
+    [[VM_N48_UKCA_EG_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_um_safe_noomp/build-*/bin'"
+        [[[environment]]]
+            # UKCA output will be decomposition dependent, so
+            # include this information in the KGO directory name
+            KGO_VM_N48_UKCA_EG_DIR={{KGO_VM_ROOT_DIR}}/vm_n48_ukca_eg/{{VM_N48_UKCA_EG_KGO}}
+
+    # Reconfiguration 1x{{MPI_TASKS}}
+    [[recon_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_noomp/build-*/bin'"
+        inherit = VM_N48_UKCA_EG_NOOMP, VM, VM_MPI, VM_1_THREAD, UM_N48_UKCA_EG, RECON_1x{{MPI_TASKS}}
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}/atmos.astart
+
+    # Check recon KGO
+    [[rose_ana_vm_n48_ukca_eg_noomp_recon_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_NOOMP, VM, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_UKCA_EG_DIR
+            DIR1=../recon_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}
+            KGO=0
+            
+    # Check atmos KGO
+    [[rose_ana_vm_n48_ukca_eg_noomp_atmos_kgo]]  
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_NOOMP, VM, ROSE_ANA_N48_UKCA_EG
+        [[[environment]]]
+            DIR0=$KGO_VM_N48_UKCA_EG_DIR
+            DIR1=../atmos_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}
+            KGO=0
+
+    # Atmosphere Model Run 1x{{MPI_TASKS}}
+    [[atmos_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}]]
+        inherit = VM_N48_UKCA_EG_NOOMP, VM, VM_MPI, VM_1_THREAD, UM_N48_UKCA_EG, ATMOS_1x{{MPI_TASKS}}, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}/atmos.astart
+
+    [[housekeep_recon_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}
+
+    [[housekeep_atmos_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}
+
+{%- if INTEGRATION_TESTING == true %}
+    # Reconfiguration {{MPI_TASKS}}x1
+    [[recon_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_vm_gnu_um_safe_omp/build-*/bin'"
+        inherit = VM_N48_UKCA_EG_NOOMP, VM, VM_MPI, VM_1_THREAD, UM_N48_UKCA_EG, RECON_{{MPI_TASKS}}x1
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1/atmos.astart
+
+    # Atmosphere Model Run {{MPI_TASKS}}x1
+    [[atmos_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1]]
+        inherit = VM_N48_UKCA_EG_NOOMP, VM, VM_MPI, VM_1_THREAD, UM_N48_UKCA_EG, ATMOS_{{MPI_TASKS}}x1, IOS_0
+        [[[environment]]]
+            ASTART=../recon_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1/atmos.astart
+
+    [[rose_ana_vm_n48_ukca_eg_noomp_recon_proc]]
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_NOOMP, VM, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}
+            DIR1=../recon_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1
+            KGO=
+
+    [[rose_ana_vm_n48_ukca_eg_noomp_atmos_proc]]
+        inherit = VM_ROSE_ANA, VM_N48_UKCA_EG_NOOMP, VM, ROSE_ANA_N48_UKCA_EG
+        [[[environment]]]
+            DIR0=../atmos_vm_n48_ukca_eg_noomp_1x{{MPI_TASKS}}
+            DIR1=../atmos_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1
+            KGO=
+
+    [[housekeep_recon_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../recon_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1
+
+    [[housekeep_atmos_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_vm_n48_ukca_eg_noomp_{{MPI_TASKS}}x1
+{%- endif %}
+
+{%- endif %}
+
+{% if "vm_scm_togacoare_ga6_omp" in name_graphs_out -%}
+    [[VM_SCM_TOGACOARE_GA6_OMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_scm_rigorous_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_VM_SCM_TOGACOARE_GA6_DIR={{KGO_VM_ROOT_DIR}}/vm_scm_togacoare_ga6/{{VM_SCM_TOGACOARE_GA6_KGO}}
+
+    [[scm_vm_scm_togacoare_ga6_omp_1_thread]]
+        inherit = VM_SCM_TOGACOARE_GA6_OMP, VM, VM_MPI, VM_1_THREAD, SCM_TOGACOARE_GA6
+
+    # Check atmos KGO
+    [[rose_ana_scm_vm_scm_togacoare_ga6_omp_1_thread_atmos_kgo]]
+        inherit = VM_ROSE_ANA, VM_SCM_TOGACOARE_GA6_OMP, ROSE_ANA_SCM_TOGACOARE_GA6, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_SCM_TOGACOARE_GA6_DIR
+            DIR1=../scm_vm_scm_togacoare_ga6_omp_1_thread
+            KGO=0
+
+    [[housekeep_scm_vm_scm_togacoare_ga6_omp_1_thread]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../scm_vm_scm_togacoare_ga6_omp_1_thread
+
+{%- endif %}
+
+{% if ( ( "vm_scm_togacoare_ga6_noomp" in name_graphs_out ) or
+        ( ( GENERATE_KGO == true ) and
+          ( "vm_scm_togacoare_ga6_omp" in name_graphs_out ) ) ) -%}
+    [[VM_SCM_TOGACOARE_GA6_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_scm_rigorous_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_VM_SCM_TOGACOARE_GA6_DIR={{KGO_VM_ROOT_DIR}}/vm_scm_togacoare_ga6/{{VM_SCM_TOGACOARE_GA6_KGO}}
+
+    [[scm_vm_scm_togacoare_ga6_noomp]]
+        inherit = VM_SCM_TOGACOARE_GA6_NOOMP, VM, VM_MPI, VM_1_THREAD, SCM_TOGACOARE_GA6
+
+    # Check atmos KGO
+    [[rose_ana_scm_vm_scm_togacoare_ga6_noomp_atmos_kgo]]
+        inherit = VM_ROSE_ANA, VM_SCM_TOGACOARE_GA6_NOOMP, ROSE_ANA_SCM_TOGACOARE_GA6, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_SCM_TOGACOARE_GA6_DIR
+            DIR1=../scm_vm_scm_togacoare_ga6_noomp
+            KGO=0
+
+    [[housekeep_scm_vm_scm_togacoare_ga6_noomp]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../scm_vm_scm_togacoare_ga6_noomp
+                            
+{%- endif %}
+
+{% if "vm_scm_gabls3_ga6_omp" in name_graphs_out -%}
+    [[VM_SCM_GABLS3_GA6_OMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_scm_debug_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_VM_SCM_GABLS3_GA6_DIR={{KGO_VM_ROOT_DIR}}/vm_scm_gabls3_ga6/{{VM_SCM_GABLS3_GA6_KGO}}
+
+    [[scm_vm_scm_gabls3_ga6_omp_1_thread]]
+        inherit = VM_SCM_GABLS3_GA6_OMP, VM, VM_MPI, VM_1_THREAD, SCM_GABLS3_GA6
+
+    # Check atmos KGO
+    [[rose_ana_scm_vm_scm_gabls3_ga6_omp_1_thread_atmos_kgo]]
+        inherit = VM_ROSE_ANA, VM_SCM_GABLS3_GA6_OMP, ROSE_ANA_SCM_GABLS3_GA6, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_SCM_GABLS3_GA6_DIR
+            DIR1=../scm_vm_scm_gabls3_ga6_omp_1_thread
+            KGO=0
+
+    [[housekeep_scm_vm_scm_gabls3_ga6_omp_1_thread]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../scm_vm_scm_gabls3_ga6_omp_1_thread
+
+{%- endif %}
+
+{% if ( ( "vm_scm_gabls3_ga6_noomp" in name_graphs_out ) or
+        ( ( GENERATE_KGO == true ) and
+          ( "vm_scm_gabls3_ga6_omp" in name_graphs_out ) ) ) -%}
+    [[VM_SCM_GABLS3_GA6_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_vm_gnu_scm_debug_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_VM_SCM_GABLS3_GA6_DIR={{KGO_VM_ROOT_DIR}}/vm_scm_gabls3_ga6/{{VM_SCM_GABLS3_GA6_KGO}}
+
+    [[scm_vm_scm_gabls3_ga6_noomp]]
+        inherit = VM_SCM_GABLS3_GA6_NOOMP, VM, VM_MPI, VM_1_THREAD, SCM_GABLS3_GA6
+
+    # Check atmos KGO
+    [[rose_ana_scm_vm_scm_gabls3_ga6_noomp_atmos_kgo]]
+        inherit = VM_ROSE_ANA, VM_SCM_GABLS3_GA6_NOOMP, ROSE_ANA_SCM_GABLS3_GA6, VM
+        [[[environment]]]
+            DIR0=$KGO_VM_SCM_GABLS3_GA6_DIR
+            DIR1=../scm_vm_scm_gabls3_ga6_noomp
+            KGO=0
+
+    [[housekeep_scm_vm_scm_gabls3_ga6_noomp]]
+        inherit = VM_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../scm_vm_scm_gabls3_ga6_noomp
+
+{%- endif %}

@@ -1,0 +1,326 @@
+#!jinja2
+
+{% set TASK_RUN = 'rose task-run --verbose' %}
+{% set TASK_RUN_RECON = 'rose task-run --verbose --command-key=recon' %}
+
+{%- if MAKE_PREBUILDS == true %}
+{%- set PREBUILDS=false %}
+{%- set ARCHIVE_FCM_MAKE=false %}
+{%- endif %}
+
+{%- if SITE == 'meto' %}
+%include 'site/meto/variables.rc'
+{%- elif SITE == 'nci' %}
+%include 'site/nci/variables.rc'
+{%- elif SITE == 'ncas' %}
+%include 'site/ncas/variables.rc'
+{%- elif SITE == 'uoe' %}
+%include 'site/uoe/variables.rc'
+{%- elif SITE == 'niwa' %}
+%include 'site/niwa/variables.rc'
+{%- elif SITE == 'kma' %}
+%include 'site/kma/variables.rc'
+{%- elif SITE == 'ncm' %}
+%include 'site/ncm/variables.rc'
+{%- elif SITE == 'mss' %}
+%include 'site/mss/variables.rc'
+{%- elif SITE == 'afw' %}
+%include 'site/afw/variables.rc'
+{%- elif SITE == 'ecmwf' %}
+%include 'site/ecmwf/variables.rc'
+{%- elif SITE == 'saws' %}
+%include 'site/saws/variables.rc'
+{%- elif SITE == 'vm' %}
+%include 'site/vm/variables.rc'
+{%- elif SITE == 'icm' %}
+%include 'site/icm/variables.rc'
+{%- else %}
+# Site not set, or not recognised - deliberately cause an undefined variable
+# error to cause an abort
+{{ SITE_NOT_FOUND }}
+{%- endif %}
+
+{# Cannot install KGO on sites other than the VM #}
+{%- if GENERATE_KGO %}
+  {%- if SITE != 'vm' %}
+    {{ raise('Only rose stem on the virtual machine can automatically generate and install KGO.') }}
+  {%- endif %}
+{%- endif %}
+
+[cylc]
+    UTC mode = True 
+    abort if any task fails = {{ ABORT_ON_FAIL | default("False") }}
+    # Timeout handlers
+    [[events]]
+        timeout = {{ SUITE_TIMEOUT }}
+        # deal with installation of KGO if requested
+        {%- if GENERATE_KGO == true %}
+            # Make use of the kgo_update.py script to check for failed
+            # rose-ana tests, and copy the KGO generated to the standard
+            # install locations.
+            shutdown handler = "kgo_update.py --non-interactive ; suite_report.py -s"
+            stalled handler = "kgo_update.py --non-interactive ; suite_report.py -s"
+        {%- else %}
+            shutdown handler = "suite_report.py -s"
+            stalled handler = "suite_report.py -s"
+        {%- endif %}
+
+
+# Link job name to the dependency tree of tasks belonging to that job
+{# name_graphs contains test_option-dependency key-value pairs -#}
+{%- if SITE == 'meto' %}
+%include 'site/meto/graph-standard.rc'
+{%- elif SITE == 'nci' %}
+%include 'site/nci/graph-standard.rc'
+{%- elif SITE == 'ncas' %}
+%include 'site/ncas/graph-standard.rc'
+{%- elif SITE == 'uoe' %}
+%include 'site/uoe/graph-standard.rc'
+{%- elif SITE == 'niwa' %}
+%include 'site/niwa/graph-standard.rc'
+{%- elif SITE == 'kma' %}
+%include 'site/kma/graph-standard.rc'
+{%- elif SITE == 'ncm' %}
+%include 'site/ncm/graph-standard.rc'
+{%- elif SITE == 'mss' %}
+%include 'site/mss/graph-standard.rc'
+{%- elif SITE == 'afw' %}
+%include 'site/afw/graph-standard.rc'
+{%- elif SITE == 'ecmwf' %}
+%include 'site/ecmwf/graph-standard.rc'
+{%- elif SITE == 'saws' %}
+%include 'site/saws/graph-standard.rc'
+{%- elif SITE == 'vm' %}
+%include 'site/vm/graph-standard.rc'
+{%- elif SITE == 'icm' %}
+%include 'site/icm/graph-standard.rc'
+{%- endif %}
+
+# Define groups as lists of jobs and other groups
+{# groups contains group_option-trigger_list key-value pairs. -#}
+{# If a group option is set, each group or task in the trigger list will be set. -#}
+{%- if SITE == 'meto' %}
+%include 'site/meto/graph-group.rc'
+{%- elif SITE == 'nci' %}
+%include 'site/nci/graph-group.rc'
+{%- elif SITE == 'kma' %}
+%include 'site/kma/graph-group.rc'
+{%- elif SITE == 'ncas' %}
+%include 'site/ncas/graph-group.rc'
+{%- elif SITE == 'vm' %}
+%include 'site/vm/graph-group.rc'
+{%- elif SITE == 'niwa' %}
+%include 'site/niwa/graph-group.rc'
+{%- endif %}
+
+{%- if SITE == 'meto' %}
+%include 'site/meto/graph-integ.rc'
+{%- elif SITE == 'nci' %}
+%include 'site/nci/graph-integ.rc'
+{%- elif SITE == 'ncas' %}
+%include 'site/ncas/graph-integ.rc'
+{%- elif SITE == 'uoe' %}
+%include 'site/uoe/graph-integ.rc'
+{%- elif SITE == 'niwa' %}
+%include 'site/niwa/graph-integ.rc'
+{%- elif SITE == 'kma' %}
+%include 'site/kma/graph-integ.rc'
+{%- elif SITE == 'ncm' %}
+%include 'site/ncm/graph-integ.rc'
+{%- elif SITE == 'mss' %}
+%include 'site/mss/graph-integ.rc'
+{%- elif SITE == 'afw' %}
+%include 'site/afw/graph-integ.rc'
+{%- elif SITE == 'ecmwf' %}
+%include 'site/ecmwf/graph-integ.rc'
+{%- elif SITE == 'saws' %}
+%include 'site/saws/graph-integ.rc'
+{%- elif SITE == 'vm' %}
+%include 'site/vm/graph-integ.rc'
+{%- elif SITE == 'icm' %}
+%include 'site/icm/graph-integ.rc'
+{%- else %}
+  {%- set INTEGRATION_TESTING = false %}
+  {%- set integ_graphs = "" %}
+{%- endif %}
+
+
+[scheduling]
+{%- if SITE == 'meto' %}
+%include 'site/meto/queues.rc'
+{%- elif SITE == 'nci' %}
+%include 'site/nci/queues.rc'
+{%- elif SITE == 'kma' %}
+%include 'site/kma/queues.rc'
+{%- elif SITE == 'ncas' %}
+%include 'site/ncas/queues.rc'
+{%- elif SITE == 'vm' %}
+%include 'site/vm/queues.rc'
+{%- elif SITE == 'niwa' %}
+%include 'site/niwa/queues.rc'
+{%- elif SITE == 'icm' %}
+%include 'site/icm/queues.rc'
+{%- endif %}
+
+    [[dependencies]]
+        graph = """
+{#- Recursively add dependencies from RUN_NAMES, replacing groups with subgroups/tasks #}
+{%- set name_graphs_out = [] %}
+{%- set graphs_out = [] %}
+{%- for name in RUN_NAMES %}
+    {%- set namestack = [name] %}
+    {%- for stackname in namestack recursive %}
+        {%- if stackname in name_graphs %}
+            {%- if name_graphs_out.append(stackname) %}
+            {%- endif %}
+            {%- set outgraph = name_graphs[stackname] %}
+            {%- set integgraph = integ_graphs[stackname] %}
+            {%- if outgraph not in graphs_out %}
+            {#- Add new dependency. #}
+{{ outgraph }}
+              {%- do graphs_out.append(outgraph) %}
+            {%- endif %}
+
+            {% if INTEGRATION_TESTING == true %}
+              {%- set integgraph = integ_graphs[stackname] %}
+              {%- if integgraph not in graphs_out %}
+{{integgraph}}
+                {%- do graphs_out.append(integgraph) %}
+              {%- endif %}
+            {% endif %}
+
+
+        {%- elif stackname in groups %}
+        {#- Add the group contents to the stack. #}
+{{ loop(groups[stackname]) }}
+        {%- else %}
+        {# Deliberately cause an error as the group does not exist #}
+        {{ raise('A specified group does not exist: ' + stackname) }} 
+        {%- endif %}
+    {%- endfor %}
+{%- endfor %}
+     """
+
+# Runtime sections
+[runtime]
+# Root, inherited by everything
+    [[root]]
+        init-script = """
+export CYLC_VERSION={{CYLC_VERSION}}
+export ROSE_VERSION={{ROSE_VERSION}}
+export FCM_VERSION={{FCM_VERSION}}
+"""
+        script = "{{TASK_RUN}}"
+        [[[events]]]
+            mail events = retry, submission retry, timeout, submission timeout, submission failed
+            submission timeout = {{ SUITE_TIMEOUT }}
+        [[[environment]]]
+            UMDIR={{ UMDIR }}
+            CUMFDIR=$CYLC_TASK_WORK_PATH
+            DATAW=$CYLC_TASK_WORK_PATH
+            DATAM=$CYLC_TASK_WORK_PATH
+            INPUT_DATA=$UMDIR/standard_jobs/inputs/vn{{VN}}
+            ROSE_ORIG_HOST={{ ROSE_ORIG_HOST }}
+            VN = {{ VN }}
+            UM_INSTALL_DIR=$CYLC_SUITE_SHARE_DIR
+            STASHMASTER=$CYLC_SUITE_SHARE_DIR/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF=$CYLC_SUITE_SHARE_DIR/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+
+%include 'family-common.rc'
+
+{%- if SITE == 'meto' %}
+%include 'site/meto/family-linux.rc'
+%include 'site/meto/family-xc40.rc'
+{%- elif SITE == 'nci' %}
+%include 'site/nci/family.rc'
+{%- elif SITE == 'ncas' %}
+%include 'site/ncas/family-linux.rc'
+%include 'site/ncas/family-xc30.rc'
+{%- elif SITE == 'uoe' %}
+%include 'site/uoe/family-x86-gnu.rc'
+%include 'site/uoe/family-emps.rc'
+%include 'site/uoe/family-dirac.rc'
+%include 'site/uoe/family-isca.rc'
+{%- elif SITE == 'niwa' %}
+%include 'site/niwa/family-xc50.rc'
+{%- elif SITE == 'kma' %}
+%include 'site/kma/family-linux.rc'
+%include 'site/kma/family-xc40.rc'
+{%- elif SITE == 'ncm' %}
+%include 'site/ncm/family-hpc.rc'
+{%- elif SITE == 'mss' %}
+%include 'site/mss/family.rc'
+{%- elif SITE == 'afw' %}
+%include 'site/afw/family.rc'
+{%- elif SITE == 'ecmwf' %}
+%include 'site/ecmwf/family.rc'
+{%- elif SITE == 'saws' %}
+%include 'site/saws/family.rc'
+{%- elif SITE == 'vm' %}
+%include 'site/vm/family.rc'
+{%- elif SITE == 'icm' %}
+%include 'site/icm/family-pwr7.rc'
+%include 'site/icm/family-xc40.rc'
+%include 'site/icm/family-linux.rc'
+{%- endif %}
+
+
+
+# Runtime sections for each task, ordered by job. The Jinja2 'if/endif' block
+# surrounding each job removes it if that job isn't active, so cylc doesn't
+# have to process tasks it's not going to run.
+
+# Each job contains its own family, which is used to contain settings common
+# to a particular job but no others, as well as enabling neater visualisation.
+
+
+{%- if SITE == 'meto' %}
+%include 'site/meto/runtime-install.rc'
+%include 'site/meto/runtime-xc40.rc'
+%include 'site/meto/runtime-linux-common.rc'
+%include 'site/meto/runtime-linux.rc'
+{%- elif SITE == 'nci' %}
+%include 'site/nci/runtime-install.rc'
+%include 'site/nci/runtime.rc'
+{%- elif SITE == 'ncas' %}
+%include 'site/ncas/runtime-install.rc'
+%include 'site/ncas/runtime.rc'
+{%- elif SITE == 'uoe' %}
+%include 'site/uoe/runtime-install.rc'
+%include 'site/uoe/runtime-x86-gnu.rc'
+%include 'site/uoe/runtime-emps.rc'
+%include 'site/uoe/runtime-dirac.rc'
+%include 'site/uoe/runtime-isca.rc'
+{%- elif SITE == 'niwa' %}
+%include 'site/niwa/runtime-install.rc'
+%include 'site/niwa/runtime-xc50.rc'
+{%- elif SITE == 'kma' %}
+%include 'site/kma/runtime-install.rc'
+%include 'site/kma/runtime-xc40.rc'
+{%- elif SITE == 'ncm' %}
+%include 'site/ncm/runtime-hpc.rc'
+%include 'site/ncm/runtime-install.rc'
+{%- elif SITE == 'mss' %}
+%include 'site/mss/runtime-install.rc'
+%include 'site/mss/runtime.rc'
+{%- elif SITE == 'afw' %}
+%include 'site/afw/runtime-install.rc'
+%include 'site/afw/runtime.rc'
+{%- elif SITE == 'ecmwf' %}
+%include 'site/ecmwf/runtime-install.rc'
+%include 'site/ecmwf/runtime.rc'
+{%- elif SITE == 'saws' %}
+%include 'site/saws/runtime-install.rc'
+%include 'site/saws/runtime.rc'
+{%- elif SITE == 'vm' %}
+%include 'site/vm/runtime-install.rc'
+%include 'site/vm/runtime.rc'
+{%- elif SITE == 'icm' %}
+%include 'site/icm/runtime-install.rc'
+%include 'site/icm/runtime-pwr7.rc'
+%include 'site/icm/runtime-xc40.rc'
+%include 'site/icm/runtime-linux.rc'
+{%- endif %}
+
+%include 'runtime-common.rc'
+

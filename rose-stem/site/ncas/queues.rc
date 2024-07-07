@@ -1,0 +1,10 @@
+    [[queues]]
+        [[[extract_local]]]
+            limit = 4
+            members = EXTRACT, EXTRACT_INTEL
+        [[[serial_queue_archer]]]
+            limit = 2
+            members = NCAS_XC30
+        [[[short_queue_archer]]]
+            limit = 1
+            members = NCAS_XC30_PARALLEL

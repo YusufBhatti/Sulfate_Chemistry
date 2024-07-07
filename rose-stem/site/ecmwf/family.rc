@@ -1,0 +1,52 @@
+# Extract & mirror tasks should use this class directly
+    [[EXTRACT]]
+        inherit = EXTRACT_SOURCE
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+        [[[job submission]]]
+            method = background
+        [[[environment]]]
+            PLATFORM=ecmwf-xc30-cce
+            OPENMP=true
+            DRHOOK=false
+
+
+    [[XC30]]
+        [[[job submission]]]
+           method = pbs
+        [[[remote]]]
+           host = $(rose host-select hpc)
+        [[[directives]]]
+           -W = umask=0022
+           -l = walltime=3600
+            -l EC_total_tasks=1
+            -l EC_total_tasks=1
+        [[[environment]]]
+            UMDIR={{UMDIR}}
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{ECMWF_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{ECMWF_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{ECMWF_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+
+# ECMWF XC30 class for serial jobs
+    [[XC30_SERIAL]]
+        inherit = XC30
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+        [[[directives]]]
+            -l = walltime=10800
+            -l EC_total_tasks=1
+            -q = ns
+
+# HPC class for build jobs
+    [[XC30_BUILD]]
+        inherit = EXTRACT_SOURCE, XC30_SERIAL
+        pre-script = "module list 2>&1"
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+            PLATFORM=ecmwf-xc30-cce
+            OPENMP=true
+            DRHOOK=false
+           

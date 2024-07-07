@@ -1,0 +1,184 @@
+#!/usr/bin/perl -w
+# *****************************COPYRIGHT*******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT*******************************
+# Name: parsec
+# Version: 0.0.1
+# Author: thomas.edwards@metoffice.gov.uk
+# Purpose: This deck will parse a C file, preprocess it with a set of defines
+# and then generate a F90 file for submission to f90tohtml and a html file
+# which contains anchors of the orignal C source file.
+# Usage: parsec [cpp options] <file>
+
+use strict;
+
+# HTML::Entities allows us to escape all special characters which can cause
+# problems when displaying code.
+use HTML::Entities;
+
+
+
+my($inputfile)=$ARGV[$#ARGV];
+my($workdir)=$ENV{'WORKDIR'};
+
+# Check that the input file does exist
+if(! -f $inputfile)  {
+  die("Input file, $inputfile, does not exist");
+}
+my @split=split(/\//,$inputfile);
+my($htmlname)=$split[$#split];
+$htmlname=~s/\.[A-z]+$//;
+my($fortranname)="$workdir/$htmlname.F90";
+$htmlname.=".html";
+
+my %knownTokens = (
+  '\)' => "RPAR",
+  '\(' => "LPAR",
+  '{' => "LBRACE",
+  '}' => "RBRACE",
+  ',' => "COMMA",
+  ';' => "SCOLON",
+  '\*' => "ASTERIX",
+  '[A-z0-9_-]+' => "STRING",
+  'void' => "VOID",
+  'struct|char|integer|real|int|float|double|u_integer' => "VAR"
+);
+
+my @regExpOrder = (
+  '\)',
+  '\(',
+  '{',
+  '}',
+  ',',
+  ';',
+  '\*',
+  'void',
+  'struct|char|integer|real|int|float|double|u_integer',
+  '[A-z0-9_-]+'
+);
+
+
+my @tokens=();
+my @linenos=();
+
+
+my $cppCommand="cpp";
+for my $arg (@ARGV) {
+  $cppCommand=$cppCommand . " " . $arg;
+}
+my @processedCode=`$cppCommand 2> /dev/null`;
+
+my $x=0;
+
+for my $line (@processedCode) { 
+  for my $token (split(/([;\s*{\(\)}\*,])/, $line)) {
+    chomp($token);
+    $token=~s/^\s+//g;
+    $token=~s/\s+$//g;
+    if($token!~/^\s*$/) {
+      push @tokens, $token;
+      push @linenos, $x;
+    }
+  }
+  $x++;
+}
+
+my @typing=();
+
+for($x=0; $x< scalar(@tokens); $x++) {
+ # print $tokens[$x], "\n";
+ # print $knownTokens{$tokens[$x]}, "\n";
+  my $found=0;
+  for my $regex (@regExpOrder) {
+    if(!$found and $tokens[$x]=~/$regex/)  {
+      $found=1;
+      push @typing, $knownTokens{$regex};
+    }
+  }  
+  if(!$found) {
+    push @typing, "UNKNOWN";
+  }
+}
+
+my %ids=();
+my %anchors=();
+
+open(OUTFILE, ">$fortranname");
+
+my $y=0;
+for($x=0; $x < scalar(@tokens); $x+=$y) {
+  $y=1;
+  if((($typing[$x] eq "VAR") or ($typing[$x] eq "VOID")) && ($typing[$x+1] eq "STRING") && ($typing[$x+2] eq "LPAR")) {
+    for($y=3; !($typing[$x+$y] eq "RPAR"); $y++) {
+      if(!(($typing[$x+$y] eq "STRING") || ($typing[$x+$y] eq "VAR") || ($typing[$x+$y] eq "COMMA") || ($typing[$x+$y] eq "ASTERIX"))) {
+        last;
+     }
+    }
+    if(($typing[$x+$y] eq "RPAR") and (($typing[$x+$y+1] eq "VAR") or ($typing[$x+$y+1] eq "LBRACE"))) {
+       my $buffer="";
+       if($typing[$x] eq "VOID") {
+         $buffer = "     Subroutine ";
+         my $id=$processedCode[$linenos[$x+1]];
+         chomp($id);
+         $anchors{$id}=$tokens[$x+1];
+       } else {
+         $buffer = "     Function ";
+         my $id=$processedCode[$linenos[$x+1]];
+         chomp($id);
+         $anchors{$id}=$tokens[$x+1];
+       }
+       for(my $z=1; $z < $y+1; $z++) {
+         if((length($buffer) + length($tokens[$x+$z])) > 72) {
+             print OUTFILE $buffer, "\n";
+             $buffer = "                   ". $tokens[$x+$z];
+         } else {
+           $buffer = $buffer . $tokens[$x+$z];
+         }
+         if(!($typing[$x+$z+1] eq "COMMA") and !($typing[$x+$z] eq "LPAR") and !($typing[$x+$z+1] eq "RPAR")) {
+           $buffer = $buffer . " ";
+         }
+       }
+       print OUTFILE $buffer, "\n";
+       
+       print OUTFILE "! <a href=\"./" . $htmlname . "#" . $tokens[$x+1]  . "\">View C source</a>\n";
+       if($typing[$x] eq "VOID") {
+         print OUTFILE "     End Subroutine\n\n\n";
+       } else {
+         print OUTFILE "     End Function\n\n\n";
+       }
+    }
+    
+  }
+}
+close(OUTFILE);
+
+open(INFILE, $inputfile);
+open(SRCHTML, ">$workdir/$htmlname");
+
+print SRCHTML <<EOF;
+<html>
+<head>
+<title>$inputfile</title>
+</head>
+<body>
+<pre>
+EOF
+while(my $line=<INFILE>) {
+  for my $search (keys %anchors) {
+    my $temp = $search;
+    $temp=~s/\(/\\\(/g;
+    $temp=~s/\)/\\\)/g;
+    $temp=~s/\{/\\\{/g;
+    $temp=~s/\}/\\\}/g;
+    $temp=~s/\*/\\\*/g;
+    if($line=~/^$temp$/) {
+      print SRCHTML "<a name=\"", $anchors{$search}, "\" />\n";
+    }
+  }
+  print SRCHTML HTML::Entities::encode($line);
+}
+print SRCHTML "</pre>\n</body>\n</html>\n";
+close(INFILE);
+close(SRCHTML);

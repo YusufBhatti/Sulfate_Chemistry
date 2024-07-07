@@ -1,0 +1,47 @@
+    [[kma_xc40_install_utils]]
+        inherit = INSTALL, KMALINUX, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = install_utils
+            PLATFORM = xc40
+            SOURCES = fcm_make_kma_xc40_cce_utils_serial_high_omp fcm_make_kma_xc40_cce_utils_mpp_high_omp fcm_make_kma_xc40_cce_recon_serial_high_omp fcm_make_kma_xc40_ifort_createbc_high_omp
+
+    [[kma_xc40_install_libs]]
+        inherit = INSTALL, KMALINUX, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = install_libs
+            PLATFORM = xc40
+            TASK_DIR="fcm_make_kma_xc40_cce_libs"
+
+    [[fcm_make_kma_xc40_install_mule]]
+        inherit = INSTALL, KMA_XC40_EXTRACT, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=extract
+            ROSE_TASK_APP=fcm_make_install_mule
+            SHUMLIB_LIB = $UMDIR/shumlib/shumlib-2018.02.1/kma-xc40-crayftn-craycc/openmp
+
+    [[kma_xc40_install_mule]]
+        inherit = INSTALL, KMA_XC40, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = install_mule
+            ROSE_FILE_INSTALL_ROOT = $UM_INSTALL_DIR
+            PLATFORM = xc40
+            TASK_DIR="fcm_make_kma_xc40_install_mule"
+            PYTHON_COMMANDS = "python"
+            CFLAGS = "-Wextra"
+            SHUMLIB_LIB = $UMDIR/shumlib/shumlib-2018.02.1/kma-xc40-crayftn-craycc/openmp
+        [[[directives]]]
+            -l walltime = 00:05:00
+
+    [[fcm_make_kma_xc40_install_ctldata]]
+        inherit = INSTALL, KMA_XC40_EXTRACT, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=extract
+            ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[kma_xc40_install_ctldata]]
+        inherit = INSTALL, KMA_XC40_EXTRACT, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT = $UM_INSTALL_DIR
+            ROSE_TASK_APP          = install_ctldata
+            TASK_DIR               = fcm_make_kma_xc40_install_ctldata
+

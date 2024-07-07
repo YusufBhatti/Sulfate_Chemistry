@@ -1,0 +1,234 @@
+# Machine specific classes for the HPC
+# HPC tasks should use either:
+#   * HPC         - short single-process serial jobs
+#     or
+#   * NCMHPC_SERIAL  - other serial jobs
+#     or
+#   * One of NCMHPC_PARALLEL_THREADS_1, NCMHPC_PARALLEL_THREADS_2 or NCMHPC_SMT_OFF
+#       together with
+#     One of the NCMHPC_PARALLEL_TASKS_x classes - used for all parallel jobs
+#     or
+#   * NCMHPC_BUILD which is optimised for running UM builds
+
+    [[NCMHPC]]
+        [[[job submission]]]
+            method = lsf
+        [[[remote]]]
+            host = ncmlogin3
+        [[[directives]]]
+            -a = poe
+            -q = large
+        [[[environment]]]
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{HPC_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{HPC_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{HPC_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+# HPC class for serial jobs - uses ROSE_TASK_N_JOBS to control the number of
+# threads fcm_make uses.
+    [[NCMHPC_SERIAL]]
+        inherit = NCMHPC
+        [[[environment]]]
+            ROSE_TASK_N_JOBS     = 1
+        [[[directives]]]
+            resources        = ConsumableCpus(1) ConsumableMemory(2000mb)
+            wall_clock_limit  = "01:01:00,01:00:00"
+
+# HPC class for UM Utils jobs
+    [[NCMHPC_UTILS]]
+        inherit = NCMHPC_PARALLEL_TASKS_1,  NCMHPC_PARALLEL_THREADS_1
+        script = "{{TASK_RUN}}"
+        [[[directives]]]
+            resources        = ConsumableMemory(100Mb)
+            wall_clock_limit = "00:15:00,00:14:00"
+
+# HPC - single OpenMP thread
+    [[NCMHPC_PARALLEL_THREADS_1]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 1
+        [[[directives]]]
+            task_affinity    = cpu(1)
+
+# HPC - two OpenMP threads
+    [[NCMHPC_PARALLEL_THREADS_2]]
+        [[[directives]]]
+            parallel_threads = 2
+
+# HPC - four OpenMP threads
+    [[NCMHPC_PARALLEL_THREADS_4]]
+        [[[directives]]]
+            parallel_threads = 4
+
+# HPC - 8 OpenMP threads for optimum OpenMP benefit (crmstyle_coarse_grid)
+    [[NCMHPC_PARALLEL_THREADS_8]]
+        [[[directives]]]
+            parallel_threads = 8
+
+# Switch SMT off
+# (technically you can run with SMT off but more than one OpenMP thread - we
+#  don't cater for that here as it's unlikely we'll ever do that with
+#  standard jobs)
+    [[NCMHPC_SMT_OFF]]
+        inherit = NCMHPC_PARALLEL_THREADS_1
+        [[[directives]]]
+            task_affinity    = core(1)
+
+# HPC - parallel queues - do not inherit directly, use NCMHPC_PARALLEL_TASKS_X
+    [[NCMHPC_PARALLEL_QUEUE]]
+        inherit = NCMHPC
+        [[[directives]]]
+            -q = large
+            -a = poe
+
+# HPC - single task
+    [[NCMHPC_PARALLEL_TASKS_1]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1800Mb)
+            node             = 1
+            -n = 1
+
+# HPC - two tasks
+    [[NCMHPC_PARALLEL_TASKS_2]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            -n = 2
+
+# HPC - four tasks
+    [[NCMHPC_PARALLEL_TASKS_4]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1Gb)
+            -n = 4
+
+# HPC - six tasks
+    [[NCMHPC_PARALLEL_TASKS_6]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1800Mb)
+            -n = 6
+
+# HPC - eight tasks
+    [[NCMHPC_PARALLEL_TASKS_8]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1Gb)
+            -n = 8
+
+# HPC - sixteen tasks
+    [[NCMHPC_PARALLEL_TASKS_16]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1Gb)
+            node             = 1
+            -n = 16
+
+# HPC - thirty tasks
+    [[NCMHPC_PARALLEL_TASKS_30]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1Gb)
+            -n = 30
+
+# HPC - thirty-two tasks
+    [[NCMHPC_PARALLEL_TASKS_32]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1Gb)
+            -n = 32
+            -x = 
+
+# HPC - forty-four tasks
+    [[NCMHPC_PARALLEL_TASKS_44]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1500Mb)
+            -n = 44
+            -x = 
+
+# HPC - sixty-four tasks
+    [[NCMHPC_PARALLEL_TASKS_64]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(750Mb)
+            -n = 64
+            -x = 
+
+# HPC - 124 tasks
+    [[NCMHPC_PARALLEL_TASKS_124]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1Gb)
+            -n = 124
+            -x = 
+
+# HPC - 128 tasks
+    [[NCMHPC_PARALLEL_TASKS_128]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1Gb)
+            -n = 128
+            -x = 
+
+# HPC - 192 tasks
+    [[NCMHPC_PARALLEL_TASKS_192]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1600Mb)
+            -n = 192
+            -x = 
+
+# HPC - 220 tasks
+    [[NCMHPC_PARALLEL_TASKS_220]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1600Mb)
+            -n = 220
+            -x =
+
+# HPC - 236 tasks
+    [[NCMHPC_PARALLEL_TASKS_236]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1400Mb)
+            -n = 236
+            -x =
+
+# HPC - 256 tasks
+    [[NCMHPC_PARALLEL_TASKS_256]]
+        inherit = NCMHPC_PARALLEL_QUEUE
+        [[[directives]]]
+            resources        = ConsumableMemory(1800Mb)
+            -n = 256
+            -x =
+
+# HPC class for build jobs
+    [[NCMHPC_BUILD]]
+        inherit = EXTRACT_SOURCE, NCMHPC_SMT_OFF, NCMHPC_PARALLEL_TASKS_6
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 6
+            DRHOOK=false
+            OPENMP=true
+            PLATFORM=ncm-ibm-ifort
+        [[[directives]]]
+            resources        = ConsumableMemory(1536mb)
+            -q = large
+            -a = poe
+            -w = "00:36:00,00:35:00"
+
+# EXTRACT & NCMHPC_EXTRACT in the lines of METOHPC_EXTRACT - added by Raghav on Dec 9th, 2014
+    [[EXTRACT]]
+        inherit = EXTRACT_SOURCE
+        [[[remote]]]
+            host = ncmlogin3
+        [[[job submission]]]
+            method = lsf
+        [[[directives]]]
+            -a = poe
+            -q = large
+    [[NCMHPC_EXTRACT]]
+        inherit = EXTRACT
+        [[[environment]]]
+            grib_api_path = {{GRIB_API_HPC_ROOT_DIR}}
+

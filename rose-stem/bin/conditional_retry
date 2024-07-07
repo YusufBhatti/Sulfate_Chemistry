@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# *****************************COPYRIGHT*******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT*******************************
+
+# This script was created because at the Met Office we were encountering
+# an inconvenient number of build failures due to compiler licence 
+# acquisition issues.  It wraps another command and will retry the command 
+# *if* it sees a particular pattern in the command's stdout or stderr, or
+# if the command exits with a specific return code (the patterns and 
+# code/s are set via the environment variables below).
+#
+# Note: although the stdout and stderr of the original command are still
+# output, it is possible that the ordering of statement might change 
+# (compared to the order if running via this wrapper).
+#
+# Environment variables define the pattern to look for in the stderr, stdout
+# as well as the maximum number of tries and an optional pause between tries.
+CONDITIONAL_RETRY_STDERR=${CONDITIONAL_RETRY_STDERR:-}
+CONDITIONAL_RETRY_STDOUT=${CONDITIONAL_RETRY_STDOUT:-}
+CONDITIONAL_RETRY_ERRCODE=${CONDITIONAL_RETRY_ERRCODE:-}
+CONDITIONAL_RETRY_COUNT=${CONDITIONAL_RETRY_COUNT:-10}
+CONDITIONAL_RETRY_SLEEP=${CONDITIONAL_RETRY_SLEEP:-5}
+
+# A counter to avoid infinite retries
+TRY_COUNT=0
+TRY_COUNT_MAX=$CONDITIONAL_RETRY_COUNT
+
+# Set the retry flag to yes so that we pass the first loop
+RETRY="Yes"
+REASON=
+while [ $RETRY == "Yes" ] && [ $TRY_COUNT -lt $TRY_COUNT_MAX ] ; do
+
+  # Increment the counter
+  TRY_COUNT=$((TRY_COUNT + 1))
+
+  # Report on why we are retrying
+  if [ -n "$REASON" ] ; then
+      echo "[WARN] Retrying command (try $TRY_COUNT of $TRY_COUNT_MAX)"
+      echo "[WARN] because $REASON"
+  fi
+
+  # Run the passed command and save the return code, stdout and stderr...
+  # The complicated looking way of running is creating mirrored file 
+  # descriptors 5 & 6 for stdout and stderr, and then using tee to split
+  # the output from the command and send it both to the variables and to the
+  # usual descriptors
+  unset STDERR STDOUT RETURN_CODE
+  exec 5>&1 6>&2
+  eval "$( $@ \
+           2> >(stdbuf -o 0 tee >(cat - >&6) > >(STDERR=$(cat) ; typeset -p STDERR))  \
+            > >(stdbuf -o 0 tee >(cat - >&5) > >(STDOUT=$(cat) ; typeset -p STDOUT)); \
+               RETURN_CODE=$?; typeset -p RETURN_CODE )"
+
+  # Look to see if the patterns are in the output anywhere
+  RETRY="No"
+  if [ $RETURN_CODE -ne 0 ] ; then
+    if [ -n "$CONDITIONAL_RETRY_STDOUT" ] ; then
+        if grep "$CONDITIONAL_RETRY_STDOUT" <<< "$STDOUT" > /dev/null 2>&1 ; then
+            RETRY="Yes"
+            REASON="command stdout contained: $CONDITIONAL_RETRY_STDOUT"
+        fi
+    fi
+    if [ -n "$CONDITIONAL_RETRY_STDERR" ] ; then
+        if grep "$CONDITIONAL_RETRY_STDERR" <<< "$STDERR" > /dev/null 2>&1 ; then
+            RETRY="Yes"
+            REASON="command stderr contained: $CONDITIONAL_RETRY_STDERR"
+        fi
+    fi
+    # Look to see if the return code matches one of the passed codes
+    for err in $CONDITIONAL_RETRY_ERRCODE ; do
+        if [ $RETURN_CODE == $err ] ; then
+            RETRY="Yes"
+            REASON="command error code was: $err"          
+        fi
+    done
+  fi
+
+  # (Possibly) pause for a moment
+  if [ $RETRY == "Yes" ] ; then
+      sleep $CONDITIONAL_RETRY_SLEEP
+  fi
+
+done
+
+# And be sure that this command exits with the same return code as whatever
+# the last run of the child command returned
+exit $RETURN_CODE
+
+

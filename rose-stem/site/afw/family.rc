@@ -1,0 +1,74 @@
+# Machine specific classes for Linux
+# Linux tasks should use one of:
+#  * LINUX       - for simple Linux tasks such as rose-ana
+#  * EXTRACT     - for tasks which mirror to the HPC
+#  * LINUX_BUILD - for tasks which compile on Linux
+#  * LINUX_RECON - for Linux reconfiguration tasks
+#  * LINUX_ATMOS - for Linux atmosphere run tasks
+#  * LINUX_SCM   - for Linux Single Column Model tasks
+#  * LINUX_UTILS - for Linux utils tasks
+# Tasks which link in OpenMP, either for the exec build or for a parallel GCOM
+# library, should also inherit one of the following classes:
+#  * LINUX_1_THREAD  - single thread
+#  * LINUX_2_THREADS - two threads
+
+    [[AFW]]
+        [[[remote]]]
+{%- if LOCAL_RUN == true %}
+            host = {{ ROSE_ORIG_HOST }}
+{%- else %}
+            host = $(rose host-select --choice=5 {{ HOST_HPC }})
+{%- endif %}
+        [[[environment]]]
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+# Extract & mirror tasks should use one of these two classes directly. 
+# Extract & build tasks should use LINUX_BUILD below instead. Note that this 
+# does NOT inherit the LINUX base class.
+    [[EXTRACT]]
+        inherit = EXTRACT_SOURCE
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+
+# Subclass for building on Linux. Used to limit the number of simultaneous
+# local builds as well.
+    [[AFW_BUILD]]
+        inherit = EXTRACT, AFW
+        [[[environment]]]
+            grib_api_path = {{GRIB_API_INTEL_ROOT_DIR}}
+            DRHOOK=false
+            OPENMP=true
+            PLATFORM=afw-hp-ifort
+
+# Linux class for reconfiguration jobs
+    [[AFW_RECON]]
+        inherit = AFW
+        [[[environment]]]
+            decfort_dump_flag = y
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 1000000 -c unlimited
+
+# Linux class for large, memory intensive reconfiguration jobs
+    [[AFW_RECON_EXTRA_MEM]]
+        inherit = AFW_RECON
+	[[[environment]]]
+	    ROSE_LAUNCHER_ULIMIT_OPTS = -s 4000000 -c unlimited
+
+# Linux class for atmosphere run jobs
+    [[AFW_ATMOS]]
+        inherit = AFW
+        [[[environment]]]
+            decfort_dump_flag = y
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 4000000 -c unlimited
+    
+# Linux class for UTILS run jobs
+    [[AFW_UTILS]]
+        inherit = AFW
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[environment]]]
+            ULIMIT= ulimit -s 2000000 -c unlimited
+            decfort_dump_flag = y
+

@@ -1,0 +1,39 @@
+# Groups in graph-integ.rc must match those named below
+{%- set name_graphs = {
+
+    "mss_install"    : "fcm_make_mss_utils_serial_high_noomp => mss_install_utils
+                        fcm_make_mss_utils_mpp_high_omp => mss_install_utils
+                        fcm_make_mss_recon_serial_high_omp => mss_install_utils
+                        fcm_make_mss_recon_high_omp => mss_install_utils
+                        fcm_make_mss_ifort_createbc_high_omp => mss_install_utils
+                        fcm_make_mss_cray_libs => \
+                        mss_cray_install_libs
+                        fcm_make_mss_gnu_libs => \
+                        mss_gnu_install_libs
+                        fcm_make_mss_install_ctldata => \
+                        mss_install_ctldata",
+
+    "mss_fcm_make"   : "fcm_make_mss_utils_serial_high_noomp
+                        fcm_make_mss_utils_mpp_high_omp 
+                        fcm_make_mss_recon_high_omp
+                        fcm_make_mss_recon_serial_high_omp
+                        fcm_make_mss_recon_serial_high_noomp
+                        fcm_make_mss_ifort_createbc_high_omp
+                        fcm_make_mss_ifort_createbc_high_noomp
+                        fcm_make_mss_um_high_omp
+                        fcm_make_mss_um_high_noomp
+                        fcm_make_mss_gnu_libs
+                        fcm_make_mss_cray_libs",
+
+    "mss_utils"      : "fcm_make_mss_utils_serial_high_noomp => mss_install_utils
+                        fcm_make_mss_utils_mpp_high_omp => mss_install_utils
+                        fcm_make_mss_ifort_createbc_high_omp => mss_install_utils",
+
+    "mss_utils_ifort" : "fcm_make_mss_ifort_utils_serial_high_noomp
+                         fcm_make_mss_ifort_utils_mpp_high_omp",
+
+    "mss_fcm_make_createbc" : "fcm_make_mss_ifort_createbc_high_omp 
+                               fcm_make_mss_ifort_createbc_rigorous_noomp",
+
+    }
+-%}

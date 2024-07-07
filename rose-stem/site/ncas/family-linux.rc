@@ -1,0 +1,23 @@
+# Extract & mirror tasks should use this class directly
+    [[EXTRACT]]
+        inherit = EXTRACT_SOURCE
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+        [[[job]]]
+            batch system = at
+        [[[environment]]]
+            PLATFORM=ncas-xc30-cce
+            OPENMP=true
+            DRHOOK=false
+
+# Intel class for createBC
+    [[EXTRACT_INTEL]]
+        inherit = EXTRACT_SOURCE
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+        [[[job]]]
+            batch system = at
+        [[[environment]]]
+            PLATFORM=ncas-xc30-ifort
+            OPENMP=true
+            DRHOOK=false

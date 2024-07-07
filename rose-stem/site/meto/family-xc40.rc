@@ -1,0 +1,421 @@
+# Machine-specific classes for the XC40.
+
+    [[METO_XC40]]
+        [[[job]]]
+            execution time limit = PT33M
+            batch system = pbs
+        [[[remote]]]
+            host = $(rose host-select {{ HOST_XC40 }})
+        [[[directives]]]
+            -S = /bin/bash
+            -q = shared
+{% if TRUSTZONE == 'collaboration' %}
+            -P = {{PROJECT|default('umadmin')}}
+{% else %}
+            -P = foundation
+{% endif %}
+        [[[environment]]]
+            PATH = /opt/nctools/nccmp-1.5.0/bin:$PATH
+            COPY_CMD=lfs cp
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{XC40_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{XC40_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{XC40_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+# CCE family which implements conditional retries (since we often run into
+# failures to do with the licence server):
+    [[METO_XC40_CCE_CONDITIONAL_RETRY]]
+        [[[environment]]]
+            cc=conditional_retry cc
+            fc=conditional_retry ftn
+            CONDITIONAL_RETRY_STDERR="Unable to obtain a Cray Compiling Environment License"
+            CONDITIONAL_RETRY_SLEEP=5
+            CONDITIONAL_RETRY_COUNT=10        
+
+# For CCE executables which are more likely to be run on CDL nodes:
+    [[METO_XC40_CCE_IVYBRIDGE]]
+        inherit = METO_XC40_CCE_CONDITIONAL_RETRY
+        pre-script = """
+                            module swap PrgEnv-cray PrgEnv-cray/5.2.82
+                            module swap craype-haswell craype-ivybridge
+                            module load cray-netcdf/4.3.2
+                            module load cray-snplauncher/7.0.4
+                            module swap cce cce/8.4.3
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            PLATFORM=meto-xc40-cce
+            grib_api_path = {{GRIB_API_XC40_CCE_ROOT_DIR}}
+
+# For CCE executables which are more likely to be run on compute nodes:
+    [[METO_XC40_CCE_HASWELL]]
+        inherit = METO_XC40_CCE_CONDITIONAL_RETRY
+        pre-script = """
+                            module swap PrgEnv-cray PrgEnv-cray/5.2.82
+                            module load cray-netcdf/4.3.2
+                            module load cray-snplauncher/7.0.4
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            PLATFORM=meto-xc40-cce
+            grib_api_path = {{GRIB_API_XC40_CCE_ROOT_DIR}}
+
+# For Intel executables which are more likely to be run on CDL nodes:
+    [[METO_XC40_INTEL_IVYBRIDGE]]
+        pre-script = """
+                            module swap PrgEnv-cray PrgEnv-intel/5.2.82
+                            module swap intel intel/17.0.0.098
+                            module swap craype-haswell craype-ivybridge
+                            module load cray-netcdf/4.4.1.1
+                            module load cray-hdf5/1.10.0.1
+                            module load cray-snplauncher/7.5.3
+                            module load cdt/17.03 2>&1
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            KMP_AFFINITY=disabled
+            PLATFORM=meto-xc40-ifort
+            grib_api_path = {{GRIB_API_XC40_IFORT_ROOT_DIR}}
+
+
+# For Intel executables which are more likely to be run on compute nodes:
+    [[METO_XC40_INTEL_HASWELL]]
+        pre-script = """
+                            module swap PrgEnv-cray PrgEnv-intel/5.2.82
+                            module swap intel intel/17.0.0.098
+                            module load cray-netcdf/4.4.1.1
+                            module load cray-hdf5/1.10.0.1
+                            module load cray-snplauncher/7.5.3
+                            module load cdt/17.03 2>&1
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            KMP_AFFINITY=disabled
+            PLATFORM=meto-xc40-ifort
+            grib_api_path = {{GRIB_API_XC40_IFORT_ROOT_DIR}}
+
+# For GNU executables which are more likely to be run on CDL nodes:
+    [[METO_XC40_GNU_IVYBRIDGE]]
+        pre-script = """
+                            module swap PrgEnv-cray PrgEnv-gnu/5.2.82
+                            module swap gcc gcc/6.3.0
+                            module swap cray-mpich cray-mpich/7.5.3
+                            module swap craype-haswell craype-ivybridge
+                            module load cray-netcdf/4.4.1.1
+                            module load cray-hdf5/1.10.0.1
+                            module load cray-snplauncher/7.5.3
+                            module load cdt/17.03 2>&1
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            PLATFORM=meto-xc40-gnu
+            grib_api_path = {{GRIB_API_XC40_GNU_ROOT_DIR}}
+
+# For GNU executables which are more likely to be run on compute nodes:
+    [[METO_XC40_GNU_HASWELL]]
+        pre-script = """
+                            module swap PrgEnv-cray PrgEnv-gnu/5.2.82
+                            module swap gcc gcc/6.3.0
+                            module swap cray-mpich cray-mpich/7.5.3
+                            module load cray-netcdf/4.4.1.1
+                            module load cray-hdf5/1.10.0.1
+                            module load cray-snplauncher/7.5.3
+                            module load cdt/17.03 2>&1
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            PLATFORM=meto-xc40-gnu
+            grib_api_path = {{GRIB_API_XC40_GNU_ROOT_DIR}}
+
+# Detailed fcm-make job settings that can be inherited by both METO_XC40_BUILD
+# and METO_XC40_MIRROR_BUILD without breaking the nesting structure.
+# No make tasks should inherit this family directly.
+    [[METO_XC40_BUILD_SETTINGS]]
+        script = """
+rose task-run --verbose --define=fast-dest-root-orig=$RAMTMP --define='args=$ARCHIVE_FCM_MAKE_CMD'
+"""
+        env-script = "eval $(rose task-env)"
+        post-script = "cp $CYLC_SUITE_SHARE_DIR/$ROSE_TASK_NAME/fcm-make.log $ROSE_TASK_LOG_DIR"
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 6
+            DRHOOK=false
+            OPENMP=true
+        [[[job]]]
+            execution time limit = PT82M
+        [[[directives]]]
+            -l mem = 8GB
+            -l tmpsize = 3GB
+
+# One-stage makes (no mirror step) should inherit this family.
+    [[METO_XC40_BUILD]]
+        inherit = EXTRACT_SOURCE, METO_XC40_BUILD_SETTINGS, METO_XC40_CORES_6
+
+# Builds using a mirror step should inherit this instead of METO_XC40_BUILD.
+    [[METO_XC40_MIRROR_BUILD]]
+        inherit = EXTRACT_SOURCE, METO_XC40_BUILD_SETTINGS, METO_XC40_CORES_6
+        script = """
+rose task-run --verbose --define=fast-dest-root-cont=$RAMTMP --define='args=$ARCHIVE_FCM_MAKE_CMD'
+"""
+        post-script = """
+                      export BUILD_NAME=`echo $ROSE_TASK_NAME | sed -e 's/fcm_make2/fcm_make/'`
+                      cp $CYLC_SUITE_SHARE_DIR/$BUILD_NAME/fcm-make2.log $ROSE_TASK_LOG_DIR
+                      """
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=mirror
+
+    [[METO_XC40_BUILD_NORAMDISK]]
+        inherit = EXTRACT_SOURCE, METO_XC40_BUILD_SETTINGS, METO_XC40_CORES_6
+        script = """
+                 rose task-run --verbose --new
+                 """
+        [[[directives]]]
+            -l tmpsize = 0kb
+
+    [[METO_XC40_HOUSEKEEPING]]
+        inherit = HOUSEKEEPING, METO_XC40
+        [[[job]]]
+            execution time limit = PT16M
+
+# XC40 classes for use of Mule
+    [[METO_XC40_MULE]]
+        script = "PATH=/opt/python/gnu/2.7.9/bin:$PATH PYTHONPATH=$UMDIR/mule/mule-2017.08.1/python2.7/lib:$PYTHONPATH {{TASK_RUN}}"
+
+# XC40 classes for Rose-ana
+    [[METO_XC40_ROSE_ANA_COMPARISON]]
+        inherit = ROSE_ANA_COMPARISON, METO_XC40_MULE
+        [[[job]]]
+            execution time limit = PT11M
+        [[[directives]]]
+            -l mem = 1GB
+
+    [[METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON]]
+        inherit = METO_XC40_MULE, ROSE_ANA_WALLCLOCK, ROSE_ANA_COMPARISON
+
+    [[METO_XC40_UTILS]]
+        inherit = METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[job]]]
+            execution time limit = PT23M
+        [[[directives]]]
+            -l mem = 256MB
+        [[[environment]]]
+            ULIMIT = ulimit -s 2000000 -c unlimited
+
+# Use mpiexec for the shared queue (the default). Order of inheritance: this
+# must come after all other atmos/recon/IOS/MPI families.
+    [[METO_XC40_SHARED_QUEUE]]
+        [[[environment]]]
+            ROSE_LAUNCHER = mpiexec
+            ROSE_LAUNCHER_PREOPTS = -n ${TOTAL_MPI_TASKS:-1}
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s unlimited -c unlimited
+
+# Use aprun (the default) for the normal queue. Order of inheritance: this 
+# must come after all other atmos/recon/IOS/MPI/OpenMP families.
+# The distribution of MPI tasks per node is not even across numa-regions if a task does
+# not use all available cores on those numa-regions. An even distribution would be:
+# (CORES_PER_NUMA_REGION * TOT_MPI_TASKS * HYPERTHREADS) /
+#   ( (TOT_MPI_TASKS * OMP_NUM_THREADS) + (CORES_PER_NUMA_REGION * HYPERTHREADS) - 1 )
+    [[METO_XC40_NORMAL_QUEUE]]
+        [[[directives]]]
+            -q = normal
+        [[[environment]]]
+            CORES_PER_NODE = 36
+            NUMA_REGIONS_PER_NODE = 2
+            CORES_PER_NUMA_REGION = $((CORES_PER_NODE/NUMA_REGIONS_PER_NODE))
+            HYPERTHREADS = 1
+            POTENTIAL_MPI_TASKS_PER_NUMA_REGION = $(((CORES_PER_NUMA_REGION*HYPERTHREADS)/OMP_NUM_THREADS))
+            MPI_TASKS_PER_NUMA_REGION = $((POTENTIAL_MPI_TASKS_PER_NUMA_REGION>TOTAL_MPI_TASKS?TOTAL_MPI_TASKS:POTENTIAL_MPI_TASKS_PER_NUMA_REGION))
+            ROSE_LAUNCHER_PREOPTS=-n $TOTAL_MPI_TASKS -ss -S $MPI_TASKS_PER_NUMA_REGION -d $OMP_NUM_THREADS -j $HYPERTHREADS
+
+# Core count families: all UM runtime tasks should inherit 1 of these.
+    [[METO_XC40_CORES_1]]
+        inherit = METO_XC40_SHARED_QUEUE, METO_XC40
+        [[[directives]]]
+            -l ncpus = 1
+
+    [[METO_XC40_CORES_2]]
+        inherit = METO_XC40_SHARED_QUEUE, METO_XC40
+        [[[directives]]]
+            -l ncpus = 2
+
+    [[METO_XC40_CORES_4]]
+        inherit = METO_XC40_SHARED_QUEUE, METO_XC40
+        [[[directives]]]
+            -l ncpus = 4
+
+    [[METO_XC40_CORES_6]]
+        inherit = METO_XC40_SHARED_QUEUE, METO_XC40
+        [[[directives]]]
+            -l ncpus = 6
+
+    [[METO_XC40_CORES_8]]
+        inherit = METO_XC40_SHARED_QUEUE, METO_XC40
+        [[[directives]]]
+            -l ncpus = 8
+
+    [[METO_XC40_CORES_12]]
+        inherit = METO_XC40_SHARED_QUEUE, METO_XC40
+        [[[directives]]]
+            -l ncpus = 12
+
+    [[METO_XC40_CORES_16]]
+        inherit = METO_XC40_SHARED_QUEUE, METO_XC40
+        [[[directives]]]
+            -l ncpus = 16
+
+    [[METO_XC40_CORES_18]]
+        inherit = METO_XC40_SHARED_QUEUE, METO_XC40
+        [[[directives]]]
+            -l ncpus = 18
+
+    [[METO_XC40_CORES_32]]
+        inherit = METO_XC40_SHARED_QUEUE, METO_XC40
+        [[[directives]]]
+            -l ncpus = 32
+
+    [[METO_XC40_CORES_36]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 1:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_CORES_72]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 2:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_CORES_144]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 4:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_CORES_216]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 6:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_CORES_288]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 8:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_CORES_396]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 11:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_CORES_432]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 12:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_CORES_468]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 13:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_CORES_504]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 14:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_CORES_540]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 15:coretype=broadwell:subproject={{SUBPROJECT}}
+
+# Cannot run two different executables on the same node in MPMD mode,
+# so use these families for coupled models to signify capacity requirements.
+    [[METO_XC40_NODES_4]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 4:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_NODES_5]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 5:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_NODES_7]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 7:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_NODES_8]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 8:coretype=broadwell:subproject={{SUBPROJECT}}
+
+    [[METO_XC40_NODES_10]]
+        inherit = METO_XC40_NORMAL_QUEUE, METO_XC40
+        [[[directives]]]
+            -l select = 10:coretype=broadwell:subproject={{SUBPROJECT}}
+
+# OpenMP families: all UM runtime tasks should inherit 1 of these.
+# These are the only families inherited by all runtime tasks but no build tasks,
+# so module load commands for runtime tasks are applied here so they don't
+# override the pre-scripting in the METO_XC40_<node>_<compiler> families
+# needed by the build tasks.
+
+    [[METO_XC40_PARALLEL_THREADS_1]]
+        pre-script = """
+                            module load cray-netcdf/4.3.2
+                            module load cray-snplauncher/7.0.4
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            OMP_NUM_THREADS = 1
+            OMP_STACKSIZE = 1g
+
+    [[METO_XC40_PARALLEL_THREADS_2]]
+        pre-script = """
+                            module load cray-netcdf/4.3.2
+                            module load cray-snplauncher/7.0.4
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            OMP_NUM_THREADS = 2
+            OMP_STACKSIZE = 2g
+
+    [[METO_XC40_PARALLEL_THREADS_4]]
+        pre-script = """
+                            module load cray-netcdf/4.3.2
+                            module load cray-snplauncher/7.0.4
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            OMP_NUM_THREADS = 4
+            OMP_STACKSIZE = 2g
+
+    [[METO_XC40_PARALLEL_THREADS_8]]
+        pre-script = """
+                            module load cray-netcdf/4.3.2
+                            module load cray-snplauncher/7.0.4
+                            module list 2>&1
+                            """
+        [[[environment]]]
+            OMP_NUM_THREADS = 8
+            OMP_STACKSIZE = 2g
+
+# IOS families: All atmos tasks should inherit 1 of these.
+
+    [[METO_XC40_IOS_OFF]]
+        [[[environment]]]
+            MPICH_GNI_ROUTING_MODE=ADAPTIVE_2
+
+# Tasks using the I/O Server have MPICH_MAX_THREAD_SAFETY set to raise
+# the MPI thread level. This is necessary to fully implement the I/O Server,
+# at the cost of adding additional locks elsewhere.
+# MPICH_NEMESIS_ASYNC_PROGRESS is also set to improve I/O Server performance,
+# but should NOT be used with hyperthreading (which is turned off in rose-stem).
+    [[METO_XC40_IOS_ON]]
+        [[[environment]]]
+            MPICH_MAX_THREAD_SAFETY=multiple
+            MPICH_NEMESIS_ASYNC_PROGRESS=mc
+            MPICH_GNI_ROUTING_MODE=ADAPTIVE_2
+
+#Common task for all GA tasks that need AINITIAL set    
+    [[METO_XC40_N48_GA_COMMON]]
+        [[[environment]]]
+            AINITIAL=$INPUT_DATA/n48_ga7/ab357a.da19810901_00
+

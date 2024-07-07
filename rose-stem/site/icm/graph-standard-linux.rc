@@ -1,0 +1,4 @@
+{%- set name_graphs_linux = {
+    "umdp3_check" : "umdp3_checker => housekeep_icm_linux",
+    "linux_build_packing_lib" : "fcm_make_icm_linux_gcc_utils_packing_library",
+} -%}

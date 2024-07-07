@@ -1,0 +1,22 @@
+{%- set integ_graphs = {
+    "fcm_make"              :    "",
+    "kma_xc40_n48_eg_noomp" :    "",
+
+    "kma_xc40_install"      :    "",
+
+    "kma_xc40_fcm_make"     :    "",
+
+    "kma_xc40_createbc_calcs" :
+                          "
+                           fcm_make_kma_xc40_ifort_createbc_rigorous_noomp & kma_xc40_install_ctldata => \
+                           createbc_kma_xc40_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_noomp => \
+                           rose_ana_kma_xc40_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_kgo => housekeep_createbc_kma_xc40_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_noomp
+                         
+                           fcm_make_kma_xc40_ifort_createbc_rigorous_omp & kma_xc40_install_ctldata => \
+                           createbc_kma_xc40_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp => \
+                           rose_ana_kma_xc40_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_proc => \
+                           housekeep_createbc_kma_xc40_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_omp & housekeep_createbc_kma_xc40_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_noomp
+                           createbc_kma_xc40_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_noomp => rose_ana_kma_xc40_createbc_calcs_comp_check_global_eg_varres_eg_2dust6_proc",
+
+    }
+-%}

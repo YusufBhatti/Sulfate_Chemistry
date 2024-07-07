@@ -1,0 +1,47 @@
+    [[icm_boreasz_install_utils]]
+        inherit = INSTALL, ICM_BOREASZ, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP=install_utils
+            PLATFORM=icm-pwr7-xlf
+            SOURCES="fcm_make_icm_boreasz_xlf_utils_serial_high_noomp \
+                     fcm_make_icm_boreasz_xlf_recon_serial_high_omp \
+                     fcm_make_icm_boreasz_xlf_utils_mpp_high_omp \
+                     fcm_make_icm_boreasz_xlf_createbc_high_omp"
+   
+    [[fcm_make_icm_boreasz_install_ctldata]]
+        inherit = INSTALL, ICM_BOREASZ_EXTRACT, EXTRACT_SOURCE
+    	[[[environment]]]
+    	    ROSE_APP_OPT_CONF_KEYS=mirror
+    	    ROSE_TASK_APP=fcm_make_install_ctldata
+	    ROSE_TASK_MIRROR_TARGET="um@boreasz:${CYLC_SUITE_SHARE_DIR#$HOME/}/$CYLC_TASK_NAME"
+
+    [[icm_boreasz_install_ctldata]]
+        inherit = INSTALL, ICM_BOREASZ, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP=install_ctldata
+    	    TASK_DIR=fcm_make_icm_boreasz_install_ctldata
+
+    [[icm_okeanos_install_utils]]
+        inherit = INSTALL, ICM_OKEANOS, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP=install_utils
+            PLATFORM=icm-xc40-cce
+            SOURCES="fcm_make_icm_okeanos_cce_utils_serial_high_noomp \
+                     fcm_make_icm_okeanos_cce_recon_serial_high_omp \
+                     fcm_make_icm_okeanos_cce_utils_mpp_high_omp \
+                     fcm_make_icm_okeanos_cce_createbc_high_omp"
+   
+    [[fcm_make_icm_okeanos_install_ctldata]]
+        inherit = INSTALL, ICM_OKEANOS_EXTRACT, EXTRACT_SOURCE
+    	[[[environment]]]
+    	    ROSE_APP_OPT_CONF_KEYS=mirror
+    	    ROSE_TASK_APP=fcm_make_install_ctldata
+	    ROSE_TASK_MIRROR_TARGET="um@okeanos:${CYLC_SUITE_SHARE_DIR#$HOME/}/$CYLC_TASK_NAME"
+
+    [[icm_okeanos_install_ctldata]]
+        inherit = INSTALL, ICM_OKEANOS, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP=install_ctldata
+    	    TASK_DIR=fcm_make_icm_okeanos_install_ctldata

@@ -1,0 +1,365 @@
+#!/usr/bin/perl -w 
+#
+# *****************************COPYRIGHT*******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT*******************************
+
+=pod
+
+=head1 UM_indices
+
+After f90tohtml has created the html files, and contents file,
+we want to create separate indices and contents for each
+section (plus RECON, CreateBC, ...). UM_indices  does this.
+
+=head1 SYNOPSIS
+
+UM_indices
+
+=head1 DESCRIPTION
+
+UM_indices reads the values of $WORKDIR, $BUILD_DIR and $HTML
+from the environment, identifies a list of sections and files,
+and then creates index and contents files for each section.
+
+Finally it edits the top-level contents file to add links to 
+the newly created indices.
+
+=head1 BUGS
+
+Depends precisely on format of html files produced by f90tohtml - this is 
+not likely to change massively, but, for example, the number of header lines 
+might change.
+Will only work with files under directories 2 deep from $BUILD_DIR.
+At the time of writing this was the nature of the FCM repository
+
+=head1 AUTHOR
+
+Current maintainer: UM Systems Team <UMSysTeam@metoffice.gov.uk>
+
+=cut
+
+use strict;
+
+use File::Copy;
+use File::Find;
+
+my($usage) = "UM_indices";
+
+my($UM_workdir)=$ENV{'WORKDIR'};
+my($UM_html)=$ENV{'HTML'};
+my($UM_build)="$UM_workdir/src";
+
+my($INDEXDIR)=$UM_html."/UMbrowser/ind/";
+
+my($UMF_name)=$INDEXDIR."/UM_f.html";
+
+# UMF_array contains the links to the decks for a specific file name.
+# It searches through the array and creates the hash from the results
+# of the regular expression.
+my(%UMF_array);
+open UMF_file, "<$UMF_name"  or die "Cannot open $UMF_name\n$!\n";
+my($line);
+while ($line=<UMF_file>){
+ if($line=~/^<A[^>]+>([A-z0-9\.\-]+)<\/A>/) {
+   $UMF_array{$1}=$line;
+ }
+}
+
+my($UMI_name)=$INDEXDIR."/UM_index.html";
+
+# UMI_programs, UMI_subroutines, UMI_functions and UMI_modules are 
+# hashes which contain hypertext links to the program object. They also
+# by their nature contain the types of these program objects. i.e.
+# UMI_programs only contains links to PROGRAM objects.
+
+my(%UMI_programs);
+my(%UMI_subroutines);
+my(%UMI_functions);
+my(%UMI_modules);
+
+open UMI_file, "<$UMI_name" or die "Cannot open $UMI_name\n$!\n";
+
+# We rely on the UMI_file being structure so that a title of the
+# type <B>:::x:::,</B> exists before each block of program object
+# links, where :::x:::: is one of programs, subroutines, functions
+# or modules. From this we can construct not only a list of each
+# program object type, but also the hypertext link to be used later.
+
+my($target)="";
+while($line=<UMI_file>) {
+  if($line =~ /<B>([A-z,]+)<\/B>/) {
+    $target=$1;
+    next;
+  }
+  if($line =~ /<A href=[^>]*\/([A-z0-9\-]+\.[Ff](90)?)\.html/i) {
+    if($target eq "programs,") {
+      $UMI_programs{$1}.=$line;
+    }
+    elsif($target eq "subroutines,") {
+      $UMI_subroutines{$1}.=$line;
+    }
+    elsif($target eq "functions,") {
+      $UMI_functions{$1}.=$line;
+    }
+    elsif($target eq "modules,") {
+      $UMI_modules{$1}.=$line;
+    }
+
+  }
+}
+
+close UMI_file;
+
+# This section replaces sections. For the moment we attempt to 
+# copy the directory structure of the FCM repository, as long
+# as it it only 2 directories deep. At the time of writing it 
+# divided code up into atmosphere, control, ocean etc. and then
+# put individual sections in named directories.
+
+# We index the top level directory into a hash, %PARTS, which
+# contains the names of sub directories (sections).
+
+# Open the original HTML directory to get the structure
+my(%PARTS);
+opendir(repos_dir, "$UM_build") || die ("Unable to open code directory, $UM_build");
+for my $repos (grep(!/^\./, readdir(repos_dir))) {
+  if ( ! -d "$UM_build/$repos" ) {
+    next
+  }
+  my(@SECTIONS);
+  opendir(build_dir, "$UM_build/$repos") || die ("Unable to open code directory, $UM_build/$repos"); 
+  my($item);
+  for $item (grep(!/^\./, readdir(build_dir))) { # The grep function gets rid of hidden files, . and ..
+    if( -d "$UM_build/$repos/$item" and ($item !~ /^include/ )) {
+      $PARTS{"$repos/$item"} = ();
+    }
+  }
+  closedir(build_dir);
+}
+closedir(repos_dir);
+my($part);
+for $part (keys(%PARTS)) {
+  opendir(sec_dir, "$UM_build/$part") || die("Unable to open section directory $UM_build/$part");
+  my($sect);
+  my($found)=0;
+  for $sect (grep(!/^\./, readdir(sec_dir))) { # The grep function gets rid of hidden files, . and ..
+   if(-d "$UM_build/$part/$sect" ) {
+      $found=1;
+      push @{$PARTS{$part}}, $sect;
+    }
+  }
+  # If there are no subdirectories to the $part, we removee it
+  # so that it is not indexed unecessarily later on (and causes
+  # memory faults later on).
+  if(!$found) {
+    delete($PARTS{$part});
+  }
+  closedir(sec_dir);
+}
+
+# The contents file will be copied and edited to include section listings.
+my($CONTENTS_name)=$UM_html."/UMbrowser/contents.html";
+# This is the new contents file which will be used for editing.
+my($NEWCONT_name)=$UM_workdir."/contents.html";
+open NEWCONT_file, ">$NEWCONT_name" or die "Cannot open $NEWCONT_name\n$!\n";
+open CONTENTS_file, "<$CONTENTS_name" or die "Cannot open $CONTENTS_name$!\n\n";
+
+# Copy the head of the contents file to the new contents file.
+while (<CONTENTS_file>) 
+{
+  print NEWCONT_file $_;
+  last if ($_=~/<A href='ind\/include_index.html'/);
+}
+
+
+print NEWCONT_file "\nBy DEF or section:";
+
+foreach my $part (sort(keys(%PARTS))) {
+  # Add some a header to this block of sections
+  print NEWCONT_file "\n<b>$part</b>";
+  my($section);
+  for $section (sort(@{$PARTS{$part}}))
+  {
+    my $part_name = $part;
+    my $repos     = $part;
+    $part_name =~ s/\//_/;
+    $repos     =~ s/^([0-9]*)\/.*/$1/;
+
+    # Create two files for each section, a list of filenames "_f" and a 
+    # list of program objects, "_index"
+    my($SECTF_name)=$part_name.$section."_f.html";
+    my($SECTI_name)=$part_name.$section."_index.html";
+    
+    open SECTF_file, ">$INDEXDIR/$SECTF_name" or die "Cannot open $INDEXDIR/$SECTF_name\n$!\n";
+    open SECTI_file, ">$INDEXDIR/$SECTI_name" or die "Cannot open $INDEXDIR/$SECTI_name\n$!\n";
+ 
+    # Get a listing of all the "decks/files" that make up this section
+    my(@decks);
+    find({wanted => sub {-f && push @decks, "$repos-$_"}, no_chdir => 0},"$UM_build/$part/$section");
+    chomp @decks;
+    # Write the header of the list of the two files, including a total number of files.
+    my($total)=scalar @decks;
+    print SECTF_file  '<HTML>
+<HEAD>
+<TITLE>'.$section.'</TITLE><A NAME="TOP">
+</HEAD>
+<BODY BGCOLOR=#eeeeee LINK=#0000aa VLINK=#0000ff ALINK=#ff0000 >
+<FONT COLOR=#990000>'.$section.'</FONT><BR><FONT COLOR=#009900> '.$total.' files</FONT>:<BR>
+<PRE>
+';
+
+    print SECTI_file '
+<HTML>
+<HEAD>
+<TITLE>'.$section.'</TITLE><A NAME="TOP">
+</HEAD>
+<BODY BGCOLOR=#eeeeee LINK=#0000aa VLINK=#0000ff ALINK=#ff0000 >
+<FONT COLOR=#990000>'.$section.' index</FONT><PRE>';
+
+    # Check what sort of decks are contained, and add the link to the deck in the
+    # appropriate section of the file (programs,subroutiens,function,modules).
+    # This uses the UMI_* hashes indexed at the start of the program.
+    my($deck);
+    my (@sect_programs);
+    my($program);
+    foreach $deck (@decks)
+    {
+      if (exists($UMI_programs{$deck}))
+      {
+        # A file may have multiple links so we need to split to make sure each
+        # subroutuine/module...etc is in a separate entry in the array so sort 
+        # works correctly later (and displays correctly).
+        my @multi_line = map { "$_\n" } split( /\n/, $UMI_programs{$deck});
+        push @sect_programs, @multi_line;
+      }
+    }
+    $total=scalar @sect_programs;
+    if ($total)
+    {
+      print SECTI_file '
+<a name=\"programs\">
+<b>programs,</b>
+<FONT COLOR=#009900>'.$total.' total</FONT>:
+';
+      @sect_programs = sort target_sort @sect_programs;
+      print SECTI_file " @sect_programs\n";
+    }
+
+    my (@sect_subroutines);
+    my($subroutine);
+    foreach $deck (@decks)
+    {
+      if (exists($UMI_subroutines{$deck}))
+      {
+        # A file may have multiple links so we need to split to make sure each
+        # subroutuine/module...etc is in a separate entry in the array so sort 
+        # works correctly later (and displays correctly).
+        my @multi_line = map { "$_\n" } split( /\n/, $UMI_subroutines{$deck});
+        push @sect_subroutines, @multi_line;
+      }
+    }
+    $total=scalar @sect_subroutines;
+    if ($total)
+    {
+      print SECTI_file '
+<A NAME=\"subroutines\">
+<B>subroutines,</B>
+<FONT COLOR=#009900>'.$total.' total</FONT>:
+';
+      @sect_subroutines = sort target_sort @sect_subroutines;
+      print SECTI_file " @sect_subroutines\n";
+    }
+
+    my (@sect_functions);
+    my($function);
+    foreach $deck (@decks)
+    {
+      if (exists($UMI_functions{$deck}))
+      {
+        # A file may have multiple links so we need to split to make sure each
+        # subroutuine/module...etc is in a separate entry in the array so sort 
+        # works correctly later (and displays correctly).
+        my @multi_line = map { "$_\n" } split( /\n/, $UMI_functions{$deck});
+        push @sect_functions, @multi_line;
+      }
+    }
+    $total=scalar @sect_functions;
+    if ($total)
+    {
+      print SECTI_file '
+<A NAME=\"functions\"><BR>
+<B>functions,</B>
+<FONT COLOR=#009900>'.$total.' total</FONT>:
+';
+      @sect_functions = sort target_sort @sect_functions;
+      print SECTI_file " @sect_functions\n";
+    } 
+
+    my (@sect_modules);
+    my($module);
+    foreach $deck (@decks)
+    {
+      if (exists($UMI_modules{$deck}))
+      {
+        # A file may have multiple links so we need to split to make sure each
+        # subroutuine/module...etc is in a separate entry in the array so sort 
+        # works correctly later (and displays correctly).
+        my @multi_line = map { "$_\n" } split( /\n/, $UMI_modules{$deck});
+        push @sect_modules, @multi_line;
+      }
+    }
+    $total=scalar @sect_modules;
+    if ($total)
+    {
+      print SECTI_file '
+<A NAME=\"modules\"><BR>
+<B>modules,</B>
+<FONT COLOR=#009900>'.$total.' total</FONT>:
+';
+      @sect_modules = sort target_sort @sect_modules;
+      print SECTI_file " @sect_modules\n";
+    }
+
+    print SECTI_file '
+</pre></body></html>
+';
+    # Add the links in the file listing of the directory to the _f file. 
+    # From the UMF_array hash created at the beginning of the program
+    foreach $deck (@decks)
+    {
+      if(exists($UMF_array{$deck})) {
+        print SECTF_file $UMF_array{$deck};
+      }
+    }
+  print SECTF_file '
+</pre></body></html>
+';
+  close SECTF_file;
+  close SECTI_file;
+  # Add this section and a link to the file lising to the contents file.
+  print NEWCONT_file '
+<a href="ind/'.$SECTI_name.'" target="index">'.$section.'</a> <a href="ind/'.$SECTF_name.'" target="index">ls</a>';
+  }
+}
+
+print NEWCONT_file "\n";
+# Copy the end of the contents file to the new contents file.
+while (<CONTENTS_file>){
+  print NEWCONT_file $_;}
+
+close CONTENTS_file;
+close NEWCONT_file;
+
+# Overwrite the original contents file with the new contents file.
+File::Copy::copy $NEWCONT_name, $CONTENTS_name or die "Could not move contents file\n$!\n";
+
+sub target_sort
+{
+   my($keya,$keyb)=($a,$b);
+   $keya=~s/^.*bottom_target'>//;
+   $keyb=~s/^.*bottom_target'>//;
+   return ($keya cmp $keyb);
+}

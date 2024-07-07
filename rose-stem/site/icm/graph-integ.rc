@@ -1,0 +1,7 @@
+%include 'site/icm/graph-integ-pwr7.rc'
+%include 'site/icm/graph-integ-xc40.rc'
+%include 'site/icm/graph-integ-linux.rc'
+
+{%- set integ_graphs = integ_graphs_boreasz %}
+{%- do integ_graphs.update(integ_graphs_okeanos.items()) %}
+{%- do integ_graphs.update(integ_graphs_linux.items()) %}

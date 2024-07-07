@@ -1,0 +1,1159 @@
+# XC40 task definitions
+
+# Compilations
+# UM high OpenMP
+    # Extract, Preprocess, Build
+    [[fcm_make_kma_xc40_cce_um_high_omp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+# UM high no OpenMP
+    # Extract, Preprocess, Build
+    [[fcm_make_kma_xc40_cce_um_high_noomp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe OpenMP
+    # Extract, Preprocess, Build
+    [[fcm_make_kma_xc40_cce_um_safe_omp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_safe_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe no OpenMP
+    # Extract, Preprocess, Build
+    [[fcm_make_kma_xc40_cce_um_safe_noomp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_safe_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM debug OpenMP
+    # Extract, Preprocess, Build
+    [[fcm_make_kma_xc40_cce_um_debug_omp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_debug_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM debug no OpenMP
+    # Extract, Preprocess, Build
+    [[fcm_make_kma_xc40_cce_um_debug_noomp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high OpenMP, single precision solver
+    # Extract, Mirror
+    [[fcm_make_kma_xc40_cce_um_high_omp_single_precis]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_high_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe OpenMP, single precision solver
+    # Extract, Mirror
+    [[fcm_make_kma_xc40_cce_um_safe_omp_single_precis]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_safe_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe OpenMP, single precision solver
+    # Extract, Mirror
+    [[fcm_make_kma_xc40_cce_um_debug_omp_single_precis]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_debug_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM rigorous OpenMP
+    # Extract, Preprocess, Build
+    [[fcm_make_kma_xc40_cce_um_rigorous_omp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_rigorous_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM rigorous no OpenMP
+    # Extract, Preprocess, Build
+    [[fcm_make_kma_xc40_cce_um_rigorous_noomp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC40_ROOT_DIR }}/fcm_make_kma_xc40_cce_um_rigorous_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+{% if "kma_xc40_n48_eg_noomp" in name_graphs_out -%}
+# N48 EG job
+
+    [[KMA_XC40_N48_EG_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_cce_um_high_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_XC40_N48_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_n48_eg/{{XC40_N48_EG_KGO}}
+
+    # Reconfiguration 1x2
+    [[recon_kma_xc40_n48_eg_noomp_1x2]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_high_noomp/build-*/bin'"
+        inherit = KMA_XC40_N48_EG_NOOMP, KMA_XC40_CORES_2, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_noomp_1x2/atmos.astart
+        [[[directives]]]
+            -l walltime = 00:04:00
+
+    # Atmosphere Model Run 1x2
+    [[atmos_kma_xc40_n48_eg_noomp_1x2]]
+        inherit = KMA_XC40_N48_EG_NOOMP, KMA_XC40_CORES_4, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x2, IOS_0, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_noomp_1x2/atmos.astart
+        [[[directives]]]
+            -l walltime = 00:11:00
+
+    [[rose_ana_kma_xc40_n48_eg_noomp_atmos_kgo]]  
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_NOOMP, KMALINUX, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n48_eg/{{XC40_N48_EG_KGO}}
+            DIR1=../atmos_kma_xc40_n48_eg_noomp_1x2
+            KGO=0
+
+    [[rose_ana_kma_xc40_n48_eg_noomp_recon_kgo]]  
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_NOOMP, KMALINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n48_eg/{{XC40_N48_EG_KGO}}
+            DIR1=../recon_kma_xc40_n48_eg_noomp_1x2
+            KGO=0
+
+    [[housekeep_atmos_kma_xc40_n48_eg_noomp_1x2]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n48_eg_noomp_1x2
+{%- endif %}
+
+{% if "kma_xc40_n48_eg_omp_ios" in name_graphs_out
+   or "kma_xc40_n48_eg_omp_atmos_1_thread_ios_2_thread" in name_graphs_out
+   or "kma_xc40_n48_eg_omp_noios" in name_graphs_out -%}
+# Same family and make task used by both OpenMP IOS and OpenMP no-IOS jobs
+
+    [[KMA_XC40_N48_EG_OMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_cce_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_XC40_N48_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_n48_eg/{{XC40_N48_EG_KGO}}
+
+{%- endif %}
+
+{% if "kma_xc40_n48_eg_omp_ios" in name_graphs_out -%}
+# N48 EG job
+
+    # Reconfiguration 1x2
+    [[recon_kma_xc40_n48_eg_omp_ios_1x2]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_high_omp/build-*/bin'"
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_CORES_2, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_1x2/atmos.astart
+        [[[directives]]]
+            -l walltime = 00:05:00
+
+    # Reconfiguration 2x1
+    [[recon_kma_xc40_n48_eg_omp_ios_2x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_high_omp/build-*/bin'"
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_CORES_2, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x1, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_2x1/atmos.astart
+        [[[directives]]]
+            -l walltime = 00:05:00
+
+    # Atmosphere Model Run 1x2
+    [[atmos_kma_xc40_n48_eg_omp_ios_1x2]]
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_IOS_ON, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x2, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_1x2/atmos.astart
+        [[[directives]]]
+            -l walltime = 00:11:00
+
+    # Atmosphere Model Run 2x1
+    [[atmos_kma_xc40_n48_eg_omp_ios_2x1]]
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_IOS_ON, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_2x1, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_2x1/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=ios-2-threads
+        [[[directives]]]
+            -l walltime = 00:11:00
+
+
+    [[rose_ana_kma_xc40_n48_eg_omp_ios_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n48_eg/{{XC40_N48_EG_KGO}}
+            DIR1=../atmos_kma_xc40_n48_eg_omp_ios_1x2
+            KGO=0
+
+    [[rose_ana_kma_xc40_n48_eg_omp_ios_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n48_eg/{{XC40_N48_EG_KGO}}
+            DIR1=../recon_kma_xc40_n48_eg_omp_ios_1x2
+            KGO=0
+
+    [[rose_ana_kma_xc40_n48_eg_omp_ios_atmos_proc]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n48_eg_omp_ios_2x1
+            DIR1=../atmos_kma_xc40_n48_eg_omp_ios_1x2
+            KGO=
+
+    [[rose_ana_kma_xc40_n48_eg_omp_ios_recon_proc]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_kma_xc40_n48_eg_omp_ios_2x1
+            DIR1=../recon_kma_xc40_n48_eg_omp_ios_1x2
+            KGO=
+
+    # This housekeeping task will delete working dir of the shortstep task as well.
+    # A dependency has been added to the graph to stop this happening until the
+    # task has finished.
+    [[housekeep_atmos_kma_xc40_n48_eg_omp_ios_1x2]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n48_eg_omp_ios_1x2
+
+    [[housekeep_atmos_kma_xc40_n48_eg_omp_ios_2x1]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n48_eg_omp_ios_2x1
+
+    # Atmosphere EG Model Run 1x2 nrun
+    [[atmos_kma_xc40_n48_eg_omp_ios_1x2_nrun]]
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_IOS_ON, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x2, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=nrun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS
+        [[[directives]]]
+            -l walltime = 00:10:00
+
+    # Atmosphere EG Model Run 1x2 crun
+    [[atmos_kma_xc40_n48_eg_omp_ios_1x2_crun]]
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_IOS_ON, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x2, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=crun
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS
+        [[[directives]]]
+            -l walltime = 00:10:00
+
+    [[rose_ana_kma_xc40_n48_eg_omp_ios_lrun_crun_atmos]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_N48_EG_CRUN
+        [[[environment]]]
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS
+            DIR1=../atmos_kma_xc40_n48_eg_omp_ios_1x2
+            KGO=
+
+    # Atmosphere EG Model Run 1x2 nrun - shortstep version
+    [[atmos_kma_xc40_n48_eg_omp_ios_1x2_nrun_shortstep]]
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_IOS_ON, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x2, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=nrun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS_SHORTSTEP
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS_SHORTSTEP
+        [[[directives]]]
+            -l walltime = 00:10:00
+
+    # Atmosphere EG Model Run 1x2 crun - shortstep version
+    [[atmos_kma_xc40_n48_eg_omp_ios_1x2_crun_shortstep]]
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_IOS_ON, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x2, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_1x2/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=crun shortstep
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS_SHORTSTEP
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS_SHORTSTEP
+        [[[directives]]]
+            -l walltime = 00:10:00
+
+
+    # Shortstep version has no equivalent single run, so uses its own KGO
+    [[rose_ana_kma_xc40_n48_eg_omp_ios_crun_shortstep_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_N48_EG_CRUN
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n48_eg_shortstep/{{XC40_N48_EG_SHORTSTEP_KGO}}
+            DIR1=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS_SHORTSTEP
+            KGO=0
+
+    [[housekeep_atmos_kma_xc40_n48_eg_omp_ios_1x2_crun_shortstep]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=$CYLC_SUITE_SHARE_DIR/data/KMA_XC40_N48_EG_OMP_IOS_SHORTSTEP
+
+{%- endif %}
+
+{% if "kma_xc40_n48_eg_omp_ios_comp_check" in name_graphs_out %}
+
+    [[KMA_XC40_N48_EG_OMP_COMP_CHECK]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_cce_um_rigorous_omp/build-*/bin'"
+
+    [[recon_kma_xc40_n48_eg_omp_ios_comp_check]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_rigorous_omp/build-*/bin'"
+        inherit = KMA_XC40_N48_EG_OMP_COMP_CHECK, KMA_XC40_CORES_2, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_comp_check/atmos.astart
+        [[[directives]]]
+            -l walltime = 00:03:00
+
+    [[atmos_kma_xc40_n48_eg_omp_ios_comp_check]]
+        inherit = KMA_XC40_N48_EG_OMP_COMP_CHECK, KMA_XC40_IOS_ON, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_2x1, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_ios_comp_check/atmos.astart
+        [[[directives]]]
+            -l walltime = 00:30:00
+
+    [[housekeep_kma_xc40_n48_eg_omp_ios_comp_check]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n48_eg_omp_ios_comp_check
+
+{%- endif %}
+
+
+{% if "kma_xc40_n48_eg_omp_noios" in name_graphs_out -%}
+# N48 EG job
+
+    # Reconfiguration 1x2
+    [[recon_kma_xc40_n48_eg_omp_noios_1x2]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_high_omp/build-*/bin'"
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_CORES_2, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_noios_1x2/atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+            -l walltime = 00:03:00
+
+    # Reconfiguration 2x1
+    [[recon_kma_xc40_n48_eg_omp_noios_2x1]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_high_omp/build-*/bin'"
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_CORES_2, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x1, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_noios_2x1/atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+            -l walltime = 00:03:00
+
+    # Atmosphere Model Run 1x2
+    [[atmos_kma_xc40_n48_eg_omp_noios_1x2]]
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_IOS_OFF, KMA_XC40_CORES_4, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x2, IOS_0, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_noios_1x2/atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+            -l walltime = 00:11:00
+
+    # Atmosphere Model Run 2x1
+    [[atmos_kma_xc40_n48_eg_omp_noios_2x1]]
+        inherit = KMA_XC40_N48_EG_OMP, KMA_XC40_IOS_OFF, KMA_XC40_CORES_4, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_2x1, IOS_0, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n48_eg_omp_noios_2x1/atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+            -l walltime = 00:11:00
+
+    [[rose_ana_kma_xc40_n48_eg_omp_noios_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n48_eg/{{XC40_N48_EG_KGO}}
+            DIR1=../atmos_kma_xc40_n48_eg_omp_noios_1x2
+            KGO=0
+
+    [[rose_ana_kma_xc40_n48_eg_omp_noios_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n48_eg/{{XC40_N48_EG_KGO}}
+            DIR1=../recon_kma_xc40_n48_eg_omp_noios_1x2
+            KGO=0
+
+    [[rose_ana_kma_xc40_n48_eg_omp_noios_atmos_proc]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n48_eg_omp_noios_2x1
+            DIR1=../atmos_kma_xc40_n48_eg_omp_noios_1x2
+            KGO=
+
+    [[rose_ana_kma_xc40_n48_eg_omp_noios_recon_proc]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N48_EG_OMP, KMA_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_kma_xc40_n48_eg_omp_noios_2x1
+            DIR1=../recon_kma_xc40_n48_eg_omp_noios_1x2
+            KGO=
+
+    [[housekeep_atmos_kma_xc40_n48_eg_omp_noios_1x2]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n48_eg_omp_noios_1x2
+
+    [[housekeep_atmos_kma_xc40_n48_eg_omp_noios_2x1]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n48_eg_omp_noios_2x1
+
+{%- endif %}
+
+
+# XC40 Jobs: Endgame: Global Configurations
+{% if "kma_xc40_n512_debug_eg_ios_noios" in name_graphs_out -%}
+# N512 Endgame XC40
+    [[KMA_XC40_N512_DEBUG_EG]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_cce_um_debug_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_XC40_N512_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_kma_xc40_n512_debug_eg]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_debug_omp/build-*/bin'"
+        inherit = KMA_XC40_N512_DEBUG_EG, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_debug_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:12:00
+
+    # Atmosphere Model Run 4x34 no ios servers
+    [[atmos_kma_xc40_n512_debug_eg_4x34_noios]]
+        inherit = KMA_XC40_N512_DEBUG_EG, KMA_XC40_IOS_OFF, KMA_XC40_CORES_288, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x34, IOS_0, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_debug_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:28:00
+
+    # Atmosphere Model Run 4x34 + (1*8) io servers
+    [[atmos_kma_xc40_n512_debug_eg_4x34_ios]]
+        inherit = KMA_XC40_N512_DEBUG_EG, KMA_XC40_IOS_ON, KMA_XC40_CORES_288, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x34, IOS_8, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_debug_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:28:00
+
+    # Comparison tasks
+    [[rose_ana_kma_xc40_n512_debug_eg_omp_ios_noios_atmos_proc]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_DEBUG_EG, KMALINUX, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n512_debug_eg_4x34_noios
+            DIR1=../atmos_kma_xc40_n512_debug_eg_4x34_ios
+            KGO=
+
+    [[rose_ana_kma_xc40_n512_debug_eg_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_DEBUG_EG, KMALINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../recon_kma_xc40_n512_debug_eg
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_debug_eg_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_DEBUG_EG, KMALINUX, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../atmos_kma_xc40_n512_debug_eg_4x34_noios
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_debug_eg_wallclock_kgo]]
+        inherit = ROSE_ANA_WALLCLOCK, ROSE_ANA_COMPARISON, KMA_XC40_N512_DEBUG_EG, KMALINUX
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n512_debug_eg_4x34_noios
+            DIR1={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            KGO=1
+
+    [[housekeep_atmos_kma_xc40_n512_debug_eg_4x34]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n512_debug_eg_4x34_noios
+
+{%- endif %}
+
+{% if "kma_xc40_n512_debug_safe_eg_ios" in name_graphs_out -%}
+# N512 Endgame XC40
+    [[KMA_XC40_N512_DEBUG_EG]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_cce_um_debug_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_XC40_N512_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+
+    [[KMA_XC40_N512_SAFE_EG]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_cce_um_safe_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_XC40_N512_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_kma_xc40_n512_debug_eg]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_debug_omp/build-*/bin'"
+        inherit = KMA_XC40_N512_DEBUG_EG, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_debug_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:12:00
+
+    [[recon_kma_xc40_n512_safe_eg]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_safe_omp/build-*/bin'"
+        inherit = KMA_XC40_N512_SAFE_EG, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_safe_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:12:00
+
+    # Atmosphere Model Run 4x34 + (1*8) io servers
+    [[atmos_kma_xc40_n512_debug_eg_4x34_ios]]
+        inherit = KMA_XC40_N512_DEBUG_EG, KMA_XC40_IOS_ON, KMA_XC40_CORES_288, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x34, IOS_8, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_debug_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:28:00
+
+    [[atmos_kma_xc40_n512_safe_eg_4x34_ios]]
+        inherit = KMA_XC40_N512_SAFE_EG, KMA_XC40_IOS_ON, KMA_XC40_CORES_288, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x34, IOS_8, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_safe_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:28:00
+
+    # Comparison tasks
+    [[rose_ana_kma_xc40_n512_debug_safe_eg_omp_ios_atmos_proc]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_DEBUG_EG, KMALINUX, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n512_debug_eg_4x34_ios
+            DIR1=../atmos_kma_xc40_n512_safe_eg_4x34_ios
+            KGO=
+
+    [[rose_ana_kma_xc40_n512_debug_eg_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_DEBUG_EG, KMALINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../recon_kma_xc40_n512_debug_eg
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_safe_eg_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_SAFE_EG, KMALINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../recon_kma_xc40_n512_safe_eg
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_debug_eg_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_DEBUG_EG, KMALINUX, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../atmos_kma_xc40_n512_debug_eg_4x34_ios
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_safe_eg_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_SAFE_EG, KMALINUX, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../atmos_kma_xc40_n512_safe_eg_4x34_ios
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_debug_eg_wallclock_kgo]]
+        inherit = ROSE_ANA_WALLCLOCK, ROSE_ANA_COMPARISON, KMA_XC40_N512_DEBUG_EG, KMALINUX
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n512_debug_eg_4x34_ios
+            DIR1={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            KGO=1
+
+    [[rose_ana_kma_xc40_n512_safe_eg_wallclock_kgo]]
+        inherit = ROSE_ANA_WALLCLOCK, ROSE_ANA_COMPARISON, KMA_XC40_N512_DEBUG_EG, KMALINUX
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n512_safe_eg_4x34_ios
+            DIR1={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            KGO=1
+
+    [[housekeep_atmos_kma_xc40_n512_debug_eg_4x34]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n512_debug_eg_4x34_ios
+
+    [[housekeep_atmos_kma_xc40_n512_safe_eg_4x34]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n512_safe_eg_4x34_ios
+{%- endif %}
+
+{% if "kma_xc40_n512_high_eg_ios" in name_graphs_out -%}
+# N512 Endgame XC40
+    [[KMA_XC40_N512_HIGH_EG]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_cce_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_XC40_N512_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_kma_xc40_n512_high_eg]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_high_omp/build-*/bin'"
+        inherit = KMA_XC40_N512_HIGH_EG, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_high_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:12:00
+
+    # Atmosphere Model Run 4x34 + (1*8) io servers and 34x4 + (1*8) io servers
+    [[atmos_kma_xc40_n512_high_eg_4x34_ios]]
+        inherit = KMA_XC40_N512_HIGH_EG, KMA_XC40_IOS_ON, KMA_XC40_CORES_288, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x34, IOS_8, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_high_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:28:00
+
+    [[atmos_kma_xc40_n512_high_eg_34x4_ios]]
+        inherit = KMA_XC40_N512_HIGH_EG, KMA_XC40_IOS_ON, KMA_XC40_CORES_288, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_34x4, IOS_8, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_high_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:28:00
+
+    # Comparison tasks
+    [[rose_ana_kma_xc40_n512_high_eg_omp_4x34_34x4_ios_atmos_proc]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_HIGH_EG, KMALINUX, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n512_high_eg_4x34_ios
+            DIR1=../atmos_kma_xc40_n512_high_eg_34x4_ios
+            KGO=
+
+    [[rose_ana_kma_xc40_n512_high_eg_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_HIGH_EG, KMALINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../recon_kma_xc40_n512_high_eg
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_high_eg_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_HIGH_EG, KMALINUX, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../atmos_kma_xc40_n512_high_eg_4x34_ios
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_high_eg_wallclock_kgo]]
+        inherit = ROSE_ANA_WALLCLOCK, ROSE_ANA_COMPARISON, KMA_XC40_N512_HIGH_EG, KMALINUX
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n512_high_eg_4x34_ios
+            DIR1={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            KGO=1
+
+    [[housekeep_atmos_kma_xc40_n512_high_eg_4x34]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n512_high_eg_4x34_ios
+
+{%- endif %}
+
+{% if "kma_xc40_n512_safe_eg_ios" in name_graphs_out -%}
+# N512 Endgame XC40
+    [[KMA_XC40_N512_SAFE_EG]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_cce_um_safe_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_XC40_N512_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_kma_xc40_n512_safe_eg]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_kma_xc40_cce_um_safe_omp/build-*/bin'"
+        inherit = KMA_XC40_N512_SAFE_EG, KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_safe_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:12:00
+
+    # Atmosphere Model Run 4x34 + (1*8) io servers and 34x4 + (1*8) io servers
+    [[atmos_kma_xc40_n512_safe_eg_4x34_ios]]
+        inherit = KMA_XC40_N512_SAFE_EG, KMA_XC40_IOS_ON, KMA_XC40_CORES_288, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x34, IOS_8, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_safe_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:28:00
+
+    [[atmos_kma_xc40_n512_safe_eg_34x4_ios]]
+        inherit = KMA_XC40_N512_SAFE_EG, KMA_XC40_IOS_ON, KMA_XC40_CORES_288, KMA_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_34x4, IOS_8, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_kma_xc40_n512_safe_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=kmaxc40
+        [[[directives]]]
+            -l walltime = 00:28:00
+
+    # Comparison tasks
+    [[rose_ana_kma_xc40_n512_safe_eg_omp_4x34_34x4_ios_atmos_proc]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_SAFE_EG, KMALINUX, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n512_safe_eg_4x34_ios
+            DIR1=../atmos_kma_xc40_n512_safe_eg_34x4_ios
+            KGO=
+
+    [[rose_ana_kma_xc40_n512_safe_eg_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_SAFE_EG, KMALINUX, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../recon_kma_xc40_n512_safe_eg
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_safe_eg_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMA_XC40_N512_SAFE_EG, KMALINUX, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            DIR1=../atmos_kma_xc40_n512_safe_eg_4x34_ios
+            KGO=0
+
+    [[rose_ana_kma_xc40_n512_safe_eg_wallclock_kgo]]
+        inherit = ROSE_ANA_WALLCLOCK, ROSE_ANA_COMPARISON, KMA_XC40_N512_SAFE_EG, KMALINUX
+        [[[environment]]]
+            DIR0=../atmos_kma_xc40_n512_safe_eg_4x34_ios
+            DIR1={{KGO_XC40_ROOT_DIR}}/xc40_n512_eg/{{XC40_N512_EG_KGO}}
+            KGO=1
+
+    [[housekeep_atmos_kma_xc40_n512_safe_eg_4x34]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../atmos_kma_xc40_n512_safe_eg_4x34_ios
+
+{%- endif %}
+
+
+# CreateBC builds
+   [[XC40_CREATEBC_BUILD]]
+       inherit = KMA_XC40_INTEL_IVYBRIDGE
+
+   [[fcm_make_kma_xc40_ifort_createbc_high_omp]]
+        inherit = KMA_XC40_EXTRACT, XC40_CREATEBC_BUILD, KMA_XC40_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=high
+            PLATFORM=kma-xc40-ifort
+            grib_api_path = {{GRIB_API_XC40_IFORT_ROOT_DIR}}
+
+    [[fcm_make_kma_xc40_ifort_createbc_rigorous_noomp]]
+        inherit = KMA_XC40_EXTRACT, XC40_CREATEBC_BUILD, KMA_XC40_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=false
+            OPTIMISATION=rigorous
+            PLATFORM=kma-xc40-ifort
+
+    [[fcm_make_kma_xc40_ifort_createbc_rigorous_omp]]
+        inherit = KMA_XC40_EXTRACT, XC40_CREATEBC_BUILD, KMA_XC40_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION=rigorous
+            PLATFORM=kma-xc40-ifort
+
+# UM Utils build
+    # Extract, Mirror
+    [[fcm_make_kma_xc40_cce_utils_serial_high_omp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            PREBUILD =
+
+# UM Utils Serial recon build
+    # Extract, Mirror
+    [[fcm_make_kma_xc40_cce_recon_serial_high_omp]]
+        inherit = KMA_XC40_EXTRACT, MAKE_RECON_SERIAL
+        [[[environment]]]
+            OPTIMISATION=high
+            PREBUILD =
+
+# UM Utils mpp build
+    # Extract, Mirror
+    [[fcm_make_kma_xc40_cce_utils_mpp_high_omp]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            PREBUILD=
+
+# UM libraries
+    [[fcm_make_kma_xc40_cce_libs]]
+        inherit = KMA_XC40_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+# UM Utilities Calcs
+
+{%- if "kma_xc40_createbc_calcs" in name_graphs_out %}
+    [[KMA_XC40_CREATEBC]]
+        inherit = KMA_XC40_CORES_8, KMA_XC40_PARALLEL_THREADS_4, KMA_XC40_INTEL_IVYBRIDGE
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[environment]]]
+            ULIMIT = ulimit -s unlimited -c unlimited
+        [[[directives]]]
+            -l walltime = 00:14:00
+
+    # CreateBC calculation tests
+
+    # Note the "global_eg_varres_eg_2dust6" test should use a rigorous optimisation build!
+
+    {%- set createbc_calcs_map_xc40 = {
+            "global_nd_fixed_nd_2dust2"        : [XC40_CREATEBC_GLOBAL_ND_FIXED_ND_2DUST2_KGO,     "5Gb", "00:07:00"],
+            "global_nd_fixed_eg_0dust0"        : [XC40_CREATEBC_GLOBAL_ND_FIXED_EG_0DUST0_KGO,     "5Gb", "00:10:00"],
+            "global_eg_fixed_nd_0dust0"        : [XC40_CREATEBC_GLOBAL_EG_FIXED_ND_0DUST0_KGO,     "5Gb", "00:07:00"],
+            "global_eg_fixed_eg_2dust6"        : [XC40_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO,    "15Gb", "00:07:00"],
+            "global_eg_varres_nd_0dust0"       : [XC40_CREATEBC_GLOBAL_EG_VARRES_ND_0DUST0_KGO,    "5Gb", "00:07:00"],
+            "global_eg_varres_eg_2dust6"       : [XC40_CREATEBC_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "15Gb", "00:07:00"],
+            "fixed_eg_varres_nd_0dust0"        : [XC40_CREATEBC_FIXED_EG_VARRES_ND_0DUST0_KGO,     "5Gb", "00:07:00"],
+            "fixed_eg_fixed_nd_0dust0"         : [XC40_CREATEBC_FIXED_EG_FIXED_ND_0DUST0_KGO,     "10Gb", "00:07:00"],
+            "fixed_eg_fixed_eg_0dust0"         : [XC40_CREATEBC_FIXED_EG_FIXED_EG_0DUST0_KGO,      "5Gb", "00:07:00"],
+            "varres_eg_fixed_eg_0dust0"        : [XC40_CREATEBC_VARRES_EG_FIXED_EG_0DUST0_KGO,     "5Gb", "00:07:00"],
+            "varres_eg_fixed_nd_0dust0"        : [XC40_CREATEBC_VARRES_EG_FIXED_ND_0DUST0_KGO,    "10Gb", "00:07:00"],
+            "global_eg_frame_eg_2dust2"        : [XC40_CREATEBC_GLOBAL_EG_FRAME_EG_2DUST2_KGO,    "10Gb", "00:18:00"],
+            "frame_eg_varres_eg_2dust6"        : [XC40_CREATEBC_FRAME_EG_VARRES_EG_2DUST6_KGO,    "15Gb", "00:18:00"],
+            "global_nd_fixed_eg_freetracer"    : [XC40_CREATEBC_GLOBAL_ND_FIXED_EG_FREETRACER_KGO,"10Gb", "00:18:00"],
+            "global_eg_fixed_nd_aqumtracer"    : [XC40_CREATEBC_GLOBAL_EG_FIXED_ND_AQUMTRACER_KGO,"10Gb", "00:18:00"],
+            "varres_eg_frame_eg_0dust0"        : [XC40_CREATEBC_VARRES_EG_FRAME_EG_0DUST0_KGO,     "5Gb", "00:18:00"],
+            "frame_eg_fixed_eg_0dust0"         : [XC40_CREATEBC_FRAME_EG_FIXED_EG_0DUST0_KGO,      "5Gb", "00:18:00"],
+            "global_eg_fixed_eg_timecontrol"   : [XC40_CREATEBC_GLOBAL_EG_FIXED_EG_TIMECONTROL_KGO,"5Gb", "00:18:00"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc40.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_kma_xc40_createbc_calcs_{{test_type}}]]
+            inherit = KMA_XC40_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_ifort_createbc_high_omp/build-*/bin'"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_TASK_APP=createbc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                FRAME_DIR=../createbc_kma_xc40_createbc_calcs_global_eg_frame_eg_2dust2
+                FRAME_DIR2=../createbc_kma_xc40_createbc_calcs_varres_eg_frame_eg_0dust0
+            [[[directives]]]
+                -l walltime = {{wall_clock}}
+
+        [[rose_ana_kma_xc40_createbc_calcs_{{test_type}}_kgo]]
+            inherit = ROSE_ANA_COMPARISON, KMALINUX
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_createbc/{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_kma_xc40_createbc_calcs_{{test_type}}
+                 KGO=0
+                 ROSE_TASK_APP=rose_ana_createbc_calcs
+
+        [[housekeep_createbc_kma_xc40_createbc_calcs_{{test_type}}]]
+            inherit = KMA_XC40_HOUSEKEEPING
+            [[[environment]]]
+                RUNDIR=../createbc_kma_xc40_createbc_calcs_{{test_type}}
+
+        {%- endfor %}
+
+{% if INTEGRATION_TESTING == true %}
+
+    {%- set createbc_calcs_map_xc40_compcheck = {
+            "global_eg_varres_eg_2dust6"       : [XC40_CREATEBC_COMP_CHECK_GLOBAL_EG_VARRES_EG_2DUST6_KGO,   "20Gb", "00:35:00"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc40_compcheck.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[createbc_kma_xc40_createbc_calcs_comp_check_{{test_type}}_noomp]]
+            inherit = KMA_XC40_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_ifort_createbc_rigorous_noomp/build-*/bin'"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_TASK_APP=createbc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l walltime = {{wall_clock}}
+
+        [[createbc_kma_xc40_createbc_calcs_comp_check_{{test_type}}_omp]]
+            inherit = KMA_XC40_CREATEBC
+            script = "$ULIMIT ; {{TASK_RUN}} --path= --path='share/fcm_make_kma_xc40_ifort_createbc_rigorous_omp/build-*/bin'"
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_TASK_APP=createbc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+            [[[directives]]]
+                -l walltime = {{wall_clock}}
+
+        [[rose_ana_kma_xc40_createbc_calcs_comp_check_{{test_type}}_kgo]]
+            inherit = ROSE_ANA_COMPARISON, KMALINUX
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_createbc/comp_check_{{test_type}}/{{kgo_var}}
+                 DIR1=../createbc_kma_xc40_createbc_calcs_comp_check_{{test_type}}_noomp
+                 KGO=0
+                 ROSE_TASK_APP=rose_ana_createbc_calcs
+
+        [[rose_ana_kma_xc40_createbc_calcs_comp_check_{{test_type}}_proc]]
+            inherit = ROSE_ANA_COMPARISON, KMALINUX
+             [[[environment]]]
+                 DIR0=../createbc_kma_xc40_createbc_calcs_comp_check_{{test_type}}_omp
+                 DIR1=../createbc_kma_xc40_createbc_calcs_comp_check_{{test_type}}_noomp
+                 KGO=
+                 ROSE_TASK_APP=rose_ana_createbc_calcs
+
+        [[housekeep_createbc_kma_xc40_createbc_calcs_comp_check_{{test_type}}_noomp]]
+            inherit = KMA_XC40_HOUSEKEEPING
+            [[[environment]]]
+                RUNDIR=../createbc_kma_xc40_createbc_calcs_comp_check_{{test_type}}_noomp
+
+        [[housekeep_createbc_kma_xc40_createbc_calcs_comp_check_{{test_type}}_omp]]
+            inherit = KMA_XC40_HOUSEKEEPING
+            [[[environment]]]
+                RUNDIR=../createbc_kma_xc40_createbc_calcs_comp_check_{{test_type}}_omp
+
+        {%- endfor %}
+
+{%- endif %}
+{%- endif %}
+
+{%- if "kma_xc40_vomext_calcs" in name_graphs_out %}
+    # Vomext calculation tests
+    {%- set vomext_calcs_map_xc40 = {
+            "default_nd" : [XC40_UTILS_VOMEXT_DEFAULT_ND_KGO, "550MB", "00:14:00"],
+            "default_eg" : [XC40_UTILS_VOMEXT_DEFAULT_EG_KGO, "10GB",  "00:14:00"],
+            }
+    %}
+
+    {%- for test_type, params in vomext_calcs_map_xc40.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[utils_kma_xc40_vomext_calcs_{{test_type}}]]
+            inherit = KMALINUX_UTILS
+            script = $ULIMIT; {{TASK_RUN}} --command-key={{test_type}}
+            [[[environment]]]
+                INPUT_FILE=$INPUT_DATA/vomext/{{test_type}}_input.ff
+                ROSE_TASK_APP=utils_vomext_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                VOMEXT_OUT_DIR=$CYLC_TASK_WORK_PATH
+            [[[directives]]]
+                -l walltime = {{wall_clock}}
+
+        [[rose_ana_kma_xc40_utils_vomext_calcs_{{test_type}}_kgo]]
+            inherit = ROSE_ANA_COMPARISON, KMALINUX_UTILS
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_vomext/{{test_type}}/{{kgo_var}}
+                 DIR1=../utils_kma_xc40_vomext_calcs_{{test_type}}
+                 KGO=0
+                 ROSE_TASK_APP=rose_ana_vomext_calcs
+
+        [[housekeep_utils_kma_xc40_vomext_calcs_{{test_type}}]]
+            inherit = HOUSEKEEPING, KMALINUX
+            [[[environment]]]
+                RUNDIR=../utils_kma_xc40_vomext_calcs_{{test_type}}
+
+        {%- endfor %}
+{%- endif %}
+
+{%- if "kma_xc40_pptoanc_calcs" in name_graphs_out %}
+     # pptoanc calculation tests
+    {%- set pptoanc_calcs_map_xc40 = {
+            "basic_test"      : [XC40_UTILS_PPTOANC_BASIC_TEST_KGO, "100MB", "00:14:00"],
+            }
+    %}
+
+    {%- for test_type, params in pptoanc_calcs_map_xc40.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+        {%- set wall_clock   = params[2] %}
+
+        [[utils_kma_xc40_pptoanc_calcs_{{test_type}}]]
+            inherit = KMALINUX_UTILS
+            script = $ULIMIT; {{TASK_RUN}} --command-key={{test_type}}
+            [[[environment]]]
+                INPUT_FILE=$INPUT_DATA/pptoanc/{{test_type}}_input.pp
+                ROSE_TASK_APP=utils_pptoanc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                PPTOANC_OUT_DIR=$CYLC_TASK_WORK_PATH
+            [[[directives]]]
+                -l walltime = {{wall_clock}}
+
+        [[rose_ana_kma_xc40_utils_pptoanc_calcs_{{test_type}}_kgo]]
+            inherit = ROSE_ANA_COMPARISON, KMALINUX_UTILS
+             [[[environment]]]
+                 DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_pptoanc/{{test_type}}/{{kgo_var}}
+                 DIR1=../utils_kma_xc40_pptoanc_calcs_{{test_type}}
+                 KGO=0
+                 ROSE_TASK_APP=rose_ana_pptoanc_calcs
+
+        [[housekeep_utils_kma_xc40_pptoanc_calcs_{{test_type}}]]
+            inherit = HOUSEKEEPING, KMALINUX
+            [[[environment]]]
+                RUNDIR=../utils_kma_xc40_pptoanc_calcs_{{test_type}}
+
+        {%- endfor %}
+{%- endif %}
+
+{%- if "kma_xc40_crmstyle_coarse_grid" in name_graphs_out %}
+# crmstyle_coarse_grid checking
+# This utility uses 8 threads to gain maximum parallelism from OpenMP;
+# using more than this on the Power7 is inefficient.
+    [[KMA_XC40_CRMSTYLE_COARSE_GRID]]
+        inherit = KMA_XC40_PARALLEL_THREADS_8, KMA_XC40
+        [[[directives]]]
+            -l walltime = 00:01:00
+        [[[environment]]]
+            ROSE_TASK_APP=utils_crmstyle_coarse_grid
+
+    [[utils_kma_xc40_crmstyle_coarse_grid_whole]]
+        inherit = KMA_XC40_CRMSTYLE_COARSE_GRID, KMA_XC40_CORES_8
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_whole
+            NPROCX  =1
+            NPROCY  =1
+            NEWRES  =100
+
+    [[UTILS_KMA_XC40_CRMSTYLE_COARSE_GRID_PART]]
+        inherit = KMA_XC40_CRMSTYLE_COARSE_GRID, KMA_XC40_CORES_16
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_part
+            ROSE_LAUNCHER_PREOPTS=-n 2
+            NEWRES  =40
+
+    [[utils_kma_xc40_crmstyle_coarse_grid_part_1x2]]
+        inherit = UTILS_KMA_XC40_CRMSTYLE_COARSE_GRID_PART
+        [[[environment]]]
+            NPROCX           =1
+            NPROCY           =2
+
+    [[utils_kma_xc40_crmstyle_coarse_grid_part_2x1]]
+        inherit = UTILS_KMA_XC40_CRMSTYLE_COARSE_GRID_PART
+        [[[environment]]]
+            NPROCX           =2
+            NPROCY           =1
+
+    [[rose_ana_kma_xc40_utils_crmstyle_coarse_grid_whole_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMALINUX
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_single
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_crmstyle_coarse_grid/{{XC40_UTILS_CRMSTYLE_COARSE_GRID_KGO}}
+            DIR1=../utils_kma_xc40_crmstyle_coarse_grid_whole
+            KGO=0
+            NEWRES  =100
+
+    [[rose_ana_kma_xc40_utils_crmstyle_coarse_grid_part_proc]]
+        inherit = ROSE_ANA_COMPARISON, KMALINUX
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            DIR0=../utils_kma_xc40_crmstyle_coarse_grid_part_1x2
+            DIR1=../utils_kma_xc40_crmstyle_coarse_grid_part_2x1
+            KGO=
+            NEWRES  =40
+
+    [[rose_ana_kma_xc40_utils_crmstyle_coarse_grid_part_kgo]]
+        inherit = ROSE_ANA_COMPARISON, KMALINUX
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_utils_crmstyle_coarse_grid/{{XC40_UTILS_CRMSTYLE_COARSE_GRID_KGO}}
+            DIR1=../utils_kma_xc40_crmstyle_coarse_grid_part_2x1
+            KGO=0
+            NEWRES  =40
+
+    [[housekeep_utils_kma_xc40_crmstyle_coarse_grid_whole]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../utils_kma_xc40_crmstyle_coarse_grid_whole
+
+    [[housekeep_utils_kma_xc40_crmstyle_coarse_grid_part_1x2]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../utils_kma_xc40_crmstyle_coarse_grid_part_1x2
+
+    [[housekeep_utils_kma_xc40_crmstyle_coarse_grid_part_2x1]]
+        inherit = KMA_XC40_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=../utils_kma_xc40_crmstyle_coarse_grid_part_2x1
+
+{%- endif %}
+
+{%-if "kma_xc40_mule_test" in name_graphs_out %}
+    [[utils_kma_xc40_mule_packing_test]]
+        inherit = KMALINUX
+        pre-script = """
+                     module swap python python/2.7.6-iris
+                     module unload grib_api
+                     module load grib_api/1.13.0
+                     """
+        [[[environment]]]
+            ROSE_TASK_APP=run_mule_tests
+{%- endif %}

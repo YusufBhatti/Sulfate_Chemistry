@@ -1,0 +1,356 @@
+# Linux Jobs: Compilations
+
+# UM high OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_um_high_omp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high OpenMP DrHook
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_um_high_omp_drhook]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+            DRHOOK=true
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_high_omp_drhook
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high no OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_um_high_noomp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_um_safe_omp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_safe_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe no OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_um_safe_noomp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_safe_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM debug OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_um_debug_omp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_debug_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM debug no OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_um_debug_noomp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM rigorous OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_um_rigorous_omp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_rigorous_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[job]]]
+            execution time limit = PT99M
+
+# UM rigorous no OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_um_rigorous_noomp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_rigorous_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[job]]]
+            execution time limit = PT99M
+
+# UM high Clang
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_clang_ifort_um_high_omp]]
+        inherit = METO_LINUX_BUILD_CLANG_IFORT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_clang_ifort_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+# Reconfiguration-only high OpenMP
+    # Extract, Pre-process-recon, Build-recon
+    [[fcm_make_meto_linux_ifort_recon_high_omp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[job]]]
+            execution time limit = PT27M
+
+# Reconfiguration-only high OpenMP no GRIB_API
+    # Extract, Pre-process-recon, Build-recon
+    [[fcm_make_meto_linux_ifort_recon_high_omp_nogrib]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            ROSE_APP_OPT_CONF_KEYS=meto_linux_ifort_nogrib
+            OPTIMISATION=high
+            PREBUILD =
+        [[[job]]]
+            execution time limit = PT27M
+
+# SCM debug OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_scm_debug_omp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPTIMISATION=debug
+            OPENMP=true
+        [[[job]]]
+            execution time limit = PT33M
+            
+# SCM debug no-OpenMP
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_scm_debug_noomp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+            OPTIMISATION=debug
+            OPENMP=false
+        [[[job]]]
+            execution time limit = PT33M
+            
+# CreateBC builds
+    [[CREATEBC_BUILD_SETTINGS]]
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            PLATFORM=meto-x86-ifort
+        [[[job]]]
+            execution time limit = PT26M
+
+    [[CREATEBC_BUILD]]
+        inherit = CREATEBC_BUILD_SETTINGS
+
+    [[CREATEBC_BUILD_CLANG_IFORT]]
+        inherit = CREATEBC_BUILD_SETTINGS
+        [[[environment]]]
+            PLATFORM=meto-x86-clang-ifort
+
+    [[fcm_make_meto_linux_ifort_createbc_rigorous_noomp]]
+        inherit = CREATEBC_BUILD, METO_LINUX_BUILD
+        [[[environment]]]
+            OPENMP=false
+            OPTIMISATION=rigorous
+
+    [[fcm_make_meto_linux_ifort_createbc_rigorous_omp]]
+        inherit = CREATEBC_BUILD, METO_LINUX_BUILD
+        [[[environment]]]
+            OPENMP=true
+            OPTIMISATION=rigorous
+
+    [[fcm_make_meto_linux_ifort_createbc_high_omp]]
+        inherit = CREATEBC_BUILD, METO_LINUX_BUILD
+        [[[environment]]]
+            OPENMP=true
+            OPTIMISATION=high
+
+    [[fcm_make_meto_linux_ifort_createbc_high_omp_drhook]]
+        inherit = CREATEBC_BUILD, METO_LINUX_BUILD
+        [[[environment]]]
+            DRHOOK=true
+            OPENMP=true
+            OPTIMISATION=high
+
+    [[fcm_make_meto_linux_ifort_createbc_high_noomp]]
+        inherit = CREATEBC_BUILD, METO_LINUX_BUILD
+        [[[environment]]]
+            OPENMP=false
+            OPTIMISATION=high
+
+    [[fcm_make_meto_linux_clang_ifort_createbc_high_omp]]
+        inherit = CREATEBC_BUILD_CLANG_IFORT, METO_LINUX_BUILD_CLANG_IFORT
+        [[[environment]]]
+            OPENMP=true
+            OPTIMISATION=high
+
+# UM Utils build
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_utils_serial_high_noomp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_ifort_utils_serial_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[directives]]]
+            --mem=3072
+        [[[job]]]
+            execution time limit = PT49M
+
+# UM Utils build Clang
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_clang_ifort_utils_serial_high_noomp]]
+        inherit = METO_LINUX_BUILD_CLANG_IFORT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_LINUX_ROOT_DIR }}/fcm_make_meto_linux_clang_ifort_utils_serial_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+        [[[directives]]]
+            --mem=3072
+        [[[job]]]
+            execution time limit = PT49M
+
+# UM Utils Serial recon build
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_recon_serial_high_omp]]
+        inherit = METO_LINUX_BUILD, MAKE_RECON_SERIAL
+       [[[environment]]]
+           OPTIMISATION=high
+           PREBUILD=
+       [[[directives]]]
+           --mem=600
+        [[[job]]]
+            execution time limit = PT26M
+
+# UM Utils mpp build
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_ifort_utils_mpp_high_omp]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            PREBUILD=
+        [[[directives]]]
+            --mem=2048
+        [[[job]]]
+            execution time limit = PT16M
+
+# UM Utils mpp build Clang
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_clang_ifort_utils_mpp_high_omp]]
+        inherit = METO_LINUX_BUILD_CLANG_IFORT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            PREBUILD=
+        [[[directives]]]
+            --mem=2048
+        [[[job]]]
+            execution time limit = PT16M
+
+
+# UM libraries build
+    # Extract, Pre-process, Build
+    [[fcm_make_meto_linux_gcc_ifort_libs]]
+        inherit = METO_LINUX_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+    [[fcm_make_meto_linux_clang_ifort_libs]]
+        inherit = METO_LINUX_BUILD_CLANG_IFORT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+# Monitoring app (linux)
+{% if "monitor_linux_tasks"  in name_graphs_out -%}
+    [[monitor_linux_tasks]]
+       [[[environment]]]
+           ROSE_TASK_APP = monitor
+       [[[remote]]]
+           host = {{ ROSE_ORIG_HOST }}
+       [[[directives]]]
+           --mem=32
+        [[[job]]]
+            execution time limit = PT3M
+{% endif %}
+
+
+# Housekeeping
+    [[housekeep_meto_linux]]
+        inherit = METO_LINUX_HOUSEKEEPING, RUN_LINUX
+{%- if TRUSTZONE == 'collaboration' %}
+        pre-script = ""
+        [[[job]]]
+            batch system = background
+{%- endif %}
+        [[[environment]]]
+            RUNDIR=$CYLC_SUITE_WORK_DIR/
+

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+
+META_DIR=../script_source/um/rose-meta
+
+# APP_DIRS - should be passed down from suite level and contain a space
+# separated list of app directories and/or wildcards i.e. "um_* coupled_*"
+# will run the macro on app directories beginning with um or coupled.
+
+MY_RC=0
+
+echo "[INFO] Running metadata-check on each metadata directory"
+for metadata in $(ls -d $META_DIR/*); do
+    meta_name=`basename $metadata`
+    echo "[INFO] Running metadata-check on ${metadata}/HEAD"
+    rose metadata-check -C ${metadata}/HEAD
+    RC=$?
+    if [[ $RC -eq 0 ]]; then
+        echo "[OK] $meta_name"
+    else
+        MY_RC=$RC
+        echo "[FAIL] $meta_name"      
+        echo "[FAIL] $meta_name" >&2
+    fi
+done
+
+echo "[INFO] Running --validate on each app directory"
+for um_app in $(cd "$ROSE_SUITE_DIR"/app && ls -d $APP_DIRS); do
+    echo "[INFO] Running --validate on $um_app"
+    rose macro -C "$ROSE_SUITE_DIR"/app/"$um_app" -M $META_DIR --validate \
+        --no-warn version
+    RC=$?
+    if [[ $RC -eq 0 ]]; then
+        echo "[OK] $um_app"
+    else
+        MY_RC=$RC
+        echo "[FAIL] $um_app"
+        echo "[FAIL] $um_app" >&2
+    fi
+done
+
+exit $MY_RC 
+

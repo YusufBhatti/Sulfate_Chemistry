@@ -1,0 +1,18 @@
+{%- set integ_graphs_linux_common = {
+
+    "umdp3_check"       :  "",
+
+    "ifdef_check"       :  "",
+
+    "nl_bcast_check"    :  "",
+
+    "drhook_check"      :  "",
+
+    "site_validate"     :  "",
+
+    "monitor_linux_tasks" :  "",
+
+    "metadata_check"    :  "",
+
+    }
+%}

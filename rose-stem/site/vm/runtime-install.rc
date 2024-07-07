@@ -1,0 +1,73 @@
+{# Override exclusion of UKCA AUX files if any UKCA tests are included. #}
+{% set overrides = {'UKCA': false} %}
+{% for name in name_graphs_out %}
+    {% if 'ukca' in name %}
+        {% do overrides.update({'UKCA': true}) %}
+    {% endif %}
+{% endfor %}
+
+    [[install_source]]
+        inherit = VM, EXTRACT_SOURCE
+        [[[environment]]]
+{% if UKCA == true or overrides.UKCA == true %}
+            UKCA_DIR=UKCA
+{% else %}
+            UKCA_DIR=unset
+{% endif %}
+
+
+    [[vm_install_utils]]
+        inherit = INSTALL, VM, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = install_utils
+            PLATFORM = linux
+            SOURCES = "fcm_make_vm_gnu_utils_serial_high_omp \
+                       fcm_make_vm_gnu_utils_mpp_high_omp \
+                       fcm_make_vm_gnu_createbc_high_noomp"
+
+    [[fcm_make_vm_install_ctldata]]
+        inherit = INSTALL, VM, EXTRACT_SOURCE
+        [[[environment]]]
+{% if UKCA == true or overrides.UKCA == true %}
+            EXCLUDE_UKCA=
+{% else %}
+            EXCLUDE_UKCA=UKCA
+{% endif %}
+            ROSE_APP_OPT_CONF_KEYS=extract vm
+            ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[vm_install_ctldata]]
+        inherit = INSTALL, VM, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP    = install_ctldata
+            TASK_DIR=fcm_make_vm_install_ctldata
+
+
+# Library and mule install tasks
+
+    [[vm_install_libs]]
+        inherit = INSTALL, VM, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = install_libs
+            PLATFORM = linux
+            TASK_DIR = "fcm_make_vm_gnu_libs_high_noomp"
+
+    [[fcm_make_vm_install_mule]]
+        inherit = INSTALL, VM, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = fcm_make_install_mule
+            ROSE_APP_OPT_CONF_KEYS=extract
+
+    [[vm_install_mule]]
+        inherit = VM_MULE, INSTALL, VM, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT = $UM_INSTALL_DIR
+            ROSE_TASK_APP          = install_mule
+            TASK_DIR               = fcm_make_vm_install_mule
+            PLATFORM = linux
+
+    [[vm_test_mule]]
+        inherit = VM_MULE, VM
+        [[[environment]]]
+            ROSE_TASK_APP = run_mule_tests

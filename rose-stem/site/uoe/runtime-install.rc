@@ -1,0 +1,111 @@
+#
+# x86 gnu install tasks
+#
+    [[uoe_x86_gnu_install_libs]]
+        inherit = INSTALL, UOE_X86_GNU, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP = install_libs
+            PLATFORM = linux
+            TASK_DIR = "fcm_make_uoe_x86_gnu_libs" 
+
+    [[fcm_make_uoe_x86_install_ctldata]]
+        inherit = INSTALL, UOE_X86_GNU, EXTRACT_SOURCE
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=extract
+            ROSE_TASK_APP=fcm_make_install_ctldata
+
+   [[uoe_x86_install_ctldata]]
+        inherit = INSTALL, UOE_X86_GNU, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP=install_ctldata
+            TASK_DIR=fcm_make_uoe_x86_install_ctldata
+	    
+#
+# EMPS install tasks
+#
+
+    [[uoe_emps_install_utils]]
+        inherit = INSTALL, UOE_EMPS, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_TASK_APP=install_utils
+            PLATFORM=linux
+            SOURCES=fcm_make_uoe_emps_ifort_utils_serial_high_noomp
+
+    [[fcm_make_uoe_emps_install_ctldata]]
+        inherit = INSTALL, UOE_EMPS, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=extract
+            ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[uoe_emps_install_ctldata]]
+        inherit = INSTALL, UOE_EMPS, EXTRACT_SOURCE
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP=install_ctldata
+            TASK_DIR=fcm_make_uoe_emps_install_ctldata
+
+#
+# Dirac install tasks
+#
+
+    [[fcm_make_uoe_dirac_install_ctldata]]
+        inherit = INSTALL, UOE_DIRAC, EXTRACT_SOURCE
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=mirror
+            ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[fcm_make2_uoe_dirac_install_ctldata]]
+        inherit = INSTALL, UOE_DIRAC, EXTRACT_SOURCE
+        [[[remote]]]
+            host = leicester.dirac.ac.uk
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[uoe_dirac_install_ctldata]]
+        inherit = INSTALL, UOE_DIRAC, EXTRACT_SOURCE
+        [[[remote]]]
+            host = leicester.dirac.ac.uk
+        [[[environment]]]
+            ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+            ROSE_TASK_APP=install_ctldata
+            TASK_DIR=fcm_make_uoe_dirac_install_ctldata
+
+# Isca install tasks
+
+    [[uoe_isca_ifort_install_libs]]
+        inherit = INSTALL, UOE_ISCA, EXTRACT_SOURCE
+        [[[remote]]]
+           host = login.isca.ex.ac.uk
+        [[[environment]]]
+            ROSE_TASK_APP = install_libs
+            PLATFORM = linux
+            TASK_DIR = "fcm_make_uoe_isca_ifort_libs"
+
+    [[fcm_make_uoe_isca_install_ctldata]]
+        inherit = INSTALL, UOE_ISCA, EXTRACT_SOURCE
+	[[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+	[[[environment]]]
+	    ROSE_APP_OPT_CONF_KEYS=mirror
+	    ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[fcm_make2_uoe_isca_install_ctldata]]
+        inherit = INSTALL, UOE_ISCA, EXTRACT_SOURCE
+	[[[remote]]]
+	    host = login.isca.ex.ac.uk
+        [[[environment]]]
+	    ROSE_TASK_APP=fcm_make_install_ctldata
+
+    [[uoe_isca_install_ctldata]]
+        inherit = INSTALL, UOE_ISCA, EXTRACT_SOURCE
+	[[[remote]]]
+            host = login.isca.ex.ac.uk
+        [[[environment]]]
+	    ROSE_FILE_INSTALL_ROOT=$UM_INSTALL_DIR
+	    ROSE_TASK_APP=install_ctldata
+	    TASK_DIR=fcm_make_uoe_isca_install_ctldata

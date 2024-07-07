@@ -1,0 +1,106 @@
+# Linux Jobs: Non-UM scripts
+    [[SCRIPTS]]
+
+# UMDP3 compliance checker - needs to run on ROSE_ORIG_HOST so we use the
+# EXTRACT family
+{% if "umdp3_check" in name_graphs_out -%}
+    [[umdp3_checker]]
+{% if OFFLINE %}
+        inherit = UNAVAILABLE
+        script = "echo Task unavailable in offline mode"
+{% else %}
+        inherit = SCRIPTS, EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=script_umdp3_checker
+{% endif %}
+{% endif %}
+
+# Check for retired if-defs being reintroduced. Also needs ROSE_ORIG_HOST.
+{% if "ifdef_check" in name_graphs_out -%}
+    [[ifdef_checker]]
+{% if OFFLINE %}
+        inherit = UNAVAILABLE
+        script = "echo Task unavailable in offline mode"
+{% else %}
+        inherit = SCRIPTS, EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=script_ifdef_checker
+{% endif %}
+{% endif %}
+
+# Takes a copy of all three source trees for running script tests on.
+{% if "nl_bcast_check" in name_graphs_out 
+   or "drhook_check" in name_graphs_out 
+   or "metadata_check" in name_graphs_out -%}
+    [[script_source]]
+        inherit = SCRIPTS, EXTRACT
+
+    [[housekeep_script_source]]
+        inherit = SCRIPTS, EXTRACT
+        script = "rm -rf ../script_source"
+{% endif %}
+
+# Checks namelist broadcasting code is valid. Also needs ROSE_ORIG_HOST.
+{% if "nl_bcast_check" in name_graphs_out -%}
+    [[nl_bcast_checker]]
+        inherit = SCRIPTS, EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=script_nl_bcast_checker
+            # IGNORES gives a comma-delimited list of patterns which will be
+            # excluded from the check (if found)
+            IGNORES=src/atmosphere/radiation_control/setup_spectra_mod.F90
+{% endif %}
+
+# Checks infrastructure for calling Dr Hook.  Also needs ROSE_ORIG_HOST.
+{% if "drhook_check" in name_graphs_out -%}
+    [[drhook_checker]]
+        inherit = SCRIPTS, EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=script_drhook_checker
+{% endif %}
+
+# Checks that rose stem groups at a number of sites are valid.
+# Needs the EXTRACT family to obtain SOURCE_UM_BASE and needs to be
+# run on ROSE_ORIG_HOST in order to access SOURCE_UM_BASE.
+{% if "site_validate" in name_graphs_out -%}
+    [[site_validator]]
+        inherit = SCRIPTS, EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=script_site_validator
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}	
+        [[[job]]]
+            batch system = background
+{% endif %}
+
+{% if "metadata_check" in name_graphs_out -%}
+# Metadata tasks
+    [[METADATA]]
+
+    [[metadata_check_validate]]
+        inherit = METADATA, EXTRACT
+        [[[environment]]]
+            APP_DIRS = um_* coupled_* fcm_make_* recon_* createbc_*
+            ROSE_TASK_APP = run_meta_macro
+
+    [[metadata_check_upgrade]]
+        inherit = METADATA, EXTRACT
+        [[[environment]]]
+            APP_DIRS = "um_n48_eg@vn10.3 \
+                        um_seukv_eg@55747 \
+                        fcm_make_um@vn10.5 \
+                        fcm_make_recon@vn10.5 \
+                        fcm_make_scm@vn10.5 \
+                        fcm_make_createbc@vn10.5 \
+                        fcm_make_utils_mpp@vn10.5 \
+                        fcm_make_utils_serial@vn10.5 \
+                        createbc_calcs@54180 \
+                        recon_lam_from_grib_cutout@vn10.7"
+            ROSE_TASK_APP = script_upgrade
+
+    [[metadata_check_missing_macro]]
+        inherit = METADATA, EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP = script_missing_macro
+
+{%- endif %}

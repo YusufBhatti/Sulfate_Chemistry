@@ -1,0 +1,320 @@
+{%- set name_graphs = {
+
+    "nci_n96_amip_eg"   : "fcm_make_nci_um_safe_omp => fcm_make2_nci_um_safe_omp => \
+                           recon_nci_n96_amip_eg_1x4 => atmos_nci_n96_amip_eg_4x8 => rose_ana_nci_n96_amip_eg_atmos_kgo
+                           recon_nci_n96_amip_eg_1x4 => rose_ana_nci_n96_amip_eg_recon_kgo
+                           fcm_make2_nci_um_safe_omp => recon_nci_n96_amip_eg_4x1
+                           recon_nci_n96_amip_eg_1x4 => rose_ana_nci_n96_amip_eg_recon_proc
+                           recon_nci_n96_amip_eg_4x1 => rose_ana_nci_n96_amip_eg_recon_proc
+                           recon_nci_n96_amip_eg_4x1 => atmos_nci_n96_amip_eg_6x5
+                           atmos_nci_n96_amip_eg_4x8 => rose_ana_nci_n96_amip_eg_atmos_proc
+                           atmos_nci_n96_amip_eg_6x5 => rose_ana_nci_n96_amip_eg_atmos_proc
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n96_amip_eg_1x4 & recon_nci_n96_amip_eg_4x1
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n96_amip_eg_drhook" :
+                          "fcm_make_nci_um_high_omp_drhook => fcm_make2_nci_um_high_omp_drhook => \
+                           recon_nci_n96_amip_eg_drhook => atmos_nci_n96_amip_eg_drhook_4x8 => rose_ana_nci_n96_amip_eg_drhook_atmos_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n96_amip_eg_drhook
+                           recon_nci_n96_amip_eg_drhook => rose_ana_nci_n96_amip_eg_drhook_recon_kgo
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+
+    "nci_ukca_eg_strattrop"  :
+                          "fcm_make_nci_um_safe_omp => fcm_make2_nci_um_safe_omp => \
+                           recon_nci_ukca_eg_strattrop => atmos_nci_ukca_eg_strattrop_16x8 => rose_ana_nci_ukca_eg_strattrop_atmos_kgo
+                           recon_nci_ukca_eg_strattrop => rose_ana_nci_ukca_eg_strattrop_recon_kgo
+                           recon_nci_ukca_eg_strattrop => atmos_nci_ukca_strattrop_16x8_2omp 
+                           atmos_nci_ukca_eg_strattrop_16x8 & atmos_nci_ukca_strattrop_16x8_2omp => rose_ana_nci_ukca_strattrop_atmos_omp_kgo
+                           recon_nci_ukca_eg_strattrop => atmos_nci_ukca_strattrop_nrun_16x8 => atmos_nci_ukca_strattrop_crun_16x8
+                           atmos_nci_ukca_strattrop_crun_16x8 & atmos_nci_ukca_eg_strattrop_16x8 => rose_ana_nci_ukca_strattrop_atmos_nruncrun
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_ukca_eg_strattrop
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n48_eg_omp_noios"        :
+                          "fcm_make_nci_um_high_omp => fcm_make2_nci_um_high_omp  => \
+                           recon_nci_n48_eg_omp_noios_1x2 => atmos_nci_n48_eg_omp_noios_2x4 => rose_ana_nci_n48_eg_omp_noios_atmos_kgo
+                           recon_nci_n48_eg_omp_noios_1x2 => rose_ana_nci_n48_eg_omp_noios_recon_kgo
+                           fcm_make2_nci_um_high_omp => recon_nci_n48_eg_omp_noios_2x1
+                           recon_nci_n48_eg_omp_noios_1x2 => rose_ana_nci_n48_eg_omp_noios_recon_proc
+                           recon_nci_n48_eg_omp_noios_2x1 => rose_ana_nci_n48_eg_omp_noios_recon_proc
+                           recon_nci_n48_eg_omp_noios_2x1 => atmos_nci_n48_eg_omp_noios_1x8
+                           atmos_nci_n48_eg_omp_noios_2x4 => rose_ana_nci_n48_eg_omp_noios_atmos_proc
+                           atmos_nci_n48_eg_omp_noios_1x8 => rose_ana_nci_n48_eg_omp_noios_atmos_proc
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n48_eg_omp_noios_1x2 & recon_nci_n48_eg_omp_noios_2x1
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n48_eg_omp_ios"        :
+                          "fcm_make_nci_um_high_omp => fcm_make2_nci_um_high_omp  => \
+                           recon_nci_n48_eg_omp_ios_1x2 => atmos_nci_n48_eg_omp_ios_1x6 => rose_ana_nci_n48_eg_omp_ios_atmos_kgo
+                           recon_nci_n48_eg_omp_ios_1x2 => rose_ana_nci_n48_eg_omp_ios_recon_kgo
+                           fcm_make2_nci_um_high_omp => recon_nci_n48_eg_omp_ios_2x1
+                           recon_nci_n48_eg_omp_ios_1x2 => rose_ana_nci_n48_eg_omp_ios_recon_proc
+                           recon_nci_n48_eg_omp_ios_2x1 => rose_ana_nci_n48_eg_omp_ios_recon_proc
+                           recon_nci_n48_eg_omp_ios_2x1 => atmos_nci_n48_eg_omp_ios_2x3
+                           atmos_nci_n48_eg_omp_ios_1x6 => rose_ana_nci_n48_eg_omp_ios_atmos_proc
+                           atmos_nci_n48_eg_omp_ios_2x3 => rose_ana_nci_n48_eg_omp_ios_atmos_proc
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n48_eg_omp_ios_1x2 & recon_nci_n48_eg_omp_ios_2x1
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n48_eg_omp_ios_comp_check" :
+                          "fcm_make_nci_um_rigorous_omp => fcm_make2_nci_um_rigorous_omp => \
+                           recon_nci_n48_eg_omp_ios_comp_check => atmos_nci_n48_eg_omp_ios_comp_check
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => nci_install_ctldata => \
+                           recon_nci_n48_eg_omp_ios_comp_check
+                           atmos_nci_n48_eg_omp_ios_comp_check => housekeep_nci",
+
+			  "nci_n48_eg_noomp"  :    "fcm_make_nci_um_high_noomp => fcm_make2_nci_um_high_noomp => \
+                           recon_nci_n48_eg_noomp_1x2 => atmos_nci_n48_eg_noomp_4x4 => rose_ana_nci_n48_eg_noomp_atmos_kgo
+                           recon_nci_n48_eg_noomp_1x2 => rose_ana_nci_n48_eg_noomp_recon_kgo
+                           fcm_make2_nci_um_high_noomp => recon_nci_n48_eg_noomp_2x1
+                           recon_nci_n48_eg_noomp_1x2 => rose_ana_nci_n48_eg_noomp_recon_proc
+                           recon_nci_n48_eg_noomp_2x1 => rose_ana_nci_n48_eg_noomp_recon_proc
+                           recon_nci_n48_eg_noomp_2x1 => atmos_nci_n48_eg_noomp_2x8
+                           atmos_nci_n48_eg_noomp_4x4 => rose_ana_nci_n48_eg_noomp_atmos_proc
+                           atmos_nci_n48_eg_noomp_2x8 => rose_ana_nci_n48_eg_noomp_atmos_proc
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n48_eg_noomp_1x2 & recon_nci_n48_eg_noomp_2x1
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n48_eg_noomp_comp_check" :
+                          "fcm_make_nci_um_rigorous_noomp => fcm_make2_nci_um_rigorous_noomp => \
+                           recon_nci_n48_eg_noomp_comp_check => atmos_nci_n48_eg_noomp_comp_check
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => nci_install_ctldata => \
+                           recon_nci_n48_eg_noomp_comp_check
+                           atmos_nci_n48_eg_noomp_comp_check => housekeep_nci",
+			  
+    "nci_n48_ga7_amip_2day" : 
+                          "fcm_make_nci_um_safe_omp => fcm_make2_nci_um_safe_omp => \
+                           recon_nci_n48_ga7_amip_2day_4x8 => atmos_nci_n48_ga7_amip_2day_4x8
+                           fcm_make2_nci_um_safe_omp => recon_nci_n48_ga7_amip_2day_8x4 => \
+                           atmos_nci_n48_ga7_amip_2day_8x4 & atmos_nci_n48_ga7_amip_2day_nc3_8x4 & \
+                           atmos_nci_n48_ga7_amip_2day_nc4_8x4 & atmos_nci_n48_ga7_amip_2day_nc4_32_8x4
+                           recon_nci_n48_ga7_amip_2day_8x4 => atmos_nci_n48_ga7_amip_1day_NRUN_8x4 => \
+                           atmos_nci_n48_ga7_amip_1day_CRUN_8x4
+                           recon_nci_n48_ga7_amip_2day_8x4 => atmos_nci_n48_ga7_amip_1day_NRUN_nc3_8x4 => \
+                           atmos_nci_n48_ga7_amip_1day_CRUN_nc3_8x4
+                           recon_nci_n48_ga7_amip_2day_8x4 => atmos_nci_n48_ga7_amip_1day_NRUN_nc4_8x4 => \
+                           atmos_nci_n48_ga7_amip_1day_CRUN_nc4_8x4
+                           recon_nci_n48_ga7_amip_2day_8x4 => atmos_nci_n48_ga7_amip_1day_NRUN_nc4_32_8x4 => \
+                           atmos_nci_n48_ga7_amip_1day_CRUN_nc4_32_8x4
+                           atmos_nci_n48_ga7_amip_1day_CRUN_8x4 & atmos_nci_n48_ga7_amip_2day_8x4 => rose_ana_nci_n48_ga7_amip_2day_atmos_nruncrun_lrun
+                           atmos_nci_n48_ga7_amip_1day_CRUN_nc3_8x4 & atmos_nci_n48_ga7_amip_2day_nc3_8x4 => rose_ana_nci_n48_ga7_amip_2day_nc3_atmos_nruncrun_lrun
+                           atmos_nci_n48_ga7_amip_1day_CRUN_nc4_8x4 & atmos_nci_n48_ga7_amip_2day_nc4_8x4 => rose_ana_nci_n48_ga7_amip_2day_nc4_atmos_nruncrun_lrun
+                           atmos_nci_n48_ga7_amip_1day_CRUN_nc4_32_8x4 & atmos_nci_n48_ga7_amip_2day_nc4_32_8x4 => rose_ana_nci_n48_ga7_amip_2day_nc4_32_atmos_nruncrun_lrun
+                           atmos_nci_n48_ga7_amip_2day_4x8 & atmos_nci_n48_ga7_amip_2day_8x4 => rose_ana_nci_n48_ga7_amip_2day_atmos_proc
+                           atmos_nci_n48_ga7_amip_2day_8x4 => rose_ana_nci_n48_ga7_amip_2day_atmos_kgo
+                           atmos_nci_n48_ga7_amip_2day_nc3_8x4 => rose_ana_nci_n48_ga7_amip_2day_nc3_atmos_kgo
+                           atmos_nci_n48_ga7_amip_2day_nc4_8x4 => rose_ana_nci_n48_ga7_amip_2day_nc4_atmos_kgo
+                           atmos_nci_n48_ga7_amip_2day_nc4_32_8x4 => rose_ana_nci_n48_ga7_amip_2day_nc4_32_atmos_kgo
+                           recon_nci_n48_ga7_amip_2day_4x8 & recon_nci_n48_ga7_amip_2day_8x4 => rose_ana_nci_n48_ga7_amip_2day_recon_proc
+                           recon_nci_n48_ga7_amip_2day_8x4 => rose_ana_nci_n48_ga7_amip_2day_recon_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n48_ga7_amip_2day_4x8 & recon_nci_n48_ga7_amip_2day_8x4
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n48_ga7_amip_12hr_comp_check" : 
+                          "fcm_make_nci_um_rigorous_noomp => fcm_make2_nci_um_rigorous_noomp => \
+                           recon_nci_n48_ga7_amip_12hr_comp_check_4x8 => atmos_nci_n48_ga7_amip_12hr_comp_check_4x8 => \
+                           rose_ana_nci_n48_ga7_amip_12hr_comp_check_atmos_kgo
+                           recon_nci_n48_ga7_amip_12hr_comp_check_4x8 => rose_ana_nci_n48_ga7_amip_12hr_comp_check_recon_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n48_ga7_amip_12hr_comp_check_4x8
+			   NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n48_ga7_amip_10day" : 
+                          "fcm_make_nci_um_safe_omp => fcm_make2_nci_um_safe_omp => \
+                           recon_nci_n48_ga7_amip_10day_4x8 => atmos_nci_n48_ga7_amip_10day_8x14
+                           fcm_make2_nci_um_safe_omp => recon_nci_n48_ga7_amip_10day_8x4 => \
+                           atmos_nci_n48_ga7_amip_10day_16x8
+                           atmos_nci_n48_ga7_amip_10day_16x8 & atmos_nci_n48_ga7_amip_10day_8x14 => rose_ana_nci_n48_ga7_amip_10day_atmos_proc
+                           atmos_nci_n48_ga7_amip_10day_8x14 => rose_ana_nci_n48_ga7_amip_10day_atmos_kgo
+                           recon_nci_n48_ga7_amip_10day_4x8 & recon_nci_n48_ga7_amip_10day_8x4 => rose_ana_nci_n48_ga7_amip_10day_recon_proc
+                           recon_nci_n48_ga7_amip_10day_4x8 => rose_ana_nci_n48_ga7_amip_10day_recon_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n48_ga7_amip_10day_4x8 & recon_nci_n48_ga7_amip_10day_8x4
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n48_ga7_amip_30day" : 
+                          "fcm_make_nci_um_safe_omp => fcm_make2_nci_um_safe_omp => \
+                           recon_nci_n48_ga7_amip_30day_4x8 => atmos_nci_n48_ga7_amip_30day_8x14
+                           fcm_make2_nci_um_safe_omp => recon_nci_n48_ga7_amip_30day_8x4 => \
+                           atmos_nci_n48_ga7_amip_30day_16x8
+                           atmos_nci_n48_ga7_amip_30day_16x8 & atmos_nci_n48_ga7_amip_30day_8x14 => rose_ana_nci_n48_ga7_amip_30day_atmos_proc
+                           atmos_nci_n48_ga7_amip_30day_8x14 => rose_ana_nci_n48_ga7_amip_30day_atmos_kgo
+                           recon_nci_n48_ga7_amip_30day_4x8 & recon_nci_n48_ga7_amip_30day_8x4 => rose_ana_nci_n48_ga7_amip_30day_recon_proc
+                           recon_nci_n48_ga7_amip_30day_4x8 => rose_ana_nci_n48_ga7_amip_30day_recon_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n48_ga7_amip_30day_4x8 & recon_nci_n48_ga7_amip_30day_8x4
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n48_ga_amip_exp_2day" : 
+                          "fcm_make_nci_um_safe_omp => fcm_make2_nci_um_safe_omp => \
+                           recon_nci_n48_ga_amip_exp_2day_4x8 => atmos_nci_n48_ga_amip_exp_2day_4x8
+                           fcm_make2_nci_um_safe_omp => recon_nci_n48_ga_amip_exp_2day_8x4 => \
+                           atmos_nci_n48_ga_amip_exp_2day_8x4 & atmos_nci_n48_ga_amip_exp_2day_nc3_8x4 & \
+                           atmos_nci_n48_ga_amip_exp_2day_nc4_8x4 & atmos_nci_n48_ga_amip_exp_2day_nc4_32_8x4
+                           recon_nci_n48_ga_amip_exp_2day_8x4 => atmos_nci_n48_ga_amip_exp_1day_NRUN_8x4 => \
+                           atmos_nci_n48_ga_amip_exp_1day_CRUN_8x4
+                           recon_nci_n48_ga_amip_exp_2day_8x4 => atmos_nci_n48_ga_amip_exp_1day_NRUN_nc3_8x4 => \
+                           atmos_nci_n48_ga_amip_exp_1day_CRUN_nc3_8x4
+                           recon_nci_n48_ga_amip_exp_2day_8x4 => atmos_nci_n48_ga_amip_exp_1day_NRUN_nc4_8x4 => \
+                           atmos_nci_n48_ga_amip_exp_1day_CRUN_nc4_8x4
+                           recon_nci_n48_ga_amip_exp_2day_8x4 => atmos_nci_n48_ga_amip_exp_1day_NRUN_nc4_32_8x4 => \
+                           atmos_nci_n48_ga_amip_exp_1day_CRUN_nc4_32_8x4
+                           atmos_nci_n48_ga_amip_exp_1day_CRUN_8x4 & atmos_nci_n48_ga_amip_exp_2day_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_atmos_nruncrun_lrun
+                           atmos_nci_n48_ga_amip_exp_1day_CRUN_nc3_8x4 & atmos_nci_n48_ga_amip_exp_2day_nc3_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_nc3_atmos_nruncrun_lrun
+                           atmos_nci_n48_ga_amip_exp_1day_CRUN_nc4_8x4 & atmos_nci_n48_ga_amip_exp_2day_nc4_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_nc4_atmos_nruncrun_lrun
+                           atmos_nci_n48_ga_amip_exp_1day_CRUN_nc4_32_8x4 & atmos_nci_n48_ga_amip_exp_2day_nc4_32_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_nc4_32_atmos_nruncrun_lrun
+                           atmos_nci_n48_ga_amip_exp_2day_4x8 & atmos_nci_n48_ga_amip_exp_2day_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_atmos_proc
+                           atmos_nci_n48_ga_amip_exp_2day_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_atmos_kgo
+                           atmos_nci_n48_ga_amip_exp_2day_nc3_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_nc3_atmos_kgo
+                           atmos_nci_n48_ga_amip_exp_2day_nc4_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_nc4_atmos_kgo
+                           atmos_nci_n48_ga_amip_exp_2day_nc4_32_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_nc4_32_atmos_kgo
+                           recon_nci_n48_ga_amip_exp_2day_4x8 & recon_nci_n48_ga_amip_exp_2day_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_recon_proc
+                           recon_nci_n48_ga_amip_exp_2day_8x4 => rose_ana_nci_n48_ga_amip_exp_2day_recon_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n48_ga_amip_exp_2day_4x8 & recon_nci_n48_ga_amip_exp_2day_8x4
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n48_ga_amip_exp_12hr_comp_check" : 
+                          "fcm_make_nci_um_rigorous_noomp => fcm_make2_nci_um_rigorous_noomp => \
+                           recon_nci_n48_ga_amip_exp_12hr_comp_check_4x8 => atmos_nci_n48_ga_amip_exp_12hr_comp_check_4x8 => \
+                           rose_ana_nci_n48_ga_amip_exp_12hr_comp_check_atmos_kgo
+                           recon_nci_n48_ga_amip_exp_12hr_comp_check_4x8 => rose_ana_nci_n48_ga_amip_exp_12hr_comp_check_recon_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n48_ga_amip_exp_12hr_comp_check_4x8
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_n512_eg"  :
+                          "fcm_make_nci_um_high_omp_single_precis => fcm_make2_nci_um_high_omp_single_precis => \
+                           recon_nci_n512_eg => atmos_nci_n512_eg_4x62 => rose_ana_nci_n512_eg_atmos_kgo & rose_ana_nci_n512_eg_wallclock_kgo
+                           recon_nci_n512_eg => rose_ana_nci_n512_eg_recon_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n512_eg
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_scm_togacoare_ga6"  :
+                          "fcm_make_nci_scm_debug_noomp => fcm_make2_nci_scm_debug_noomp
+                           fcm_make2_nci_scm_debug_noomp => scm_nci_scm_togacoare_ga6 => rose_ana_nci_scm_togacoare_ga6_atmos_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => scm_nci_scm_togacoare_ga6
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_scm_gabls3_ga6"  :
+                          "fcm_make_nci_scm_debug_noomp => fcm_make2_nci_scm_debug_noomp
+                           fcm_make2_nci_scm_debug_noomp => scm_nci_scm_gabls3_ga6 => rose_ana_nci_scm_gabls3_ga6_atmos_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => scm_nci_scm_gabls3_ga6
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_scm_gabls3_ga6_comp_check"  :
+                          "fcm_make_nci_scm_rigorous_noomp => fcm_make2_nci_scm_rigorous_noomp
+                           fcm_make2_nci_scm_rigorous_noomp => scm_nci_scm_gabls3_ga6_comp_check => rose_ana_nci_scm_gabls3_ga6_atmos_comp_check_kgo
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => scm_nci_scm_gabls3_ga6_comp_check
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_createbc_calcs" :
+                          "
+                           fcm_make_nci_createbc_high_omp => fcm_make2_nci_createbc_high_omp
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => nci_install_ctldata
+                         
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_nd_fixed_nd_2dust2 => \
+                           rose_ana_nci_createbc_calcs_global_nd_fixed_nd_2dust2_kgo
+                         
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_nd_fixed_eg_0dust0 => \
+                           rose_ana_nci_createbc_calcs_global_nd_fixed_eg_0dust0_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_eg_fixed_nd_0dust0 => \
+                           rose_ana_nci_createbc_calcs_global_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_eg_fixed_eg_2dust6 => \
+                           rose_ana_nci_createbc_calcs_global_eg_fixed_eg_2dust6_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_eg_fixed_eg_timecontrol => \
+                           rose_ana_nci_createbc_calcs_global_eg_fixed_eg_timecontrol_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_eg_varres_nd_0dust0 => \
+                           rose_ana_nci_createbc_calcs_global_eg_varres_nd_0dust0_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_eg_varres_eg_2dust6 => \
+                           rose_ana_nci_createbc_calcs_global_eg_varres_eg_2dust6_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_fixed_eg_varres_nd_0dust0 => \
+                           rose_ana_nci_createbc_calcs_fixed_eg_varres_nd_0dust0_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_fixed_eg_fixed_nd_0dust0 => \
+                           rose_ana_nci_createbc_calcs_fixed_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_fixed_eg_fixed_eg_0dust0 => \
+                           rose_ana_nci_createbc_calcs_fixed_eg_fixed_eg_0dust0_kgo
+                         
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_varres_eg_fixed_eg_0dust0 => \
+                           rose_ana_nci_createbc_calcs_varres_eg_fixed_eg_0dust0_kgo
+                         
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_varres_eg_fixed_nd_0dust0 => \
+                           rose_ana_nci_createbc_calcs_varres_eg_fixed_nd_0dust0_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_nd_fixed_eg_freetracer => \
+                           rose_ana_nci_createbc_calcs_global_nd_fixed_eg_freetracer_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_eg_fixed_nd_aqumtracer => \
+                           rose_ana_nci_createbc_calcs_global_eg_fixed_nd_aqumtracer_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_global_eg_frame_eg_2dust2 => \
+                           rose_ana_nci_createbc_calcs_global_eg_frame_eg_2dust2_kgo
+                           createbc_nci_createbc_calcs_global_eg_frame_eg_2dust2 & fcm_make2_nci_createbc_high_omp & nci_install_ctldata => \
+                           createbc_nci_createbc_calcs_frame_eg_varres_eg_2dust6 => rose_ana_nci_createbc_calcs_frame_eg_varres_eg_2dust6_kgo
+
+                           fcm_make2_nci_createbc_high_omp & nci_install_ctldata => createbc_nci_createbc_calcs_varres_eg_frame_eg_0dust0 => \
+                           rose_ana_nci_createbc_calcs_varres_eg_frame_eg_0dust0_kgo
+                           createbc_nci_createbc_calcs_varres_eg_frame_eg_0dust0 & fcm_make2_nci_createbc_high_omp & nci_install_ctldata => \
+                           createbc_nci_createbc_calcs_frame_eg_fixed_eg_0dust0 => rose_ana_nci_createbc_calcs_frame_eg_fixed_eg_0dust0_kgo
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_global_to_lam_eg" :
+                          "
+                           fcm_make_nci_createbc_high_omp => fcm_make2_nci_createbc_high_omp => createbc_nci_global_to_lam_frame_seukv_eg => createbc_nci_global_to_lam_createbc_seukv_eg
+                           fcm_make_nci_um_high_omp => fcm_make2_nci_um_high_omp => \
+                           recon_nci_global_to_lam_seukv_eg => atmos_nci_global_to_lam_seukv_eg_4x8
+                           createbc_nci_global_to_lam_createbc_seukv_eg => atmos_nci_global_to_lam_seukv_eg_4x8
+                           atmos_nci_n512_eg_4x62 => recon_nci_global_to_lam_seukv_eg
+                           atmos_nci_n512_eg_4x62 => createbc_nci_global_to_lam_frame_seukv_eg
+                           fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata => \
+                           nci_install_ctldata => recon_nci_n512_eg
+                           atmos_nci_global_to_lam_seukv_eg_4x8 => rose_ana_nci_global_to_lam_seukv_eg_4x8_atmos_kgo
+                           
+                           recon_nci_global_to_lam_seukv_eg => rose_ana_nci_global_to_lam_seukv_eg_recon_kgo
+                           createbc_nci_global_to_lam_createbc_seukv_eg => rose_ana_nci_global_to_lam_seukv_eg_createbc_kgo
+                           createbc_nci_global_to_lam_frame_seukv_eg => rose_ana_nci_global_to_lam_seukv_eg_frame_kgo
+                           
+                           fcm_make_nci_um_high_omp_single_precis => fcm_make2_nci_um_high_omp_single_precis => \
+                           recon_nci_n512_eg => atmos_nci_n512_eg_4x62 => rose_ana_nci_n512_eg_atmos_kgo & rose_ana_nci_n512_eg_wallclock_kgo
+                           recon_nci_n512_eg => rose_ana_nci_n512_eg_recon_kgo
+                           NCI_ROSE_ANA_COMPARISON:succeed-all => housekeep_nci",
+
+    "nci_install"    :    "fcm_make_nci_install_ctldata => fcm_make2_nci_install_ctldata  => nci_install_ctldata
+                           fcm_make_nci_utils_serial_high_omp => fcm_make2_nci_utils_serial_high_omp => nci_install_utils
+                           fcm_make_nci_createbc_high_omp => fcm_make2_nci_createbc_high_omp => nci_install_utils",
+
+    "nci_install_libs" :
+                           "fcm_make_nci_libs => fcm_make2_nci_libs => nci_install_libs",
+
+    "nci_test_mule" :
+                           "fcm_make_nci_libs => fcm_make2_nci_libs => nci_install_libs => nci_install_mule
+                            fcm_make_nci_install_mule => fcm_make2_nci_install_mule => nci_install_mule => nci_runtest_mule",
+
+    "umdp3_check"       : "umdp3_checker",
+    "ifdef_check"       : "ifdef_checker",
+    "nl_bcast_check"    : "script_source => nl_bcast_checker => \
+                           housekeep_script_source",
+
+    }
+-%}
+

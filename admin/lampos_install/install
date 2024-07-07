@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+
+#####################################################################
+# Install script for LAMPOS 4.2                                     #
+#                                                                   #
+# Before running this script edit the directory paths and           #
+# application names listed below to conform                         #
+# with your system and where you want the lampos files to reside    #
+#                                                                   #
+# UM collaboration support utility.                                 #
+# (UM system dev team Nov 2011)                                     #
+# flip view facility provided by NIWA to better support SH domains  #
+#####################################################################
+
+#####################################################################
+# The name of the Fortran compiler                                  #
+#####################################################################
+
+fortran='ifort'
+export fortran
+
+#####################################################################
+# The directory into which the files will be installed              #
+#####################################################################
+
+destdir=~/lamposvn4.2
+
+#####################################################################
+# The script will create an extra file in a standard bin            #
+# directory, so that you don't need to change the path if you want  #
+# execute the program:                                              #
+#####################################################################
+
+bindir=~/bin
+
+#####################################################################
+# The program needs version 8.0 of the tcl/tk "wish" shell to       #
+# execute.                                                          #
+#####################################################################
+
+#wishdir='/usr/local/bin/wish8.0'
+#wishdir='/home/fr0100/umui/opt/bin/wish8.0'
+wishdir='/usr/bin/wish'
+
+#####################################################################
+# Last but not least, the script needs the directory where the      #
+# unpacked files are.                                               #
+#####################################################################
+
+installdir=~/lampos_install
+
+#####################################################################
+
+#####################################################################
+#                     Do not to edit below here!                    #
+#####################################################################
+
+setterm -clear
+
+test -d $installdir/bin/
+if [ $? = 1 ]; then
+  mkdir -p $installdir/bin
+  echo "installdir/bin does not exist... create $installdir/bin"
+fi
+test -d $destdir/
+if [ $? = 1 ]; then
+  mkdir -p $destdir
+  echo "destdir does not exist... create $destdir"
+fi
+test -d $destdir/data/
+if [ $? = 1 ]; then
+  mkdir -p $destdir/data
+  echo "destdir/data does not exist... create $destdir/data"
+fi
+test -d $destdir/source/
+if [ $? = 1 ]; then
+  mkdir -p $destdir/source
+  echo "destdir/source does not exist... create $destdir/source"
+fi
+test -d $destdir/source/Tcl
+if [ $? = 1 ]; then
+  mkdir -p $destdir/source/Tcl
+  echo "destdir/source/Tcl does not exist... create $destdir/source/Tcl"
+fi
+test -d $destdir/bin/
+if [ $? = 1 ]; then
+  mkdir -p $destdir/bin
+  echo "destdir/bin does not exist... create $destdir/bin"
+fi
+test -d $bindir/
+if [ $? = 1 ]; then
+  mkdir -p $bindir
+  echo "destdir does not exist... create $bindir"
+fi
+    
+#####################################################################
+#                    Create lampos executable:                      #
+#####################################################################
+
+cat > $bindir/lampos << EOF
+#!/usr/bin/env bash
+exec $wishdir -f $destdir/lampos.tcl 
+EOF
+
+cat > $destdir/lampos << EOF
+#!/usr/bin/env bash
+exec $wishdir -f $destdir/lampos.tcl 
+EOF
+
+#####################################################################
+#                       make fortran based executables:             #
+#####################################################################
+
+cd $installdir/source
+make lltoeq eqtoll coasts
+cd $installdir
+
+#####################################################################
+#                               Copy data:                          #
+#####################################################################
+
+cp $installdir/bin/eqtoll.exec $destdir/bin
+cp $installdir/bin/lltoeq.exec $destdir/bin
+cp $installdir/data/data_coarse $destdir/data
+cp $installdir/data/data_fine $destdir/data
+cp $installdir/data/data_latlon $destdir/data
+cp $installdir/data/grey.5 $destdir/data
+cp $installdir/data/pwrdLogo200.gif $destdir/data
+cp $installdir/help.html $destdir
+cp $installdir/lampos.tcl $destdir
+cp $installdir/source/Tcl/colour.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/cross.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/drawarea.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/drawlatlon.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/drawmap.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/helpbrowser.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/main.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/options.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/params.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/print.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/util.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/zoom.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/centreview.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/newarea.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/checklatlon.tcl $destdir/source/Tcl
+cp $installdir/source/Tcl/flipview.tcl $destdir/source/Tcl
+
+chmod 777 $bindir/lampos
+chmod 777 $destdir/lampos    
+echo ""
+echo "Installation finished!"
+echo ""
+echo ""
+exit

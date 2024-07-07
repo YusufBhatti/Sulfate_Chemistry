@@ -1,0 +1,27 @@
+# Groups in graph-integ.rc must match those named below
+{%- set name_graphs = {
+
+    "afw_install"    : "fcm_make_afw_utils_serial_high_noomp => afw_install_utils
+                        fcm_make_afw_utils_mpp_high_omp => afw_install_utils
+                        fcm_make_afw_recon_serial_high_omp => afw_install_utils
+                        fcm_make_afw_recon_high_omp => afw_install_utils
+                        fcm_make_afw_createbc_high_omp => afw_install_utils
+                        fcm_make_afw_install_ctldata => \
+                        afw_install_ctldata",
+
+    "afw_fcm_make"   : "fcm_make_afw_utils_serial_high_noomp
+                        fcm_make_afw_utils_mpp_high_omp 
+                        fcm_make_afw_recon_high_omp
+                        fcm_make_afw_recon_serial_high_omp
+                        fcm_make_afw_recon_serial_high_noomp
+                        fcm_make_afw_createbc_high_omp
+                        fcm_make_afw_createbc_high_noomp
+                        fcm_make_afw_um_high_omp
+                        fcm_make_afw_um_high_noomp",
+
+    "afw_utils"      : "fcm_make_afw_utils_serial_high_noomp => afw_install_utils
+                        fcm_make_afw_utils_mpp_high_omp => afw_install_utils
+                        fcm_make_afw_createbc_high_omp => afw_install_utils",
+                        
+    }
+-%}

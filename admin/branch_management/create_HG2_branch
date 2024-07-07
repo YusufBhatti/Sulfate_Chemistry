@@ -1,0 +1,191 @@
+#!/usr/bin/env bash
+#
+# create_HG2_branch - a simple wrapper for creation of fcm branches
+#                     from the HadGEM2-ES configuration branch
+#
+# This script asks for the basic information required to create a 
+# branch via kdialog or the command line.
+#
+# Options:
+#   -c      Forces command line input
+#
+# Assumes paths for kdialog and fcm are as provided in section 2.
+#
+# Note little/no error checking provided.
+#
+# Original Author: P. Selwood, March 2008
+
+#################################################################
+### Section 0 - Define function(s) used later by script
+#################################################################
+
+#  text_input - Replicate the functionality of KDIALOG
+#               using input from the command line only.
+
+function text_input
+{
+  typeset VAR="" TITLE="" INPUTBOX="" DEFAULT="" COMBONUM="" COMBOBOX=""
+  while [ $# -gt 0 ]
+  do
+    VAR=$1
+    case "$VAR" in
+      --title) shift
+               TITLE=$1
+               echo "--------------------------------------------------------------------------------" 1>&2
+               echo $TITLE 1>&2
+               shift;;
+      --inputbox) shift
+                  INPUTBOX=$1
+                  shift
+                  if [ $# -eq 1 ]
+                  then
+                    DEFAULT=$1
+                    INPUTBOX="$INPUTBOX [$DEFAULT]"
+                    shift
+                  fi
+                  echo -n "$INPUTBOX " 1>&2;;
+      --combobox) shift
+                  INPUTBOX=$1
+                  echo "$INPUTBOX" 1>&2
+                  shift
+                  COMBONUM=0
+                  while [ $# -gt 0 ]
+                  do
+                    let COMBONUM=$COMBONUM+1
+                    echo "$COMBONUM. $1" 1>&2
+                    COMBOBOX[$COMBONUM]=$1
+                    shift
+                  done;;
+      *) echo "Error: Unknown option to $0." 1>&2
+         exit 1;;
+    esac
+  done
+  read
+  if [ -z $REPLY ]
+  then
+    if [[ -n $DEFAULT ]]
+    then
+      echo "$DEFAULT"
+    else
+      echo
+      return 1;
+    fi
+  else
+    if [[ $COMBONUM -gt 0 && $REPLY -gt 0 && $REPLY -le $COMBONUM ]]
+    then
+      echo "${COMBOBOX[$REPLY]}"
+    else
+      echo "$REPLY"
+    fi
+  fi
+}
+
+#################################################################
+### Section 1 - Parse input arguments
+#################################################################
+me=$(basename $0)
+usage="Usage: $me [-c]"
+while getopts 'c' OPTION
+do
+  case $OPTION in
+  c) command_line=TRUE
+     ;;
+  ?) echo $usage
+     exit 1
+     ;;
+  esac
+done
+shift $(($OPTIND - 1))
+
+#################################################################
+### Section 2 - Set variables
+#################################################################
+if [[ ( -n "$DISPLAY" ) && ( -x /usr/bin/kdialog ) && (-z "$command_line") ]]
+then
+  DIALOG=/usr/bin/kdialog
+else
+  DIALOG=text_input
+fi
+UM_SED=${UM_SED:-'sed'}
+
+# FCM command path  (At Met Office fcm is now in the standard path.)
+FCM=fcm 
+
+#################################################################
+### Section 3 - Get information from user
+#################################################################
+
+# Get the repository - default to UM trunk
+repository="fcm:um_br/pkg/Config/HadGEM2-ES"
+repository=`$DIALOG --title "FCM HG2 branch creation - repository" --inputbox "What repository do you wish to create the branch in?" $repository`
+
+if [[ $? == 1 ]]; then
+  echo "Cancelled!"
+  exit 1
+fi
+
+# Get the revision - For some first guesses, parse the output from
+#                    "fcm keyword-print" using "sed" to get a list of available
+#                    revision keywords. If these are not appropriate use "Other"
+#                    which prompts for string input.
+# Notes on sed commands used: s/HG/hg/g - converts all upper case "HG"s to lower case "hg"s
+#                             /hg[0-9]\+\.[0-9]\+.*=/!d - deletes any lines NOT containing "hgX.Y...="
+#                                                         (where X and Y are any numbers - possibly >= 10)
+#                             s/^.*\(hg.*\)=.*$/\1/ - replaces whole lines containing "...hg...=..."
+#                                                     with just the middle "hg..." bit
+#                             s/]//g - removes all "]" characters still left in
+revs="`$FCM kp $repository | $UM_SED -e 's/HG/hg/g;/hg[0-9]\+\.[0-9]\+.*=/!d;s/^.*\(hg.*\)=.*$/\1/;s/]//g' | sort -r`" 2>/dev/null
+if [[ $revs == "" ]]; then
+ revision=Other
+else
+ revision=`$DIALOG --title "FCM HG2 branch creation - revision" --combobox "What revision is the branch to be created at?" $revs "Other"`
+fi
+
+if [[ $? == 1 ]]; then
+  echo "Cancelled!"
+  exit 1
+else
+  # If "Other" has been selected then prompt for string input
+  if [[ $revision == Other ]];then
+    revision=`$DIALOG --title "FCM HG2 branch creation - revision" --inputbox "Type in which revision the branch is to be created at:"`
+    if [[ $? == 1 ]]; then
+      echo "Cancelled!"
+      exit 1
+    fi  
+  fi
+fi
+
+# Get the branch name
+name=`$DIALOG --title "FCM HG2 branch creation - branch name" --inputbox "Type in the name for the branch (do not include revision):"`
+
+if [[ $? == 1 ]]; then
+  echo "Cancelled!"
+  exit 1
+fi
+
+# Get the branch type
+brtype=`$DIALOG --title "FCM HG2 branch creation - branch type" --combobox "Which branch type do you wish to create?" "DEV::USER" "DEV::SHARE" "TEST::USER" "TEST::SHARE" "PKG::USER" "PKG::SHARE" "PKG::CONFIG" "PKG::REL"`
+
+if [[ $? == 1 ]]; then
+  echo "Cancelled!"
+  exit 1
+fi
+
+# Get the ticket number
+ticket=`$DIALOG --title "FCM HG2 branch creation - ticket number" --inputbox "What ticket number is associated with this branch?" "No ticket"`
+if [[ $? == 1 ]]; then
+ ticket="No ticket"
+fi
+
+#################################################################
+### Section 4 - Create the branch
+#################################################################
+echo "--------------------------------------------------------------------------------"
+echo "Executing command:"
+if [[ $ticket != "No ticket" ]]; then
+  echo fcm branch-create --branch-of-branch --ticket $ticket --type $brtype $name $repository@$revision
+  $FCM branch-create --branch-of-branch --ticket $ticket --type $brtype $name $repository@$revision
+else
+  echo fcm branch-create --branch-of-branch --type $brtype $name $repository@$revision
+  $FCM branch-create --branch-of-branch --type $brtype $name $repository@$revision
+fi

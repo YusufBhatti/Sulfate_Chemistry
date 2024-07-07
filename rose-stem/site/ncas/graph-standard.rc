@@ -1,0 +1,153 @@
+{%- set name_graphs = {
+
+    "ncas_xc30_install" : 
+                          "fcm_make_ncas_xc30_cce_utils_serial_high_omp => fcm_make2_ncas_xc30_cce_utils_serial_high_omp => ncas_xc30_install_utils => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_utils_mpp_high_omp => fcm_make2_ncas_xc30_cce_utils_mpp_high_omp => ncas_xc30_install_utils => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_ifort_createbc_high_omp => fcm_make2_ncas_xc30_ifort_createbc_high_omp => ncas_xc30_install_createbc => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_libs => fcm_make2_ncas_xc30_cce_libs => ncas_xc30_install_libs_cce => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_ifort_libs => fcm_make2_ncas_xc30_ifort_libs => ncas_xc30_install_libs_ifort => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_install_ctldata => fcm_make2_ncas_xc30_install_ctldata => ncas_xc30_install_ctldata => housekeep_ncas_xc30",
+
+    "ncas_xc30_fcm_make" : 
+                          "fcm_make_ncas_xc30_cce_um_debug_omp => fcm_make2_ncas_xc30_cce_um_debug_omp => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_um_debug_noomp => fcm_make2_ncas_xc30_cce_um_debug_noomp => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_um_high_omp => fcm_make2_ncas_xc30_cce_um_high_omp => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_um_high_noomp => fcm_make2_ncas_xc30_cce_um_high_noomp => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_um_rigorous_omp => fcm_make2_ncas_xc30_cce_um_rigorous_omp => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_um_rigorous_noomp => fcm_make2_ncas_xc30_cce_um_rigorous_noomp => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_um_safe_omp => fcm_make2_ncas_xc30_cce_um_safe_omp => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_um_safe_noomp => fcm_make2_ncas_xc30_cce_um_safe_noomp => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_um_high_omp_single_precis => fcm_make2_ncas_xc30_cce_um_high_omp_single_precis => housekeep_ncas_xc30
+                           fcm_make_ncas_xc30_cce_um_high_omp_drhook => fcm_make2_ncas_xc30_cce_um_high_omp_drhook => housekeep_ncas_xc30 ",
+
+    "ncas_xc30_n48_eg_noomp" : 
+                          "fcm_make_ncas_xc30_cce_um_safe_noomp => fcm_make2_ncas_xc30_cce_um_safe_noomp  => \
+                           recon_ncas_xc30_n48_eg_noomp_4x6 => atmos_ncas_xc30_n48_eg_noomp_4x6 => rose_ana_ncas_xc30_n48_eg_noomp_atmos_kgo
+                           recon_ncas_xc30_n48_eg_noomp_4x6 => rose_ana_ncas_xc30_n48_eg_noomp_recon_kgo
+                           fcm_make_ncas_xc30_install_ctldata => fcm_make2_ncas_xc30_install_ctldata => \
+                           ncas_xc30_install_ctldata => recon_ncas_xc30_n48_eg_noomp_4x6
+                           NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+  
+    "ncas_xc30_n48_eg_omp_noios_drhook" : 
+                          "fcm_make_ncas_xc30_cce_um_high_omp_drhook => fcm_make2_ncas_xc30_cce_um_high_omp_drhook => \
+                           recon_ncas_xc30_n48_eg_omp_noios_drhook => atmos_ncas_xc30_n48_eg_omp_noios_drhook_2x6 => \
+                           rose_ana_ncas_xc30_n48_eg_omp_noios_drhook_atmos_kgo
+                           fcm_make_ncas_xc30_install_ctldata => fcm_make2_ncas_xc30_install_ctldata => \
+                           ncas_xc30_install_ctldata => recon_ncas_xc30_n48_eg_omp_noios_drhook => rose_ana_ncas_xc30_n48_eg_omp_noios_drhook_recon_kgo
+                           NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+
+    "ncas_xc30_n48_eg_omp_ios" : 
+                          "fcm_make_ncas_xc30_cce_um_safe_omp => fcm_make2_ncas_xc30_cce_um_safe_omp  => \
+                           recon_ncas_xc30_n48_eg_omp_ios_4x6 => atmos_ncas_xc30_n48_eg_omp_ios_2x5 => rose_ana_ncas_xc30_n48_eg_omp_ios_atmos_kgo
+                           recon_ncas_xc30_n48_eg_omp_ios_4x6 => rose_ana_ncas_xc30_n48_eg_omp_ios_recon_kgo
+
+                           fcm_make2_ncas_xc30_cce_um_safe_omp => recon_ncas_xc30_n48_eg_omp_ios_6x4
+                           recon_ncas_xc30_n48_eg_omp_ios_4x6 => rose_ana_ncas_xc30_n48_eg_omp_ios_recon_proc 
+                           recon_ncas_xc30_n48_eg_omp_ios_6x4 => rose_ana_ncas_xc30_n48_eg_omp_ios_recon_proc
+                           recon_ncas_xc30_n48_eg_omp_ios_6x4 => atmos_ncas_xc30_n48_eg_omp_ios_4x2
+                           atmos_ncas_xc30_n48_eg_omp_ios_2x5 => rose_ana_ncas_xc30_n48_eg_omp_ios_atmos_proc 
+                           atmos_ncas_xc30_n48_eg_omp_ios_4x2 => rose_ana_ncas_xc30_n48_eg_omp_ios_atmos_proc
+                           fcm_make_ncas_xc30_install_ctldata => fcm_make2_ncas_xc30_install_ctldata => \
+                           ncas_xc30_install_ctldata => recon_ncas_xc30_n48_eg_omp_ios_4x6 & recon_ncas_xc30_n48_eg_omp_ios_6x4
+
+                           recon_ncas_xc30_n48_eg_omp_ios_4x6 => atmos_ncas_xc30_n48_eg_omp_ios_2x5 & atmos_ncas_xc30_n48_eg_omp_ios_2x5_nrun
+                           atmos_ncas_xc30_n48_eg_omp_ios_2x5_nrun => atmos_ncas_xc30_n48_eg_omp_ios_2x5_crun             
+                           atmos_ncas_xc30_n48_eg_omp_ios_2x5_crun => rose_ana_ncas_xc30_n48_eg_omp_ios_lrun_crun_atmos 
+                           atmos_ncas_xc30_n48_eg_omp_ios_2x5 => rose_ana_ncas_xc30_n48_eg_omp_ios_lrun_crun_atmos
+                           NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+
+    "ncas_xc30_createbc_calcs" :
+                          "fcm_make_ncas_xc30_ifort_createbc_high_omp => fcm_make2_ncas_xc30_ifort_createbc_high_omp
+                           fcm_make_ncas_xc30_install_ctldata => fcm_make2_ncas_xc30_install_ctldata => ncas_xc30_install_ctldata
+
+                           fcm_make2_ncas_xc30_ifort_createbc_high_omp & ncas_xc30_install_ctldata => \
+                           createbc_ncas_xc30_createbc_calcs_global_eg_fixed_eg_2dust6 => rose_ana_ncas_xc30_createbc_calcs_global_eg_fixed_eg_2dust6_kgo
+                           NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+
+    "ncas_xc30_crmstyle_coarse_grid" : 
+                          "fcm_make_ncas_xc30_cce_utils_mpp_high_omp => fcm_make2_ncas_xc30_cce_utils_mpp_high_omp
+                           fcm_make2_ncas_xc30_cce_utils_mpp_high_omp => utils_ncas_xc30_crmstyle_coarse_grid_whole 
+                           fcm_make2_ncas_xc30_cce_utils_mpp_high_omp => utils_ncas_xc30_crmstyle_coarse_grid_part_1x2 
+                           fcm_make2_ncas_xc30_cce_utils_mpp_high_omp => utils_ncas_xc30_crmstyle_coarse_grid_part_2x1
+
+                           utils_ncas_xc30_crmstyle_coarse_grid_whole => rose_ana_ncas_xc30_utils_crmstyle_coarse_grid_whole_kgo
+                           utils_ncas_xc30_crmstyle_coarse_grid_part_2x1 => rose_ana_ncas_xc30_utils_crmstyle_coarse_grid_part_kgo
+                           utils_ncas_xc30_crmstyle_coarse_grid_part_1x2 & \
+                           utils_ncas_xc30_crmstyle_coarse_grid_part_2x1 => rose_ana_ncas_xc30_utils_crmstyle_coarse_grid_part_proc
+                           NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+ 
+    "ncas_xc30_global_to_lam_eg" :
+                          "fcm_make_ncas_xc30_ifort_createbc_high_omp => fcm_make2_ncas_xc30_ifort_createbc_high_omp => \
+                           createbc_ncas_xc30_global_to_lam_frame_seukv_eg => createbc_ncas_xc30_global_to_lam_createbc_seukv_eg
+                           fcm_make_ncas_xc30_cce_um_high_omp => fcm_make2_ncas_xc30_cce_um_high_omp => recon_ncas_xc30_global_to_lam_seukv_eg => \
+                           atmos_ncas_xc30_global_to_lam_seukv_eg_4x6
+                           createbc_ncas_xc30_global_to_lam_createbc_seukv_eg => atmos_ncas_xc30_global_to_lam_seukv_eg_4x6
+                           atmos_ncas_xc30_n512_eg_4x23 => recon_ncas_xc30_global_to_lam_seukv_eg
+                           atmos_ncas_xc30_n512_eg_4x23 => createbc_ncas_xc30_global_to_lam_frame_seukv_eg
+                           fcm_make_ncas_xc30_install_ctldata => fcm_make2_ncas_xc30_install_ctldata => ncas_xc30_install_ctldata => \
+                           recon_ncas_xc30_n512_eg
+                           atmos_ncas_xc30_global_to_lam_seukv_eg_4x6 => rose_ana_ncas_xc30_global_to_lam_seukv_eg_4x6_atmos_kgo
+                           recon_ncas_xc30_global_to_lam_seukv_eg => rose_ana_ncas_xc30_global_to_lam_seukv_eg_recon_kgo
+                           createbc_ncas_xc30_global_to_lam_createbc_seukv_eg => rose_ana_ncas_xc30_global_to_lam_seukv_eg_createbc_kgo
+                           createbc_ncas_xc30_global_to_lam_frame_seukv_eg => rose_ana_ncas_xc30_global_to_lam_seukv_eg_frame_kgo
+                           
+                           fcm_make_ncas_xc30_cce_um_high_omp_single_precis => fcm_make2_ncas_xc30_cce_um_high_omp_single_precis => \
+                           recon_ncas_xc30_n512_eg => atmos_ncas_xc30_n512_eg_4x23 => \
+                           rose_ana_ncas_xc30_n512_eg_atmos_kgo & rose_ana_ncas_xc30_n512_eg_wallclock_kgo
+                           recon_ncas_xc30_n512_eg => rose_ana_ncas_xc30_n512_eg_recon_kgo
+                           NCAS_XC30_ROSE_ANA_WALLCLOCK_COMPARISON:finish-all & NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+
+    "ncas_xc30_n48_ga_amip_exp_2day" : 
+                          "fcm_make_ncas_xc30_cce_um_safe_omp => fcm_make2_ncas_xc30_cce_um_safe_omp => \
+                           recon_ncas_xc30_n48_ga_amip_exp_2day_4x6 => atmos_ncas_xc30_n48_ga_amip_exp_2day_4x6
+                           fcm_make_ncas_xc30_cce_um_safe_omp => fcm_make2_ncas_xc30_cce_um_safe_omp => \
+                           recon_ncas_xc30_n48_ga_amip_exp_2day_6x4 => atmos_ncas_xc30_n48_ga_amip_exp_2day_6x4
+                           recon_ncas_xc30_n48_ga_amip_exp_2day_6x4 => atmos_ncas_xc30_n48_ga_amip_exp_1day_NRUN_6x4 => \
+                           atmos_ncas_xc30_n48_ga_amip_exp_1day_CRUN_6x4
+                           atmos_ncas_xc30_n48_ga_amip_exp_1day_CRUN_6x4 & atmos_ncas_xc30_n48_ga_amip_exp_2day_6x4 => \
+                           rose_ana_ncas_xc30_n48_ga_amip_exp_2day_atmos_nruncrun_lrun
+                           atmos_ncas_xc30_n48_ga_amip_exp_2day_4x6 & atmos_ncas_xc30_n48_ga_amip_exp_2day_6x4 => \
+                           rose_ana_ncas_xc30_n48_ga_amip_exp_2day_atmos_proc
+                           atmos_ncas_xc30_n48_ga_amip_exp_2day_6x4 => rose_ana_ncas_xc30_n48_ga_amip_exp_2day_atmos_kgo
+                           recon_ncas_xc30_n48_ga_amip_exp_2day_4x6 & recon_ncas_xc30_n48_ga_amip_exp_2day_6x4 => \
+                           rose_ana_ncas_xc30_n48_ga_amip_exp_2day_recon_proc
+                           recon_ncas_xc30_n48_ga_amip_exp_2day_6x4 => rose_ana_ncas_xc30_n48_ga_amip_exp_2day_recon_kgo
+                           fcm_make_ncas_xc30_install_ctldata => fcm_make2_ncas_xc30_install_ctldata => \
+                           ncas_xc30_install_ctldata => recon_ncas_xc30_n48_ga_amip_exp_2day_4x6 & recon_ncas_xc30_n48_ga_amip_exp_2day_6x4
+                           NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+
+    "ncas_xc30_mule" : 
+                          "fcm_make_ncas_xc30_cce_libs => fcm_make2_ncas_xc30_cce_libs => ncas_xc30_install_libs_cce => ncas_xc30_install_mule_cce
+                           fcm_make_ncas_xc30_install_mule_cce => fcm_make2_ncas_xc30_install_mule_cce => ncas_xc30_install_mule_cce => \
+                           ncas_xc30_test_mule_cce => rose_ana_xc30_mule_sstpert_cce_kgo & rose_ana_xc30_mule_wafccb_cce_kgo
+
+                           fcm_make_ncas_xc30_ifort_libs => fcm_make2_ncas_xc30_ifort_libs => ncas_xc30_install_libs_ifort => ncas_xc30_install_mule_ifort
+                           fcm_make_ncas_xc30_install_mule_ifort => fcm_make2_ncas_xc30_install_mule_ifort => ncas_xc30_install_mule_ifort => \
+                           ncas_xc30_test_mule_ifort => rose_ana_xc30_mule_sstpert_ifort_kgo & rose_ana_xc30_mule_wafccb_ifort_kgo
+
+                           NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+
+   "ncas_xc30_convpp_calcs" : 
+                          "fcm_make_ncas_xc30_cce_utils_serial_high_omp => fcm_make2_ncas_xc30_cce_utils_serial_high_omp
+                           fcm_make_ncas_xc30_install_ctldata => fcm_make2_ncas_xc30_install_ctldata => ncas_xc30_install_ctldata
+
+                           fcm_make2_ncas_xc30_cce_utils_serial_high_omp => utils_ncas_xc30_convpp_calcs_64B_large_ff
+                           ncas_xc30_install_ctldata => utils_ncas_xc30_convpp_calcs_64B_large_ff
+                           utils_ncas_xc30_convpp_calcs_64B_large_ff =>  rose_ana_ncas_xc30_utils_convpp_calcs_64B_large_ff_kgo
+                           rose_ana_ncas_xc30_utils_convpp_calcs_64B_large_ff_kgo
+
+                           NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+
+    "ncas_xc30_pptoanc_calcs" :
+                          "fcm_make_ncas_xc30_cce_utils_serial_high_omp => fcm_make2_ncas_xc30_cce_utils_serial_high_omp
+                           fcm_make_ncas_xc30_install_ctldata => fcm_make2_ncas_xc30_install_ctldata => ncas_xc30_install_ctldata
+
+                           fcm_make2_ncas_xc30_cce_utils_serial_high_omp => utils_ncas_xc30_pptoanc_calcs_basic_test
+                           ncas_xc30_install_ctldata => utils_ncas_xc30_pptoanc_calcs_basic_test
+                           utils_ncas_xc30_pptoanc_calcs_basic_test => rose_ana_ncas_xc30_utils_pptoanc_calcs_basic_test_kgo
+                           rose_ana_ncas_xc30_utils_pptoanc_calcs_basic_test_kgo
+
+                           NCAS_XC30_ROSE_ANA_COMPARISON:succeed-all => housekeep_ncas_xc30",
+
+     }
+-%}

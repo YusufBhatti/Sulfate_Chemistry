@@ -1,0 +1,105 @@
+# Machine specific class for Okeanos
+    [[ICM_OKEANOS]]
+        pre-script = """
+                     module load cray-netcdf
+                     module list 2>&1
+                     """
+        [[[remote]]]
+            host = okeanos
+	    owner = um
+        [[[environment]]]
+	    UMDIR = {{OKEANOS_UMDIR}}
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{OKEANOS_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{OKEANOS_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{OKEANOS_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+# Submission setup - bg
+    [[ICM_OKEANOS_AT]]
+        [[[job submission]]]
+            method = background
+
+# Submission setup - slurm
+    [[ICM_OKEANOS_SLURM]]
+        [[[job submission]]]
+            method = slurm
+        [[[directives]]]
+	    --account=gs-01
+	    --job-name = um{{VN}}-rose-stem
+            --time = 00:50:00
+        [[[environment]]]
+            COPY_CMD=lfs cp
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{OKEANOS_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{OKEANOS_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+{% else %}
+            UM_INSTALL_DIR=$CYLC_SUITE_SHARE_DIR
+            STASHMASTER=$CYLC_SUITE_SHARE_DIR/vn{{VN}}/ctldata/STASHmaster
+{% endif %}
+
+# Okeanos node setup
+# Single OpenMP thread
+    [[ICM_OKEANOS_PARALLEL_THREADS_1]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 1
+	    OMP_STACKSIZE = 1g
+
+# Two OpenMP threads
+    [[ICM_OKEANOS_PARALLEL_THREADS_2]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 2
+	    OMP_STACKSIZE = 1g
+
+# Single task
+    [[ICM_OKEANOS_PARALLEL_TASKS_1]]
+        [[[directives]]]
+            --nodes       = 1
+            --ntasks      = 1
+
+# Two tasks
+    [[ICM_OKEANOS_PARALLEL_TASKS_2]]
+        [[[directives]]]
+            --nodes       = 1
+            --ntasks      = 2
+
+# Four tasks
+    [[ICM_OKEANOS_PARALLEL_TASKS_4]]
+        [[[directives]]]
+            --nodes       = 1
+            --ntasks      = 4
+
+# Eight tasks
+    [[ICM_OKEANOS_PARALLEL_TASKS_8]]
+        [[[directives]]]
+            --nodes       = 1
+            --ntasks      = 8
+
+# 32 tasks
+    [[ICM_OKEANOS_PARALLEL_TASKS_32]]
+        [[[directives]]]
+            --nodes       = 1
+            --ntasks      = 32
+
+# 64 tasks
+    [[ICM_OKEANOS_PARALLEL_TASKS_64]]
+        [[[directives]]]
+            --nodes       = 2
+            --ntasks      = 64
+
+# 256 tasks
+    [[ICM_OKEANOS_PARALLEL_TASKS_256]]
+        [[[directives]]]
+            --nodes       = 8
+            --ntasks      = 256
+
+# Build task for building on Okeanos
+# Currently runs on the login node
+# Note that the ICM_OKEANOS_EXTRACT family can be found in file
+# family-linux.rc, as the extract step is run on a Linux 
+    [[ICM_OKEANOS_BUILD]]
+        inherit = ICM_OKEANOS, ICM_OKEANOS_SLURM, EXTRACT_SOURCE
+        [[[environment]]]
+            grib_api_path = {{GRIB_API_OKEANOS_ROOT_DIR}}
+            DRHOOK=false
+            PLATFORM=icm-xc40-cce

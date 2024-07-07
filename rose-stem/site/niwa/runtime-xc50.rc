@@ -1,0 +1,555 @@
+# Runtime configurations
+
+# Compiler-dependent configurations are automatically replicated
+# for every compiler listed here
+{% set compilers = ["cce", "ifort"] %}
+
+# Build configurations are automatically replicated for every
+# optimisation level
+{% set opt_levels = ["debug", "safe", "rigorous", "high"] %}
+
+# ------------------------------------------------------
+# Scripts
+# ------------------------------------------------------
+
+# Scripts for which housekeeping tasks need to be generated
+{% set scripts = ["umdp3_checker", "ifdef_checker"] %}
+
+{% for script in scripts %}
+
+    [[housekeep_niwa_xc50_{{ script }}]]
+        inherit = HOUSEKEEPING, NIWA_XC50
+        [[[environment]]]
+            RUNDIR=../{{ script }}
+
+{% endfor %}
+
+# ------------------------------------------------------
+# UM variants
+# ------------------------------------------------------
+
+{% for compiler in compilers %}
+{% for opt_level in opt_levels %}
+
+    [[fcm_make_niwa_xc50_{{ compiler }}_um_{{ opt_level }}_omp]]
+        inherit = NIWA_XC50_BUILD_{{ compiler|upper() }}
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION={{ opt_level }}
+            OPENMP=true
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC50_ROOT_DIR }}/fcm_make_niwa_xc50_{{ compiler }}_um_{{ opt_level }}_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+{% endfor %}
+{% endfor %}
+
+# ---------------------------------------------------------------------------------------------
+# SCM variants
+# ---------------------------------------------------------------------------------------------
+
+{% for compiler in compilers %}
+{% for opt_level in opt_levels %}
+
+    [[fcm_make_niwa_xc50_{{ compiler }}_scm_{{ opt_level }}_omp]]
+        inherit = NIWA_XC50_BUILD_{{ compiler|upper() }}
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_scm
+	    OPENMP=true
+            OPTIMISATION={{ opt_level }}
+{%- if PREBUILDS %}
+            PREBUILD = {{ PREBUILD_XC50_ROOT_DIR }}/fcm_make_niwa_xc50_{{ compiler }}_scm_{{ opt_level }}_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+{% endfor %}
+{% endfor %}
+
+# ------------------------------------------------------
+# CreateBC variants
+# ------------------------------------------------------
+
+{% for compiler in compilers %}
+{% for opt_level in opt_levels %}
+
+    [[fcm_make_niwa_xc50_{{ compiler }}_createbc_{{ opt_level }}_omp]]
+        inherit = NIWA_XC50_BUILD_{{ compiler|upper() }}
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPENMP=true
+            OPTIMISATION={{ opt_level }}
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC50_ROOT_DIR }}/fcm_make_niwa_xc50_{{ compiler }}_createbc_{{ opt_level }}_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+{% endfor %}
+{% endfor %}
+
+# ------------------------------------------------------
+# UM utils variants
+# ------------------------------------------------------
+
+{% for compiler in compilers %}
+{% for opt_level in opt_levels %}
+
+    [[fcm_make_niwa_xc50_{{ compiler }}_utils_serial_{{ opt_level }}_omp]]
+        inherit = NIWA_XC50_BUILD_{{ compiler|upper() }}
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPENMP=true
+            OPTIMISATION={{ opt_level }}
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC50_ROOT_DIR }}/fcm_make_niwa_xc50_{{ compiler }}_utils_serial_{{ opt_level }}_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    [[fcm_make_niwa_xc50_{{ compiler }}_utils_mpp_{{ opt_level }}_omp]]
+        inherit = NIWA_XC50_BUILD_{{ compiler|upper() }}
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPENMP=true
+            OPTIMISATION={{ opt_level }}
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC50_ROOT_DIR }}/fcm_make_niwa_xc50_{{ compiler }}_utils_mpp_{{ opt_level }}_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+{% endfor %}
+{% endfor %}
+
+# ------------------------------------------------------
+# UM recon variants
+# ------------------------------------------------------
+
+{% for compiler in compilers %}
+{% for opt_level in opt_levels %}
+
+    [[fcm_make_niwa_xc50_{{ compiler }}_recon_{{ opt_level }}_omp]]
+        inherit = NIWA_XC50_BUILD_{{ compiler|upper() }}
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_recon
+            OPENMP=true
+            OPTIMISATION={{ opt_level }}
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC50_ROOT_DIR }}/fcm_make_niwa_xc50_{{ compiler }}_recon_{{ opt_level }}_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+{% endfor %}
+
+    # Serial version, only high optimisation
+    [[fcm_make_niwa_xc50_{{ compiler }}_recon_serial_high_omp]]
+        inherit = NIWA_XC50_BUILD_{{ compiler|upper() }}, MAKE_RECON_SERIAL
+        [[[environment]]]
+            OPENMP=true
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC50_ROOT_DIR }}/fcm_make_niwa_xc50_{{ compiler }}_recon_serial_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+{% endfor %}
+
+# ------------------------------------------------------
+# Libs variants
+# ------------------------------------------------------
+
+{% for compiler in compilers %}
+{% for opt_level in opt_levels %}
+
+    [[fcm_make_niwa_xc50_{{ compiler }}_libs_{{ opt_level }}_omp]]
+        inherit = NIWA_XC50_BUILD_{{ compiler|upper() }}
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+            OPENMP=true
+            OPTIMISATION={{ opt_level }}
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC50_ROOT_DIR }}/fcm_make_niwa_xc50_{{ compiler }}_libs_{{ opt_level }}_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+{% endfor %}
+{% endfor %}
+
+# ------------------------------------------------------
+# N48 EG test
+# ------------------------------------------------------
+
+{%- if ("xc50_cce_n48_omp_noios" in name_graphs_out) or ("xc50_ifort_n48_omp_noios" in name_graphs_out) -%}
+
+{% for compiler in compilers %}
+
+    # N48 EndGame with OpenMP
+    [[NIWA_XC50_{{ compiler|upper() }}_N48_EG]]
+        inherit = NIWA_XC50
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_niwa_xc50_{{ compiler }}_um_safe_omp/build-*/bin')"
+        script = "{{TASK_RUN}}"
+
+    # Reconfiguration
+    [[recon_niwa_xc50_{{ compiler }}_n48_eg_omp_noios]]
+        script = "{{TASK_RUN_RECON}}"
+        inherit = NIWA_XC50_{{ compiler|upper() }}_N48_EG, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1, NIWA_XC50_PARALLEL_TASKS_2, RECON_1x2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_niwa_xc50_{{ compiler }}_n48_eg_omp_noios/atmos.astart
+
+    # Atmosphere Model Run 1x2, OpenMP, no IOS
+    [[atmos_niwa_xc50_{{ compiler }}_n48_eg_omp_noios]]
+        inherit = NIWA_XC50_{{ compiler|upper() }}_N48_EG, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1, NIWA_XC50_PARALLEL_TASKS_2, ATMOS_1x2, IOS_0, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_niwa_xc50_{{ compiler }}_n48_eg_omp_noios/atmos.astart
+
+    # Comparison of recon output
+    [[rose_ana_niwa_xc50_{{ compiler }}_n48_eg_omp_noios_recon_kgo]]
+        inherit =  NIWA_XC50_{{ compiler|upper() }}_N48_EG, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC50_ROOT_DIR}}/xc50_n48_eg/{{XC50_N48_EG_KGO}}_{{ compiler }}
+            DIR1 = ../recon_niwa_xc50_{{ compiler }}_n48_eg_omp_noios
+            KGO=0
+
+    # Comparison of atmosphere output
+    [[rose_ana_niwa_xc50_{{ compiler }}_n48_eg_omp_noios_atmos_kgo]]
+        inherit =  NIWA_XC50_{{ compiler|upper() }}_N48_EG, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0 = {{KGO_XC50_ROOT_DIR}}/xc50_n48_eg/{{XC50_N48_EG_KGO}}_{{ compiler }}
+            DIR1 = ../atmos_niwa_xc50_{{ compiler }}_n48_eg_omp_noios
+            KGO=0
+
+    # Housekeeping task
+    [[housekeep_atmos_niwa_xc50_{{ compiler }}_n48_eg_omp_noios]]
+        inherit = HOUSEKEEPING, NIWA_XC50
+        [[[environment]]]
+            RUNDIR=../atmos_niwa_xc50_{{ compiler }}_n48_eg_omp_noios
+
+{% endfor %}
+
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# N512 EG global model
+# ---------------------------------------------------------------------------------------------
+
+{% if ("xc50_cce_n512_eg" in name_graphs_out) or ("xc50_ifort_n512_eg" in name_graphs_out) -%}
+
+{% for compiler in compilers %}
+
+    [[NIWA_XC50_{{ compiler|upper() }}_N512_EG]]
+        inherit = NIWA_XC50
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_niwa_xc50_{{ compiler }}_um_high_omp/build-*/bin')"
+        script = "{{TASK_RUN}}"
+
+    # Reconfiguration
+    [[recon_niwa_xc50_{{ compiler }}_n512_eg]]
+        script = "{{TASK_RUN_RECON}}"
+        inherit = NIWA_XC50_{{ compiler|upper() }}_N512_EG, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1, NIWA_XC50_PARALLEL_TASKS_8, RECON_2x4, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_niwa_xc50_{{ compiler }}_n512_eg/atmos.astart
+
+    # Atmosphere Model Run
+    [[atmos_niwa_xc50_{{ compiler }}_n512_eg]]
+        inherit = NIWA_XC50_{{ compiler|upper() }}_N512_EG, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1, NIWA_XC50_PARALLEL_TASKS_240, ATMOS_10x24, IOS_0, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_niwa_xc50_{{ compiler }}_n512_eg/atmos.astart
+        [[[directives]]]
+            --mem-per-cpu = 1G
+
+    # Comparison of recon output
+    [[rose_ana_niwa_xc50_{{ compiler }}_n512_eg_recon_kgo]]
+        inherit =  NIWA_XC50_{{ compiler|upper() }}_N512_EG, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC50_ROOT_DIR}}/xc50_n512_eg/{{XC50_N512_EG_KGO}}_{{ compiler }}
+            DIR1=../recon_niwa_xc50_{{ compiler }}_n512_eg
+            KGO=0
+
+    # Comparison of atmosphere output
+    [[rose_ana_niwa_xc50_{{ compiler }}_n512_eg_atmos_kgo]]
+        inherit =  NIWA_XC50_{{ compiler|upper() }}_N512_EG, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0={{KGO_XC50_ROOT_DIR}}/xc50_n512_eg/{{XC50_N512_EG_KGO}}_{{ compiler }}
+            DIR1=../atmos_niwa_xc50_{{ compiler }}_n512_eg
+            KGO=0
+
+    # Housekeeping task
+    [[housekeep_atmos_niwa_xc50_{{ compiler }}_n512_eg]]
+        inherit = HOUSEKEEPING, NIWA_XC50
+        [[[environment]]]
+            RUNDIR=../atmos_niwa_xc50_{{ compiler }}_n512_eg
+
+{% endfor %}
+
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# SEUKV EG LAM
+# ---------------------------------------------------------------------------------------------
+
+{% if ("xc50_cce_seukv_eg_omp_noios" in name_graphs_out) or ("xc50_ifort_seukv_eg_omp_noios" in name_graphs_out) -%}
+
+{% for compiler in compilers %}
+
+    [[NIWA_XC50_{{ compiler|upper() }}_SEUKV_EG]]
+        inherit = NIWA_XC50
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_niwa_xc50_{{ compiler }}_um_high_omp/build-*/bin')"
+        script = "{{TASK_RUN}}"
+
+    # Reconfiguration
+    [[recon_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios]]
+        script = "{{TASK_RUN_RECON}}"
+        inherit = NIWA_XC50_{{ compiler|upper() }}_SEUKV_EG, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1, NIWA_XC50_PARALLEL_TASKS_4, RECON_2x2, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios/atmos.astart
+
+    # Atmosphere Model Run 4x8, no IOS
+    [[atmos_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios]]
+        inherit = NIWA_XC50_{{ compiler|upper() }}_SEUKV_EG, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1, NIWA_XC50_PARALLEL_TASKS_40, ATMOS_4x10, IOS_0, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios/atmos.astart
+        [[[directives]]]
+            --mem-per-cpu = 1G
+
+    # Comparison of recon output
+    [[rose_ana_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios_recon_kgo]]
+        inherit =  NIWA_XC50_{{ compiler|upper() }}_SEUKV_EG, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC50_ROOT_DIR}}/xc50_seukv_eg/{{XC50_SEUKV_EG_KGO}}_{{ compiler }}
+            DIR1 = ../recon_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios
+            KGO=0
+
+    # Comparison of atmosphere output
+    [[rose_ana_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios_atmos_kgo]]
+        inherit =  NIWA_XC50_{{ compiler|upper() }}_SEUKV_EG, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_SEUKV_EG
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS =
+            DIR0 = {{KGO_XC50_ROOT_DIR}}/xc50_seukv_eg/{{XC50_SEUKV_EG_KGO}}_{{ compiler }}
+            DIR1 = ../atmos_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios
+            KGO=0
+
+    # Housekeeping task
+    [[housekeep_atmos_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios]]
+        inherit = HOUSEKEEPING, NIWA_XC50
+        [[[environment]]]
+            RUNDIR=../atmos_niwa_xc50_{{ compiler }}_seukv_eg_omp_noios
+
+{% endfor %}
+
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# NZCSM LAM
+# ---------------------------------------------------------------------------------------------
+
+{% if ("xc50_ifort_nzcsm" in name_graphs_out) -%}
+
+{% for compiler in compilers %}
+
+    [[NIWA_XC50_{{ compiler|upper() }}_NZCSM]]
+        inherit = NIWA_XC50
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_niwa_xc50_{{ compiler }}_um_high_omp/build-*/bin' --path='share/fcm_make_niwa_xc50_{{ compiler }}_createbc_high_omp/build-*/bin')"
+        script = "{{TASK_RUN}}"
+        [[[environment]]]
+	    LBC_FILE=../createbc_niwa_xc50_{{ compiler }}_nzcsm/output.lbc
+
+    # Reconfiguration
+    [[recon_niwa_xc50_{{ compiler }}_nzcsm]]
+        script = "{{TASK_RUN_RECON}}"
+        inherit = NIWA_XC50_{{ compiler|upper() }}_NZCSM, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1, NIWA_XC50_PARALLEL_TASKS_32, RECON_8x4
+        [[[environment]]]
+            ASTART=../recon_niwa_xc50_{{ compiler }}_nzcsm/atmos.astart
+            ROSE_TASK_APP=um_nzcsm
+        [[[directives]]]
+            --mem-per-cpu = 1G
+
+    # Boundary Conditions
+    [[createbc_niwa_xc50_{{ compiler }}_nzcsm]]
+        inherit = NIWA_XC50_{{ compiler|upper() }}_NZCSM, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_4, NIWA_XC50_PARALLEL_TASKS_1
+        [[[environment]]]
+            ROSE_TASK_APP=createbc_nzcsm
+
+    # Atmosphere Model Run
+    [[atmos_niwa_xc50_{{ compiler }}_nzcsm]]
+        inherit = NIWA_XC50_{{ compiler|upper() }}_NZCSM, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1, NIWA_XC50_PARALLEL_TASKS_280, ATMOS_14x20, IOS_0
+        [[[environment]]]
+            ASTART=../recon_niwa_xc50_{{ compiler }}_nzcsm/atmos.astart
+            ROSE_TASK_APP=um_nzcsm
+        [[[directives]]]
+            --time = 00:45:00
+            --mem = 85G              
+
+    # Comparison of createbc output
+    [[rose_ana_niwa_xc50_{{ compiler }}_nzcsm_createbc_kgo]]
+        inherit =  NIWA_XC50_{{ compiler|upper() }}_NZCSM, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_CREATEBC
+        [[[environment]]]
+            DIR0 = {{KGO_XC50_ROOT_DIR}}/xc50_nzcsm/{{XC50_NZCSM_KGO}}_{{ compiler }}
+            DIR1 = ../createbc_niwa_xc50_{{ compiler }}_nzcsm
+            KGO=0
+
+    # Comparison of recon output
+    [[rose_ana_niwa_xc50_{{ compiler }}_nzcsm_recon_kgo]]
+        inherit =  NIWA_XC50_{{ compiler|upper() }}_NZCSM, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC50_ROOT_DIR}}/xc50_nzcsm/{{XC50_NZCSM_KGO}}_{{ compiler }}
+            DIR1 = ../recon_niwa_xc50_{{ compiler }}_nzcsm
+            KGO=0
+
+    # Comparison of atmosphere output
+    [[rose_ana_niwa_xc50_{{ compiler }}_nzcsm_atmos_kgo]]
+        inherit =  NIWA_XC50_{{ compiler|upper() }}_NZCSM, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_NZCSM
+        [[[environment]]]
+            DIR0 = {{KGO_XC50_ROOT_DIR}}/xc50_nzcsm/{{XC50_NZCSM_KGO}}_{{ compiler }}
+            DIR1 = ../atmos_niwa_xc50_{{ compiler }}_nzcsm
+            KGO=0
+
+    # Housekeeping task
+    [[housekeep_atmos_niwa_xc50_{{ compiler }}_nzcsm]]
+        inherit = HOUSEKEEPING, NIWA_XC50
+        [[[environment]]]
+            RUNDIR=../atmos_niwa_xc50_{{ compiler }}_nzcsm
+
+{% endfor %}
+
+{%- endif %}
+
+
+# ---------------------------------------------------------------------------------------------
+# Recon from GRIB1 and GRIB2
+# ---------------------------------------------------------------------------------------------
+
+{% if ("xc50_cce_recon_n512_eg_grib1" in name_graphs_out) or ("xc50_cce_recon_n512_eg_grib2" in name_graphs_out) or
+      ("xc50_ifort_recon_n512_eg_grib1" in name_graphs_out) or ("xc50_ifort_recon_n512_eg_grib2" in name_graphs_out) -%}
+
+{% for compiler in compilers %}
+
+    [[NIWA_XC50_{{ compiler|upper() }}_RECON_STANDALONE]]
+        inherit = NIWA_XC50
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_niwa_xc50_{{ compiler }}_recon_safe_omp/build-*/bin')"
+        script = "{{TASK_RUN_RECON}}"
+
+{% endfor %}
+
+{%- endif %}
+
+# RECON GRIB1 N512 Endgame
+{% if ("xc50_cce_recon_n512_eg_grib1" in name_graphs_out) or ("xc50_ifort_recon_n512_eg_grib1" in name_graphs_out) -%}
+
+{% for compiler in compilers %}
+
+    # Reconfiguration
+    [[recon_niwa_xc50_{{ compiler }}_recon_n512_eg_grib1]]
+        inherit = NIWA_XC50_{{ compiler|upper() }}_RECON_STANDALONE, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1, NIWA_XC50_PARALLEL_TASKS_8, RECON_4x2, RECON_N512_EG_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib1
+
+    # Comparison tasks
+    [[rose_ana_niwa_xc50_{{ compiler }}_recon_n512_eg_grib1_kgo]]
+        inherit = NIWA_XC50_{{ compiler|upper() }}_RECON_STANDALONE, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC50_ROOT_DIR}}/xc50_recon_n512_eg_grib1/{{XC50_RECON_N512_EG_GRIB1_KGO}}_{{ compiler }}
+            DIR1 = ../recon_niwa_xc50_{{ compiler }}_recon_n512_eg_grib1
+            KGO=0
+
+    [[housekeep_niwa_xc50_{{ compiler }}_recon_n512_eg_grib1]]
+        inherit = HOUSEKEEPING, NIWA_XC50
+        [[[environment]]]
+            RUNDIR=../recon_niwa_xc50_{{ compiler }}_recon_n512_eg_grib1
+
+{% endfor %}
+
+{%- endif %}
+
+# RECON GRIB2 N512 Endgame
+{% if ("xc50_cce_recon_n512_eg_grib2" in name_graphs_out) or ("xc50_ifort_recon_n512_eg_grib2" in name_graphs_out) -%}
+
+{% for compiler in compilers %}
+
+    # Reconfiguration
+    [[recon_niwa_xc50_{{ compiler }}_recon_n512_eg_grib2]]
+        inherit = NIWA_XC50_{{ compiler|upper() }}_RECON_STANDALONE, NIWA_XC50_SL, NIWA_XC50_PARALLEL_THREADS_1 , NIWA_XC50_PARALLEL_TASKS_8, RECON_4x2, RECON_N512_EG_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib2
+
+    # Comparison tasks
+    [[rose_ana_niwa_xc50_{{ compiler }}_recon_n512_eg_grib2_kgo]]
+        inherit = NIWA_XC50_{{ compiler|upper() }}_RECON_STANDALONE, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC50_ROOT_DIR}}/xc50_recon_n512_eg_grib2/{{XC50_RECON_N512_EG_GRIB2_KGO}}_{{ compiler }}
+            DIR1 = ../recon_niwa_xc50_{{ compiler }}_recon_n512_eg_grib2
+            KGO=0
+
+    [[housekeep_niwa_xc50_{{ compiler }}_recon_n512_eg_grib2]]
+        inherit = HOUSEKEEPING, NIWA_XC50
+        [[[environment]]]
+            RUNDIR=../recon_niwa_xc50_{{ compiler }}_recon_n512_eg_grib2
+
+{% endfor %}
+
+{%- endif %}
+
+# ---------------------------------------------------------------------------------------------
+# CreateBC calculation tests
+# ---------------------------------------------------------------------------------------------
+
+{%- if ("xc50_cce_createbc_calcs" in name_graphs_out) or ("xc50_ifort_createbc_calcs" in name_graphs_out) %}
+
+{% for compiler in compilers %}
+
+    [[NIWA_XC50_{{ compiler|upper() }}_CREATEBC]]
+        inherit = NIWA_XC50
+        env-script = "eval $(rose task-env --path= --path='share/fcm_make_niwa_xc50_{{ compiler }}_createbc_high_omp/build-*/bin')"
+        script = "{{TASK_RUN}}"
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+
+    {%- set createbc_calcs_map_xc50 = {
+            "global_eg_fixed_eg_2dust6" : [XC50_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO, "15G"],
+            "global_eg_varres_eg_2dust6" : [XC50_CREATEBC_GLOBAL_EG_VARRES_EG_2DUST6_KGO, "15G"],
+            "fixed_eg_fixed_eg_0dust0" : [XC50_CREATEBC_FIXED_EG_FIXED_EG_0DUST0_KGO, "5G"],
+            "varres_eg_fixed_eg_0dust0" : [XC50_CREATEBC_VARRES_EG_FIXED_EG_0DUST0_KGO, "5G"],
+            "global_eg_frame_eg_2dust2" : [XC50_CREATEBC_GLOBAL_EG_FRAME_EG_2DUST2_KGO, "50G"],
+            "frame_eg_varres_eg_2dust6" : [XC50_CREATEBC_FRAME_EG_VARRES_EG_2DUST6_KGO, "15G"],
+            "global_eg_fixed_eg_aqumtracer" : [XC50_CREATEBC_GLOBAL_EG_FIXED_EG_AQUMTRACER_KGO, "10G"],
+            "varres_eg_frame_eg_0dust0" : [XC50_CREATEBC_VARRES_EG_FRAME_EG_0DUST0_KGO, "5G"],
+            "frame_eg_fixed_eg_0dust0" : [XC50_CREATEBC_FRAME_EG_FIXED_EG_0DUST0_KGO, "5G"],
+            "global_eg_fixed_eg_timecontrol" : [XC50_CREATEBC_GLOBAL_EG_FIXED_EG_TIMECONTROL_KGO, "15G"],
+            }
+    %}
+
+    {%- for test_type, params in createbc_calcs_map_xc50.iteritems() %}
+        {%- set kgo_var      = params[0] %}
+        {%- set memory_allow = params[1] %}
+
+        [[createbc_niwa_xc50_{{ compiler }}_createbc_calcs_{{test_type}}]]
+            inherit = NIWA_XC50_{{ compiler|upper() }}_CREATEBC, NIWA_XC50_SL, NIWA_XC50_PARALLEL_TASKS_1, NIWA_XC50_PARALLEL_THREADS_4
+            [[[environment]]]
+                CREATEBC_INPUT=$INPUT_DATA/createbc
+                ROSE_TASK_APP=createbc_calcs
+                ROSE_APP_OPT_CONF_KEYS={{test_type}}
+                FRAME_DIR=../createbc_niwa_xc50_{{ compiler }}_createbc_calcs_global_eg_frame_eg_2dust2
+                FRAME_DIR2=../createbc_niwa_xc50_{{ compiler }}_createbc_calcs_varres_eg_frame_eg_0dust0
+            [[[directives]]]
+                --mem = {{memory_allow}}
+
+        [[rose_ana_niwa_xc50_{{ compiler }}_createbc_calcs_{{test_type}}_kgo]]
+            inherit = NIWA_XC50_{{ compiler|upper() }}_CREATEBC, NIWA_XC50_MULE, ROSE_ANA_COMPARISON, ROSE_ANA_CREATEBC
+             [[[environment]]]
+                 DIR0={{KGO_XC50_ROOT_DIR}}/xc50_createbc/{{test_type}}/{{kgo_var}}_{{ compiler }}
+                 DIR1=../createbc_niwa_xc50_{{ compiler }}_createbc_calcs_{{test_type}}
+                 KGO=0
+
+        [[housekeep_createbc_niwa_xc50_{{ compiler }}_createbc_calcs_{{test_type}}]]
+            inherit = HOUSEKEEPING, NIWA_XC50
+            [[[environment]]]
+                RUNDIR=../createbc_niwa_xc50_{{ compiler }}_createbc_calcs_{{test_type}}
+
+        {%- endfor %}
+
+{% endfor %}
+
+{%- endif %}

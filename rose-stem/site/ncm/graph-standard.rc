@@ -1,0 +1,18 @@
+{%- set name_graphs = {
+
+    "ncmhpc_n48_eg_noomp"     : "fcm_make_ncmhpc_um_high_noomp => recon_ncmhpc_n48_eg_noomp_1x1 => atmos_ncmhpc_n48_eg_noomp_1x2",
+
+    "ncmhpc_n48_eg_omp_noios" : "fcm_make_ncmhpc_um_high_omp => recon_ncmhpc_n48_eg_omp_noios_1x1 => atmos_ncmhpc_n48_eg_omp_noios_1x2", 
+
+    "ncmhpc_n48_eg_omp_ios"   : "fcm_make_ncmhpc_um_high_omp => recon_ncmhpc_n48_eg_omp_ios_1x2 => atmos_ncmhpc_n48_eg_omp_ios_1x6",
+
+    "ncmhpc_n512_eg"          : "fcm_make_ncmhpc_um_high_omp_single_precis => recon_ncmhpc_n512_eg => atmos_ncmhpc_n512_eg_4x62",  
+
+    "ncmhpc_n512_eg_ios"      : "fcm_make_ncmhpc_um_high_omp_single_precis => recon_ncmhpc_n512_eg => atmos_ncmhpc_n512_eg_ios_4x62",
+
+    "ncmhpc_install"          :    "fcm_make_ncmhpc_install_ctldata => ncmhpc_install_ctldata",
+
+    "fcm_make"                : "fcm_make_ncmhpc_utils_serial_high_omp",
+
+    }
+-%}

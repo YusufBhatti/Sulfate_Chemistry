@@ -1,0 +1,28 @@
+# Paths to UM directory and GRIB
+{%- set UMDIR = '/opt/niwa/um_sys_prelim/um' %}
+# Set remote host on HPC
+{% if HOST_XC50 is not defined %}
+{%- set HOST_XC50='login.kupe.niwa.co.nz' %}
+{%- endif %}
+# This path is used to look for control files etc if Jinja2 variable CENTRAL_INSTALL=true
+{%- set CENTRAL_INSTALL_DIR=UMDIR %}
+# Path to prebuilds for XC50
+{%- set PREBUILD_XC50_ROOT_DIR=UMDIR+'/vn11.1/prebuilds' %}
+# Path to directory with Known Good Output
+{%- set KGO_XC50_ROOT_DIR=UMDIR+'/standard_jobs/kgo' %}
+{%- set XC50_N48_EG_KGO='vn11.1' %}
+{%- set XC50_N512_EG_KGO='vn11.1' %}
+{%- set XC50_SEUKV_EG_KGO='vn11.1' %}
+{%- set XC50_NZCSM_KGO='vn11.1' %}
+{%- set XC50_RECON_N512_EG_GRIB1_KGO='vn11.1' %}
+{%- set XC50_RECON_N512_EG_GRIB2_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_GLOBAL_EG_VARRES_EG_2DUST6_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_FIXED_EG_FIXED_EG_0DUST0_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_VARRES_EG_FIXED_EG_0DUST0_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_GLOBAL_EG_FRAME_EG_2DUST2_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_FRAME_EG_VARRES_EG_2DUST6_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_GLOBAL_EG_FIXED_EG_AQUMTRACER_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_VARRES_EG_FRAME_EG_0DUST0_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_FRAME_EG_FIXED_EG_0DUST0_KGO='vn11.1' %}
+{%- set XC50_CREATEBC_GLOBAL_EG_FIXED_EG_TIMECONTROL_KGO='vn11.1' %}

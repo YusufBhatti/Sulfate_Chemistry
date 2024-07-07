@@ -1,0 +1,199 @@
+# Machine specific classes for NCAS XC30 machine (ARCHER). 
+
+# Base class for ARCHER (serial queue 30 min). 
+# -- Do not use directly - inherited by
+#    NCAS_XC30 for serial jobs
+#    NCAS_XC30_BACKGROUND for background jobs 
+#    NCAS_XC30_PARALLEL for parallel short queue
+
+    [[ARCHER]] 
+        [[[job]]]
+            batch system = pbs
+            submission polling intervals = PT30S
+            execution polling intervals = PT30S
+        [[[remote]]]
+            host = $(rose host-select {{ HOST_XC30 }})
+        [[[directives]]]
+            -A = n02-cms
+            -W = umask=0022
+        [[[environment]]]
+            UMDIR=/work/y07/y07/umshared
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{XC30_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{XC30_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{XC30_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+
+
+# Archer class for serial jobs
+    [[NCAS_XC30]]
+        inherit = ARCHER
+        [[[directives]]]
+            -l = select=serial=true:ncpus=1,walltime=1800
+
+# Archer class for background jobs
+    [[NCAS_XC30_BACKGROUND]] 
+        inherit = ARCHER
+        [[[job]]]
+           batch system = background
+
+# Archer class for build jobs
+    [[NCAS_XC30_BUILD]]
+        inherit = EXTRACT_SOURCE, NCAS_XC30
+        pre-script = """
+                     module load cray-netcdf/4.4.1.1
+                     module load cray-hdf5/1.10.0.1
+                     module list 2>&1             
+                     """
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+            PLATFORM=ncas-xc30-cce
+            OPENMP=true
+            DRHOOK=false
+            ROSE_TASK_OPTIONS=--ignore-lock
+         [[[directives]]]
+            -l = select=serial=true:ncpus=1,walltime=10800
+
+# Archer class to build for PP nodes
+# We need to use cce/8.4.1
+    [[NCAS_XC30_PP_BUILD]]
+        inherit = NCAS_XC30_BUILD
+        pre-script = """
+                     module load cray-netcdf/4.4.1.1
+                     module load cray-hdf5/1.10.0.1
+                     module switch cce cce/8.4.1
+                     module list 2>&1             
+                     """
+
+# Archer class for Intel builds
+    [[NCAS_XC30_INTEL_BUILD]]
+        inherit = EXTRACT_SOURCE, NCAS_XC30
+        pre-script = """
+                     module switch PrgEnv-cray PrgEnv-intel
+                     module switch intel intel/15.0.2.164
+                     module list 2>&1             
+                     """
+        [[[environment]]]
+            ROSE_TASK_N_JOBS = 4
+            PLATFORM=ncas-xc30-ifort
+            OPENMP=true
+            DRHOOK=false
+            ROSE_TASK_OPTIONS=--ignore-lock
+         [[[directives]]]
+            -l = select=serial=true:ncpus=1,walltime=10800
+
+# Archer class for housekeeping 
+    [[NCAS_XC30_HOUSEKEEPING]]
+        inherit = HOUSEKEEPING, NCAS_XC30
+        [[[directives]]]
+            -l = select=serial=true:ncpus=1,walltime=600
+
+# Archer class for running Mule
+    [[NCAS_XC30_MULE]]
+        script = "module load anaconda; PYTHONPATH=$UMDIR/mule/mule-2017.08.1/python2.7/lib:$PYTHONPATH {{TASK_RUN}}"
+      
+# Archer classes for rose-ana
+    [[NCAS_XC30_ROSE_ANA_COMPARISON]]
+        inherit = ROSE_ANA_COMPARISON
+        pre-script = """
+                     export PATH=$UMDIR/bin:$PATH
+                     module load anaconda
+                     """
+        [[[directives]]] 
+            -l = select=serial=true:ncpus=1,walltime=1200
+
+    [[NCAS_XC30_ROSE_ANA_WALLCLOCK_COMPARISON]]
+        inherit = ROSE_ANA_WALLCLOCK, ROSE_ANA_COMPARISON
+        pre-script = """
+                     export PATH=$UMDIR/bin:$PATH
+                     module load anaconda
+                     """
+        [[[directives]]] 
+            -l = select=serial=true:ncpus=1,walltime=1200
+ 
+# Archer class for utilities
+    [[NCAS_XC30_UTILS]]
+        inherit = NCAS_XC30
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[environment]]]
+            ULIMIT = ulimit -s unlimited -c unlimited
+
+# Archer class for parallel jobs
+# ** Note: Assuming everything can run in short queue for now (if not just define separate class). ** 
+# The distribution of MPI tasks per node is not even across nodes if a task does
+# not use all available cores on those nodes. 
+    [[NCAS_XC30_PARALLEL]] 
+        inherit = ARCHER
+        init-script = "export HOME=$DATADIR"
+        [[[environment]]]
+            CORES_PER_NODE = 24
+            NUMA_REGIONS_PER_NODE = 2
+            POTENTIAL_MPI_TASKS_PER_NODE = $((CORES_PER_NODE/OMP_NUM_THREADS))
+            MPI_TASKS_PER_NODE = $(($POTENTIAL_MPI_TASKS_PER_NODE>$TOTAL_MPI_TASKS?$TOTAL_MPI_TASKS:$POTENTIAL_MPI_TASKS_PER_NODE))
+            MPI_TASKS_PER_NUMA = $((NUMA_REGIONS_PER_NODE>MPI_TASKS_PER_NODE?$MPI_TASKS_PER_NODE:$MPI_TASKS_PER_NODE/$NUMA_REGIONS_PER_NODE))
+            ROSE_LAUNCHER_PREOPTS=-n $TOTAL_MPI_TASKS -ss -N $MPI_TASKS_PER_NODE -S $MPI_TASKS_PER_NUMA -d $OMP_NUM_THREADS
+        [[[directives]]]
+            -q = short
+        [[[job]]]
+            execution time limit = PT20M
+
+# Core count families: all UM runtime tasks should inherit 1 of these.
+# This sets number of nodes
+
+    [[NCAS_XC30_CORES_24]] 
+        inherit = NCAS_XC30_PARALLEL
+        [[[directives]]]
+            -l select = 1 
+
+    [[NCAS_XC30_CORES_48]] 
+        inherit = NCAS_XC30_PARALLEL
+        [[[directives]]]
+            -l select = 2 
+
+    [[NCAS_XC30_CORES_192]] 
+        inherit = NCAS_XC30_PARALLEL
+        [[[directives]]]
+            -l select = 8
+
+# OpenMP families: all UM runtime tasks should inherit 1 of these.
+
+    [[NCAS_XC30_PARALLEL_THREADS_1]] 
+        [[[environment]]]
+            OMP_NUM_THREADS = 1
+
+    [[NCAS_XC30_PARALLEL_THREADS_2]] 
+        [[[environment]]]
+            OMP_NUM_THREADS = 2
+
+    [[NCAS_XC30_PARALLEL_THREADS_8]]
+        [[[environment]]]
+            OMP_NUM_THREADS = 8
+
+# MPI families: set num MPI processes for non-UM jobs
+
+    [[NCAS_XC30_MPI_TASKS_1]]
+        [[[environment]]]
+            TOTAL_MPI_TASKS = 1
+	
+    [[NCAS_XC30_MPI_TASKS_2]]
+         [[[environment]]]
+            TOTAL_MPI_TASKS = 2	
+
+# IO server families: 
+       
+# Do nothing for IOS off
+    [[NCAS_XC30_IOS_OFF]] 
+
+# Tasks using the I/O Server have MPICH_MAX_THREAD_SAFETY set to raise
+# the MPI thread level. This is necessary to fully implement the I/O Server,
+# at the cost of adding additional locks elsewhere.
+# MPICH_NEMESIS_ASYNC_PROGRESS is also set to improve I/O Server performance,
+# but should NOT be used with hyperthreading (which is turned off in rose-stem).
+    [[NCAS_XC30_IOS_ON]]
+        [[[environment]]]
+            MPICH_MAX_THREAD_SAFETY=multiple
+            MPICH_NEMESIS_ASYNC_PROGRESS=mc
+
+    [[NCAS_N48_GA_COMMON]]
+        [[[environment]]]
+            AINITIAL=$INPUT_DATA/n48_ga7/ab357a.da19810901_00

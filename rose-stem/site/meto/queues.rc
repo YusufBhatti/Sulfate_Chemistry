@@ -1,0 +1,34 @@
+    [[queues]]
+{%- if LOCAL_BUILD == true %}
+        [[[build_on_linux]]]
+            limit = 2
+            members = METO_LINUX_BUILD_SETTINGS
+        [[[extract_on_xc40]]]
+            limit = 4
+            members = METO_XC40_EXTRACT
+{%- else %}
+        [[[avoid_ssh_dos]]]
+            limit = 3
+            members = METO_XC40_EXTRACT, METO_LINUX_BUILD_SETTINGS
+{%- endif %}
+{%- if LOCAL_RUN == true %}
+        [[[run_on_linux]]]
+            limit = 1
+            members = RUN_LINUX
+{%- endif %}
+        [[[steady_task_release]]]
+            limit = 1
+            members = GATEKEEPER
+{%- if TRUSTZONE == 'collaboration' %}
+        [[[limit_scripts_on_monsoon]]]
+            limit = 1
+            members = METADATA, SCRIPTS
+{%- endif %}
+        [[[generic_queue_limit_on_supercomputers]]]
+            limit = 100
+            members = METO_XC40
+{%- if 'xcs' in HOST_XC40 %}
+        [[[shared_node_limit_on_xcs]]]
+            limit = 10
+            members = METO_XC40_SHARED_QUEUE, METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UTILS, METO_XC40_CREATEBC
+{%- endif %}

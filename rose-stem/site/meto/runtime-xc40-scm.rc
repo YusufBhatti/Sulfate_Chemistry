@@ -1,0 +1,239 @@
+
+{% if "meto_xc40_scm_togacoare_ga6_omp" in name_graphs_out -%}
+# Single Column Model - TOGA-COARE case, GA6 configuration, XC40, OpenMP
+
+    [[METO_XC40_SCM_TOGACOARE_GA6_OMP]]
+        script = "{{TASK_RUN}} {{ SCM_XC40_CCE_DEBUG_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SCM_TOGACOARE_GA6_DIR={{KGO_XC40_ROOT_DIR}}/xc40_scm_togacoare_ga6/{{XC40_SCM_TOGACOARE_GA6_KGO}}
+
+    # SCM Model Run - 1 thread
+    [[scm_meto_xc40_scm_togacoare_ga6_omp_1_thread]]
+        inherit = METO_XC40_SCM_TOGACOARE_GA6_OMP, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, SCM_TOGACOARE_GA6
+        [[[directives]]]
+            -l mem = 500MB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # SCM Model Run - 2 threads
+    [[scm_meto_xc40_scm_togacoare_ga6_omp_2_threads]]
+        inherit = METO_XC40_SCM_TOGACOARE_GA6_OMP, METO_XC40_CORES_2, METO_XC40_PARALLEL_THREADS_2, SCM_TOGACOARE_GA6
+        [[[directives]]]
+            -l mem = 500MB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # Comparison task
+    [[rose_ana_meto_xc40_scm_togacoare_ga6_omp_1_thread_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SCM_TOGACOARE_GA6_OMP, METO_XC40, ROSE_ANA_SCM_TOGACOARE_GA6
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SCM_TOGACOARE_GA6_DIR
+            DIR1=../scm_meto_xc40_scm_togacoare_ga6_omp_1_thread
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_xc40_scm_togacoare_ga6_noomp" in name_graphs_out -%}
+# Single Column Model - TOGA-COARE case, GA6 configuration, XC40, no-OpenMP
+
+    [[METO_XC40_SCM_TOGACOARE_GA6_NOOMP]]
+        script = "{{TASK_RUN}} {{ SCM_XC40_CCE_DEBUG_NOOMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SCM_TOGACOARE_GA6_DIR={{KGO_XC40_ROOT_DIR}}/xc40_scm_togacoare_ga6/{{XC40_SCM_TOGACOARE_GA6_KGO}}
+
+    # SCM Model Run
+    [[scm_meto_xc40_scm_togacoare_ga6_noomp]]
+        inherit = METO_XC40_SCM_TOGACOARE_GA6_NOOMP, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, SCM_TOGACOARE_GA6
+        [[[directives]]]
+            -l mem = 500MB
+        [[[job]]]
+            execution time limit = PT15M
+
+    # Comparison task
+    [[rose_ana_meto_xc40_scm_togacoare_ga6_noomp_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SCM_TOGACOARE_GA6_NOOMP, METO_XC40, ROSE_ANA_SCM_TOGACOARE_GA6
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SCM_TOGACOARE_GA6_DIR
+            DIR1=../scm_meto_xc40_scm_togacoare_ga6_noomp
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_xc40_scm_togacoare_ga6_gnu_omp" in name_graphs_out -%}
+# Single Column Model - TOGA-COARE case, GA6 configuration, XC40, GNU compiler, OpenMP
+
+    [[METO_XC40_SCM_TOGACOARE_GA6_GNU_OMP]]
+        script = "{{TASK_RUN}} {{ SCM_XC40_GNU_RIGOROUS_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SCM_TOGACOARE_GA6_GNU_DIR={{KGO_XC40_ROOT_DIR}}/xc40_scm_togacoare_ga6_gnu/{{XC40_SCM_TOGACOARE_GA6_GNU_KGO}}
+
+    # SCM Model Run - 1 thread
+    [[scm_meto_xc40_scm_togacoare_ga6_gnu_omp_1_thread]]
+        inherit = METO_XC40_SCM_TOGACOARE_GA6_GNU_OMP, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, SCM_TOGACOARE_GA6
+        [[[directives]]]
+            -l mem = 500MB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # SCM Model Run - 2 threads
+    [[scm_meto_xc40_scm_togacoare_ga6_gnu_omp_2_threads]]
+        inherit = METO_XC40_SCM_TOGACOARE_GA6_GNU_OMP, METO_XC40_CORES_2, METO_XC40_PARALLEL_THREADS_2, SCM_TOGACOARE_GA6
+        [[[directives]]]
+            -l mem = 500MB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # Comparison task
+    [[rose_ana_meto_xc40_scm_togacoare_ga6_gnu_omp_1_thread_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SCM_TOGACOARE_GA6_GNU_OMP, METO_XC40, ROSE_ANA_SCM_TOGACOARE_GA6
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SCM_TOGACOARE_GA6_GNU_DIR
+            DIR1=../scm_meto_xc40_scm_togacoare_ga6_gnu_omp_1_thread
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_xc40_scm_togacoare_ga6_gnu_noomp" in name_graphs_out -%}
+# Single Column Model - TOGA-COARE case, GA6 configuration, XC40, GNU compiler, no-OpenMP
+
+    [[METO_XC40_SCM_TOGACOARE_GA6_GNU_NOOMP]]
+        script = "{{TASK_RUN}} {{ SCM_XC40_GNU_RIGOROUS_NOOMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SCM_TOGACOARE_GA6_GNU_DIR={{KGO_XC40_ROOT_DIR}}/xc40_scm_togacoare_ga6_gnu/{{XC40_SCM_TOGACOARE_GA6_GNU_KGO}}
+
+    # SCM Model Run
+    [[scm_meto_xc40_scm_togacoare_ga6_gnu_noomp]]
+        inherit = METO_XC40_SCM_TOGACOARE_GA6_GNU_NOOMP, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, SCM_TOGACOARE_GA6
+        [[[directives]]]
+            -l mem = 500MB
+        [[[job]]]
+            execution time limit = PT15M
+
+    # Comparison task
+    [[rose_ana_meto_xc40_scm_togacoare_ga6_gnu_noomp_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SCM_TOGACOARE_GA6_GNU_NOOMP, METO_XC40, ROSE_ANA_SCM_TOGACOARE_GA6
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SCM_TOGACOARE_GA6_GNU_DIR
+            DIR1=../scm_meto_xc40_scm_togacoare_ga6_gnu_noomp
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_xc40_scm_gabls3_ga6_gnu_omp" in name_graphs_out -%}
+# Single Column Model - GABLS3 case, GA6 configuration, XC40, GNU compiler, OpenMP
+
+    [[METO_XC40_SCM_GABLS3_GA6_GNU_OMP]]
+        script = "{{TASK_RUN}} {{ SCM_XC40_GNU_DEBUG_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SCM_GABLS3_GA6_GNU_DIR={{KGO_XC40_ROOT_DIR}}/xc40_scm_gabls3_ga6_gnu/{{XC40_SCM_GABLS3_GA6_GNU_KGO}}
+
+    # SCM Model Run - 1 thread
+    [[scm_meto_xc40_scm_gabls3_ga6_gnu_omp_1_thread]]
+        inherit = METO_XC40_SCM_GABLS3_GA6_GNU_OMP, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, SCM_GABLS3_GA6
+        [[[directives]]]
+            -l mem = 256MB
+        [[[job]]]
+            execution time limit = PT4M
+
+    # SCM Model Run - 2 threads
+    [[scm_meto_xc40_scm_gabls3_ga6_gnu_omp_2_threads]]
+        inherit = METO_XC40_SCM_GABLS3_GA6_GNU_OMP, METO_XC40_CORES_2, METO_XC40_PARALLEL_THREADS_2, SCM_GABLS3_GA6
+        [[[directives]]]
+            -l mem = 256MB
+        [[[job]]]
+            execution time limit = PT4M
+
+    # Comparison task
+    [[rose_ana_meto_xc40_scm_gabls3_ga6_gnu_omp_1_thread_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SCM_GABLS3_GA6_GNU_OMP, METO_XC40, ROSE_ANA_SCM_GABLS3_GA6
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SCM_GABLS3_GA6_GNU_DIR
+            DIR1=../scm_meto_xc40_scm_gabls3_ga6_gnu_omp_1_thread
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_xc40_scm_gabls3_ga6_gnu_noomp" in name_graphs_out -%}
+# Single Column Model - GABLS3 case, GA6 configuration, XC40, no-OpenMP
+
+    [[METO_XC40_SCM_GABLS3_GA6_GNU_NOOMP]]
+        script = "{{TASK_RUN}} {{ SCM_XC40_GNU_DEBUG_NOOMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SCM_GABLS3_GA6_GNU_DIR={{KGO_XC40_ROOT_DIR}}/xc40_scm_gabls3_ga6_gnu/{{XC40_SCM_GABLS3_GA6_GNU_KGO}}
+
+    # SCM Model Run
+    [[scm_meto_xc40_scm_gabls3_ga6_gnu_noomp]]
+        inherit = METO_XC40_SCM_GABLS3_GA6_GNU_NOOMP, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, SCM_GABLS3_GA6
+        [[[directives]]]
+            -l mem = 256MB
+        [[[job]]]
+            execution time limit = PT15M
+
+    # Comparison task
+    [[rose_ana_meto_xc40_scm_gabls3_ga6_gnu_noomp_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SCM_GABLS3_GA6_GNU_NOOMP, METO_XC40, ROSE_ANA_SCM_GABLS3_GA6
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SCM_GABLS3_GA6_GNU_DIR
+            DIR1=../scm_meto_xc40_scm_gabls3_ga6_gnu_noomp
+            KGO=0
+
+{%- endif %}
+{% if "meto_xc40_scm_gabls3_ga6_omp" in name_graphs_out -%}
+# Single Column Model - GABLS3 case, GA6 configuration, XC40, OpenMP
+
+    [[METO_XC40_SCM_GABLS3_GA6_OMP]]
+        script = "{{TASK_RUN}} {{ SCM_XC40_CCE_DEBUG_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SCM_GABLS3_GA6_DIR={{KGO_XC40_ROOT_DIR}}/xc40_scm_gabls3_ga6/{{XC40_SCM_GABLS3_GA6_KGO}}
+
+    # SCM Model Run - 1 thread
+    [[scm_meto_xc40_scm_gabls3_ga6_omp_1_thread]]
+        inherit = METO_XC40_SCM_GABLS3_GA6_OMP, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, SCM_GABLS3_GA6
+        [[[directives]]]
+            -l mem = 256MB
+        [[[job]]]
+            execution time limit = PT4M
+
+    # SCM Model Run - 2 threads
+    [[scm_meto_xc40_scm_gabls3_ga6_omp_2_threads]]
+        inherit = METO_XC40_SCM_GABLS3_GA6_OMP, METO_XC40_CORES_2, METO_XC40_PARALLEL_THREADS_2, SCM_GABLS3_GA6
+        [[[directives]]]
+            -l mem = 256MB
+        [[[job]]]
+            execution time limit = PT4M
+
+    # Comparison task
+    [[rose_ana_meto_xc40_scm_gabls3_ga6_omp_1_thread_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SCM_GABLS3_GA6_OMP, METO_XC40, ROSE_ANA_SCM_GABLS3_GA6
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SCM_GABLS3_GA6_DIR
+            DIR1=../scm_meto_xc40_scm_gabls3_ga6_omp_1_thread
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_xc40_scm_gabls3_ga6_noomp" in name_graphs_out -%}
+# Single Column Model - GABLS3 case, GA6 configuration, XC40, no-OpenMP
+
+    [[METO_XC40_SCM_GABLS3_GA6_NOOMP]]
+        script = "{{TASK_RUN}} {{ SCM_XC40_CCE_DEBUG_NOOMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SCM_GABLS3_GA6_DIR={{KGO_XC40_ROOT_DIR}}/xc40_scm_gabls3_ga6/{{XC40_SCM_GABLS3_GA6_KGO}}
+
+    # SCM Model Run
+    [[scm_meto_xc40_scm_gabls3_ga6_noomp]]
+        inherit = METO_XC40_SCM_GABLS3_GA6_NOOMP, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, SCM_GABLS3_GA6
+        [[[directives]]]
+            -l mem = 256MB
+        [[[job]]]
+            execution time limit = PT15M
+
+    # Comparison task
+    [[rose_ana_meto_xc40_scm_gabls3_ga6_noomp_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SCM_GABLS3_GA6_NOOMP, METO_XC40, ROSE_ANA_SCM_GABLS3_GA6
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SCM_GABLS3_GA6_DIR
+            DIR1=../scm_meto_xc40_scm_gabls3_ga6_noomp
+            KGO=0
+
+{%- endif %}

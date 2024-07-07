@@ -1,0 +1,142 @@
+<h1>LAMPOS</h1>
+<p>
+Version 4.2  Nov 2011<BR>
+UM collaboration utility.<BR>
+(UM system dev team Nov 2011)
+
+
+<h1>1. Introduction</h1>
+
+This application facilitates the positioning and sizing of a Unified Model Limited Area Model (LAM). Then numbers generated are suitable for entering into the UMUI. 
+<p>
+LAMs use an equatorial latitude-longitude grid in which the coordinate pole is displaced away from the Earth's North Pole in such a way that the equator of the rotated grid passes through the centre of the forecast region. Coordinates for the new pole should be selected which give a uniform grid spacing over the forecast region, otherwise the timestep may be compromised. This is best achieved by keeping the <b>Centre of View</b>, discussed below, at or near the middle of the chosen LAM area. 
+<p>
+The application consists of an upper window in which the LAM area is displayed over a map of the world. Below this are the control panels. The lower panels provide precise controls over the specification of the LAM area including the domain size and pole or <b>Centre of View</b> coordinates. The upper panels support miscellaneous options. 
+<p>
+The application supports a range of functions. These are explained in the following sections. 
+
+<h1>2. Zooming</h1>
+
+You can <b>Zoom In</b> to or <b>Zoom Out</b> from the centre of the display. Several quick clicks on the left hand mouse button are an effective way of quickly focusing into or out from the region of interest.  
+
+<h1>3. Panning</h1>
+
+The map may be moved in any direction by holding down the central button and moving the mouse. This allows the area of interest to be easily centred in the window. The same effect can be obtained by pressing the <i>up</i>, <i>down</i>, <i>left</i> and <i>right</i> arrow keys. 
+
+<h1>4. Options</h1>
+<p>
+Clicking on <b>Options</b> displays a pull down menu which allows the user to select new or different options for display. The options are: 
+<p>
+<dt><i>Display Lat-lon</i>: <dd>A latitude longitude grid at 20 deg intervals 
+<p>
+<dt><i>Display Grid</i>: <dd>The forecast grid. (Note this is an expensive option. Only use it once you are happy with your choice of area and zoom factor.) 
+<p>
+<dt><i>Lowres coasts</i>: <dd>A less detailed representation of the coastal map background. (Use of this option to make the application run more quickly if you are experiencing slow response). 
+<p>
+<dt><i>Colours and line widths</i>: <dd> The colour of the background, coastlines, lat-lon grid and LAM area may be changed by selecting this option. The thickness of the lines displayed may also be altered. The currently selected colours and line widths are saved in ~/.lampos.options when <b>Quit</b> is pressed and reinstated when the application is next started. Delete this file to regain the defaults. 
+<p>
+<dt><i>Print</i>: <dd> Print out the view displayed in the upper window to a postscript file or a printer. The printed page includes a summary of the parameters which determine the chosen LAM area. 
+
+<h1>5. New Dynamics versus Old Dynamics</h1>
+
+The position of a grid in a rotated coordinate system is defined by its "first latitude". The definition of the "first latitude" of a UM grid was changed with the introduction of the New Dynamics (at UM version 5.0). More is said about this under the description of the <b>First lat</b> entry box of the <b>Grid</B> section below. The <b>ND vs. OD</b> drop-down menu allows the user to specify whether they are working under the Old or New Dynamics convention, and thus alters the interpretation of the number in the <b>First lat</b> entry box. 
+<p>
+Options include:
+<p>
+<dt><i>ND mode</i>: New Dynamics mode. The first latitude is interpreted as the latitude of the <i>bottom</i> left hand corner of the grid. Suitable for UM versions 5.0 and above. 
+<p>
+<dt><i>OD mode</i>: Old Dynamics mode. The first latitude is interpreted as the latitude of the <i>top</i> left hand corner of the grid. Suitable for UM versions prior to 5.0. 
+<p>
+<dt><i>Add</i> (<i>nrows-1</i>)*<i>row</i>_<i>spacing to first latitude</i>: Adds the "height" of the grid in degrees to the first latitude. This should be done if you switch from ND mode to OD mode, but do not want the grid to move as a result. 
+<p>
+<dt><i>Subtract</i> (<i>nrows-1</i>)*<i>row</i>_<i>spacing from first latitude</i>: Subtracts the "height" of the grid in degrees from the first latitude. This should be done if you switch from OD mode to ND mode, but do not want the grid to move as a result. 
+<p>
+<i>Note: although retained, this option is rarely needed now unless UM vn4.5 is still used.</i>
+
+<h1>6. Grid</h1>
+
+Values for the LAM area may be selected in one of four ways:
+<ul>
+<li> By entering values in the appropriate boxes
+<p>
+<li> By selecting a predefined area from the <b>Predefined LAM  Areas...</b> pull down menu 
+<p>
+<li> By marking a rectangular region using the mouse with the left hand button depressed through the <b>Drag New Area</b> option (see below).  
+<p>
+<li> By importing a grid from a UMUI output file using the <b>Read in grid from UM job</b> option 
+</ul>
+The entry boxes in the panel are:
+<p>
+<dt><i>Number of cols</i>: The number of columns (EW points) across the forecast area. (1 <-> 999)
+<p>
+<dt><i>Number of rows</i>: The number of rows (NS points) in the forecast area (1 <-> 999)
+<p>
+<dt><i>Col' spacing</i>: The East-West grid length in degrees on the rotated coordinates (0. <-> 10.)
+<p>
+<dt><i>Row spacing</i>: The North-South grid length in degrees on the rotated coordinates (0. <-> 10.)
+<p>
+<dt><i>First lat</i>: The "first latitude" of the LAM area expressed in degrees in the rotated coordinates (-90 <-> 90). The definition of the "first latitude" of a UM grid was changed with the introduction of the New Dynamics (at UM version 5.0). Previously it was the latitude of the top left-hand corner of the grid. Since vn5.0 it has been the latitude of the <i>bottom</i> left-hand corner of the grid. By default LAMPOS will assume the New Dynamics definition (bottom), but this can be changed through the <b>ND vs. OD</b> option, which can also convert between the two numbers for you.  
+<p>
+<dt><i>First lon</i>: The longitude of the top left hand corner of the LAM area expressed in degrees in the rotated coordinates. (0 <-> 360) 
+<p>
+<b>Apply</b> will process the options and redisplay the outline of the area.
+<p>
+<b>Drag New Area</b> allows the user to use the mouse controls to mark out a new forecast area. First click on <b>Drag New Area</b> with the left mouse button; then move the mouse pointer to one corner of the new area you wish to mark out. Press the left hand button and, keeping it depressed, drag the mouse to the location of the opposite corner of the desired area. Release the left hand button to display the new area. This process can be repeated until you are satisfied. Press the right hand mouse button to leave this option. The coordinates of the bottom left hand corner (or top LHC if in <b>Old Dynamics Mode</b>) and the dimensions of the area are displayed in the <b>Grid</b> panel. These may be edited and then activated by pressing <i>Apply</i>. 
+<p>
+It is advisable to enter the required grid length (in degrees) into the <i>Col' spacing</i> and <i>Row spacing</i> boxes prior to editing the number of columns or rows or dragging out a new area.
+
+<h1>7.  Coords of Rotated Pole</h1>
+
+New pole coordinates may be entered in one of four ways:
+<ul>
+<li> By entering values in the appropriate boxes
+<p>
+<li> By selecting a <b>Predefined LAM Poles...</b> from the pull down menu
+<p>
+<li> By using the <b>Centre of View</b> option
+<p>
+<li> By importing a grid from a UMUI output file using the <b>Read in grid
+from UM job</b> option (see below) 
+</ul>
+The panel contains the following entry boxes:
+<p>
+<dt><i>Latitude</i>: <dd>The latitude of the coordinate pole in degrees (0 <-> 180). A value between 0 and 90 gives a LAM in the Northern Hemisphere. A value between 90 and 180 gives a LAM in the Southern Hemisphere. 
+<dt><dd>A latitude greater than 90 degrees is obviously quite unphysical, but the placement of the pole should be thought of as the result of a rotational transformation: a pole latitude of 90 degrees leaves it at the true North Pole, of less than 90 degrees moves it down the 180-degree line of longitude (shifting a LAM from the equator up into the Northern Hemisphere), and of more than 90 degrees moves it down the 0-degree line of longitude (shifting a LAM from the equator down into the Southern Hemisphere). Values less than zero can be entered, but give up-side-down LAMs in the Northern Hemisphere - not very useful. 
+<p>
+<dt><i>Longitude</i>: <dd>The longitude of the coordinate pole in degrees (0 <-> 360)
+<p>
+<b>Centre of View</b> allows the user to reposition the centre of the view as delineated by a cross. The cross marks the position where the zeroth meridian crosses the rotated equator. This option provides an easy way to reposition the pole. First click on <b>Centre of View</b>; then place the mouse pointer over the centre of the new forecast region and press the left hand button. This process can be repeated until you are happy with the new position. Press the right hand button to leave this option. The coordinates of the new pole are displayed in the <b>Coords of Rotated Pole</b> section of the control panel. The new values for the location of the pole can be first edited and then activated by pressing <i>Apply</i>. 
+<p>
+<b>Predefined LAM poles...</b> is a drop-down menu which reveals a list of standard LAMs. Choosing one of them will cause their pole latitude and longitude to be selected. 
+<p>
+<b>Apply</b> processes the options and redisplays the map background. The options specified in the <b>Grid</b> panel are processed at the same time. 
+
+<h1>7a. Centre of View and the Flip View Control</h1>
+
+The <b>Centre of View</b> is the rotated grid's equator/zero-meridian crossing point.  The uniform grid requirement is satisfied so long as the rotated equator passes through the domain, regardless of where the centre of view is located. In practice, however, there are only two useful domain locations for a given pole position: centred over the rotated equator/zero-meridian crossing, or centred over the rotated equator/180-meridian crossing.  At other locations along the rotated equator the rotated grids are tilted with respect to the unrotated grid (i.e. they are not N-S aligned).
+<p>
+The <b>Flip View</b> button can be used to swap between the two equivalent domains settings that exist for each LAM domain.  One view has the <b>Centre of View</b> or <i>Rotated pole</i> inside the domain itself, the other has it positioned at its alternative location, described by the translations,
+<p>
+  <li> alt_plon = 180. + plon
+  <li> alt_plat = 180. - plat
+  <li> alt_BLC_lon = 180. + BLC_lon 
+<p>
+It is generally advisable to use domain settings where the pole latitude is < 90 degrees.  The <b>Flip View</b> button allows these settings to be found easily.
+
+<h1>8. Read in grid from UM job</h1>
+
+Users of LAMPOS are not always looking to create an entirely new grid. It is often desired to view a grid that already exists in a UM job. This panel allows the user to avoid the tedious step of having to copy the parameters that define a grid out of a UMUI panel and into the respective entry boxes. 
+<p>
+It is assumed that the UMUI has been used to process the job and the resulting output files are in a directory with a name of the form ~<username>/umui_jobs/<jobID>, where <username> is the username of a person who has <i>processed</i> (without necessarily owning) the job, and <jobID> is the five letter ID of the job. The grid definition is held in a file called SIZES in this directory, and this is the only file read. The username and job ID can be entered in the respective entry boxes and, upon hitting return or clicking <b>Read & apply</B>, the grid is read out of the file and applied. 
+<p>
+An edit to the code means LAMPOS now looks for the processed SIZES namelist under ~<username>/umui_jobs_niwa/<jobID>/.
+
+<h1>9. Notes on use of Entry boxes</h1>
+
+You can add characters by pointing, clicking and typing.  You can delete by selecting and typing Control-d.  Backspace, Control-h, and Delete may be typed to erase the character just before  the insertion point, Control-W erases the word just before the insertion  point, and Control-u clears the entry.  Entries that are too large to fit in the window all at once are not supported. The values are right truncated when the Apply button is pressed. 
+
+<h1>10. Known Bugs</h1>
+
+  <li>The postscript print option converts the background colour to white no matter what colour is displayed on the screen. All line colours are represented truly. 
+<p>
+

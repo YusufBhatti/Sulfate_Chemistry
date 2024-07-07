@@ -1,0 +1,425 @@
+# Machine specific classes for Linux
+# Linux tasks should use one of:
+#  * LINUX       - for simple Linux tasks such as rose-ana
+#  * EXTRACT     - for tasks which extract code on Linux
+#  * LINUX_BUILD - for tasks which compile on Linux
+#  * LINUX_RECON - for Linux reconfiguration tasks
+#  * LINUX_ATMOS - for Linux atmosphere run tasks
+#  * LINUX_SCM   - for Linux Single Column Model tasks
+#  * LINUX_UTILS - for Linux utils tasks
+# Tasks which link in OpenMP, either for the exec build or for a parallel GCOM
+# library, should also inherit one of the following classes:
+#  * LINUX_1_THREAD  - single thread
+#  * LINUX_2_THREADS - two threads
+
+    [[METO_LINUX]]
+        pre-script = """
+module swap ifort ifort/16.0_64
+module unload nagfor pgfortran
+module list 2>&1"""
+        [[[environment]]]
+            PATH = /home/h01/frum/lib/ifort-16.0.1-gcc-4.4.7/mpi/mpich-3.2/bin:/home/h01/frum/lib/ifort-16.0.1-gcc-4.4.7/nccmp/nccmp-1.8.2.1/bin:$PATH
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{LINUX_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{LINUX_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{LINUX_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+       [[[directives]]]
+           --qos={{QOS}}
+           --wckey=um-rose-stem
+
+# Gatekeeper family for limiting the rate at which remote extracts are
+# triggered. HPC jobs shouldn't queue unnecessarily, but we don't want them
+# all being released at the same time.
+    [[GATEKEEPER]]
+        inherit = DESKTOP
+        [[[environment]]]
+            ROSE_TASK_APP = dummy
+
+
+    [[DESKTOP]]
+        [[[job]]]
+            batch system = background
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+
+
+    [[BUILD_LINUX]]
+{%- if LOCAL_BUILD == true %}
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+        [[[job]]]
+            batch system = background
+{%- else %}
+        [[[job]]]
+            batch system = slurm
+{%- endif %}
+
+
+    [[RUN_LINUX]]
+{%- if LOCAL_RUN == true %}
+        [[[job]]]
+            batch system = background
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+{%- else %}
+        [[[job]]]
+            batch system = slurm
+{%- endif %}
+
+
+# Research Trustzone: Run on Linux through SLURM
+# Collaboration Trustzone: Run on XCS-C through PBS
+    [[EXTRACT]]
+{% if TRUSTZONE == 'collaboration' %}
+        inherit = EXTRACT_SOURCE
+        [[[job]]]
+            batch system = background
+            execution time limit = PT90M
+{% else %}
+        inherit = EXTRACT_SOURCE, BUILD_LINUX
+        [[[job]]]
+            execution time limit = PT22M
+        [[[directives]]]
+            --qos={{QOS}}
+            --wckey=um-rose-stem
+{% endif %}
+
+
+# Note that the --ntasks=2 deliberately oversubscribes the resources 
+# (ROSE_TASK_N_JOBS defaults to 4) as there will be quite a bit of I/O in tasks
+# in this family.
+    [[METO_XC40_EXTRACT]]
+        inherit = EXTRACT_SOURCE, BUILD_LINUX
+        env-script = "eval $(rose task-env)"
+        post-script = "cp $CYLC_SUITE_SHARE_DIR/$ROSE_TASK_NAME/fcm-make.log $ROSE_TASK_LOG_DIR"
+        [[[environment]]]
+            DRHOOK=false
+            OPENMP=true
+            ROSE_TASK_OPTIONS=--ignore-lock
+        [[[job]]]
+            execution time limit = PT33M
+        [[[directives]]]
+            --ntasks=2
+
+# Detailed fcm-make job settings that can be inherited by both METO_LINUX_BUILD
+# and METO_LINUX_BUILD_CLANG_IFORT without breaking the nesting structure.
+# No make tasks should inherit this family directly.
+# Note that the --ntasks=2 deliberately oversubscribes the resources (ROSE_TASK_N_JOBS
+# defaults to 4) as there will be quite a bit of I/O in tasks in this family.
+      [[METO_LINUX_BUILD_SETTINGS]]
+        inherit = EXTRACT_SOURCE, METO_LINUX, BUILD_LINUX
+        script = """
+rose task-run --verbose --define=fast-dest-root-orig=$TMPDIR --define='args=$ARCHIVE_FCM_MAKE_CMD'
+"""
+        env-script = "eval $(rose task-env)"
+        post-script = "cp $CYLC_SUITE_SHARE_DIR/$ROSE_TASK_NAME/fcm-make.log $ROSE_TASK_LOG_DIR"
+        [[[environment]]]
+            grib_api_path = {{GRIB_API_LINUX_ROOT_DIR}}
+            DRHOOK=false
+            OPENMP=true
+            PLATFORM=meto-x86-ifort
+            ROSE_TASK_OPTIONS=--ignore-lock
+        [[[job]]]
+            execution time limit = PT82M
+        [[[directives]]]
+            --mem=8192
+            --ntasks=2
+            --gres=tmp:2048
+
+# Subclasses for building on Linux. Used to limit the number of simultaneous
+# local builds as well.
+    [[METO_LINUX_BUILD]]
+        inherit = METO_LINUX_BUILD_SETTINGS
+
+    [[METO_LINUX_BUILD_CLANG_IFORT]]
+        inherit = METO_LINUX_BUILD_SETTINGS
+        [[[environment]]]
+            PLATFORM=meto-x86-clang-ifort
+
+# Linux class for reconfiguration jobs
+    [[METO_LINUX_RECON]]
+        inherit = METO_LINUX
+        [[[environment]]]
+            decfort_dump_flag = y
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s unlimited -c unlimited
+        [[[job]]]
+            execution time limit = PT25M
+        [[[directives]]]
+            --mem=1024
+
+# Linux class for reconfiguration jobs
+    [[METO_LINUX_RECON_EXTRA_MEM]]
+        inherit = METO_LINUX_RECON
+        [[[directives]]]
+            --mem=8192
+
+# Linux class for atmosphere run jobs
+    [[METO_LINUX_ATMOS]]
+        inherit = METO_LINUX
+        [[[environment]]]
+            decfort_dump_flag = y
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s unlimited -c unlimited
+        [[[job]]]
+            execution time limit = PT13M
+        [[[directives]]]
+            --mem=3072
+    
+# Linux class for SCM run jobs
+    [[METO_LINUX_SCM]]
+        inherit = METO_LINUX
+        [[[environment]]]
+            decfort_dump_flag = y
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s 2000000 -c unlimited
+        [[[job]]]
+            execution time limit = PT27M
+        [[[directives]]]
+            --mem=512
+
+# Linux class for UTILS run jobs
+    [[METO_LINUX_UTILS]]
+        inherit = METO_LINUX
+        post-script = "ln -s -f $CYLC_TASK_LOG_ROOT.out stdout"
+        [[[environment]]]
+            ULIMIT= ulimit -s 2000000 -c unlimited
+            decfort_dump_flag = y
+        [[[job]]]
+            execution time limit = PT5M
+        [[[directives]]]
+            --mem=1024
+            --ntasks=1
+
+# Linux class for Mule jobs
+    [[METO_LINUX_MULE]]
+        script = "PATH=/usr/local/sci/bin:$PATH PYTHONPATH=$UMDIR/mule/mule-2017.08.1/python2.7/lib:$PYTHONPATH {{TASK_RUN}}"
+
+# Linux class for rose ana jobs
+    [[METO_LINUX_ROSE_ANA]]
+        inherit = ROSE_ANA_COMPARISON, METO_LINUX_MULE, METO_LINUX
+        [[[job]]]
+            execution time limit = PT11M
+        [[[directives]]]
+            --mem=1024
+            --ntasks=1
+
+# Linux class for housekeeping jobs
+    [[METO_LINUX_HOUSEKEEPING]]
+        inherit = HOUSEKEEPING, METO_LINUX
+        [[[job]]]
+            execution time limit = PT9M
+        [[[directives]]]
+            --mem=128
+            --ntasks=1
+
+# Linux class for a single thread
+    [[METO_LINUX_1_THREAD]]
+        [[[environment]]]
+            OMP_NUM_THREADS   = 1
+            OMP_STACKSIZE     = 1g
+        [[[directives]]]
+           --ntasks-per-core=1            
+
+# Linux class, two threads
+    [[METO_LINUX_2_THREADS]]
+        [[[environment]]]
+            OMP_NUM_THREADS   = 2
+            OMP_STACKSIZE     = 1g
+        [[[directives]]]
+           --cpus-per-task=2
+
+# Linux class, four threads
+    [[METO_LINUX_4_THREADS]]
+        [[[environment]]]
+            OMP_NUM_THREADS   = 4
+            OMP_STACKSIZE     = 1g
+        [[[directives]]]
+           --cpus-per-task=4
+        
+
+# Linux class, 1 task
+    [[METO_LINUX_1_TASK]]
+        [[[directives]]]
+            --ntasks=1
+
+# Linux class, 2 tasks
+    [[METO_LINUX_2_TASKS]]
+        [[[directives]]]
+            --ntasks=2
+
+# Linux class, 4 tasks
+    [[METO_LINUX_4_TASKS]]
+        [[[directives]]]
+            --ntasks=4
+
+# Linux class, 5 tasks
+    [[METO_LINUX_5_TASKS]]
+        [[[directives]]]
+            --ntasks=5
+
+# Linux class, 6 tasks
+    [[METO_LINUX_6_TASKS]]
+        [[[directives]]]
+            --ntasks=6
+
+# Linux class, 8 tasks
+    [[METO_LINUX_8_TASKS]]
+        [[[directives]]]
+            --ntasks=8
+
+# Linux class, 9 tasks
+    [[METO_LINUX_9_TASKS]]
+        [[[directives]]]
+            --ntasks=9
+
+# Linux class, 10 tasks
+    [[METO_LINUX_10_TASKS]]
+        [[[directives]]]
+            --ntasks=10
+
+# Linux class, 16 tasks
+    [[METO_LINUX_16_TASKS]]
+        [[[directives]]]
+            --ntasks=16
+
+# Linux class, 24 tasks
+    [[METO_LINUX_24_TASKS]]
+        [[[directives]]]
+            --ntasks=24
+
+# Linux class, 32 tasks
+    [[METO_LINUX_32_TASKS]]
+        [[[directives]]]
+            --ntasks=32
+
+# Job-specific classes
+    [[METO_LINUX_AQUM_EG]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_AQUM_EG_DIR={{KGO_LINUX_ROOT_DIR}}/linux_aqum_eg/{{LINUX_AQUM_EG_KGO}}
+
+    [[METO_LINUX_AQUM_EG_GLOMAP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_AQUM_EG_GLOMAP_DIR={{KGO_LINUX_ROOT_DIR}}/linux_aqum_eg_glomap/{{LINUX_AQUM_EG_GLOMAP_KGO}}
+
+    [[METO_LINUX_AQUM_EG_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_AQUM_EG_DIR={{KGO_LINUX_ROOT_DIR}}/linux_aqum_eg/{{LINUX_AQUM_EG_KGO}}
+
+    [[METO_LINUX_AQUM_EG_GLOMAP_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_AQUM_EG_GLOMAP_DIR={{KGO_LINUX_ROOT_DIR}}/linux_aqum_eg_glomap/{{LINUX_AQUM_EG_GLOMAP_KGO}}
+
+    [[METO_LINUX_N48_GA_COMMON]]
+        [[[environment]]]
+            AINITIAL=$INPUT_DATA/n48_ga7/ab357a.da19810901_00
+            
+    [[METO_LINUX_N48_GA7_AMIP_12HR]]
+        inherit=METO_LINUX_N48_GA_COMMON
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_GA7_AMIP_12HR_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_ga7_amip_12hr/{{LINUX_N48_GA7_AMIP_12HR_KGO}}
+
+    [[METO_LINUX_N48_GA7_AMIP_NAMING]]
+        inherit=METO_LINUX_N48_GA_COMMON
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_GA7_AMIP_NAMING_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_ga7_amip_naming/{{LINUX_N48_GA7_AMIP_NAMING_KGO}}
+
+    [[METO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK]]
+        inherit=METO_LINUX_N48_GA_COMMON
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_rigorous_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_GA7_AMIP_12HR_COMP_CHECK_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_ga7_amip_12hr_comp_check/{{LINUX_N48_GA7_AMIP_12HR_COMP_CHECK_KGO}}
+
+    [[METO_LINUX_N48_GA_AMIP_EXP_NAMING]]
+        inherit=METO_LINUX_N48_GA_COMMON
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_GA_AMIP_EXP_NAMING_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_ga_amip_exp_naming/{{LINUX_N48_GA_AMIP_EXP_NAMING_KGO}}
+
+    [[METO_LINUX_N48_GA_AMIP_EXP_12HR]]
+        inherit=METO_LINUX_N48_GA_COMMON
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_GA_AMIP_EXP_12HR_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_ga_amip_exp_12hr/{{LINUX_N48_GA_AMIP_EXP_12HR_KGO}}
+
+    [[METO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK]]
+        inherit=METO_LINUX_N48_GA_COMMON
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_rigorous_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_ga_amip_exp_12hr_comp_check/{{LINUX_N48_GA_AMIP_EXP_12HR_COMP_CHECK_KGO}}
+
+    [[METO_LINUX_N48_EG_OMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_EG_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_eg/{{LINUX_N48_EG_KGO}}
+
+    [[METO_LINUX_N48_EG_PWS]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_EG_PWS_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_eg_pws/{{LINUX_N48_EG_PWS_KGO}}
+
+    [[METO_LINUX_N48_EG_DRHOOK]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_omp_drhook/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_EG_DRHOOK_DIR={{KGO_LINUX_ROOT_DIR}}/linux_drhook/{{LINUX_N48_EG_DRHOOK_KGO}}        
+
+    [[METO_LINUX_N48_EG_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_ifort_um_high_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_N48_EG_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_eg/{{LINUX_N48_EG_KGO}}
+
+    [[METO_LINUX_N48_EG_OMP_CLANG_IFORT]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_meto_linux_clang_ifort_um_high_omp/build-*/bin'"
+        [[[environment]]]
+            # Clang-Ifort builds bit-reproduce the GCC-Ifort builds, so use the same KGO
+            KGO_LINUX_N48_EG_CLANG_IFORT_DIR={{KGO_LINUX_ROOT_DIR}}/linux_n48_eg/{{LINUX_N48_EG_KGO}}
+
+    [[METO_LINUX_RECON_STANDALONE]]
+        script = "{{TASK_RUN_RECON}} --verbose --path= --path='share/fcm_make_meto_linux_ifort_recon_high_omp/build-*/bin'"
+
+
+    [[METO_LINUX_CREATEBC]]
+        inherit = CREATEBC, CREATEBC_BUILD_SETTINGS, METO_LINUX_1_TASK, METO_LINUX_4_THREADS, METO_LINUX, RUN_LINUX
+        [[[environment]]]
+            ULIMIT = ulimit -s unlimited -c unlimited
+            decfort_dump_flag = y
+        [[[job]]]
+            execution time limit = PT16M
+        [[[directives]]]
+            --mem=8192
+
+    [[METO_LINUX_SCM_TOGACOARE_GA6_OMP]]
+        script = "rose task-run --verbose --path= --path='share/fcm_make_meto_linux_ifort_scm_debug_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_SCM_TOGACOARE_GA6_DIR={{KGO_LINUX_ROOT_DIR}}/linux_scm_togacoare_ga6/{{LINUX_SCM_TOGACOARE_GA6_KGO}}
+
+    [[METO_LINUX_SCM_TOGACOARE_GA6_NOOMP]]
+        script = "rose task-run --verbose --path= --path='share/fcm_make_meto_linux_ifort_scm_debug_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_SCM_TOGACOARE_GA6_DIR={{KGO_LINUX_ROOT_DIR}}/linux_scm_togacoare_ga6/{{LINUX_SCM_TOGACOARE_GA6_KGO}}
+
+    [[METO_LINUX_SCM_GABLS3_GA6_OMP]]
+        script = "rose task-run --verbose --path= --path='share/fcm_make_meto_linux_ifort_scm_debug_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_SCM_GABLS3_GA6_DIR={{KGO_LINUX_ROOT_DIR}}/linux_scm_gabls3_ga6/{{LINUX_SCM_GABLS3_GA6_KGO}}
+
+    [[METO_LINUX_SCM_GABLS3_GA6_NOOMP]]
+        script = "rose task-run --verbose --path= --path='share/fcm_make_meto_linux_ifort_scm_debug_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_LINUX_SCM_GABLS3_GA6_DIR={{KGO_LINUX_ROOT_DIR}}/linux_scm_gabls3_ga6/{{LINUX_SCM_GABLS3_GA6_KGO}}
+
+    [[METO_LINUX_CRMSTYLE_COARSE_GRID]]
+        inherit = METO_LINUX_4_THREADS, METO_LINUX_UTILS
+        
+    [[UTILS_METO_LINUX_CRMSTYLE_COARSE_GRID_PART]]
+        inherit = METO_LINUX_2_TASKS, METO_LINUX_CRMSTYLE_COARSE_GRID
+        [[[environment]]]
+            ROSE_TASK_APP=utils_crmstyle_coarse_grid
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_part
+            NEWRES  =40
+
+

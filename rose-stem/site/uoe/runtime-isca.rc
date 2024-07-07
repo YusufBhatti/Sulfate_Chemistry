@@ -1,0 +1,75 @@
+# Isca Jobs
+
+#
+# Utils builds
+#
+
+# Libs build
+    [[fcm_make_uoe_isca_ifort_libs]]
+        inherit = UOE_ISCA_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+
+    [[fcm_make2_uoe_isca_ifort_libs]]
+	inherit = UOE_ISCA_BUILD
+	[[[environment]]]
+	    ROSE_TASK_APP=fcm_make_libs
+	
+#
+# UM builds
+#
+
+# UM safe no OpenMP (Intel)
+    [[fcm_make_uoe_isca_ifort_um_safe_noomp]]
+        inherit = UOE_ISCA_EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+            PREBUILD =
+
+    [[fcm_make2_uoe_isca_ifort_um_safe_noomp]]
+        inherit = UOE_ISCA_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+            PREBUILD =
+	    
+# N48 no OpenMP
+
+    # Reconfiguration
+    [[recon_uoe_isca_n48_noomp]]
+        inherit = UOE_ISCA_RECON, UM_N48_EG, RECON_MPI, RECON_1x1
+        [[[environment]]]
+            ASTART=../recon_uoe_isca_n48_noomp/atmos.astart
+
+    # Atmosphere Model Run 4x4
+    [[atmos_uoe_isca_n48_noomp_4x4]]
+        inherit = UOE_ISCA_ATMOS, UM_N48_EG, ATMOS_MPI, ATMOS_4x4, IOS_0
+        [[[environment]]]
+            ASTART=../recon_uoe_isca_n48_noomp/atmos.astart
+        [[[directives]]]
+            -q = ptq
+            -l = 'nodes=1:ppn=16,walltime=00:10:00'
+            -A = Research_Project-157370
+
+    # Comparison tasks
+    [[rose_ana_uoe_isca_n48_noomp_atmos_kgo]]
+        inherit = ROSE_ANA_COMPARISON, UOE_ISCA, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0={{KGO_ISCA_ROOT_DIR}}/uoe_isca_n48/{{ISCA_N48_EG_KGO}}
+            DIR1=../atmos_uoe_isca_n48_noomp_4x4
+            KGO=0
+	    
+    [[rose_ana_uoe_isca_n48_noomp_recon_kgo]]
+        inherit = ROSE_ANA_COMPARISON, UOE_ISCA, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_ISCA_ROOT_DIR}}/uoe_isca_n48/{{ISCA_N48_EG_KGO}}
+            DIR1=../recon_uoe_isca_n48_noomp
+            KGO=0
+	    
+    # Housekeeping
+    [[housekeep_atmos_uoe_isca_n48_noomp_4x4]]
+        inherit = HOUSEKEEPING, UOE_ISCA
+        [[[environment]]]
+            RUNDIR=../atmos_uoe_isca_n48_noomp_4x4

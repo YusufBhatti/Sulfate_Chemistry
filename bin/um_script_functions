@@ -1,0 +1,359 @@
+#!/usr/bin/env bash
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+#
+# Set of functions to perform tasks common to all the UM wrapper scripts
+# this file should be extracted to reside alongside those scripts
+# 
+# By convention functions will begin with the abbreviation "usf_" for
+# "UM Script Function"
+
+function usf_Set_Err_Traps {
+# Set the error traps to call scripts on exit.
+
+  SIGNALS='INT ERR EXIT XCPU' 
+  for S in $SIGNALS; do 
+    trap 'usf_finally' $S 
+  done 
+
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_Running_As_Suite {
+# This is a function which may be called to check if the script is running 
+# in a Rose suite environment
+    test -n "${ROSE_TASK_LOG_ROOT:-}"
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_print_script_path {
+# Print the full path of the script currently being run
+    echo "[INFO] Using script: $0"
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_Handle_Common_Arg {
+# This function is a handler for "common" arguments to the scripts (i.e. those
+# that set environment variables which are available to most/all of them)
+# The first argument should be a variable name, followed by the argument list
+# where an unknown flag has been encountered.  This function will process the
+# unknown argument if it is recognised and return the modified argument list
+# to the calling routine
+    local __args_out=$1
+    shift
+
+    case "$1" in
+        -p|--print-status)
+            shift
+            PRINT_STATUS=${1:?$(usf_EReport "PRINT_STATUS not given" usage)}
+            usf_Print "Common argument PRINT_STATUS: $PRINT_STATUS"
+            ;;
+        -S|--STASHmaster)
+            shift
+            STASHMASTER=${1:?$(usf_EReport "STASHMASTER not given" usage)} 
+            usf_Print "Common argument STASHMASTER: $STASHMASTER"
+            ;;
+        -V|--um-version)
+            usf_Warn "-v|--um-version setting now deprecated"
+            usf_Warn "Argument ignored for now, but should be removed"
+            ;;
+        *)
+            usf_EReport "Unrecognised option: $1" usage ;;
+    esac
+    shift
+
+    # This statement will take the variable name passed in as $1 and set it
+    # to the value of the argument list $@ resulting in that variable in the
+    # calling routine receiving the value
+    eval $__args_out="\"$@\""
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_Print_Common_Args {
+# Prints the usage string for the common arguments defined above, to be called 
+# at the end of a script's normal usage function to add these 
+    usf_Print "Common UM script arguments:                               " 1>&2
+    usf_Print "  -p|--print-status PRINT_STATUS                          " 1>&2
+    usf_Print "  -S|--STASHmaster  STASHMASTER                           " 1>&2
+}
+
+#-------------------------------------------------------------------------------
+
+
+function usf_EReport {
+# Like the Fortran Ereport function - copies error messages to both
+# standard output and standard error (unless being used interactively)
+# Executes optional usage function if provided to print usage
+  error_msg=${1:-Unspecified error}
+  message_fn=${2:-}
+
+  if [[ -t "0" || -p /dev/stdin ]] ; then
+    echo "[FAIL] $error_msg" 1>&2
+  else
+    echo "[FAIL] $error_msg"
+    echo "[FAIL] $error_msg" 1>&2
+  fi
+
+  if [ -n "$message_fn" ] ; then
+      $message_fn
+  fi
+
+  exit 1
+
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_Warn {
+# Prints a warning message
+    local msg=${1:-}
+    echo "[WARN] $msg"
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_Print {
+# Prints an informational message
+    local msg=${1:-}
+    echo "[INFO] $msg"
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_set_um_vn {
+# Set VN environment variable to current UM version
+  local _VN=11.1
+  if [ -n "${VN:-}" ] ; then
+    usf_Warn "UM version (VN=x.y) defined in the environment."
+    usf_Print "Overriding \$VN to $_VN"
+  fi
+  VN=$_VN
+  export VN
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_set_print_status {
+# Check environment variable $PRINT_STATUS is set or set a default
+  PRINT_STATUS=${PRINT_STATUS:-PrStatus_Oper}
+
+  if ! [[ ${PRINT_STATUS:-} =~ ^PrStatus_(Min|Normal|Oper|Diag)$ ]] ; then
+    usf_EReport \
+        "PRINT_STATUS does not match \"PrStatus_(Min|Normal|Oper|Diag)\"."
+  fi
+
+  export PRINT_STATUS
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_set_omp_threads {
+# Set OMP threads to 1 unless specified otherwise
+    export OMP_NUM_THREADS=${OMP_NUM_THREADS:-1}
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_finally {
+# Generic form of 'final tidyup on trap' routine.
+# cats $STANDARD_OUTPUT_FILE
+# removes extra output "$STANDARD_OUTPUT_BASE*" excluding $STANDARD_OUTPUT_FILE
+# executes optional "cleanup" function for executable specific tidying.
+
+  ERR_STATE=$?
+
+  for S in ${SIGNALS:-}; do 
+    trap '' $S 
+  done
+
+  # Run the cleanup function if it's been set up.
+  if_fn_exists cleanup
+
+  if [ -f "${STANDARD_OUTPUT_FILE:-}" ]; then
+    echo -e ${OUTPUT_HEADER:-}
+    cat "$STANDARD_OUTPUT_FILE"
+  fi
+
+  # Remove unwanted output files with a given base to their names.
+  # For example by setting $STANDARD_OUTPUT_FILE 
+  # to /path/to/pe_output/atmos.fort6.pe0
+  # and $STANDARD_OUTPUT_BASE to /path/to/pe_output/atmos.fort6.pe
+  # This loop can remove all PE output, except that of pe0, 
+  # at the end of an atmos run.
+  if [ ${KEEP_EXTRA_OUTPUT:-false} == "false" ] ; then
+    if [ -n "${STANDARD_OUTPUT_BASE:-}" ] ; then
+      for file in ${STANDARD_OUTPUT_BASE}* ; do
+        if [ $file != "${STANDARD_OUTPUT_FILE:-}" ] ; then
+          if [ -f "$file" ] ; then
+            rm $file
+          fi
+        fi
+      done
+    fi
+  fi
+
+  exit $ERR_STATE
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_cp_file () {
+  # For when a copy is requested but failure to copy is considered safe.
+  # this function reports on common copy errors but continues execution.
+  # Takes two arguments, source and destination.
+  if [ -n "${1:-}" -a  -n "${2:-}" ] ; then
+    srce=$1
+    dest=$2
+
+    if [ -d $srce ] ; then
+      copy_cmd="cp -r"
+    else
+      copy_cmd="cp"
+    fi
+
+    if $copy_cmd $srce $dest ; then
+      usf_Print "Copied \"$srce\" to \"$dest\"."
+    else
+      usf_Warn "Copy failed. Cannot copy \"$srce\" to \"$dest\"."
+    fi
+
+  else
+    usf_Warn "Copy function didn't receive 2 valid arguments."
+    usf_Print "Got \"${1:-}\" and \"${2:-}\""
+  fi
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_Set_Out_Dir () {
+  # To set/create unique output dir, with optional override
+  # and default behaviours if runing in a suite.
+
+  # Arguments are:
+  #   $1 : dir to create output dir in (Has a range of defaults if empty).
+  #   $2 : base of dirname to create (defaults to 'output' if empty).
+  #   $3 : Override. If NOT empty overides both the above and
+  #        supplies a specific named dir.
+
+
+  # Set dir to create output dir in from defaults in order of precedence
+  # Starting with argument provided and working back to $TMPDIR/$USER if blank
+  default_dir=${1:-${CYLC_TASK_WORK_DIR:-${UM_TMPDIR:-${JOBTEMP:-${TMPDIR:-/tmp}/$USER}}}}
+  base_dir=${default_dir:-no_dir_provided}
+  base_nam=${2:-output}
+  override=${3:-}
+
+  if [ -z "${override:-}" ] ; then
+    if [ ! -d $base_dir ] ; then
+      echo "[WARN] $base_dir does not exist, creating it."
+      mkdir -p $base_dir
+    fi
+    if out_dir=$(mktemp -d -p $base_dir ${base_nam}_XXXX); then
+      # mktemp by default creates a private directory, but we want users to
+      # be able to access each other's output if required
+      chmod +rwx $out_dir
+    else
+      usf_EReport "Unable to create output directory in \"$base_dir\""
+    fi
+  else
+    out_dir=$override
+  fi
+
+  if [ ! -d "$out_dir" ] ; then
+    usf_EReport "Output directory \"$out_dir\" does not exist"
+  fi
+
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_Set_STASHmaster () {
+  # Sets the stashmaster default.
+  if [ -z "${STASHMASTER:-}" ] ; then
+      STASHMASTER=$UMDIR/vn$VN/ctldata/STASHmaster
+      usf_Warn "Using default STASHmaster as none provided \"$STASHMASTER\"."
+  fi
+  if [ ! -d $STASHMASTER ] ; then
+      usf_EReport "STASHMaster directory \"$STASHMASTER\" does not exist"
+  fi
+  # Catch the case that the old form of STASHMASTER (STASHMSTR) has been set
+  # and raise an error; to avoid it not being picked up by the executable
+  if [ -n "${STASHMSTR:-}" ] ; then
+      usf_EReport \
+      "Detected retired environment variable STASHMSTR (should be STASHMASTER)"
+  fi
+
+  # Sets the STASH2CF default
+  if [ -z "${STASH2CF:-}" ] ; then
+      STASH2CF=$UMDIR/vn$VN/ctldata/STASH2CF/STASH_to_CF.txt
+      usf_Warn "Using default STASH2CF as none provided \"$STASH2CF\"."
+  fi
+  if [ ! -f $STASH2CF ] ; then
+      usf_EReport "STASH2CF file \"$STASH2CF\" does not exist"
+  fi
+}
+
+#-------------------------------------------------------------------------------
+
+if_fn_exists () {
+  # Passed a function name as an argument, this function determines if
+  # if the one named exists and if it does, executes it.
+  FN=${1:-no function provided}
+  if type $FN > /dev/null 2>&1 ; then
+    $FN
+  else
+    echo "Cannot perform function \"$FN\" it hasn't been provided"
+  fi
+}
+
+#-------------------------------------------------------------------------------
+
+function usf_which () {
+# Print the full path to an executable
+# rose mpi-launch accepts two forms of argument: "COMMAND" and "-f FILE".
+  local FILE="$@"
+  FILE=$(sed 's/^\s*-f//' <<< $FILE)
+
+# Keep trying till we get a path
+  local FULL=$(readlink $FILE)
+  if [ -z "$FULL" ] ; then
+    # `which` will return an error from non-executable files
+    FULL=$(which $FILE 2>/dev/null)||:
+    if [ -z "$FULL" ] ; then
+      FULL=$(readlink -f $FILE)
+    fi
+  fi
+
+# Print the result
+  if [ -n "$FULL" ] ; then
+    if [ -x "$FULL" ] ; then
+      # Give execs an easily findable tag
+      usf_Print "Using executable: $FULL"
+    else
+      usf_Print "Using non-executable file: $FULL"
+    fi
+  else
+    usf_Warn "Cannot find path to file: $FILE"
+  fi
+}
+
+#-------------------------------------------------------------------------------
+# If the output filename passed as an argument contains a directory, create
+# that directory if it doesn't already exist.
+function usf_create_output_dir()
+{
+  local fname=$1
+  local dname=`dirname $fname`
+  if [[ ! -d $dname ]]; then
+    usf_Warn "Directory $dname does not exist. Creating it."
+    mkdir -p $dname
+  fi
+
+}

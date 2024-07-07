@@ -1,0 +1,7 @@
+    [[queues]]
+        [[[build_on_emps]]]
+            limit = 2
+            members = UOE_EMPS_BUILD
+        [[[extract_on_hpc]]]
+            limit = 2
+            members = EXTRACT

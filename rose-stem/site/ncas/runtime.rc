@@ -1,0 +1,855 @@
+### Build task definitions ### 
+
+# UM utils serial build
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_utils_serial_high_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            PREBUILD =
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_utils_serial_high_omp]]
+        inherit = NCAS_XC30_PP_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_serial
+            OPTIMISATION=high
+            PREBUILD =    
+
+# UM utils mpp build
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_utils_mpp_high_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            PREBUILD =
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_utils_mpp_high_omp]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_utils_mpp
+            OPTIMISATION=high
+            PREBUILD =
+
+# CreateBC build
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_ifort_createbc_high_omp]]
+        inherit = EXTRACT_INTEL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPTIMISATION=high
+            PREBUILD =
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_ifort_createbc_high_omp]]
+        inherit = NCAS_XC30_INTEL_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_createbc
+            OPTIMISATION=high
+            PREBUILD =
+
+# UM libraries build
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_libs]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+    # Preprocess, Build
+    [[fcm_make2_ncas_xc30_cce_libs]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_ifort_libs]]
+        inherit = EXTRACT_INTEL
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+    # Preprocess, Build
+    [[fcm_make2_ncas_xc30_ifort_libs]]
+        inherit = NCAS_XC30_INTEL_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_libs
+
+
+# UM debug no OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_debug_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_debug_noomp]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_debug_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM debug OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_debug_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            OPTIMISATION=debug
+            ROSE_TASK_APP=fcm_make_um
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_debug_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_debug_omp]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=debug
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_debug_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high no OpenMP 
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_high_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_high_noomp]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_high_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high OpenMP 
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_high_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_high_omp]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_high_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high OpenMP Dr Hook 
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_high_omp_drhook]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            DRHOOK=true
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_high_omp_drhook
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_high_omp_drhook]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            DRHOOK=true
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_high_omp_drhook
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM high OpenMP, single precision solver
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_high_omp_single_precis]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_high_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_high_omp_single_precis]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            ROSE_APP_OPT_CONF_KEYS=single_precision
+            OPTIMISATION=high
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_high_omp_single_precis
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe no OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_safe_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_safe_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_safe_noomp]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_safe_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM safe OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_safe_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_safe_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_safe_omp]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=safe
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_safe_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM rigorous no OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_rigorous_noomp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_rigorous_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_rigorous_noomp]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPENMP=false
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_rigorous_noomp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+# UM rigorous OpenMP
+    # Extract, Mirror
+    [[fcm_make_ncas_xc30_cce_um_rigorous_omp]]
+        inherit = EXTRACT
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make_ncas_xc30_cce_um_rigorous_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+    # Pre-process, Build
+    [[fcm_make2_ncas_xc30_cce_um_rigorous_omp]]
+        inherit = NCAS_XC30_BUILD
+        [[[environment]]]
+            ROSE_TASK_APP=fcm_make_um
+            OPTIMISATION=rigorous
+{%- if PREBUILDS == true %}
+            PREBUILD = {{ PREBUILD_XC30_ROOT_DIR }}/fcm_make2_ncas_xc30_cce_um_rigorous_omp
+{%- else %}
+            PREBUILD =
+{%- endif %}
+
+
+### UM and utilities task definitions ### 
+
+{% if "ncas_xc30_n48_eg_noomp" in name_graphs_out -%}
+
+    [[NCAS_XC30_N48_EG_NOOMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_cce_um_safe_noomp/build-*/bin'"
+        [[[environment]]]
+            KGO_XC30_N48_EG_DIR={{KGO_XC30_ROOT_DIR}}/xc30_n48_eg/{{XC30_N48_EG_KGO}}
+
+    # Reconfiguration 4x6 
+    [[recon_ncas_xc30_n48_eg_noomp_4x6]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncas_xc30_cce_um_safe_noomp/build-*/bin'"
+        inherit = NCAS_XC30_N48_EG_NOOMP, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_1, RECON_MPI, RECON_4x6, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_noomp_4x6/atmos.astart
+
+    # Atmos 4x6 MPI
+    [[atmos_ncas_xc30_n48_eg_noomp_4x6]]
+        inherit = NCAS_XC30_N48_EG_NOOMP, NCAS_XC30_IOS_OFF, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_4x6, IOS_0, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_noomp_4x6/atmos.astart
+
+    [[rose_ana_ncas_xc30_n48_eg_noomp_recon_kgo]]  
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_EG_NOOMP, NCAS_XC30, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC30_N48_EG_DIR
+            DIR1=../recon_ncas_xc30_n48_eg_noomp_4x6
+            KGO=0
+ 
+    [[rose_ana_ncas_xc30_n48_eg_noomp_atmos_kgo]]  
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_EG_NOOMP, NCAS_XC30, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=$KGO_XC30_N48_EG_DIR
+            DIR1=../atmos_ncas_xc30_n48_eg_noomp_4x6
+            KGO=0
+
+{%- endif %}
+
+{%- if "ncas_xc30_n48_eg_omp_noios_drhook" in name_graphs_out %}
+
+    [[NCAS_XC30_N48_EG_DRHOOK]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_cce_um_high_omp_drhook/build-*/bin'"
+        [[[environment]]]
+            KGO_XC30_N48_EG_DRHOOK_DIR={{KGO_XC30_ROOT_DIR}}/xc30_n48_eg_drhook/{{XC30_N48_EG_DRHOOK_KGO}}
+
+    # Recon 4x6 
+    [[recon_ncas_xc30_n48_eg_omp_noios_drhook]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncas_xc30_cce_um_high_omp_drhook/build-*/bin'"
+        inherit = NCAS_XC30_N48_EG_DRHOOK, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_1, RECON_MPI, RECON_4x6, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_omp_noios_drhook/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=drhook
+
+    # Atmos 2x6 MPI x 2 OMP threads
+    [[atmos_ncas_xc30_n48_eg_omp_noios_drhook_2x6]]
+        inherit = NCAS_XC30_N48_EG_DRHOOK, NCAS_XC30_IOS_OFF, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_2x6, IOS_0, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_omp_noios_drhook/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=drhook
+
+    [[rose_ana_ncas_xc30_n48_eg_omp_noios_drhook_recon_kgo]]  
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_EG_DRHOOK, NCAS_XC30, ROSE_ANA_DRHOOK
+        [[[environment]]]
+            DIR0=$KGO_XC30_N48_EG_DRHOOK_DIR
+            DIR1=../recon_ncas_xc30_n48_eg_omp_noios_drhook
+            KGO=0
+
+    [[rose_ana_ncas_xc30_n48_eg_omp_noios_drhook_atmos_kgo]]  
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_EG_DRHOOK, NCAS_XC30, ROSE_ANA_DRHOOK
+        [[[environment]]]
+            DIR0=$KGO_XC30_N48_EG_DRHOOK_DIR
+            DIR1=../atmos_ncas_xc30_n48_eg_omp_noios_drhook_2x6
+            KGO=0
+
+{%- endif %}
+
+{%- if "ncas_xc30_n48_eg_omp_ios" in name_graphs_out %}
+
+    [[NCAS_XC30_N48_EG_OMP]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_cce_um_safe_omp/build-*/bin'"
+        [[[environment]]]
+            KGO_XC30_N48_EG_DIR={{KGO_XC30_ROOT_DIR}}/xc30_n48_eg/{{XC30_N48_EG_KGO}}
+
+    # Recon 4x6
+    [[recon_ncas_xc30_n48_eg_omp_ios_4x6]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncas_xc30_cce_um_safe_omp/build-*/bin'"
+        inherit = NCAS_XC30_N48_EG_OMP, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_1, RECON_MPI, RECON_4x6, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_omp_ios_4x6/atmos.astart
+
+    # Atmos 2x5 MPI tasks x 2 OMP threads + IOS 2 MPI x 2 OMP
+    [[atmos_ncas_xc30_n48_eg_omp_ios_2x5]]
+        inherit = NCAS_XC30_N48_EG_OMP, NCAS_XC30_IOS_ON, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_2x5, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_omp_ios_4x6/atmos.astart
+
+    [[rose_ana_ncas_xc30_n48_eg_omp_ios_recon_kgo]]  
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_EG_OMP, NCAS_XC30, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC30_N48_EG_DIR
+            DIR1=../recon_ncas_xc30_n48_eg_omp_ios_4x6
+            KGO=0
+
+    [[rose_ana_ncas_xc30_n48_eg_omp_ios_atmos_kgo]]  
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_EG_OMP, NCAS_XC30, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=$KGO_XC30_N48_EG_DIR
+            DIR1=../atmos_ncas_xc30_n48_eg_omp_ios_2x5
+            KGO=0
+
+    # Recon 6x4
+    [[recon_ncas_xc30_n48_eg_omp_ios_6x4]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncas_xc30_cce_um_safe_omp/build-*/bin'"
+        inherit = NCAS_XC30_N48_EG_OMP, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_1, RECON_MPI, RECON_6x4, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_omp_ios_6x4/atmos.astart
+
+    # Atmos 4x2 MPI x 2 OMP + IOS 2 MPI x 2 OMP 
+    [[atmos_ncas_xc30_n48_eg_omp_ios_4x2]]
+        inherit = NCAS_XC30_N48_EG_OMP, NCAS_XC30_IOS_ON, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x2, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_omp_ios_6x4/atmos.astart
+
+    [[rose_ana_ncas_xc30_n48_eg_omp_ios_recon_proc]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_EG_OMP, NCAS_XC30, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_ncas_xc30_n48_eg_omp_ios_4x6
+            DIR1=../recon_ncas_xc30_n48_eg_omp_ios_6x4
+            KGO=
+
+    [[rose_ana_ncas_xc30_n48_eg_omp_ios_atmos_proc]] 
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_EG_OMP, NCAS_XC30, ROSE_ANA_N48_EG
+        [[[environment]]]
+            DIR0=../atmos_ncas_xc30_n48_eg_omp_ios_2x5
+            DIR1=../atmos_ncas_xc30_n48_eg_omp_ios_4x2
+            KGO=
+
+    # Atmos NRUN (2x5 + 2 IOS MPI) x 2 OMP
+    [[atmos_ncas_xc30_n48_eg_omp_ios_2x5_nrun]]
+        inherit = NCAS_XC30_N48_EG_OMP, NCAS_XC30_IOS_ON, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_2x5, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_omp_ios_4x6/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=nrun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_EG_OMP_IOS
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_EG_OMP_IOS
+
+    # Atmos CRUN (2x5 + 2 IOS MPI) x 2 OMP
+    [[atmos_ncas_xc30_n48_eg_omp_ios_2x5_crun]]
+        inherit = NCAS_XC30_N48_EG_OMP, NCAS_XC30_IOS_ON, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_2x5, IOS_2, UM_N48_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_eg_omp_ios_4x6/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=crun
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_EG_OMP_IOS
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_EG_OMP_IOS
+
+    [[rose_ana_ncas_xc30_n48_eg_omp_ios_lrun_crun_atmos]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_EG_OMP, NCAS_XC30, ROSE_ANA_N48_EG_CRUN
+        [[[environment]]]
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_EG_OMP_IOS
+            DIR1=../atmos_ncas_xc30_n48_eg_omp_ios_2x5
+            KGO=
+
+{%- endif %}
+
+{%- if "ncas_xc30_createbc_calcs" in name_graphs_out %}
+
+    [[createbc_ncas_xc30_createbc_calcs_global_eg_fixed_eg_2dust6]]
+        inherit = NCAS_XC30_UTILS
+        script = "$ULIMIT ; {{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_ifort_createbc_high_omp/build-*/bin'"
+        [[[environment]]]
+            CREATEBC_INPUT=$INPUT_DATA/createbc
+            ROSE_TASK_APP=createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS=global_eg_fixed_eg_2dust6
+            FRAME_DIR=../createbc_ncas_xc30_createbc_calcs_global_eg_frame_eg_2dust2
+            FRAME_DIR2=../createbc_ncas_xc30_createbc_calcs_varres_eg_frame_eg_0dust0
+
+    [[rose_ana_ncas_xc30_createbc_calcs_global_eg_fixed_eg_2dust6_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30
+        [[[environment]]]
+            DIR0={{KGO_XC30_ROOT_DIR}}/xc30_createbc/global_eg_fixed_eg_2dust6/{{XC30_CREATEBC_GLOBAL_EG_FIXED_EG_2DUST6_KGO}}
+            DIR1=../createbc_ncas_xc30_createbc_calcs_global_eg_fixed_eg_2dust6
+            ROSE_TASK_APP=rose_ana_createbc_calcs
+            KGO=0
+
+{%- endif %} 
+
+{%- if "ncas_xc30_crmstyle_coarse_grid" in name_graphs_out %}
+# crmstyle_coarse_grid checking
+# This utility uses 8 threads to gain maximum parallelism from OpenMP
+    [[NCAS_XC30_CRMSTYLE_COARSE_GRID]]
+        inherit = NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_8
+        [[[environment]]]
+            ROSE_TASK_APP=utils_crmstyle_coarse_grid
+            
+    [[utils_ncas_xc30_crmstyle_coarse_grid_whole]]
+        inherit = NCAS_XC30_CRMSTYLE_COARSE_GRID, NCAS_XC30_MPI_TASKS_1 
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_whole
+            NPROCX=1
+            NPROCY=1
+            NEWRES=100
+
+    [[UTILS_NCAS_XC30_CRMSTYLE_COARSE_GRID_PART]]
+        inherit = NCAS_XC30_CRMSTYLE_COARSE_GRID, NCAS_XC30_MPI_TASKS_2
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_part
+            NEWRES=40
+
+    [[utils_ncas_xc30_crmstyle_coarse_grid_part_1x2]]
+        inherit = UTILS_NCAS_XC30_CRMSTYLE_COARSE_GRID_PART
+        [[[environment]]]
+            NPROCX=1
+            NPROCY=2
+
+    [[utils_ncas_xc30_crmstyle_coarse_grid_part_2x1]]
+        inherit = UTILS_NCAS_XC30_CRMSTYLE_COARSE_GRID_PART
+        [[[environment]]]
+            NPROCX=2
+            NPROCY=1
+
+    [[rose_ana_ncas_xc30_utils_crmstyle_coarse_grid_whole_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            ROSE_APP_OPT_CONF_KEYS=crmstyle_single
+            DIR0={{KGO_XC30_ROOT_DIR}}/xc30_utils_crmstyle_coarse_grid/{{XC30_UTILS_CRMSTYLE_COARSE_GRID_KGO}}
+            DIR1=../utils_ncas_xc30_crmstyle_coarse_grid_whole
+            NEWRES=100
+            KGO=0
+
+    [[rose_ana_ncas_xc30_utils_crmstyle_coarse_grid_part_proc]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            DIR0=../utils_ncas_xc30_crmstyle_coarse_grid_part_1x2
+            DIR1=../utils_ncas_xc30_crmstyle_coarse_grid_part_2x1
+            NEWRES=40
+            KGO=
+
+    [[rose_ana_ncas_xc30_utils_crmstyle_coarse_grid_part_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30
+        [[[environment]]]
+            ROSE_TASK_APP=rose_ana_crmstyle_coarse_grid
+            DIR0={{KGO_XC30_ROOT_DIR}}/xc30_utils_crmstyle_coarse_grid/{{XC30_UTILS_CRMSTYLE_COARSE_GRID_KGO}}
+            DIR1=../utils_ncas_xc30_crmstyle_coarse_grid_part_2x1
+            NEWRES=40
+            KGO=0
+
+{%- endif %}
+
+{%- if "ncas_xc30_global_to_lam_eg" in name_graphs_out %}
+
+# N512 Endgame XC40
+    [[NCAS_XC30_N512_EG]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_cce_um_high_omp_single_precis/build-*/bin'"
+        [[[environment]]]
+            KGO_XC30_N512_EG_DIR={{KGO_XC30_ROOT_DIR}}/xc30_n512_eg/{{XC30_N512_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_ncas_xc30_n512_eg]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncas_xc30_cce_um_high_omp_single_precis/build-*/bin'"
+        inherit = NCAS_XC30_N512_EG, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_1, RECON_MPI, RECON_6x4, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n512_eg/atmos.astart
+
+    # Atmosphere Model Run: 8 nodes = (4x23 MPI + 4 IOS) x 2 OMP 
+    [[atmos_ncas_xc30_n512_eg_4x23]]
+        script =  "{{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_cce_um_high_omp_single_precis/build-*/bin' --define=[namelist:ioscntl]ios_spacing=24"
+        inherit = NCAS_XC30_N512_EG, NCAS_XC30_IOS_ON, NCAS_XC30_CORES_192, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x23, IOS_4, UM_N512_EG
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n512_eg/atmos.astart
+
+    # Comparison tasks
+    [[rose_ana_ncas_xc30_n512_eg_recon_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N512_EG, NCAS_XC30, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC30_N512_EG_DIR
+            DIR1=../recon_ncas_xc30_n512_eg
+            KGO=0
+
+    [[rose_ana_ncas_xc30_n512_eg_atmos_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N512_EG, NCAS_XC30, ROSE_ANA_N512_EG
+        [[[environment]]]
+            DIR0=$KGO_XC30_N512_EG_DIR
+            DIR1=../atmos_ncas_xc30_n512_eg_4x23
+            KGO=0
+
+    [[rose_ana_ncas_xc30_n512_eg_wallclock_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_WALLCLOCK_COMPARISON, NCAS_XC30_N512_EG, NCAS_XC30
+        [[[environment]]]
+            DIR0=../atmos_ncas_xc30_n512_eg_4x23
+            DIR1=$KGO_XC30_N512_EG_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+    [[NCAS_XC30_GLOBAL_TO_LAM]]
+        [[[environment]]]
+            KGO_XC30_GLOBAL_TO_LAM_EG_DIR={{KGO_XC30_ROOT_DIR}}/xc30_global_to_lam_eg/{{XC30_GLOBAL_TO_LAM_EG_KGO}}
+
+    [[createbc_ncas_xc30_global_to_lam_frame_seukv_eg]]
+        script = "$ULIMIT ; {{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_ifort_createbc_high_omp/build-*/bin'"
+        inherit = NCAS_XC30_GLOBAL_TO_LAM, NCAS_XC30_UTILS
+        [[[environment]]]
+            ROSE_TASK_APP = createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS = global_to_lam_seukv_eg_frame
+            MBC_INPUT = ../atmos_ncas_xc30_n512_eg_4x23
+            PREV_TASK=atmos_ncas_xc30_n512_eg_4x23
+
+    [[createbc_ncas_xc30_global_to_lam_createbc_seukv_eg]]
+        inherit = NCAS_XC30_GLOBAL_TO_LAM, NCAS_XC30_UTILS
+        script = "$ULIMIT ; {{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_ifort_createbc_high_omp/build-*/bin'"
+        [[[environment]]]
+            ROSE_TASK_APP = createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS = global_to_lam_seukv_eg
+            MBC_INPUT = ../atmos_ncas_xc30_n512_eg_4x23
+            PREV_TASK=createbc_ncas_xc30_global_to_lam_frame_seukv_eg
+
+    [[recon_ncas_xc30_global_to_lam_seukv_eg]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncas_xc30_cce_um_high_omp/build-*/bin'"
+        inherit = NCAS_XC30_GLOBAL_TO_LAM, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_1, RECON_MPI, RECON_4x6, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_global_to_lam_seukv_eg/atmos.astart
+            AINITIAL=../atmos_ncas_xc30_n512_eg_4x23/atmosa_da003
+            ALABCIN1=../createbc_ncas_xc30_global_to_lam_createbc_seukv_eg/output.lbc
+            ROSE_APP_OPT_CONF_KEYS=globaltolam
+
+    [[atmos_ncas_xc30_global_to_lam_seukv_eg_4x6]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_cce_um_high_omp/build-*/bin'"
+        inherit = NCAS_XC30_GLOBAL_TO_LAM, NCAS_XC30_IOS_OFF, NCAS_XC30_CORES_48, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x6, IOS_0, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_global_to_lam_seukv_eg/atmos.astart
+            AINITIAL=../atmos_ncas_xc30_global_to_lam_n512_eg_4x23/atmosa_da003
+            ALABCIN1=../createbc_ncas_xc30_global_to_lam_createbc_seukv_eg/output.lbc
+            ROSE_APP_OPT_CONF_KEYS=globaltolam
+
+    [[rose_ana_ncas_xc30_global_to_lam_seukv_eg_4x6_atmos_kgo]]  
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_GLOBAL_TO_LAM, NCAS_XC30, ROSE_ANA_SEUKV_EG_NODA
+        [[[environment]]]
+            DIR0=$KGO_XC30_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../atmos_ncas_xc30_global_to_lam_seukv_eg_4x6
+            KGO=0
+
+    [[rose_ana_ncas_xc30_global_to_lam_seukv_eg_recon_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_GLOBAL_TO_LAM, NCAS_XC30, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC30_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../recon_ncas_xc30_global_to_lam_seukv_eg
+            KGO=0  
+  
+    [[rose_ana_ncas_xc30_global_to_lam_seukv_eg_frame_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_GLOBAL_TO_LAM, NCAS_XC30
+        [[[environment]]]
+            DIR0=$KGO_XC30_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../createbc_ncas_xc30_global_to_lam_frame_seukv_eg
+            ROSE_TASK_APP=rose_ana_createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS=frame
+            KGO=0
+  
+    [[rose_ana_ncas_xc30_global_to_lam_seukv_eg_createbc_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_GLOBAL_TO_LAM, NCAS_XC30
+        [[[environment]]]
+            DIR0=$KGO_XC30_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../createbc_ncas_xc30_global_to_lam_createbc_seukv_eg
+            ROSE_TASK_APP=rose_ana_createbc_calcs
+            KGO=0
+
+{%- endif %}
+
+{% if "ncas_xc30_n48_ga_amip_exp_2day" in name_graphs_out -%}
+
+# N48 GA_AMIP_EXP climate configuration - 2 day variant
+    [[NCAS_XC30_N48_GA_AMIP_EXP_2DAY]]
+        script = "{{TASK_RUN}} --path= --path='share/fcm_make_ncas_xc30_cce_um_safe_omp/build-*/bin'"
+        inherit=NCAS_N48_GA_COMMON
+        [[[environment]]]
+            KGO_XC30_N48_GA_AMIP_EXP_2DAY_DIR={{KGO_XC30_ROOT_DIR}}/xc30_n48_ga_amip_exp_2day/{{XC30_N48_GA_AMIP_EXP_2DAY_KGO}}
+
+    # Reconfiguration
+    [[recon_ncas_xc30_n48_ga_amip_exp_2day_4x6]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncas_xc30_cce_um_safe_omp/build-*/bin'"
+        inherit = NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_1, RECON_MPI, RECON_4x6, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_ga_amip_exp_2day_4x6/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+
+    [[recon_ncas_xc30_n48_ga_amip_exp_2day_6x4]]
+        script = "{{TASK_RUN_RECON}} --path= --path='share/fcm_make_ncas_xc30_cce_um_safe_omp/build-*/bin'"
+        inherit = NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30_CORES_24, NCAS_XC30_PARALLEL_THREADS_1, RECON_MPI, RECON_6x4, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_ga_amip_exp_2day_6x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+
+    [[atmos_ncas_xc30_n48_ga_amip_exp_2day_6x4]]
+        inherit = NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30_IOS_OFF, NCAS_XC30_CORES_48, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x4, IOS_0, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_ga_amip_exp_2day_6x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+
+    [[atmos_ncas_xc30_n48_ga_amip_exp_2day_4x6]]
+        inherit = NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30_IOS_OFF, NCAS_XC30_CORES_48, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x6, IOS_0, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_ga_amip_exp_2day_4x6/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+
+    # CRUN test
+    [[atmos_ncas_xc30_n48_ga_amip_exp_1day_NRUN_6x4]]
+        inherit = NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30_IOS_OFF, NCAS_XC30_CORES_48, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x4, IOS_0, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=../recon_ncas_xc30_n48_ga_amip_exp_2day_6x4/atmos.astart
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_GA_AMIP_EXP_2DAY
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_GA_AMIP_EXP_2DAY
+            ROSE_APP_OPT_CONF_KEYS=n48 nrun 2day
+
+    [[atmos_ncas_xc30_n48_ga_amip_exp_1day_CRUN_6x4]]
+        inherit = NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30_IOS_OFF, NCAS_XC30_CORES_48, NCAS_XC30_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x4, IOS_0, UM_GA_AMIP_EXP
+        [[[environment]]]
+            ASTART=
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_GA_AMIP_EXP_2DAY
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_GA_AMIP_EXP_2DAY
+            ROSE_APP_OPT_CONF_KEYS=n48 2day
+
+    # Comparison tasks
+    [[rose_ana_ncas_xc30_n48_ga_amip_exp_2day_atmos_proc]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=2day
+            DIR0=../atmos_ncas_xc30_n48_ga_amip_exp_2day_4x6
+            DIR1=../atmos_ncas_xc30_n48_ga_amip_exp_2day_6x4
+            KGO=
+
+    [[rose_ana_ncas_xc30_n48_ga_amip_exp_2day_atmos_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=2day
+            DIR0=$KGO_XC30_N48_GA_AMIP_EXP_2DAY_DIR
+            DIR1=../atmos_ncas_xc30_n48_ga_amip_exp_2day_6x4
+            KGO=0
+
+    [[rose_ana_ncas_xc30_n48_ga_amip_exp_2day_recon_proc]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_ncas_xc30_n48_ga_amip_exp_2day_6x4
+            DIR1=../recon_ncas_xc30_n48_ga_amip_exp_2day_4x6
+            KGO=
+
+    [[rose_ana_ncas_xc30_n48_ga_amip_exp_2day_recon_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC30_N48_GA_AMIP_EXP_2DAY_DIR
+            DIR1=../recon_ncas_xc30_n48_ga_amip_exp_2day_6x4
+            KGO=0
+
+    [[rose_ana_ncas_xc30_n48_ga_amip_exp_2day_atmos_nruncrun_lrun]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30_N48_GA_AMIP_EXP_2DAY, NCAS_XC30, ROSE_ANA_N48_GA_AMIP_EXP
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=2day
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/NCAS_XC30_N48_GA_AMIP_EXP_2DAY
+            DIR1=../atmos_ncas_xc30_n48_ga_amip_exp_2day_6x4
+            ROSE_APP_OPT_CONF_KEYS=nruncrun_lrun 2day
+            KGO=
+
+{%- endif %}
+
+{%- if "ncas_xc30_convpp_calcs" in name_graphs_out %}
+
+# Convpp calculation test
+    [[utils_ncas_xc30_convpp_calcs_64B_large_ff]]
+        inherit = NCAS_XC30_UTILS
+        script = "$ULIMIT; {{TASK_RUN}} --command-key=64B_large_ff --path= --path='share/fcm_make_ncas_xc30_cce_utils_serial_high_omp/build-*/bin'" 
+        [[[environment]]]
+            INPUT_FILE=$INPUT_DATA/convpp/64B_large_ff_input.ff
+            ROSE_TASK_APP=utils_convpp_calcs
+            CONVPP_OUT_DIR=$CYLC_TASK_WORK_PATH
+
+    [[rose_ana_ncas_xc30_utils_convpp_calcs_64B_large_ff_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30
+        [[[environment]]]
+            DIR0={{KGO_XC30_ROOT_DIR}}/xc30_utils_convpp/64B_large_ff/XC30_UTILS_CONVPP_64B_LARGE_FF_KGO
+            DIR1=../utils_ncas_xc30_convpp_calcs_64B_large_ff
+            ROSE_TASK_APP=rose_ana_convpp_calcs
+            KGO=0
+
+{%- endif %}
+
+{%- if "ncas_xc30_pptoanc_calcs" in name_graphs_out %}
+
+# pptoanc calculation tests
+    [[utils_ncas_xc30_pptoanc_calcs_basic_test]]
+        inherit = NCAS_XC30_UTILS
+        script = "$ULIMIT; {{TASK_RUN}} --command-key=basic_test --path= --path='share/fcm_make_ncas_xc30_cce_utils_serial_high_omp/build-*/bin'" 
+        [[[environment]]]
+            INPUT_FILE=$INPUT_DATA/pptoanc/basic_test_input.pp
+            ROSE_TASK_APP=utils_pptoanc_calcs
+            ROSE_APP_OPT_CONF_KEYS=basic_test
+            PPTOANC_OUT_DIR=$CYLC_TASK_WORK_PATH
+
+    [[rose_ana_ncas_xc30_utils_pptoanc_calcs_basic_test_kgo]]
+        inherit = NCAS_XC30_ROSE_ANA_COMPARISON, NCAS_XC30
+        [[[environment]]]
+            DIR0={{KGO_XC30_ROOT_DIR}}/xc30_utils_pptoanc/basic_test/XC30_UTILS_PPTOANC_BASIC_TEST_KGO
+            DIR1=../utils_ncas_xc30_pptoanc_calcs_basic_test
+            ROSE_TASK_APP=rose_ana_pptoanc_calcs
+            KGO=0
+
+{%- endif %}
+
+# Housekeeping - the / is important as $CYLC_SUITE_WORK_DIR may be a symlink!
+    [[housekeep_ncas_xc30]]
+        inherit = NCAS_XC30_HOUSEKEEPING
+        [[[environment]]]
+            RUNDIR=$CYLC_SUITE_WORK_DIR/

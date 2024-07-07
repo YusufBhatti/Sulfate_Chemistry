@@ -1,0 +1,10 @@
+%include 'site/meto/graph-integ-xc40.rc'
+%include 'site/meto/graph-integ-misc.rc'
+%include 'site/meto/graph-integ-linux-common.rc'
+
+{%- set integ_graphs = integ_graphs_xc40 %}
+{%- do integ_graphs.update(integ_graphs_misc.items()) %}
+{%- do integ_graphs.update(integ_graphs_linux_common.items()) %}
+
+%include 'site/meto/graph-integ-linux.rc'
+{%- do integ_graphs.update(integ_graphs_linux.items()) %}

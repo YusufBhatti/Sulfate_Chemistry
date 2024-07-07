@@ -1,0 +1,43 @@
+{%- set groups = {
+    "fcm_make"  : [ "fcm_make" ,],
+    
+    "developer" : [ "xc40_developer",],
+
+    "xc40_developer" : [
+                   "kma_xc40_n48_eg_noomp",
+                   "kma_xc40_n48_eg_omp_noios",
+                   "kma_xc40_n48_eg_omp_ios_comp_check", 
+           ],
+
+    "xc40" : [
+                   "kma_xc40_install",
+                   "kma_xc40_fcm_make",
+                   "kma_xc40_utils",
+                   "kma_xc40_atmos",
+           ],
+
+    "kma_xc40_atmos" : [
+                   "kma_xc40_n48_eg_noomp",
+                   "kma_xc40_n48_eg_omp_ios",
+                   "kma_xc40_n48_eg_omp_noios",
+                   "kma_xc40_n48_eg_omp_ios_comp_check",
+                   "kma_xc40_n512_debug_eg_ios_noios",
+                   "kma_xc40_n512_debug_safe_eg_ios",
+                   "kma_xc40_n512_high_eg_ios",
+                   "kma_xc40_n512_safe_eg_ios", 
+           ],
+
+    "kma_xc40_utils" : ["xc40_vomext",
+                        "xc40_pptoanc",       "xc40_crmstyle_coarse_grid",
+                        "xc40_createbc",      "kma_xc40_mule_test",],
+
+    "xc40_createbc" : ["kma_xc40_createbc_calcs"],
+
+    "xc40_vomext" : ["kma_xc40_vomext_calcs"],
+
+    "xc40_pptoanc" : ["kma_xc40_pptoanc_calcs"],
+
+    "xc40_crmstyle_coarse_grid" : ["kma_xc40_crmstyle_coarse_grid"],
+
+    }
+%}

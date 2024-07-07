@@ -1,0 +1,1864 @@
+
+
+{% if "meto_xc40_mogreps_uk_eg" in name_graphs_out -%}
+# MOGREPS-UK XC40
+    [[METO_XC40_MOGREPS_UK_EG]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_FAST_OMP }}"
+        [[[environment]]]
+            KGO_XC40_MOGREPS_UK_DIR={{KGO_XC40_ROOT_DIR}}/xc40_mogreps_uk_eg/{{XC40_MOGREPS_UK_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_mogreps_uk_eg_pert]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_MOGREPS_UK_EG, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x4, UM_MOGREPS_UK
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_mogreps_uk_eg_pert/enuk_pert_001
+            IAU_INC=unset
+            ROSE_APP_OPT_CONF_KEYS=pert
+        [[[directives]]]
+            -l mem = 6GB
+        [[[job]]]
+            execution time limit = PT5M
+
+    [[recon_meto_xc40_mogreps_uk_eg_interp]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_MOGREPS_UK_EG, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x4, UM_MOGREPS_UK
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_mogreps_uk_eg_interp/atmos.astart
+            IAU_INC=unset
+        [[[directives]]]
+            -l mem = 10GB
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_mogreps_uk_eg_6x39]]
+        inherit = METO_XC40_MOGREPS_UK_EG, METO_XC40_IOS_OFF, METO_XC40_CORES_468, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x39, IOS_0, UM_MOGREPS_UK
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_mogreps_uk_eg_interp/atmos.astart
+            IAU_INC=$INPUT_DATA/mogreps_uk/PS39/20170607T0300Z_ukv_pert_001
+        [[[job]]]
+            execution time limit = PT12M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_mogreps_uk_eg_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_MOGREPS_UK_EG, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_MOGREPS_UK_DIR
+            DIR1=../recon_meto_xc40_mogreps_uk_eg_interp
+            KGO=0
+
+    [[rose_ana_meto_xc40_mogreps_uk_eg_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_MOGREPS_UK_EG, METO_XC40, ROSE_ANA_MOGREPS_UK
+        [[[environment]]]
+            DIR0=$KGO_XC40_MOGREPS_UK_DIR
+            DIR1=../atmos_meto_xc40_mogreps_uk_eg_6x39
+            KGO=0
+
+    [[rose_ana_meto_xc40_mogreps_uk_eg_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_MOGREPS_UK_EG, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_mogreps_uk_eg_6x39
+            DIR1=$KGO_XC40_MOGREPS_UK_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+{%- endif %}
+
+
+{% if "meto_xc40_mogreps_uk_exp_eg" in name_graphs_out -%}
+# MOGREPS-UK XC40
+    [[METO_XC40_MOGREPS_UK_EXP_EG]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_FAST_OMP }}"
+        [[[environment]]]
+            KGO_XC40_MOGREPS_UK_EXP_DIR={{KGO_XC40_ROOT_DIR}}/xc40_mogreps_uk_exp_eg/{{XC40_MOGREPS_UK_EXP_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_mogreps_uk_exp_eg_pert]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_MOGREPS_UK_EXP_EG, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x4, UM_MOGREPS_UK_EXP
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_mogreps_uk_exp_eg_pert/enuk_pert_001
+            IAU_INC=unset
+            ROSE_APP_OPT_CONF_KEYS=pert
+        [[[directives]]]
+            -l mem = 6GB
+        [[[job]]]
+            execution time limit = PT5M
+
+    [[recon_meto_xc40_mogreps_uk_exp_eg_interp]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_MOGREPS_UK_EXP_EG, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x4, UM_MOGREPS_UK_EXP
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_mogreps_uk_exp_eg_interp/atmos.astart
+            IAU_INC=unset
+        [[[directives]]]
+            -l mem = 10GB
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_mogreps_uk_exp_eg_6x39]]
+        inherit = METO_XC40_MOGREPS_UK_EXP_EG, METO_XC40_IOS_OFF, METO_XC40_CORES_468, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x39, IOS_0, UM_MOGREPS_UK_EXP
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_mogreps_uk_exp_eg_interp/atmos.astart
+            IAU_INC=$INPUT_DATA/mogreps_uk/PS39/20170607T0300Z_ukv_pert_001
+        [[[job]]]
+            execution time limit = PT12M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_mogreps_uk_exp_eg_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_MOGREPS_UK_EXP_EG, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_MOGREPS_UK_EXP_DIR
+            DIR1=../recon_meto_xc40_mogreps_uk_exp_eg_interp
+            KGO=0
+
+    [[rose_ana_meto_xc40_mogreps_uk_exp_eg_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_MOGREPS_UK_EXP_EG, METO_XC40, ROSE_ANA_MOGREPS_UK_EXP
+        [[[environment]]]
+            DIR0=$KGO_XC40_MOGREPS_UK_EXP_DIR
+            DIR1=../atmos_meto_xc40_mogreps_uk_exp_eg_6x39
+            KGO=0
+
+    [[rose_ana_meto_xc40_mogreps_uk_exp_eg_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_MOGREPS_UK_EXP_EG, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_mogreps_uk_exp_eg_6x39
+            DIR1=$KGO_XC40_MOGREPS_UK_EXP_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+{%- endif %}
+
+
+{% if "meto_xc40_euro4_eg" in name_graphs_out -%}
+# Limited Area Model EURO4, replaces NAE
+    [[METO_XC40_EURO4_EG]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_FAST_OMP }}"
+        [[[environment]]]
+            KGO_XC40_EURO4_DIR={{KGO_XC40_ROOT_DIR}}/xc40_euro4_eg/{{XC40_EURO4_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_euro4_eg]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_EURO4_EG, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x4, UM_EURO4
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_euro4_eg/atmos.astart
+        [[[directives]]]
+            -l mem = 18GB
+        [[[job]]]
+            execution time limit = PT19M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_euro4_eg_8x13]]
+        inherit = METO_XC40_EURO4_EG, METO_XC40_IOS_ON, METO_XC40_CORES_216, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x13, IOS_4, UM_EURO4
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_euro4_eg/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=xc40
+        [[[job]]]
+            execution time limit = PT58M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_euro4_eg_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_EURO4_EG, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_EURO4_DIR
+            DIR1=../recon_meto_xc40_euro4_eg
+            KGO=0
+
+    [[rose_ana_meto_xc40_euro4_eg_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_EURO4_EG, METO_XC40, ROSE_ANA_EURO4
+        [[[environment]]]
+            DIR0=$KGO_XC40_EURO4_DIR
+            DIR1=../atmos_meto_xc40_euro4_eg_8x13
+            KGO=0
+
+    [[rose_ana_meto_xc40_euro4_eg_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_EURO4_EG, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_euro4_eg_8x13
+            DIR1=$KGO_XC40_EURO4_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+{%- endif %}
+
+
+{% if "meto_xc40_aqum_eg" in name_graphs_out -%}
+# XC40 AQUM EG
+    [[METO_XC40_AQUM_EG]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]	       
+           KGO_XC40_AQUM_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_aqum_eg/{{XC40_AQUM_EG_KGO}}
+        
+    # Reconfiguration
+    [[recon_meto_xc40_aqum_eg]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_AQUM_EG, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_4x9]]
+        inherit = METO_XC40_AQUM_EG, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg/atmos.astart
+        [[[job]]]
+            execution time limit = PT39M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_aqum_eg_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_DIR
+            DIR1=../recon_meto_xc40_aqum_eg
+            KGO=0
+
+    [[rose_ana_meto_xc40_aqum_eg_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_DIR
+            DIR1=../atmos_meto_xc40_aqum_eg_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_aqum_eg_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_AQUM_EG, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_aqum_eg_4x9
+            DIR1=$KGO_XC40_AQUM_EG_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+{%- if INTEGRATION_TESTING == true %}
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_8x1]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_AQUM_EG, METO_XC40_IOS_OFF, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x1, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg/atmos.astart
+        [[[directives]]]
+            -l mem = 32GB
+        [[[job]]]
+            execution time limit = PT59M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_1x8]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_AQUM_EG, METO_XC40_IOS_OFF, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x8, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg/atmos.astart
+        [[[directives]]]
+            -l mem = 32GB
+        [[[job]]]
+            execution time limit = PT59M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_aqum_eg_atmos_proc81]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_aqum_eg_4x9
+            DIR1=../atmos_meto_xc40_aqum_eg_8x1
+            KGO=
+
+    [[rose_ana_meto_xc40_aqum_eg_atmos_proc18]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_aqum_eg_4x9
+            DIR1=../atmos_meto_xc40_aqum_eg_1x8
+            KGO=
+
+{%- endif %}
+
+# Note this uses same KGO as OpenMP version above
+    [[METO_XC40_AQUM_NOOMP_EG]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_NOOMP }}"
+        [[[environment]]]	       
+           KGO_XC40_AQUM_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_aqum_eg/{{XC40_AQUM_EG_KGO}}
+        
+    # Reconfiguration
+    [[recon_meto_xc40_aqum_noomp_eg]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_NOOMP }}"
+        inherit = METO_XC40_AQUM_NOOMP_EG, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_noomp_eg/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_noomp_eg_4x9]]
+        inherit = METO_XC40_AQUM_NOOMP_EG, METO_XC40_IOS_OFF, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_noomp_eg/atmos.astart
+        [[[job]]]
+            execution time limit = PT39M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_aqum_noomp_eg_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_NOOMP_EG, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_DIR
+            DIR1=../recon_meto_xc40_aqum_noomp_eg
+            KGO=0
+
+    [[rose_ana_meto_xc40_aqum_noomp_eg_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_NOOMP_EG, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_DIR
+            DIR1=../atmos_meto_xc40_aqum_noomp_eg_4x9
+            KGO=0
+
+{%- endif %}
+
+
+{% if "meto_xc40_aqum_eg_glomap" in name_graphs_out -%}
+# XC40 AQUM EG with GLOMAP-mode aerosols
+    [[METO_XC40_AQUM_EG_GLOMAP]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_XC40_AQUM_EG_GLOMAP_DIR={{KGO_XC40_ROOT_DIR}}/xc40_aqum_eg_glomap/{{XC40_AQUM_EG_GLOMAP_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_aqum_eg_glomap]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_AQUM_EG_GLOMAP, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_glomap/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=glomap
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_glomap_4x9]]
+        inherit = METO_XC40_AQUM_EG_GLOMAP, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_glomap/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=glomap
+        [[[job]]]
+            execution time limit = PT39M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_aqum_eg_glomap_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_GLOMAP, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_GLOMAP_DIR
+            DIR1=../recon_meto_xc40_aqum_eg_glomap
+            KGO=0
+
+    [[rose_ana_meto_xc40_aqum_eg_glomap_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_GLOMAP, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_GLOMAP_DIR
+            DIR1=../atmos_meto_xc40_aqum_eg_glomap_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_aqum_eg_glomap_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_AQUM_EG_GLOMAP, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_aqum_eg_glomap_4x9
+            DIR1=$KGO_XC40_AQUM_EG_GLOMAP_DIR
+            KGO=1
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+
+{%- if INTEGRATION_TESTING == true %}
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_glomap_8x1]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_AQUM_EG_GLOMAP, METO_XC40_IOS_OFF, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x1, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_glomap/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=glomap
+        [[[directives]]]
+            -l mem = 36GB
+        [[[job]]]
+            execution time limit = PT59M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_glomap_1x8]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_AQUM_EG_GLOMAP, METO_XC40_IOS_OFF, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x8, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_glomap/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=glomap
+        [[[directives]]]
+            -l mem = 36GB
+        [[[job]]]
+            execution time limit = PT59M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_aqum_eg_glomap_atmos_proc81]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_GLOMAP, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_aqum_eg_glomap_4x9
+            DIR1=../atmos_meto_xc40_aqum_eg_glomap_8x1
+            KGO=
+
+    [[rose_ana_meto_xc40_aqum_eg_glomap_atmos_proc18]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_GLOMAP, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_aqum_eg_glomap_4x9
+            DIR1=../atmos_meto_xc40_aqum_eg_glomap_1x8
+            KGO=
+
+{%- endif %}
+{%- endif %}
+
+
+{% if "meto_xc40_aqum_eg_iau" in name_graphs_out -%}
+# XC40 AQUM EG with IAU
+    [[METO_XC40_AQUM_EG_IAU]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_XC40_AQUM_EG_IAU_DIR={{KGO_XC40_ROOT_DIR}}/xc40_aqum_eg_iau/{{XC40_AQUM_EG_IAU_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_aqum_eg_iau]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_AQUM_EG_IAU, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_iau/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=iau
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_iau_4x9]]
+        inherit = METO_XC40_AQUM_EG_IAU, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_iau/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=iau
+        [[[job]]]
+            execution time limit = PT39M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_aqum_eg_iau_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_IAU, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_IAU_DIR
+            DIR1=../recon_meto_xc40_aqum_eg_iau
+            KGO=0
+
+    [[rose_ana_meto_xc40_aqum_eg_iau_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_IAU, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_IAU_DIR
+            DIR1=../atmos_meto_xc40_aqum_eg_iau_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_aqum_eg_iau_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_AQUM_EG_IAU, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_aqum_eg_iau_4x9
+            DIR1=$KGO_XC40_AQUM_EG_IAU_DIR
+            KGO=1
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+
+{%- if INTEGRATION_TESTING == true %}
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_iau_8x1]]
+        inherit = METO_XC40_AQUM_EG_IAU, METO_XC40_IOS_OFF, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x1, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_iau/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=iau
+        [[[directives]]]
+            -l mem = 36GB
+        [[[job]]]
+            execution time limit = PT59M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_iau_1x8]]
+        inherit = METO_XC40_AQUM_EG_IAU, METO_XC40_IOS_OFF, METO_XC40_CORES_16, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_1x8, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_iau/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=iau
+        [[[directives]]]
+            -l mem = 36GB
+        [[[job]]]
+            execution time limit = PT59M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_aqum_eg_iau_atmos_proc81]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_IAU, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_aqum_eg_iau_4x9
+            DIR1=../atmos_meto_xc40_aqum_eg_iau_8x1
+            KGO=
+
+    [[rose_ana_meto_xc40_aqum_eg_iau_atmos_proc18]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_IAU, METO_XC40, ROSE_ANA_AQUM_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_aqum_eg_iau_4x9
+            DIR1=../atmos_meto_xc40_aqum_eg_iau_1x8
+            KGO=
+
+{%- endif %}
+{%- endif %}
+
+
+{% if "meto_xc40_aqum_eg_comp_check" in name_graphs_out -%}
+# XC40 AQUM EG with compiler checking
+    [[METO_XC40_AQUM_EG_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_RIGOROUS_OMP }}"
+        [[[environment]]]
+            KGO_XC40_AQUM_EG_COMP_CHECK_DIR={{KGO_XC40_ROOT_DIR}}/xc40_aqum_eg_comp_check/{{XC40_AQUM_EG_COMP_CHECK_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_aqum_eg_comp_check]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_RIGOROUS_OMP }}"
+        inherit = METO_XC40_AQUM_EG_COMP_CHECK, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_comp_check/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT6M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_comp_check_4x9]]
+        inherit = METO_XC40_AQUM_EG_COMP_CHECK, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_comp_check/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=short
+        [[[job]]]
+            execution time limit = PT12M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_aqum_eg_comp_check_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_COMP_CHECK, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_COMP_CHECK_DIR
+            DIR1=../recon_meto_xc40_aqum_eg_comp_check
+            KGO=0
+
+    [[rose_ana_meto_xc40_aqum_eg_comp_check_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_COMP_CHECK, METO_XC40, ROSE_ANA_AQUM_EG_SHORTRUN
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=comp_check
+            DIR0=$KGO_XC40_AQUM_EG_COMP_CHECK_DIR
+            DIR1=../atmos_meto_xc40_aqum_eg_comp_check_4x9
+            KGO=0
+
+{%- endif %}
+
+
+{% if "meto_xc40_aqum_eg_glomap_comp_check" in name_graphs_out -%}
+# XC40 AQUM EG with GLOMAP-mode aerosols and compiler checking
+    [[METO_XC40_AQUM_EG_GLOMAP_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_RIGOROUS_OMP }}"
+        [[[environment]]]
+            KGO_XC40_AQUM_EG_GLOMAP_COMP_CHECK_DIR={{KGO_XC40_ROOT_DIR}}/xc40_aqum_eg_glomap_comp_check/{{XC40_AQUM_EG_GLOMAP_COMP_CHECK_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_aqum_eg_glomap_comp_check]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_RIGOROUS_OMP }}"
+        inherit = METO_XC40_AQUM_EG_GLOMAP_COMP_CHECK, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_glomap_comp_check/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=glomap
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT6M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_aqum_eg_glomap_comp_check_4x9]]
+        inherit = METO_XC40_AQUM_EG_GLOMAP_COMP_CHECK, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_AQUM_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_aqum_eg_glomap_comp_check/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=short glomap
+        [[[job]]]
+            execution time limit = PT12M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_aqum_eg_glomap_comp_check_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_GLOMAP_COMP_CHECK, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_AQUM_EG_GLOMAP_COMP_CHECK_DIR
+            DIR1=../recon_meto_xc40_aqum_eg_glomap_comp_check
+            KGO=0
+
+    [[rose_ana_meto_xc40_aqum_eg_glomap_comp_check_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_AQUM_EG_GLOMAP_COMP_CHECK, METO_XC40, ROSE_ANA_AQUM_EG_SHORTRUN
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=comp_check
+            DIR0=$KGO_XC40_AQUM_EG_GLOMAP_COMP_CHECK_DIR
+            DIR1=../atmos_meto_xc40_aqum_eg_glomap_comp_check_4x9
+            KGO=0
+
+{%- endif %}
+
+
+{% if "meto_xc40_ukv1p5_eg_noda" in name_graphs_out -%}
+# UKV EG 1.5km XC40 - PS37 without DA
+    [[METO_XC40_UKV1P5_EG_NODA]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_FAST_OMP }}"
+        [[[environment]]]
+            KGO_XC40_UKV1P5_EG_NODA_DIR={{KGO_XC40_ROOT_DIR}}/xc40_ukv1p5_eg_noda/{{XC40_UKV1P5_EG_NODA_KGO}}
+
+    # Reconfiguration Fast optimisation 2x4
+    [[recon_meto_xc40_ukv1p5_eg_noda_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_UKV1P5_EG_NODA, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_UKV1P5_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_eg_noda_2x4/atmos.astart
+        [[[directives]]]
+            -l mem = 36GB
+        [[[job]]]
+            execution time limit = PT11M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_ukv1p5_eg_noda_6x41]]
+        inherit = METO_XC40_UKV1P5_EG_NODA, METO_XC40_IOS_ON, METO_XC40_CORES_504, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x41, IOS_6, UM_UKV1P5_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_eg_noda_2x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT44M
+    # Nrun+Crun
+    [[atmos_meto_xc40_ukv1p5_eg_noda_NRUN_6x41]]
+        inherit = METO_XC40_UKV1P5_EG_NODA, METO_XC40_IOS_ON, METO_XC40_CORES_504, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x41, IOS_6, UM_UKV1P5_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_eg_noda_2x4/atmos.astart
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_UKV1p5_EG_NODA
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_UKV1p5_EG_NODA
+            ROSE_APP_OPT_CONF_KEYS=nrun
+        [[[job]]]
+            execution time limit = PT44M
+
+    [[atmos_meto_xc40_ukv1p5_eg_noda_CRUN_6x41]]
+        inherit = METO_XC40_UKV1P5_EG_NODA, METO_XC40_IOS_ON, METO_XC40_CORES_504, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x41, IOS_6, UM_UKV1P5_EG_NODA
+        [[[environment]]]
+            ASTART=
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_UKV1p5_EG_NODA
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_UKV1p5_EG_NODA
+        [[[job]]]
+            execution time limit = PT44M
+
+    # Reconfiguration (safe for bit comparison) 2x4
+    [[recon_meto_xc40_ukv1p5_eg_bitcomp_noda_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_UKV1P5_EG_NODA, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_UKV1P5_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_eg_bitcomp_noda_2x4/atmos.astart
+        [[[directives]]]
+            -l mem = 34GB
+        [[[job]]]
+            execution time limit = PT11M
+
+    # Reconfiguration (safe for bit comparison) 4x2
+    [[recon_meto_xc40_ukv1p5_eg_bitcomp_noda_4x2]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_UKV1P5_EG_NODA, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x2, UM_UKV1P5_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_eg_bitcomp_noda_4x2/atmos.astart
+        [[[directives]]]
+            -l mem = 34GB
+        [[[job]]]
+            execution time limit = PT11M
+
+    # Atmosphere Model Run (bit comparison)
+    [[atmos_meto_xc40_ukv1p5_eg_bitcomp_noda_12x22]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_UKV1P5_EG_NODA, METO_XC40_IOS_ON, METO_XC40_CORES_540, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_12x22, IOS_6, UM_UKV1P5_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_eg_bitcomp_noda_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=bitcomp
+        [[[job]]]
+            execution time limit = PT44M
+
+    # Atmosphere Model Run (bit comparison)
+    [[atmos_meto_xc40_ukv1p5_eg_bitcomp_noda_8x33]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_UKV1P5_EG_NODA, METO_XC40_IOS_ON, METO_XC40_CORES_540, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_8x33, IOS_6, UM_UKV1P5_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_eg_bitcomp_noda_2x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=bitcomp
+        [[[job]]]
+            execution time limit = PT44M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_ukv1p5_eg_noda_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UKV1P5_EG_NODA, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_UKV1P5_EG_NODA_DIR
+            DIR1=../recon_meto_xc40_ukv1p5_eg_noda_2x4
+            KGO=0
+
+    [[rose_ana_meto_xc40_ukv1p5_eg_noda_recon_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UKV1P5_EG_NODA, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_xc40_ukv1p5_eg_bitcomp_noda_2x4
+            DIR1=../recon_meto_xc40_ukv1p5_eg_bitcomp_noda_4x2
+            KGO=
+
+    [[rose_ana_meto_xc40_ukv1p5_eg_noda_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UKV1P5_EG_NODA, METO_XC40, ROSE_ANA_UKV1P5_EG_NODA
+        [[[environment]]]
+            DIR0=$KGO_XC40_UKV1P5_EG_NODA_DIR
+            DIR1=../atmos_meto_xc40_ukv1p5_eg_noda_6x41
+            KGO=0
+
+    [[rose_ana_meto_xc40_ukv1p5_eg_noda_atmos_nruncrun]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UKV1P5_EG_NODA, METO_XC40, ROSE_ANA_UKV1P5_EG_NODA
+        [[[environment]]]
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_UKV1p5_EG_NODA
+            DIR1=../atmos_meto_xc40_ukv1p5_eg_noda_6x41
+            ROSE_APP_OPT_CONF_KEYS=nruncrun
+            KGO=
+
+    [[rose_ana_meto_xc40_ukv1p5_eg_noda_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UKV1P5_EG_NODA, METO_XC40, ROSE_ANA_UKV1P5_EG_NODA
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_ukv1p5_eg_bitcomp_noda_12x22
+            DIR1=../atmos_meto_xc40_ukv1p5_eg_bitcomp_noda_8x33
+            KGO=
+
+{%- endif %}
+
+{% if "meto_xc40_ukv1p5_eg_da" in name_graphs_out -%}
+# UKV EG 1.5km XC40 - PS37 with DA
+    [[METO_XC40_UKV1P5_EG_DA]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_FAST_OMP }}"
+        [[[environment]]]
+            KGO_XC40_UKV1P5_EG_DA_DIR={{KGO_XC40_ROOT_DIR}}/xc40_ukv1p5_eg_da/{{XC40_UKV1P5_EG_DA_KGO}}
+
+    # Atmosphere Model Run
+    [[recon_meto_xc40_ukv1p5_eg_da_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_UKV1P5_EG_DA, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_UKV1P5_EG_DA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_eg_da_2x4/atmos.astart
+        [[[directives]]]
+            -l mem = 24GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_ukv1p5_eg_da_6x41]]
+        inherit = METO_XC40_UKV1P5_EG_DA, METO_XC40_IOS_ON, METO_XC40_CORES_504, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x41, IOS_6, UM_UKV1P5_EG_DA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_eg_da_2x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT60M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_ukv1p5_eg_da_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UKV1P5_EG_DA, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_UKV1P5_EG_DA_DIR
+            DIR1=../recon_meto_xc40_ukv1p5_eg_da_2x4
+            KGO=0
+
+    [[rose_ana_meto_xc40_ukv1p5_eg_da_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UKV1P5_EG_DA, METO_XC40, ROSE_ANA_UKV1P5_EG_DA
+        [[[environment]]]
+            DIR0=$KGO_XC40_UKV1P5_EG_DA_DIR
+            DIR1=../atmos_meto_xc40_ukv1p5_eg_da_6x41
+            KGO=0
+        [[[job]]]
+            execution time limit = PT22M
+        [[[directives]]]
+            -l mem = 2GB
+
+{%- endif %}
+
+{% if "meto_xc40_ukv1p5_exp" in name_graphs_out -%}
+# UKV EG 1.5km XC40 - PS37 with DA
+    [[METO_XC40_UKV1P5_EXP]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_FAST_OMP }}"
+        [[[environment]]]
+            KGO_XC40_UKV1P5_EXP_DIR={{KGO_XC40_ROOT_DIR}}/xc40_ukv1p5_exp/{{XC40_UKV1P5_EXP_KGO}}
+
+    # Atmosphere Model Run
+    [[recon_meto_xc40_ukv1p5_exp_2x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_UKV1P5_EXP, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_UKV1P5_EXP
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_exp_2x4/atmos.astart
+        [[[directives]]]
+            -l mem = 24GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_ukv1p5_exp_6x41]]
+        inherit = METO_XC40_UKV1P5_EXP, METO_XC40_IOS_ON, METO_XC40_CORES_504, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x41, IOS_6, UM_UKV1P5_EXP
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_ukv1p5_exp_2x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT60M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_ukv1p5_exp_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UKV1P5_EXP, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_UKV1P5_EXP_DIR
+            DIR1=../recon_meto_xc40_ukv1p5_exp_2x4
+            KGO=0
+
+    [[rose_ana_meto_xc40_ukv1p5_exp_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_UKV1P5_EXP, METO_XC40, ROSE_ANA_UKV1P5_EXP
+        [[[environment]]]
+            DIR0=$KGO_XC40_UKV1P5_EXP_DIR
+            DIR1=../atmos_meto_xc40_ukv1p5_exp_6x41
+            KGO=0
+        [[[job]]]
+            execution time limit = PT22M
+        [[[directives]]]
+            -l mem = 2GB
+
+{%- endif %}
+
+{% if "meto_xc40_seukf_tkebl" in name_graphs_out -%}
+# SEUKF ENDgame XC40
+    [[METO_XC40_SEUKF_TKEBL]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SEUKF_TKEBL_DIR={{KGO_XC40_ROOT_DIR}}/xc40_seukf_tkebl/{{XC40_SEUKF_TKEBL_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_seukf_tkebl]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_SEUKF_TKEBL, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKF_TKEBL
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukf_tkebl/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT7M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukf_tkebl_4x9]]
+        inherit = METO_XC40_SEUKF_TKEBL, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKF_TKEBL
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukf_tkebl/atmos.astart
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukf_tkebl_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKF_TKEBL, METO_XC40, ROSE_ANA_SEUKF_TKEBL
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKF_TKEBL_DIR
+            DIR1=../atmos_meto_xc40_seukf_tkebl_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukf_tkebl_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_SEUKF_TKEBL, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukf_tkebl_4x9
+            DIR1=$KGO_METO_XC40_SEUKF_TKEBL_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+    [[rose_ana_meto_xc40_seukf_tkebl_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKF_TKEBL, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKF_TKEBL_DIR
+            DIR1=../recon_meto_xc40_seukf_tkebl
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukf_tkebl_6x6]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_SEUKF_TKEBL, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_SEUKF_TKEBL
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukf_tkebl/atmos.astart
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukf_tkebl_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKF_TKEBL, METO_XC40, ROSE_ANA_SEUKF_TKEBL
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukf_tkebl_4x9
+            DIR1=../atmos_meto_xc40_seukf_tkebl_6x6
+            KGO=
+
+{%- endif %}
+
+
+{%- endif %}
+
+
+
+
+{% if "meto_xc40_seukv_eg" in name_graphs_out -%}
+# XC40 SEUKV EG
+    [[METO_XC40_SEUKV_EG]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_FAST_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SEUKV_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_seukv_eg/{{XC40_SEUKV_EG_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_seukv_eg]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_SEUKV_EG, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmosphere Model Run
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf in (["",        ""], 
+                                 ["_nc3",    "netcdf netcdf3"],
+                                 ["_nc4",    "netcdf netcdf4"],
+                                 ["_nc4_32", "netcdf netcdf4-32b"]) %}
+
+    [[atmos_meto_xc40_seukv_eg{{extension}}_4x9]]
+        inherit = METO_XC40_SEUKV_EG, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = {{opt_conf}}
+            ASTART=../recon_meto_xc40_seukv_eg/atmos.astart
+        [[[job]]]
+            execution time limit = PT58M
+
+  {%- endfor %}
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukv_eg_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_DIR
+            DIR1=../recon_meto_xc40_seukv_eg
+            KGO=0
+
+  # Repeat this section for various combinations of netcdf library settings
+  # (as well as the usual app without netcdf enabled at all)
+  {% for extension, opt_conf, kgo_subdir in (["",        "",       ""], 
+                                             ["_nc3",    "netcdf", "/netcdf-3/"],
+                                             ["_nc4",    "netcdf", "/netcdf-4/"],
+                                             ["_nc4_32", "netcdf", "/netcdf-4_32bit/"]) %}
+
+    [[rose_ana_meto_xc40_seukv_eg{{extension}}_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG, METO_XC40, ROSE_ANA_SEUKV_EG
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = {{opt_conf}}
+            DIR0=$KGO_METO_XC40_SEUKV_EG_DIR{{kgo_subdir}}
+            DIR1=../atmos_meto_xc40_seukv_eg{{extension}}_4x9
+            KGO=0
+
+  {%- endfor %}
+
+    [[rose_ana_meto_xc40_seukv_eg_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_SEUKV_EG, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukv_eg_4x9
+            DIR1=$KGO_METO_XC40_SEUKV_EG_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+{%- if INTEGRATION_TESTING == true %}
+    # Atmosphere Model Run for proc comparison
+    [[atmos_meto_xc40_seukv_eg_reprod_4x9]]
+        inherit = METO_XC40_SEUKV_EG, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg/atmos.astart
+        [[[job]]]
+            execution time limit = PT58M
+
+    [[atmos_meto_xc40_seukv_eg_reprod_6x6]]
+        inherit = METO_XC40_SEUKV_EG, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_SEUKV_EG
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg/atmos.astart
+        [[[job]]]
+            execution time limit = PT58M
+
+    # Comparison task
+    [[rose_ana_meto_xc40_seukv_eg_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG, METO_XC40, ROSE_ANA_SEUKV_EG
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukv_eg_reprod_4x9
+            DIR1=../atmos_meto_xc40_seukv_eg_reprod_6x6
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+
+{% if "meto_xc40_seukv_eg_casim" in name_graphs_out -%}
+# XC40 SEUKV EG CASIM
+    [[METO_XC40_SEUKV_EG_CASIM]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SEUKV_EG_CASIM_DIR={{KGO_XC40_ROOT_DIR}}/xc40_seukv_eg_casim/{{XC40_SEUKV_EG_CASIM_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_seukv_eg_casim]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_SEUKV_EG_CASIM, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG_CASIM_2HR
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_casim/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukv_eg_casim_4x9]]
+        inherit = METO_XC40_SEUKV_EG_CASIM, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG_CASIM_2HR
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_casim/atmos.astart
+        [[[job]]]
+            execution time limit = PT71M
+
+    [[atmos_meto_xc40_seukv_eg_casim_6x6]]
+        inherit = METO_XC40_SEUKV_EG_CASIM, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_SEUKV_EG_CASIM_2HR
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_casim/atmos.astart
+        [[[job]]]
+            execution time limit = PT71M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukv_eg_casim_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_CASIM, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_CASIM_DIR
+            DIR1=../recon_meto_xc40_seukv_eg_casim
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_casim_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_CASIM, METO_XC40, ROSE_ANA_SEUKV_EG_CASIM
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_CASIM_DIR
+            DIR1=../atmos_meto_xc40_seukv_eg_casim_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_casim_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_CASIM, METO_XC40, ROSE_ANA_SEUKV_EG_CASIM
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukv_eg_casim_4x9
+            DIR1=../atmos_meto_xc40_seukv_eg_casim_6x6
+            KGO=
+
+    [[rose_ana_meto_xc40_seukv_eg_casim_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_SEUKV_EG_CASIM, METO_XC40
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_CASIM_DIR
+            DIR1=../atmos_meto_xc40_seukv_eg_casim_4x9
+            ROSE_APP_OPT_CONF_KEYS=ten_percent
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_xc40_seukv_eg_casim_comp_check" in name_graphs_out -%}
+# XC40 SEUKV EG CASIM COMP CHECK
+    [[METO_XC40_SEUKV_EG_CASIM_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_RIGOROUS_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SEUKV_EG_CASIM_COMP_CHECK_DIR={{KGO_XC40_ROOT_DIR}}/xc40_seukv_eg_casim_comp_check/{{XC40_SEUKV_EG_CASIM_COMP_CHECK_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_seukv_eg_casim_comp_check]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_RIGOROUS_OMP }}"
+        inherit = METO_XC40_SEUKV_EG_CASIM_COMP_CHECK, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG_CASIM_1HR
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_casim_comp_check/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukv_eg_casim_comp_check_4x9]]
+        inherit = METO_XC40_SEUKV_EG_CASIM_COMP_CHECK, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG_CASIM_1HR
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_casim_comp_check/atmos.astart
+        [[[job]]]
+            execution time limit = PT55M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukv_eg_casim_comp_check_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_CASIM_COMP_CHECK, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_CASIM_COMP_CHECK_DIR
+            DIR1=../recon_meto_xc40_seukv_eg_casim_comp_check
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_casim_comp_check_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_CASIM_COMP_CHECK, METO_XC40, ROSE_ANA_SEUKV_EG_CASIM
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_CASIM_COMP_CHECK_DIR
+            DIR1=../atmos_meto_xc40_seukv_eg_casim_comp_check_4x9
+            KGO=0
+            ROSE_APP_OPT_CONF_KEYS=comp_check
+
+{%- endif %}
+
+{% if "meto_xc40_seukv_eg_drhook" in name_graphs_out -%}
+# XC40 SEUKV EG
+    [[METO_XC40_SEUKV_EG_DRHOOK]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP_DRHOOK }}"
+        [[[environment]]]
+            KGO_METO_XC40_SEUKV_EG_DRHOOK_DIR={{KGO_XC40_ROOT_DIR}}/xc40_seukv_eg_drhook/{{XC40_SEUKV_EG_DRHOOK_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_seukv_eg_drhook]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP_DRHOOK }}"
+        inherit = METO_XC40_SEUKV_EG_DRHOOK, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_drhook/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=drhook
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukv_eg_drhook_4x9]]
+        inherit = METO_XC40_SEUKV_EG_DRHOOK, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_drhook/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=drhook
+        [[[job]]]
+            execution time limit = PT58M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukv_eg_drhook_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_DRHOOK, METO_XC40, ROSE_ANA_DRHOOK
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_DRHOOK_DIR
+            DIR1=../recon_meto_xc40_seukv_eg_drhook
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_drhook_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_DRHOOK, METO_XC40, ROSE_ANA_DRHOOK
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_DRHOOK_DIR
+            DIR1=../atmos_meto_xc40_seukv_eg_drhook_4x9
+            KGO=0
+
+{%- endif %}
+
+{% if "meto_xc40_seukv_eg_urban1t" in name_graphs_out -%}
+# XC40 SEUKV EG with urban-1t
+    [[METO_XC40_SEUKV_EG_URBAN1T]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_FAST_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SEUKV_EG_URBAN1T_DIR={{KGO_XC40_ROOT_DIR}}/xc40_seukv_eg_urban1t/{{XC40_SEUKV_EG_URBAN1T_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_seukv_eg_urban1t]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_SEUKV_EG_URBAN1T, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_urban1t/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=urban1t
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukv_eg_urban1t_4x9]]
+        inherit = METO_XC40_SEUKV_EG_URBAN1T, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_urban1t/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=urban1t
+        [[[job]]]
+            execution time limit = PT58M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukv_eg_urban1t_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_URBAN1T, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_URBAN1T_DIR
+            DIR1=../recon_meto_xc40_seukv_eg_urban1t
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_urban1t_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_URBAN1T, METO_XC40, ROSE_ANA_SEUKV_EG
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_URBAN1T_DIR
+            DIR1=../atmos_meto_xc40_seukv_eg_urban1t_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_urban1t_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_SEUKV_EG_URBAN1T, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukv_eg_urban1t_4x9
+            DIR1=$KGO_METO_XC40_SEUKV_EG_URBAN1T_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+{%- endif %}
+
+{% if "meto_xc40_seukv_eg_comp_check" in name_graphs_out -%}
+# XC40 SEUKV EG
+    [[METO_XC40_SEUKV_EG_COMP_CHECK]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_RIGOROUS_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SEUKV_EG_COMP_CHECK_DIR={{KGO_XC40_ROOT_DIR}}/xc40_seukv_eg_comp_check/{{XC40_SEUKV_EG_COMP_CHECK_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_seukv_eg_comp_check]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_RIGOROUS_OMP }}"
+        inherit = METO_XC40_SEUKV_EG_COMP_CHECK, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_comp_check/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukv_eg_comp_check_4x9]]
+        inherit = METO_XC40_SEUKV_EG_COMP_CHECK, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_comp_check/atmos.astart
+        [[[job]]]
+            execution time limit = PT77M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukv_eg_comp_check_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_COMP_CHECK, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_COMP_CHECK_DIR
+            DIR1=../recon_meto_xc40_seukv_eg_comp_check
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_comp_check_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_COMP_CHECK, METO_XC40, ROSE_ANA_SEUKV_EG
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_COMP_CHECK_DIR
+            DIR1=../atmos_meto_xc40_seukv_eg_comp_check_4x9
+            KGO=0
+
+{%- endif %}
+
+
+{% if "meto_xc40_seukv_eg_noda" in name_graphs_out -%}
+# XC40 SEUKV EG NO DA
+    [[METO_XC40_SEUKV_EG_NODA]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SEUKV_EG_NODA_DIR={{KGO_XC40_ROOT_DIR}}/xc40_seukv_eg_noda/{{XC40_SEUKV_EG_NODA_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_seukv_eg_noda]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_SEUKV_EG_NODA, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_noda/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT7M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukv_eg_noda_4x9]]
+        inherit = METO_XC40_SEUKV_EG_NODA, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_noda/atmos.astart
+        [[[job]]]
+            execution time limit = PT58M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukv_eg_noda_6x6]]
+        inherit = METO_XC40_SEUKV_EG_NODA, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_noda/atmos.astart
+        [[[job]]]
+            execution time limit = PT58M
+
+    # Nrun+Crun
+    [[atmos_meto_xc40_seukv_eg_noda_NRUN_6x6]]
+        inherit = METO_XC40_SEUKV_EG_NODA, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_noda/atmos.astart
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_SEUKV_EG_NODA
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_SEUKV_EG_NODA
+            ROSE_APP_OPT_CONF_KEYS=nrun
+        [[[job]]]
+            execution time limit = PT58M
+
+    [[atmos_meto_xc40_seukv_eg_noda_CRUN_6x6]]
+        inherit = METO_XC40_SEUKV_EG_NODA, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=
+            CONTINUE=true
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_SEUKV_EG_NODA
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_SEUKV_EG_NODA
+        [[[job]]]
+            execution time limit = PT58M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukv_eg_noda_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_NODA, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_NODA_DIR
+            DIR1=../recon_meto_xc40_seukv_eg_noda
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_noda_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_NODA, METO_XC40, ROSE_ANA_SEUKV_EG_NODA
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_NODA_DIR
+            DIR1=../atmos_meto_xc40_seukv_eg_noda_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_noda_atmos_nruncrun]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_NODA, METO_XC40, ROSE_ANA_SEUKV_EG_NODA
+        [[[environment]]]
+            DIR0=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_SEUKV_EG_NODA
+            DIR1=../atmos_meto_xc40_seukv_eg_noda_6x6
+            ROSE_APP_OPT_CONF_KEYS=nruncrun
+            KGO=
+
+    [[rose_ana_meto_xc40_seukv_eg_noda_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_SEUKV_EG_NODA, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukv_eg_noda_4x9
+            DIR1=$KGO_METO_XC40_SEUKV_EG_NODA_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+    [[rose_ana_meto_xc40_seukv_eg_noda_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_NODA, METO_XC40, ROSE_ANA_SEUKV_EG_NODA
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukv_eg_noda_4x9
+            DIR1=../atmos_meto_xc40_seukv_eg_noda_6x6
+            KGO=
+
+{%- endif %}
+
+{% if "meto_xc40_seukv_eg_noda_urban1t" in name_graphs_out -%}
+# XC40 SEUKV EG NO DA with urban-1t
+    [[METO_XC40_SEUKV_EG_NODA_URBAN1T]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_METO_XC40_SEUKV_EG_NODA_URBAN1T_DIR={{KGO_XC40_ROOT_DIR}}/xc40_seukv_eg_noda_urban1t/{{XC40_SEUKV_EG_NODA_URBAN1T_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_seukv_eg_noda_urban1t]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_SEUKV_EG_NODA_URBAN1T, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_noda_urban1t/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=urban1t
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT7M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukv_eg_noda_urban1t_4x9]]
+        inherit = METO_XC40_SEUKV_EG_NODA_URBAN1T, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_noda_urban1t/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=urban1t
+        [[[job]]]
+            execution time limit = PT58M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_seukv_eg_noda_urban1t_6x6]]
+        inherit = METO_XC40_SEUKV_EG_NODA_URBAN1T, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_seukv_eg_noda_urban1t/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=urban1t
+        [[[job]]]
+            execution time limit = PT58M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_seukv_eg_noda_urban1t_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_NODA_URBAN1T, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_NODA_URBAN1T_DIR
+            DIR1=../recon_meto_xc40_seukv_eg_noda_urban1t
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_noda_urban1t_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_NODA_URBAN1T, METO_XC40, ROSE_ANA_SEUKV_EG_NODA
+        [[[environment]]]
+            DIR0=$KGO_METO_XC40_SEUKV_EG_NODA_URBAN1T_DIR
+            DIR1=../atmos_meto_xc40_seukv_eg_noda_urban1t_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_seukv_eg_noda_urban1t_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_SEUKV_EG_NODA_URBAN1T, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukv_eg_noda_urban1t_4x9
+            DIR1=$KGO_METO_XC40_SEUKV_EG_NODA_URBAN1T_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+    [[rose_ana_meto_xc40_seukv_eg_noda_urban1t_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_SEUKV_EG_NODA_URBAN1T, METO_XC40, ROSE_ANA_SEUKV_EG_NODA
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_seukv_eg_noda_urban1t_4x9
+            DIR1=../atmos_meto_xc40_seukv_eg_noda_urban1t_6x6
+            KGO=
+
+{%- endif %}
+
+{%- if "meto_xc40_global_to_lam_eg" in name_graphs_out %}
+
+  [[METO_XC40_GLOBAL_TO_LAM]]
+      [[[environment]]]
+          KGO_XC40_GLOBAL_TO_LAM_EG_DIR={{KGO_XC40_ROOT_DIR}}/xc40_global_to_lam_eg/{{XC40_GLOBAL_TO_LAM_EG_KGO}}
+
+{%- endif %}
+
+{%- if "meto_xc40_global_to_lam_eg" in name_graphs_out %}
+
+  [[createbc_meto_xc40_global_to_lam_frame_seukv_eg]]
+        script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_IFORT_HIGH_OMP }}"
+        inherit = METO_XC40_GLOBAL_TO_LAM, METO_XC40_CREATEBC_INTEL
+        [[[environment]]]
+            ROSE_TASK_APP = createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS = global_to_lam_seukv_eg_frame
+            MBC_INPUT = ../atmos_meto_xc40_n512_eg_10x23
+            PREV_TASK=atmos_meto_xc40_n512_eg_10x23
+        [[[directives]]]
+            -l mem = 4GB
+
+  [[createbc_meto_xc40_global_to_lam_createbc_seukv_eg]]
+        inherit = METO_XC40_GLOBAL_TO_LAM, METO_XC40_CREATEBC_INTEL
+        script = "$ULIMIT ; {{TASK_RUN}} {{ CREATEBC_XC40_IFORT_HIGH_OMP }}"
+        [[[environment]]]
+            ROSE_TASK_APP = createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS = global_to_lam_seukv_eg
+            MBC_INPUT = ../atmos_meto_xc40_n512_eg_10x23
+            PREV_TASK=createbc_meto_xc40_global_to_lam_frame_seukv_eg
+        [[[directives]]]
+            -l mem = 1GB
+
+  [[recon_meto_xc40_global_to_lam_seukv_eg]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_GLOBAL_TO_LAM, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_global_to_lam_seukv_eg/atmos.astart
+            AINITIAL=../atmos_meto_xc40_n512_eg_10x23/atmosa_da003
+            ALABCIN1=../createbc_meto_xc40_global_to_lam_createbc_seukv_eg/output.lbc
+            ROSE_APP_OPT_CONF_KEYS=globaltolam
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT4M
+
+  [[atmos_meto_xc40_global_to_lam_seukv_eg_4x9]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_FAST_OMP }}"
+        inherit = METO_XC40_GLOBAL_TO_LAM, METO_XC40_IOS_OFF, METO_XC40_CORES_72, METO_XC40_PARALLEL_THREADS_2, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_SEUKV_EG_NODA
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_global_to_lam_seukv_eg/atmos.astart
+            AINITIAL=../atmos_meto_xc40_global_to_lam_n512_eg_8x31/atmosa_da003
+            ALABCIN1=../createbc_meto_xc40_global_to_lam_createbc_seukv_eg/output.lbc
+            ROSE_APP_OPT_CONF_KEYS=globaltolam
+        [[[job]]]
+            execution time limit = PT39M
+
+  [[rose_ana_meto_xc40_global_to_lam_seukv_eg_4x9_atmos_kgo]]  
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_GLOBAL_TO_LAM, METO_XC40, ROSE_ANA_SEUKV_EG_NODA
+        [[[environment]]]
+            DIR0=$KGO_XC40_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../atmos_meto_xc40_global_to_lam_seukv_eg_4x9
+            KGO=0
+
+  [[rose_ana_meto_xc40_global_to_lam_seukv_eg_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_GLOBAL_TO_LAM, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../recon_meto_xc40_global_to_lam_seukv_eg
+            KGO=0  
+  
+  [[rose_ana_meto_xc40_global_to_lam_seukv_eg_frame_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_GLOBAL_TO_LAM, METO_XC40
+        [[[environment]]]
+            DIR0=$KGO_XC40_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../createbc_meto_xc40_global_to_lam_frame_seukv_eg
+            ROSE_TASK_APP=rose_ana_createbc_calcs
+            ROSE_APP_OPT_CONF_KEYS=frame
+            KGO=0
+  
+  [[rose_ana_meto_xc40_global_to_lam_seukv_eg_createbc_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_GLOBAL_TO_LAM, METO_XC40
+        [[[environment]]]
+            DIR0=$KGO_XC40_GLOBAL_TO_LAM_EG_DIR
+            DIR1=../createbc_meto_xc40_global_to_lam_createbc_seukv_eg
+            ROSE_TASK_APP=rose_ana_createbc_calcs
+            KGO=0
+
+
+{%- endif %}
+
+
+{% if "meto_xc40_idealised_bicyclic_lam_rce" in name_graphs_out -%}
+# XC40 idealised bicyclic lam : radiative-convective equilibrium
+    [[METO_XC40_IDEALISED_BICYCLIC_LAM_RCE]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_XC40_IDEALISED_BICYCLIC_LAM_RCE_DIR={{KGO_XC40_ROOT_DIR}}/xc40_idealised_bicyclic_lam_rce/{{XC40_IDEALISED_BICYCLIC_LAM_RCE_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_idealised_bicyclic_lam_rce_1x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_rce_1x4/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_meto_xc40_idealised_bicyclic_lam_rce_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_rce_4x1/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT4M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_idealised_bicyclic_lam_rce_4x9]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40_IOS_OFF, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_rce_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_recon_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_xc40_idealised_bicyclic_lam_rce_1x4
+            DIR1=../recon_meto_xc40_idealised_bicyclic_lam_rce_4x1
+            KGO=
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_IDEALISED_BICYCLIC_LAM_RCE_DIR
+            DIR1=../recon_meto_xc40_idealised_bicyclic_lam_rce_1x4
+            KGO=0
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=$KGO_XC40_IDEALISED_BICYCLIC_LAM_RCE_DIR
+            DIR1=../atmos_meto_xc40_idealised_bicyclic_lam_rce_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_idealised_bicyclic_lam_rce_4x9
+            DIR1=$KGO_XC40_IDEALISED_BICYCLIC_LAM_RCE_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_idealised_bicyclic_lam_rce_6x6]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40_IOS_OFF, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_rce_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT10M
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_idealised_bicyclic_lam_rce_4x9
+            DIR1=../atmos_meto_xc40_idealised_bicyclic_lam_rce_6x6
+            KGO=
+
+    # Atmosphere Model Run NRUN-CRUN
+    [[atmos_meto_xc40_idealised_bicyclic_lam_rce_nrun_4x9]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40_IOS_OFF, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_rce_1x4/atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=nrun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_IDEALISED_BICYCLIC_LAM_RCE
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_IDEALISED_BICYCLIC_LAM_RCE
+        [[[job]]]
+            execution time limit = PT8M
+
+    # Atmosphere Model Run NRUN-CRUN
+    [[atmos_meto_xc40_idealised_bicyclic_lam_rce_crun_4x9]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40_IOS_OFF, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=
+            CONTINUE=true
+            ROSE_APP_OPT_CONF_KEYS=crun
+            DATAW=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_IDEALISED_BICYCLIC_LAM_RCE
+            DATAM=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_IDEALISED_BICYCLIC_LAM_RCE
+        [[[job]]]
+            execution time limit = PT8M
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_atmos_nruncrun]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE, METO_XC40, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_idealised_bicyclic_lam_rce_4x9
+            DIR1=$CYLC_SUITE_SHARE_DIR/data/METO_XC40_IDEALISED_BICYCLIC_LAM_RCE
+            ROSE_APP_OPT_CONF_KEYS=nruncrun
+            KGO=
+
+{%- endif %}
+
+{% if "meto_xc40_idealised_bicyclic_lam_rce_gnu" in name_graphs_out -%}
+# XC40 idealised bicyclic lam : radiative-convective equilibrium using GNU compiler
+    [[METO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU]]
+        script = "{{TASK_RUN}} {{ UM_XC40_GNU_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU_DIR={{KGO_XC40_ROOT_DIR}}/xc40_idealised_bicyclic_lam_rce_gnu/{{XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_1x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_GNU_SAFE_OMP }}"
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_1x4/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT3M
+
+    [[recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_GNU_SAFE_OMP }}"
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x1/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT3M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x9]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU, METO_XC40_IOS_OFF, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT8M
+
+# Comparison tasks
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_recon_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_1x4
+            DIR1=../recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x1
+            KGO=
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU_DIR
+            DIR1=../recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_1x4
+            KGO=0
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU, METO_XC40, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=$KGO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU_DIR
+            DIR1=../atmos_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x9
+            KGO=0
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_idealised_bicyclic_lam_rce_gnu_6x6]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU, METO_XC40_IOS_OFF, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_rce_gnu_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT8M
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_rce_gnu_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_RCE_GNU, METO_XC40, ROSE_ANA_IDEALISED_BICYCLIC_LAM_RCE
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_idealised_bicyclic_lam_rce_gnu_4x9
+            DIR1=../atmos_meto_xc40_idealised_bicyclic_lam_rce_gnu_6x6
+            KGO=
+
+{%- endif %}
+
+
+{% if "meto_xc40_idealised_bicyclic_lam_bomex" in name_graphs_out -%}
+# XC40 idealised bicyclic lam : BOMEX like test case
+    [[METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX_DIR={{KGO_XC40_ROOT_DIR}}/xc40_idealised_bicyclic_lam_bomex/{{XC40_IDEALISED_BICYCLIC_LAM_BOMEX_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_idealised_bicyclic_lam_bomex_1x4]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, UM_IDEALISED_BICYCLIC_LAM_BOMEX
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_bomex_1x4/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_meto_xc40_idealised_bicyclic_lam_bomex_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, UM_IDEALISED_BICYCLIC_LAM_BOMEX
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_bomex_4x1/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT4M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_idealised_bicyclic_lam_bomex_4x9]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX, METO_XC40_IOS_OFF, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_4x9, IOS_0, UM_IDEALISED_BICYCLIC_LAM_BOMEX
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_bomex_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT8M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_recon_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_xc40_idealised_bicyclic_lam_bomex_1x4
+            DIR1=../recon_meto_xc40_idealised_bicyclic_lam_bomex_4x1
+            KGO=
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX_DIR
+            DIR1=../recon_meto_xc40_idealised_bicyclic_lam_bomex_1x4
+            KGO=0
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX, METO_XC40, ROSE_ANA_IDEALISED_BICYCLIC_LAM_BOMEX
+        [[[environment]]]
+            DIR0=$KGO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX_DIR
+            DIR1=../atmos_meto_xc40_idealised_bicyclic_lam_bomex_4x9
+            KGO=0
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX, METO_XC40
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_idealised_bicyclic_lam_bomex_4x9
+            DIR1=$KGO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX_DIR
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=1
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_idealised_bicyclic_lam_bomex_6x6]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX, METO_XC40_IOS_OFF, METO_XC40_CORES_36, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_6x6, IOS_0, UM_IDEALISED_BICYCLIC_LAM_BOMEX
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_bomex_1x4/atmos.astart
+        [[[job]]]
+            execution time limit = PT8M
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_bomex_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_BOMEX, METO_XC40, ROSE_ANA_IDEALISED_BICYCLIC_LAM_BOMEX
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_idealised_bicyclic_lam_bomex_4x9
+            DIR1=../atmos_meto_xc40_idealised_bicyclic_lam_bomex_6x6
+            KGO=
+
+{%- endif %}
+
+
+{% if "meto_xc40_idealised_bicyclic_lam_dry2dpl" in name_graphs_out -%}
+# XC40 idealised bicyclic lam : dry "2d like" (6 rows only)
+# Note as this setup has only 6 rows the number of processors in the y direction
+# must always be 1.
+# At present high optimisation does not give bit reproducible results. 
+    [[METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL]]
+        script = "{{TASK_RUN}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        [[[environment]]]
+            KGO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL_DIR={{KGO_XC40_ROOT_DIR}}/xc40_idealised_bicyclic_lam_dry2dpl/{{XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL_KGO}}
+
+    # Reconfiguration
+    [[recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_4x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, UM_IDEALISED_BICYCLIC_LAM_DRY2DPL
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_4x1/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT4M
+
+    [[recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_8x1]]
+        script = "{{TASK_RUN_RECON}} {{ UM_XC40_CCE_SAFE_OMP }}"
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_8x1, UM_IDEALISED_BICYCLIC_LAM_DRY2DPL
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_8x1/atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT4M
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_idealised_bicyclic_lam_dry2dpl_18x1]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_XC40_IOS_OFF, METO_XC40_CORES_18, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_18x1, IOS_0, UM_IDEALISED_BICYCLIC_LAM_DRY2DPL
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_4x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT6M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_recon_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_4x1
+            DIR1=../recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_8x1
+            KGO=
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_recon_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=$KGO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL_DIR
+            DIR1=../recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_4x1
+            KGO=0
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_atmos_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_XC40, ROSE_ANA_IDEALISED_BICYCLIC_LAM_DRY2DPL
+        [[[environment]]]
+            DIR0=$KGO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL_DIR
+            DIR1=../atmos_meto_xc40_idealised_bicyclic_lam_dry2dpl_18x1
+            KGO=0
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_wallclock_kgo]]
+        inherit = METO_XC40_ROSE_ANA_WALLCLOCK_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_XC40
+        [[[environment]]]
+            DIR0=$KGO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL_DIR
+            DIR1=../atmos_meto_xc40_idealised_bicyclic_lam_dry2dpl_18x1
+            ROSE_APP_OPT_CONF_KEYS=fifty_percent
+            KGO=0
+
+    # Atmosphere Model Run
+    [[atmos_meto_xc40_idealised_bicyclic_lam_dry2dpl_8x1]]
+        inherit = METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_XC40_IOS_OFF, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, ATMOS_MPI, ATMOS_8x1, IOS_0, UM_IDEALISED_BICYCLIC_LAM_DRY2DPL
+        [[[environment]]]
+            ASTART=../recon_meto_xc40_idealised_bicyclic_lam_dry2dpl_4x1/atmos.astart
+        [[[job]]]
+            execution time limit = PT7M
+
+    [[rose_ana_meto_xc40_idealised_bicyclic_lam_dry2dpl_atmos_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_IDEALISED_BICYCLIC_LAM_DRY2DPL, METO_XC40, ROSE_ANA_IDEALISED_BICYCLIC_LAM_DRY2DPL
+        [[[environment]]]
+            DIR0=../atmos_meto_xc40_idealised_bicyclic_lam_dry2dpl_18x1
+            DIR1=../atmos_meto_xc40_idealised_bicyclic_lam_dry2dpl_8x1
+            KGO=
+
+{%- endif %}

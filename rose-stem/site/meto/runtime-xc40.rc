@@ -1,0 +1,52 @@
+# XC40 task definitions
+{% set COUPLED_XC40_DRIVERS="--path= --path='share/fcm_make_drivers/build/bin'" %}
+{% set COUPLED_XC40_CCE_SAFE_OMP="--path= --path='share/fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct/build-*/bin'" %}
+{% set COUPLED_XC40_CCE_UKESM_SAFE_OMP="--path= --path='share/fcm_make_meto_xc40_cce_ukesm_coupled_um_safe_n96_mct/build-*/bin'" %}
+{% set CREATEBC_XC40_CCE_HIGH_NOOMP="--path= --path='share/fcm_make_meto_xc40_cce_createbc_high_noomp/build-*/bin'" %}
+{% set CREATEBC_XC40_CCE_HIGH_OMP="--path= --path='share/fcm_make_meto_xc40_cce_createbc_high_omp/build-*/bin'" %}
+{% set CREATEBC_XC40_CCE_HIGH_OMP_DRHOOK="--path= --path='share/fcm_make_meto_xc40_cce_createbc_high_omp_drhook/build-*/bin'" %}
+{% set CREATEBC_XC40_CCE_RIGOROUS_NOOMP="--path= --path='share/fcm_make_meto_xc40_cce_createbc_rigorous_noomp/build-*/bin'" %}
+{% set CREATEBC_XC40_CCE_RIGOROUS_OMP="--path= --path='share/fcm_make_meto_xc40_cce_createbc_rigorous_omp/build-*/bin'" %}
+{% set CREATEBC_XC40_IFORT_HIGH_NOOMP="--path= --path='share/fcm_make_meto_xc40_ifort_createbc_high_noomp/build-*/bin'" %}
+{% set CREATEBC_XC40_IFORT_HIGH_OMP="--path= --path='share/fcm_make_meto_xc40_ifort_createbc_high_omp/build-*/bin'" %}
+{% set CREATEBC_XC40_IFORT_RIGOROUS_NOOMP="--path= --path='share/fcm_make_meto_xc40_ifort_createbc_rigorous_noomp/build-*/bin'" %}
+{% set CREATEBC_XC40_IFORT_RIGOROUS_OMP="--path= --path='share/fcm_make_meto_xc40_ifort_createbc_rigorous_omp/build-*/bin'" %}
+{% set UM_XC40_CCE_SAFE_NOOMP="--path= --path='share/fcm_make_meto_xc40_cce_um_safe_noomp/build-*/bin'" %}
+{% set UM_XC40_CCE_SAFE_OMP_SINGLE_PRECIS="--path= --path='share/fcm_make_meto_xc40_cce_um_safe_omp_single_precis/build-*/bin'" %}
+{% set UM_XC40_CCE_SAFE_OMP_SP_PHYSICS="--path= --path='share/fcm_make_meto_xc40_cce_um_safe_omp_sp_physics/build-*/bin'" %}
+{% set UM_XC40_CCE_SAFE_OMP="--path= --path='share/fcm_make_meto_xc40_cce_um_safe_omp/build-*/bin'" %}
+{% set UM_XC40_CCE_SAFE_OMP_DRHOOK="--path= --path='share/fcm_make_meto_xc40_cce_um_safe_omp_drhook/build-*/bin'" %}
+{% set UM_XC40_CCE_FAST_OMP="--path= --path='share/fcm_make_meto_xc40_cce_um_fast_omp/build-*/bin'" %}
+{% set UM_XC40_CCE_FAST_OMP_SINGLE_PRECIS="--path= --path='share/fcm_make_meto_xc40_cce_um_fast_omp_single_precis/build-*/bin'" %}
+{% set UM_XC40_CCE_RIGOROUS_OMP="--path= --path='share/fcm_make_meto_xc40_cce_um_rigorous_omp/build-*/bin'" %}
+{% set UM_XC40_CCE_HIGH_OMP="--path= --path='share/fcm_make_meto_xc40_cce_um_high_omp/build-*/bin'" %}
+{% set UM_XC40_CCE_HIGH_NOOMP="--path= --path='share/fcm_make_meto_xc40_cce_um_high_noomp/build-*/bin'" %}
+{% set UM_XC40_CCE_HIGH_OMP_SP_PHYSICS="--path= --path='share/fcm_make_meto_xc40_cce_um_high_omp_sp_physics/build-*/bin'" %}
+{% set UM_XC40_GNU_SAFE_OMP="--path= --path='share/fcm_make_meto_xc40_gnu_um_safe_omp/build-*/bin'" %}
+{% set UM_XC40_GNU_SAFE_NOOMP="--path= --path='share/fcm_make_meto_xc40_gnu_um_safe_noomp/build-*/bin'" %}
+{% set UM_XC40_GNU_RIGOROUS_OMP="--path= --path='share/fcm_make_meto_xc40_gnu_um_rigorous_omp/build-*/bin'" %}
+{% set UM_XC40_IFORT_HIGH_OMP="--path= --path='share/fcm_make_meto_xc40_ifort_um_high_omp/build-*/bin'" %}
+{% set RECON_XC40_CCE_SAFE_OMP="--path= --path='share/fcm_make_meto_xc40_cce_recon_safe_omp/build-*/bin'" %}
+{% set RECON_SERIAL_XC40_CCE_SAFE_OMP="--path= --path='share/fcm_make_meto_xc40_cce_recon_serial_safe_omp/build-*/bin'" %}
+{% set RECON_XC40_CCE_SAFE_OMP_MIRROR="--path= --path='share/fcm_make_meto_xc40_cce_recon_safe_omp_mirror/build-*/bin'" %}
+{% set RECON_XC40_CCE_SAFE_OMP_NOGRIB="--path= --path='share/fcm_make_meto_xc40_cce_recon_safe_omp_nogrib/build-*/bin'" %}
+{% set SCM_XC40_CCE_DEBUG_NOOMP="--path= --path='share/fcm_make_meto_xc40_cce_scm_debug_noomp/build-*/bin'" %}
+{% set SCM_XC40_CCE_DEBUG_OMP="--path= --path='share/fcm_make_meto_xc40_cce_scm_debug_omp/build-*/bin'" %}
+{% set SCM_XC40_GNU_DEBUG_NOOMP="--path= --path='share/fcm_make_meto_xc40_gnu_scm_debug_noomp/build-*/bin'" %}
+{% set SCM_XC40_GNU_DEBUG_OMP="--path= --path='share/fcm_make_meto_xc40_gnu_scm_debug_omp/build-*/bin'" %}
+{% set SCM_XC40_GNU_RIGOROUS_NOOMP="--path= --path='share/fcm_make_meto_xc40_gnu_scm_rigorous_noomp/build-*/bin'" %}
+{% set SCM_XC40_GNU_RIGOROUS_OMP="--path= --path='share/fcm_make_meto_xc40_gnu_scm_rigorous_omp/build-*/bin'" %}
+{% set UTILS_SERIAL_XC40_CCE_HIGH_OMP="--path= --path='share/fcm_make_meto_xc40_cce_utils_serial_high_omp/build-*/bin'" %}
+{% set UTILS_MPP_XC40_CCE_HIGH_OMP="--path= --path='share/fcm_make_meto_xc40_cce_utils_mpp_high_omp/build-*/bin'" %}
+
+%include 'site/meto/runtime-xc40-build.rc'
+# Global includes idealised (e.g. exoplanet) tests
+%include 'site/meto/runtime-xc40-global.rc'
+# LAM includes the recon, utils and LAM portion of global-to-LAM tests
+%include 'site/meto/runtime-xc40-lam.rc'
+%include 'site/meto/runtime-xc40-coupled.rc'
+%include 'site/meto/runtime-xc40-recon.rc'
+%include 'site/meto/runtime-xc40-scm.rc'
+# Utils includes housekeeping and monitoring
+%include 'site/meto/runtime-xc40-utils.rc'
+

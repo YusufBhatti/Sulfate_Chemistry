@@ -1,0 +1,12 @@
+{%- set UMDIR = '$UMDIR' %}
+{%- set CENTRAL_INSTALL_DIR= UMDIR %}
+{%- set GRIB_API_CRAY_ROOT_DIR='$GRIB_API_CRAY' %}
+{%- set GRIB_API_INTEL_ROOT_DIR='$GRIB_API_INTEL' %}
+{%- if HOST_HPC is not defined %}
+{%- set HOST_HPC = 'hpc' %}
+{%- endif %}
+{% if HOST_LINUX is not defined %}
+{%- set HOST_LINUX='linux' %}
+{%- endif %}
+{%- set PREBUILD_SAWS_ROOT_DIR = '' %}
+{%- set KGO_SAWS_ROOT_DIR = '' %}

@@ -1,0 +1,38 @@
+{# DO NOT MODIFY THE "linux_fcm_make_clang_ifort" GROUP WITHOUT CHANGING #}
+{# ONE OR BOTH OF THE "linux_fcm_make_[no]prebuild" GROUPS TO MATCH! #}
+{%- set integ_graphs_misc = {
+
+    "linux_fcm_make_noprebuilds" :  "",
+
+    "linux_fcm_make_prebuilds"   :  "",
+
+    "linux_fcm_make_clang_ifort" : "",
+
+    "linux_high_compile" : "",
+
+    "linux_debug_compile" : "",
+
+    "xc40_fcm_make_noprebuilds"  : "",
+
+    "xc40_fcm_make_prebuilds"    : "",
+
+    "xc40_fast_compile" : "",
+
+    "xc40_high_compile" : "",
+
+    "xc40_debug_compile" : "",
+
+    "linux_install" : "",
+    
+    "xc40_install"   : "",
+    
+    "linux_install_libs" : "",
+
+    "xc40_install_libs" : "",
+
+    "linux_test_mule" : "",
+
+    "xc40_test_mule" : "",
+
+    }
+-%}

@@ -1,0 +1,115 @@
+    [[VM]]
+        [[[environment]]]
+            INPUT_DATA=$UMDIR/standard_jobs/inputs/default
+{% if CENTRAL_INSTALL == true %}
+            UM_INSTALL_DIR={{VM_CENTRAL_INSTALL_DIR}}
+            STASHMASTER={{VM_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASHmaster
+            STASH2CF={{VM_CENTRAL_INSTALL_DIR}}/vn{{VN}}/ctldata/STASH2CF/STASH_to_CF.txt
+{% endif %}
+        [[[job]]]
+            batch system = at
+            execution time limit = PT3H
+        [[[remote]]]
+            host = {{ ROSE_ORIG_HOST }}
+
+    [[EXTRACT]]
+        inherit = VM, SOURCE_LOCATION, EXTRACT_SOURCE
+# If running in offline mode, we need to redefine the revisions of the 
+# apps used for the "metadata_check_upgrade" task so they're 
+# valid revisions of the local repository. We do this by setting the override
+# environment OVERRIDE_APP_DIRS which takes precedence over the APP_DIRS 
+# variable set in the task's environment section.
+{% if OFFLINE %}
+        [[[environment]]]
+            OVERRIDE_APP_DIRS="um_n48_eg@1 \
+                               um_mogreps_uk_eg@1 \
+                               fcm_make_um@1 \
+                               fcm_make_recon@1 \
+                               fcm_make_scm@1 \
+                               fcm_make_createbc@1 \
+                               fcm_make_utils_mpp@1 \
+                               fcm_make_utils_serial@1 \
+                               createbc_calcs@1 \
+                               recon_lam_from_grib_cutout@1"
+            OVERRIDE_TRUNK="file://$HOME/source/um/offline/trunk"
+{% endif %}
+
+    [[BUILD]]
+        inherit = EXTRACT
+        [[[environment]]]
+            grib_api_path = {{GRIB_API_VM_ROOT_DIR}}
+            DRHOOK=false
+            OPENMP=true
+            PLATFORM=vm-x86-gnu
+            PREBUILD=
+            ROSE_TASK_OPTIONS=--ignore-lock
+
+    [[SOURCE_LOCATION]]
+        [[[environment]]]
+        {% if OFFLINE %}
+            um_project_location = file://$HOME/source/um/offline
+            BASE_UM_REV = 1
+            jules_project_location = file://$HOME/source/jules/offline
+            BASE_JULES_REV = 1
+            socrates_project_location = file://$HOME/source/socrates/offline
+            BASE_SOCRATES_REV = 1
+            casim_project_location = file://$HOME/source/casim/offline
+            BASE_CASIM_REV = 1
+        {% endif %}
+
+# Linux class for MPI jobs
+    [[VM_MPI]]
+        [[[environment]]]
+            ROSE_LAUNCHER_ULIMIT_OPTS = -s unlimited -c unlimited
+
+# Linux class for a single thread
+    [[VM_1_THREAD]]
+        [[[environment]]]
+            OMP_NUM_THREADS   = 1
+            OMP_STACKSIZE     = 1g
+
+# Linux class for two threads
+    [[VM_2_THREADS]]
+        [[[environment]]]
+            OMP_NUM_THREADS   = 2
+            OMP_STACKSIZE     = 1g
+
+# Linux class for tasks invoking mule scripts
+    [[VM_MULE]]
+        [[[environment]]]
+            LIB_DEST    = $UM_INSTALL_DIR/mule/lib
+            BIN_DEST    = $UM_INSTALL_DIR/mule/bin
+            SHUMLIB_LIB = $UMDIR/shumlib/default/vm-x86-gfortran-gcc/openmp
+
+# Linux class for rose ana jobs
+    [[VM_ROSE_ANA]]
+        inherit = ROSE_ANA_COMPARISON, VM
+        [[[job]]]
+            execution time limit = PT30M
+
+# Linux class for housekeeping jobs
+    [[VM_HOUSEKEEPING]]
+        inherit = HOUSEKEEPING, VM
+        [[[job]]]
+            execution time limit = PT15M
+
+# Classes for setting processor decomposition variables
+    [[ATMOS_1x{{MPI_TASKS}}]]
+        [[[environment]]]
+            UM_ATM_NPROCX=1
+            UM_ATM_NPROCY={{MPI_TASKS}}
+
+    [[ATMOS_{{MPI_TASKS}}x1]]
+        [[[environment]]]
+            UM_ATM_NPROCX={{MPI_TASKS}}
+            UM_ATM_NPROCY=1
+
+    [[RECON_1x{{MPI_TASKS}}]]
+        [[[environment]]]
+            RCF_NPROCX=1
+            RCF_NPROCY={{MPI_TASKS}}
+
+    [[RECON_{{MPI_TASKS}}x1]]
+        [[[environment]]]
+            RCF_NPROCX={{MPI_TASKS}}
+            RCF_NPROCY=1

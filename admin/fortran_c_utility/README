@@ -1,0 +1,8 @@
+fc_test-1.2
+-----------
+
+A utility to determine requirements of the Fortran-C interface 
+for the UM machine config file (see Appendix C of the X4 document).
+
+Edit the first 5 lines of the Makefile to reflect the Fortran and
+C compiler settings with which the UM will be built before running make.

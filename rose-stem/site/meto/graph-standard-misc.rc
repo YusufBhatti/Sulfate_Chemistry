@@ -1,0 +1,163 @@
+{# DO NOT MODIFY THE "linux_fcm_make_clang_ifort" GROUP WITHOUT CHANGING #}
+{# ONE OR BOTH OF THE "linux_fcm_make_[no]prebuild" GROUPS TO MATCH! #}
+{%- set name_graphs_misc = {
+    "linux_fcm_make_noprebuilds" :
+                          "fcm_make_meto_linux_clang_ifort_createbc_high_omp              => housekeep_meto_linux
+                           fcm_make_meto_linux_clang_ifort_utils_mpp_high_omp             => housekeep_meto_linux
+                           fcm_make_meto_linux_clang_ifort_libs                           => housekeep_meto_linux
+                           fcm_make_meto_linux_gcc_ifort_libs                             => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_createbc_high_noomp                  => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_createbc_high_omp                    => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_createbc_high_omp_drhook             => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_createbc_rigorous_noomp              => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_createbc_rigorous_omp                => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_recon_high_omp_nogrib                => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_recon_serial_high_omp                => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_scm_debug_noomp                      => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_scm_debug_omp                        => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_utils_mpp_high_omp                   => housekeep_meto_linux",
+
+    "linux_fcm_make_prebuilds" :
+                          "fcm_make_meto_linux_clang_ifort_um_high_omp               => housekeep_meto_linux
+                           fcm_make_meto_linux_clang_ifort_utils_serial_high_noomp   => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_debug_noomp                  => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_debug_omp                    => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_high_noomp                   => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_high_omp                     => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_high_omp_drhook              => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_rigorous_noomp               => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_rigorous_omp                 => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_safe_noomp                   => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_um_safe_omp                     => housekeep_meto_linux
+                           fcm_make_meto_linux_ifort_utils_serial_high_noomp         => housekeep_meto_linux",
+
+    "linux_fcm_make_clang_ifort" :
+                          "fcm_make_meto_linux_clang_ifort_createbc_high_omp              => housekeep_meto_linux
+                           fcm_make_meto_linux_clang_ifort_libs                           => housekeep_meto_linux
+                           fcm_make_meto_linux_clang_ifort_um_high_omp                    => housekeep_meto_linux
+                           fcm_make_meto_linux_clang_ifort_utils_mpp_high_omp             => housekeep_meto_linux
+                           fcm_make_meto_linux_clang_ifort_utils_serial_high_noomp        => housekeep_meto_linux",
+
+    "linux_high_compile" :
+                          "fcm_make_meto_linux_ifort_um_high_omp  => housekeep_meto_linux",
+
+    "linux_debug_compile" :
+                          "fcm_make_meto_linux_ifort_um_debug_omp => housekeep_meto_linux",
+
+    "xc40_fcm_make_noprebuilds" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_coupled_ocean_orca025_mct_technical_gc3   => fcm_make_meto_xc40_cce_coupled_ocean_orca025_mct_technical_gc3   => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_coupled_ocean_ukesm                       => fcm_make_meto_xc40_cce_coupled_ocean_ukesm                       => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_high_noomp                       => fcm_make_meto_xc40_cce_createbc_high_noomp                       => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_high_omp                         => fcm_make_meto_xc40_cce_createbc_high_omp                         => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_high_omp_drhook                  => fcm_make_meto_xc40_cce_createbc_high_omp_drhook                  => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_rigorous_noomp                   => fcm_make_meto_xc40_cce_createbc_rigorous_noomp                   => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_createbc_rigorous_omp                     => fcm_make_meto_xc40_cce_createbc_rigorous_omp                     => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_libs                                      => fcm_make_meto_xc40_cce_libs                                      => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp_mirror                     => fcm_make_meto_xc40_cce_recon_safe_omp_mirror => \
+                                                                                                          fcm_make2_meto_xc40_cce_recon_safe_omp_mirror                    => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_recon_safe_omp_nogrib                     => fcm_make_meto_xc40_cce_recon_safe_omp_nogrib                     => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_recon_serial_high_omp                     => fcm_make_meto_xc40_cce_recon_serial_high_omp                     => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_recon_serial_safe_omp                     => fcm_make_meto_xc40_cce_recon_serial_safe_omp                     => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_scm_debug_noomp                           => fcm_make_meto_xc40_cce_scm_debug_noomp                           => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_scm_debug_omp                             => fcm_make_meto_xc40_cce_scm_debug_omp                             => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_utils_mpp_high_omp                        => fcm_make_meto_xc40_cce_utils_mpp_high_omp                        => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_utils_serial_high_omp                     => fcm_make_meto_xc40_cce_utils_serial_high_omp                     => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_noomp                     => fcm_make_meto_xc40_ifort_createbc_high_noomp                     => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_omp                       => fcm_make_meto_xc40_ifort_createbc_high_omp                       => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_rigorous_noomp                 => fcm_make_meto_xc40_ifort_createbc_rigorous_noomp                 => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_rigorous_omp                   => fcm_make_meto_xc40_ifort_createbc_rigorous_omp                   => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_ifort_libs                                    => fcm_make_meto_xc40_ifort_libs                                    => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_createbc_high_omp                         => fcm_make_meto_xc40_gnu_createbc_high_omp                         => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_libs                                      => fcm_make_meto_xc40_gnu_libs                                      => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_recon_serial_safe_omp                     => fcm_make_meto_xc40_gnu_recon_serial_safe_omp                     => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_scm_debug_noomp                           => fcm_make_meto_xc40_gnu_scm_debug_noomp                           => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_scm_debug_omp                             => fcm_make_meto_xc40_gnu_scm_debug_omp                             => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_scm_rigorous_noomp                        => fcm_make_meto_xc40_gnu_scm_rigorous_noomp                        => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_scm_rigorous_omp                          => fcm_make_meto_xc40_gnu_scm_rigorous_omp                          => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_um_rigorous_omp                           => fcm_make_meto_xc40_gnu_um_rigorous_omp                           => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_um_safe_noomp                             => fcm_make_meto_xc40_gnu_um_safe_noomp                             => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_um_safe_omp                               => fcm_make_meto_xc40_gnu_um_safe_omp                               => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_um_safe_omp_single                        => fcm_make_meto_xc40_gnu_um_safe_omp_single                        => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_utils_serial_high_omp                     => fcm_make_meto_xc40_gnu_utils_serial_high_omp                     => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_utils_mpp_high_omp                        => fcm_make_meto_xc40_gnu_utils_mpp_high_omp                        => housekeep_meto_xc40",
+
+    "xc40_fcm_make_prebuilds" :    
+                          "gatekeeper_fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct     => fcm_make_meto_xc40_cce_coupled_um_safe_n96_mct      => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_debug_noomp              => fcm_make_meto_xc40_cce_um_debug_noomp               => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_debug_omp                => fcm_make_meto_xc40_cce_um_debug_omp                 => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_fast_noomp               => fcm_make_meto_xc40_cce_um_fast_noomp                => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp                 => fcm_make_meto_xc40_cce_um_fast_omp                  => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp_single_precis   => fcm_make_meto_xc40_cce_um_fast_omp_single_precis    => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_high_noomp               => fcm_make_meto_xc40_cce_um_high_noomp                => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_high_omp                 => fcm_make_meto_xc40_cce_um_high_omp                  => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_high_omp_single_precis   => fcm_make_meto_xc40_cce_um_high_omp_single_precis    => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_high_omp_sp_physics      => fcm_make_meto_xc40_cce_um_high_omp_sp_physics       => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_rigorous_omp             => fcm_make_meto_xc40_cce_um_rigorous_omp              => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_safe_noomp               => fcm_make_meto_xc40_cce_um_safe_noomp                => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp                 => fcm_make_meto_xc40_cce_um_safe_omp                  => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_drhook          => fcm_make_meto_xc40_cce_um_safe_omp_drhook           => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_single_precis   => fcm_make_meto_xc40_cce_um_safe_omp_single_precis    => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_um_safe_omp_sp_physics      => fcm_make_meto_xc40_cce_um_safe_omp_sp_physics       => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_ifort_um_high_omp               => fcm_make_meto_xc40_ifort_um_high_omp                => housekeep_meto_xc40",
+
+    "xc40_fast_compile"   :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_fast_omp => fcm_make_meto_xc40_cce_um_fast_omp   => housekeep_meto_xc40",
+
+    "xc40_high_compile"   :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_high_omp => fcm_make_meto_xc40_cce_um_high_omp   => housekeep_meto_xc40",
+
+    "xc40_debug_compile"   :
+                          "gatekeeper_fcm_make_meto_xc40_cce_um_debug_omp => fcm_make_meto_xc40_cce_um_debug_omp => housekeep_meto_xc40",
+
+    "linux_install" :
+                          "fcm_make_meto_linux_ifort_utils_serial_high_noomp     &  \
+                           fcm_make_meto_linux_ifort_createbc_high_omp           &  fcm_make_meto_linux_ifort_utils_mpp_high_omp   => meto_linux_install_utils => housekeep_meto_linux
+                           fcm_make_meto_linux_gcc_ifort_libs                    => meto_linux_install_libs_gcc_ifort              => housekeep_meto_linux
+                           fcm_make_meto_linux_clang_ifort_libs                  => meto_linux_install_libs_clang_ifort            => housekeep_meto_linux
+                           fcm_make_meto_linux_install_ctldata                   => meto_linux_install_ctldata                     => housekeep_meto_linux",
+
+    "xc40_install" :
+                          "gatekeeper_fcm_make_meto_xc40_cce_utils_serial_high_omp     => fcm_make_meto_xc40_cce_utils_serial_high_omp       => meto_xc40_install_utils                 => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_utils_mpp_high_omp        => fcm_make_meto_xc40_cce_utils_mpp_high_omp          => meto_xc40_install_utils                 => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_ifort_createbc_high_omp       => fcm_make_meto_xc40_ifort_createbc_high_omp         => meto_xc40_install_utils                 => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_cce_libs                      => fcm_make_meto_xc40_cce_libs                        => meto_xc40_install_libs_cce              => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_ifort_libs                    => fcm_make_meto_xc40_ifort_libs                      => meto_xc40_install_libs_ifort            => housekeep_meto_xc40
+                           gatekeeper_fcm_make_meto_xc40_gnu_libs                      => fcm_make_meto_xc40_gnu_libs                        => meto_xc40_install_libs_gnu              => housekeep_meto_xc40
+                           fcm_make_meto_xc40_install_ctldata                          => fcm_make2_meto_xc40_install_ctldata                => meto_xc40_install_ctldata               => housekeep_meto_xc40",
+
+    "linux_install_libs" :
+                           "fcm_make_meto_linux_gcc_ifort_libs   => meto_linux_install_libs_gcc_ifort
+                            fcm_make_meto_linux_clang_ifort_libs => meto_linux_install_libs_clang_ifort
+                            METO_LINUX_INSTALL_LIBS:succeed-all        => housekeep_meto_linux",
+
+    "linux_test_mule" :
+                           "fcm_make_meto_linux_gcc_ifort_libs            => meto_linux_install_libs_gcc_ifort    => meto_linux_install_mule_gcc_ifort   
+                            fcm_make_meto_linux_clang_ifort_libs          => meto_linux_install_libs_clang_ifort  => meto_linux_install_mule_clang_ifort 
+                            fcm_make_meto_linux_install_mule_gcc_ifort    => meto_linux_install_mule_gcc_ifort    => meto_linux_test_mule_gcc_ifort      \
+                                                                          => rose_ana_linux_mule_sstpert_gcc_ifort_kgo & rose_ana_linux_mule_wafccb_gcc_ifort_kgo
+                            fcm_make_meto_linux_install_mule_clang_ifort  => meto_linux_install_mule_clang_ifort  => meto_linux_test_mule_clang_ifort    \
+                                                                          => rose_ana_linux_mule_sstpert_clang_ifort_kgo & rose_ana_linux_mule_wafccb_clang_ifort_kgo
+                            METO_LINUX_ROSE_ANA:succeed-all               => housekeep_meto_linux                            
+                            METO_LINUX_TEST_MULE:succeed-all              => housekeep_meto_linux",
+
+    "xc40_install_libs" :
+                           "gatekeeper_fcm_make_meto_xc40_cce_libs   => fcm_make_meto_xc40_cce_libs    => meto_xc40_install_libs_cce   
+                            gatekeeper_fcm_make_meto_xc40_ifort_libs => fcm_make_meto_xc40_ifort_libs  => meto_xc40_install_libs_ifort 
+                            gatekeeper_fcm_make_meto_xc40_gnu_libs   => fcm_make_meto_xc40_gnu_libs    => meto_xc40_install_libs_gnu   
+                            METO_XC40_INSTALL_LIBS:succeed-all       => housekeep_meto_xc40
+                            ",
+
+    "xc40_test_mule" :
+                           "gatekeeper_fcm_make_meto_xc40_cce_libs    => fcm_make_meto_xc40_cce_libs            => meto_xc40_install_libs_cce   => meto_xc40_install_mule_cce
+                            fcm_make_meto_xc40_install_mule_cce       => fcm_make2_meto_xc40_install_mule_cce   => meto_xc40_install_mule_cce   => meto_xc40_test_mule_cce      \
+                                                                      => rose_ana_xc40_mule_sstpert_cce_kgo & rose_ana_xc40_mule_wafccb_cce_kgo
+                            gatekeeper_fcm_make_meto_xc40_ifort_libs  => fcm_make_meto_xc40_ifort_libs          => meto_xc40_install_libs_ifort => meto_xc40_install_mule_ifort
+                            fcm_make_meto_xc40_install_mule_ifort     => fcm_make2_meto_xc40_install_mule_ifort => meto_xc40_install_mule_ifort => meto_xc40_test_mule_ifort    \
+                                                                      => rose_ana_xc40_mule_sstpert_ifort_kgo & rose_ana_xc40_mule_wafccb_ifort_kgo
+                            gatekeeper_fcm_make_meto_xc40_gnu_libs    => fcm_make_meto_xc40_gnu_libs            => meto_xc40_install_libs_gnu   => meto_xc40_install_mule_gnu
+                            fcm_make_meto_xc40_install_mule_gnu       => fcm_make2_meto_xc40_install_mule_gnu   => meto_xc40_install_mule_gnu   => meto_xc40_test_mule_gnu      \
+                                                                      => rose_ana_xc40_mule_sstpert_gnu_kgo & rose_ana_xc40_mule_wafccb_gnu_kgo
+                            METO_XC40_ROSE_ANA_COMPARISON:succeed-all => housekeep_meto_xc40
+                            METO_XC40_TEST_MULE:succeed-all           => housekeep_meto_xc40",
+    }
+-%}

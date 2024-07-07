@@ -1,0 +1,209 @@
+<!-- GO5.0 version of the XIOS namelist -->
+
+<?xml version="1.0"?>
+<simulation> 
+
+ <context id="nemo" time_origin="1950-01-01 00:00:00" >
+    
+    <!-- $id$ -->
+    
+    <!-- 
+============================================================================================================
+=                                  definition of all existing variables                                    =
+=                                            DO NOT CHANGE                                                 =
+============================================================================================================
+    -->
+    <field_definition src="./field_def.xml"/>
+    <!-- 
+============================================================================================================
+=                                           output files definition                                        =
+=                                            Define your own files                                         =
+=                                         put the variables you want...                                    =
+============================================================================================================
+    -->
+    
+<!-- NOTE: *  sync_freq  is the frequency of update of / buffer flush to the output files
+           *  min_digits is the number of digits to use to represent the decomposition in the file name (_0000.nc)
+	   *  output_freq is the write frequency (subject to the setting for "operation"). However note that when output_freq < rn_rdt, 
+		the *** file time coordinate spacing is forced to output_freq *** (r429).      
+																-->
+    
+    <file_definition type="multiple_file" sync_freq="10d" min_digits="4" name="@expname@_@freq@_@startdate@_@enddate@">
+    
+      <file_group id="1ts" output_freq="1ts"  output_level="10" enabled=".TRUE."/> <!-- 1 time step files -->
+
+      <file_group id="1h" output_freq="1h"  output_level="10" enabled=".TRUE."/> <!-- 1h files -->
+      <file_group id="2h" output_freq="2h"  output_level="10" enabled=".TRUE."/> <!-- 2h files -->
+      <file_group id="3h" output_freq="3h"  output_level="10" enabled=".TRUE."/> <!-- 3h files -->     
+      <file_group id="4h" output_freq="4h"  output_level="10" enabled=".TRUE."/> <!-- 4h files -->
+      <file_group id="6h" output_freq="6h"  output_level="10" enabled=".FALSE."> <!-- 6h files -->
+        <file id="file6" name_suffix="_UK_shelf" description="Forcings for the UK shelf seas model" >
+          <field field_ref="toce"         name="votemper"     grid_ref="grid_T_3D_zoom"    operation="instant" standard_name="sea_water_potential_temperature"/> 
+          <field field_ref="soce"         name="vosaline"     grid_ref="grid_T_3D_zoom"    operation="instant" standard_name="sea_water_salinity"/>   
+          <field field_ref="ssh"          name="sossheig"     grid_ref="grid_T_2D_zoom"    operation="instant" standard_name="sea_surface_height_above_geoid"/>
+          <field field_ref="uoce"         name="vozocrtx"     grid_ref="grid_U_3D_zoom"    operation="instant" standard_name="sea_water_x_velocity"/>
+          <field field_ref="voce"         name="vomecrty"     grid_ref="grid_V_3D_zoom"    operation="instant" standard_name="sea_water_y_velocity"/>
+          <field field_ref="ubar"         name="ubar"         grid_ref="grid_U_3D_zoom"    operation="instant" standard_name="ocean_barotropic_current_along_i-axis"/>
+          <field field_ref="vbar"         name="vbar"         grid_ref="grid_V_3D_zoom"    operation="instant" standard_name="ocean_barotropic_current_along_j-axis"/>
+        </file>
+      </file_group>
+     
+      <file_group id="1d" output_freq="1d"  output_level="10" enabled=".TRUE."/> <!-- 1d files -->
+      <file_group id="3d" output_freq="3d"  output_level="10" enabled=".TRUE."/> <!-- 3d files -->    
+
+      <file_group id="10d" output_freq="10d"  split_freq="10d" output_level="10" enabled=".TRUE.">  <!-- 10d files -->   
+
+	<file id="file1" name_suffix="_grid_T" description="ocean T grid variables" >
+          <field field_ref="e3t"          name="e3t"        standard_name="cell_thickness" />
+          <field field_ref="toce"         name="votemper"     operation="instant" freq_op="10d" > @toce_e3t / @e3t </field>
+          <field field_ref="toce"         name="votemper2"    operation="instant" freq_op="10d" > @toce * @toce_e3t / @e3t </field>
+          <field field_ref="soce"         name="vosaline"     operation="instant" freq_op="10d" > @soce_e3t / @e3t </field>
+          <field field_ref="soce"         name="vosaline2"    operation="instant" freq_op="10d" > @soce * @soce_e3t / @e3t </field>
+          <field field_ref="ttrd_ldf"     name="ttrd_ldf"   standard_name="tendency_of_sea_water_temperature_due_to_horizontal_mixing"/>
+          <field field_ref="ttrd_zdf"     name="ttrd_zdf"   standard_name="tendency_of_sea_water_temperature_due_to_vertical_mixing"/>
+          <field field_ref="strd_ldf"     name="strd_ldf"   standard_name="tendency_of_sea_water_salinity_due_to_horizontal_mixing" />
+          <field field_ref="strd_zdf"     name="strd_zdf"   standard_name="tendency_of_sea_water_salinity_due_to_vertical_mixing"   />
+	  <field field_ref="ssh"          name="sossheig"   standard_name="sea_surface_height_above_geoid"                          />
+          <field field_ref="ssh2"         name="zossq"      standard_name="square_of_sea_surface_height_above_geoid"                />
+	  <field field_ref="empmr"        name="sowaflup"   standard_name="water_flux_out_of_sea_ice_and_sea_water"                 />
+	  <field field_ref="saltflx"      name="sosafldo"   standard_name="salt_flux_into_sea_water"                                />
+	  <field field_ref="qt"           name="sohefldo"   standard_name="surface_downward_heat_flux_in_sea_water"                 />
+	  <field field_ref="qsr"          name="soshfldo"   standard_name="downwelling_photosynthetic_radiative_flux_in_sea_water"               />
+          <field field_ref="mldkz5"       name="somixhgt"   standard_name="ocean_mixed_layer_thickness_defined_by_vertical_tracer_diffusivity"   />
+          <field field_ref="mldr10_1"     name="somxl010"   standard_name="ocean_mixed_layer_thickness_defined_by_sigma_theta"      />
+          <field field_ref="mldzint_1"    name="sokaraml"                                                                           />
+          <field field_ref="mldzint_2"    name="somlddbm"                                                                           />
+          <field field_ref="ice_cover"    name="soicecov"   standard_name="sea_ice_area_fraction"                                   />
+          <field field_ref="wspd"         name="sowindsp"   standard_name="wind_speed"                                              />          
+          <field field_ref="qisf"         name="sohflisf"   standard_name=""                                                        />
+          <field field_ref="fwfisf"       name="sowflisf"   standard_name=""                                                        />
+          <field field_ref="berg_total_melt"       name="berg_total_melt"          standard_name=""                                 />
+          <field field_ref="berg_total_heat_flux"  name="berg_total_heat_flux"     standard_name=""                                 />
+          <field field_ref="runoffs"      name="sorunoff"   standard_name="water_flux_into_sea_water_from_rivers"                   />
+	</file>
+	
+	<file id="file2" name_suffix="_grid_U" description="ocean U grid variables" >
+          <field field_ref="e3u"          name="e3u"        standard_name="cell_thickness" />
+          <field field_ref="uoce"         name="vozocrtx"     operation="instant" freq_op="10d" > @uoce_e3u / @e3u </field>
+          <field field_ref="uoce"         name="vozocrtx2"    operation="instant" freq_op="10d" > @uoce * @uoce_e3u / @e3u </field>
+          <field field_ref="ut"           name="ut"           operation="instant" freq_op="10d" > @ut_e3u / @e3u </field>
+          <field field_ref="us"           name="us"           operation="instant" freq_op="10d" > @us_e3u / @e3u </field>
+	  <field field_ref="utau"         name="sozotaux"   standard_name="surface_downward_x_stress" />
+	</file>
+	
+	<file id="file3" name_suffix="_grid_V" description="ocean V grid variables" >
+          <field field_ref="e3v"          name="e3v"        standard_name="cell_thickness" />
+          <field field_ref="voce"         name="vomecrty"     operation="instant" freq_op="10d" > @voce_e3v / @e3v </field>
+          <field field_ref="voce"         name="vomecrty2"    operation="instant" freq_op="10d" > @voce * @voce_e3v / @e3v </field>
+          <field field_ref="vt"           name="vt"           operation="instant" freq_op="10d" > @vt_e3v / @e3v </field>
+          <field field_ref="vs"           name="vs"           operation="instant" freq_op="10d" > @vs_e3v / @e3v </field>
+	  <field field_ref="vtau"         name="sometauy"   standard_name="surface_downward_y_stress" />
+	</file>
+	
+	<file id="file4" name_suffix="_grid_W" description="ocean W grid variables" >
+	  <field field_ref="woce"         name="vovecrtz"   standard_name="upward_sea_water_velocity"                         />
+          <field field_ref="wt"           name="wt"         standard_name=""                                                  />
+          <field field_ref="ws"           name="ws"         standard_name=""                                                  />
+	  <field field_ref="avt"          name="votkeavt"   standard_name="ocean_vertical_heat_diffusivity"                   />
+          <field field_ref="avm"          name="votkeavm"   standard_name="ocean_vertical_momentum_diffusivity"               />
+          <field field_ref="aht2d"        name="soleahtw"   standard_name="vertical_component_of_ocean_xy_tracer_diffusivity" />
+	</file>
+        
+        <file id="file5" name_suffix="_diaptr" description="processed diagnostics" >
+	  <field field_ref="zomsfglo"     name="zomsfglo"   standard_name="meridional_streamfunction_global"           grid_ref="gznl_W_3D"       />
+          <field field_ref="zotemglo"     name="zotemglo"   standard_name="zonal_mean_temperature_global"              grid_ref="gznl_T_3D"       />
+          <field field_ref="zosrfglo"     name="zosrfglo"   standard_name="zonal_mean_surface_global"                  grid_ref="gznl_T_3D"       />
+	  <field field_ref="zosalglo"     name="zosalglo"   standard_name="zonal_mean_salinity_global"                 grid_ref="gznl_T_3D"       />          
+          <field field_ref="zomsfatl"     name="zomsfatl"   standard_name="meridional_streamfunction_atlantic"         grid_ref="gznl_W_3D"       />
+          <field field_ref="zotematl"     name="zotematl"   standard_name="zonal_mean_temperature_atlantic"            grid_ref="gznl_T_3D"       />
+          <field field_ref="zosrfatl"     name="zosrfatl"   standard_name="zonal_mean_surface_atlantic"                grid_ref="gznl_T_3D"       />
+	  <field field_ref="zosalatl"     name="zosalatl"   standard_name="zonal_mean_salinity_atlantic"               grid_ref="gznl_T_3D"       />          
+          <field field_ref="zomsfpac"     name="zomsfpac"   standard_name="meridional_streamfunction_pacific"          grid_ref="gznl_W_3D"       />
+          <field field_ref="zotempac"     name="zotempac"   standard_name="zonal_mean_temperature_pacific"             grid_ref="gznl_T_3D"       />
+          <field field_ref="zosrfpac"     name="zosrfpac"   standard_name="zonal_mean_surface_pacific"                 grid_ref="gznl_T_3D"       />
+	  <field field_ref="zosalpac"     name="zosalpac"   standard_name="zonal_mean_salinity_pacific"                grid_ref="gznl_T_3D"       />
+          <field field_ref="zomsfind"     name="zomsfind"   standard_name="meridional_streamfunction_indian"           grid_ref="gznl_W_3D"       />
+          <field field_ref="zotemind"     name="zotemind"   standard_name="zonal_mean_temperature_indian"              grid_ref="gznl_T_3D"       />
+          <field field_ref="zosrfind"     name="zosrfind"   standard_name="zonal_mean_surface_indian"                  grid_ref="gznl_T_3D"       />
+	  <field field_ref="zosalind"     name="zosalind"   standard_name="zonal_mean_salinity_indian"                 grid_ref="gznl_T_3D"       />          
+          <field field_ref="zomsfipc"     name="zomsfipc"   standard_name="meridional_streamfunction_indian_pacific"   grid_ref="gznl_W_3D"       />
+          <field field_ref="zotemipc"     name="zotemipc"   standard_name="zonal_mean_temperature_indian_pacific"      grid_ref="gznl_T_3D"       />
+          <field field_ref="zosrfipc"     name="zosrfipc"   standard_name="zonal_mean_surface_indian_pacific"          grid_ref="gznl_T_3D"       />
+	  <field field_ref="zosalipc"     name="zosalipc"   standard_name="zonal_mean_salinity_indian_pacific"         grid_ref="gznl_T_3D"       />          
+          <field field_ref="sophtadv"     name="sophtadv"   standard_name="advective_heat_transport"                   grid_ref="gznl_T_2D"       />
+          <field field_ref="sopstadv"     name="sopstadv"   standard_name="advective_salt_transport"                   grid_ref="gznl_T_2D"       />
+          <field field_ref="sophtldf"     name="sophtldf"   standard_name="diffusive_heat_transport"                   grid_ref="gznl_T_2D"       />
+          <field field_ref="sopstldf"     name="sopstldf"   standard_name="diffusive_salt_transport"                   grid_ref="gznl_T_2D"       />
+	</file>
+	
+      </file_group>
+
+      <file_group id="1m" output_freq="1mo" output_level="10" enabled=".TRUE."/> <!-- real monthly files -->
+      <file_group id="2m" output_freq="2mo" output_level="10" enabled=".TRUE."/> <!-- real 2m files -->
+      <file_group id="3m" output_freq="3mo" output_level="10" enabled=".TRUE."/> <!-- real 3m files -->
+      <file_group id="4m" output_freq="4mo" output_level="10" enabled=".TRUE."/> <!-- real 4m files -->
+      <file_group id="6m" output_freq="6mo" output_level="10" enabled=".TRUE."/> <!-- real 6m files -->
+
+      <file_group id="1y"  output_freq="1y" output_level="10" enabled=".TRUE."/> <!-- real yearly files -->
+      <file_group id="2y"  output_freq="2y" output_level="10" enabled=".TRUE."/> <!-- real 2y files -->
+      <file_group id="5y"  output_freq="5y" output_level="10" enabled=".TRUE."/> <!-- real 5y files -->
+      <file_group id="10y" output_freq="10y" output_level="10" enabled=".TRUE."/> <!-- real 10y files -->
+
+   </file_definition>
+    
+    <!-- 
+============================================================================================================
+= grid definition = = DO NOT CHANGE =
+============================================================================================================
+    -->
+    
+   <axis_definition>
+      <axis id="deptht" standard_name="depth" long_name="Vertical T levels" unit="m" positive="down" />
+      <axis id="depthu" standard_name="depth" long_name="Vertical U levels" unit="m" positive="down" />
+      <axis id="depthv" standard_name="depth" long_name="Vertical V levels" unit="m" positive="down" />
+      <axis id="depthw" standard_name="depth" long_name="Vertical W levels" unit="m" positive="down" />
+      <axis id="nfloat" long_name="Float number"      unit="-"  />
+      <axis id="icbcla" long_name="Iceberg class"     unit="-"  />
+   </axis_definition>
+    
+   <domain_definition src="./domain_def.xml"/>
+   
+   <grid_definition>    
+     <grid id="grid_T_2D" domain_ref="grid_T"/>
+     <grid id="grid_T_3D" domain_ref="grid_T" axis_ref="deptht"/>
+     <grid id="grid_U_2D" domain_ref="grid_U"/>
+     <grid id="grid_U_3D" domain_ref="grid_U" axis_ref="depthu"/>
+     <grid id="grid_V_2D" domain_ref="grid_V"/>
+     <grid id="grid_V_3D" domain_ref="grid_V" axis_ref="depthv"/>
+     <grid id="grid_W_2D" domain_ref="grid_W"/>
+     <grid id="grid_W_3D" domain_ref="grid_W" axis_ref="depthw"/>
+     <grid id="grid_T_2D_zoom" domain_ref="zoomT"/>
+     <grid id="grid_T_3D_zoom" domain_ref="zoomT" axis_ref="deptht"/>
+     <grid id="grid_U_3D_zoom" domain_ref="zoomU" axis_ref="depthu"/>
+     <grid id="grid_V_3D_zoom" domain_ref="zoomV" axis_ref="depthv"/>
+     <grid id="gznl_T_2D" domain_ref="gznl"/>
+     <grid id="gznl_T_3D" domain_ref="gznl" axis_ref="deptht"/>
+     <grid id="gznl_W_3D" domain_ref="gznl" axis_ref="depthw"/>
+    </grid_definition>   
+  </context>
+  
+
+  <context id="xios">
+
+      <variable_definition>
+	
+     <!-- 
+        We must have buffer_size > jpi*jpj*jpk*8 (with jpi and jpj the subdomain size)
+-->
+	  <variable id="buffer_size"               type="integer">30000000</variable>
+	  <variable id="buffer_server_factor_size" type="integer">2</variable>
+	  <variable id="info_level"                type="integer">0</variable>
+	  <variable id="using_server"              type="boolean">true</variable>
+	  <variable id="using_oasis"               type="boolean">true</variable>
+	  <variable id="oasis_codes_id"            type="string" >toyoce</variable>
+	
+      </variable_definition>
+               
+  </context>
+  
+</simulation>

@@ -1,0 +1,15 @@
+    [[queues]]
+        [[[extract]]]
+            limit = 1
+            members = EXTRACT
+        [[[build]]]
+	    # Longer running express queue jobs
+            limit = 2
+	    members = NCI_BUILD
+        [[[default]]]
+            limit = 4
+       [[[rose-ana]]]
+            # File locking of rose-ana-comparisons.db isn't reliable at NCI so only allow
+	    # one at a time
+	    limit = 1
+	    members = NCI_ROSE_ANA_COMPARISON

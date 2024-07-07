@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# *****************************COPYRIGHT******************************
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+# *****************************COPYRIGHT******************************
+#-----------------------------------------------------------------------
+# Code Owner: Please refer to the UM file CodeOwners.txt
+# This file belongs in section: Rose scripts
+#-----------------------------------------------------------------------
+# NAME
+#     um-scm
+#
+# SYNOPSIS
+#     um-scm [EXE ...]
+#
+# DESCRIPTION
+#     Set up the environment and trigger the SCM executable with 
+#     "rose mpi-launch".
+#
+# ARGUMENTS
+#     EXE
+#          The command to launch. Defaults:
+#          1. $SCM_EXEC
+#          2. um-scm.exe
+#
+# ENVIRONMENT VARIABLES
+#     This script uses the following variables:
+#
+#     DR_HOOK
+#          Activate Dr Hook. Default=0 (off).
+#     DR_HOOK_OPTS
+#          Options to pass to Dr Hook. Default=noself.
+#     FLUME_IOS_NPROC
+#          Number of processors for the I/O server.
+#     PRINT_STATUS
+#          Model verbosity. Default=PrStatus_Normal.
+#     SCM_EXEC
+#          A command to launch. Default=um-scm.exe.
+#     UM_ATM_NPROCX
+#          Number of processors east-west.
+#     UM_ATM_NPROCY
+#          Number of processors north-south.
+#     UM_THREAD_LEVEL
+#          MPI threading level. Default=MULTIPLE.
+#     VN
+#          UM version.
+#-----------------------------------------------------------------------
+
+set -eu
+
+# Source common UM script functions from file
+um_scripts=$(dirname "$0")/um_script_functions
+if [ -f "$um_scripts" ] ; then
+    . $um_scripts
+else
+    echo "[FAIL] UM script functions file not found: $um_scripts " 1>&2
+    echo "[FAIL] Ensure the UM file above is located in the same " 1>&2
+    echo "[FAIL] directory as this script                        " 1>&2
+    exit 1
+fi
+
+export DR_HOOK=${DR_HOOK:-0}
+export DR_HOOK_OPT=${DR_HOOK_OPT:-noself}
+export PRINT_STATUS=${PRINT_STATUS:-PrStatus_Normal}
+export UM_THREAD_LEVEL=${UM_THREAD_LEVEL:-MULTIPLE}
+
+# Processor variables
+export UM_NPES=$((${UM_ATM_NPROCX:-1} * ${UM_ATM_NPROCY:-1}))
+export NPROC=$((UM_NPES + FLUME_IOS_NPROC))
+
+COMMAND="${@:-${SCM_EXEC:-$(dirname "$0")/um-scm.exe}}"
+usf_which $COMMAND
+usf_print_script_path
+
+# SCM writes directly to STDOUT so no processing required after 
+# executing this line and therefore we can "exec" the process.
+exec rose mpi-launch -v $COMMAND

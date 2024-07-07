@@ -1,0 +1,1123 @@
+
+    [[METO_XC40_RECON_STANDALONE]]
+        script = "{{TASK_RUN_RECON}} --verbose {{ RECON_XC40_CCE_SAFE_OMP }}"
+
+{% if "meto_xc40_recon_n216_eg_init_mlsnow" in name_graphs_out -%}
+#RECON N216 Initialization of multilayer snow fields
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n216_eg_init_mlsnow_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N216_EG_INIT_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n216_eg_init_mlsnow_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n216_eg_init_mlsnow/{{XC40_RECON_N216_EG_INIT_MLSNOW_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n216_eg_init_mlsnow_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n216_eg_init_mlsnow_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N216_EG_INIT_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT10M
+
+   # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n216_eg_init_mlsnow_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_xc40_recon_n216_eg_init_mlsnow_1x4/
+            DIR1=../recon_meto_xc40_recon_n216_eg_init_mlsnow_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_n320_n320_mlsnow" in name_graphs_out -%}
+#RECON N320 Basic copying of N320 snow fields
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n320_mlsnow_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N320_N320_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+        [[[job]]]
+            execution time limit = PT8M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n320_mlsnow_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n320_n320_mlsnow/{{XC40_RECON_N320_N320_MLSNOW_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n320_n320_mlsnow_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n320_mlsnow_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N320_N320_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n320_mlsnow_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n320_n320_mlsnow_1x4/
+            DIR1 = ../recon_meto_xc40_recon_n320_n320_mlsnow_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "meto_xc40_recon_n320_n320_mlsnow_mirror" in name_graphs_out -%}
+#RECON As above but using an exectuable compiled with a mirror step
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n320_mlsnow_mirror_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N320_N320_MLSNOW
+        script = "{{TASK_RUN_RECON}} --verbose {{ RECON_XC40_CCE_SAFE_OMP_MIRROR }}"
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n320_mlsnow_mirror_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n320_n320_mlsnow/{{XC40_RECON_N320_N320_MLSNOW_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n320_n320_mlsnow_mirror_1x4
+            KGO  = 0
+
+{%- endif %}
+
+
+{% if "meto_xc40_recon_n320_n320frc_mlsnow" in name_graphs_out -%}
+#RECON N320 Copying of N320 snow fields with forced relayering and
+# regluarization.
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n320frc_mlsnow_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N320_N320FRC_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n320frc_mlsnow_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n320_n320frc_mlsnow/{{XC40_RECON_N320_N320FRC_MLSNOW_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n320_n320frc_mlsnow_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n320frc_mlsnow_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N320_N320FRC_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n320frc_mlsnow_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n320_n320frc_mlsnow_1x4/
+            DIR1 = ../recon_meto_xc40_recon_n320_n320frc_mlsnow_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_n320_n3201t_mlsnow" in name_graphs_out -%}
+#RECON N320 snow fields to 1 tile
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n3201t_mlsnow_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N320_N3201T_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n3201t_mlsnow_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n320_n3201t_mlsnow/{{XC40_RECON_N320_N3201T_MLSNOW_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n320_n3201t_mlsnow_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n3201t_mlsnow_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N320_N3201T_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n3201t_mlsnow_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n320_n3201t_mlsnow_1x4/
+            DIR1 = ../recon_meto_xc40_recon_n320_n3201t_mlsnow_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_n320_n216_mlsnow" in name_graphs_out -%}
+#RECON N320 to N216 with 9 tiles
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n216_mlsnow_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N320_N216_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n216_mlsnow_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n320_n216_mlsnow/{{XC40_RECON_N320_N216_MLSNOW_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n320_n216_mlsnow_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n216_mlsnow_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N320_N216_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n216_mlsnow_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n320_n216_mlsnow_1x4/
+            DIR1 = ../recon_meto_xc40_recon_n320_n216_mlsnow_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_n320_n512_mlsnow" in name_graphs_out -%}
+#RECON N320 to N512 with 9 tiles
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n512_mlsnow_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N320_N512_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n512_mlsnow_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n320_n512_mlsnow/{{XC40_RECON_N320_N512_MLSNOW_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n320_n512_mlsnow_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n512_mlsnow_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N320_N512_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n512_mlsnow_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n320_n512_mlsnow_1x4/
+            DIR1 = ../recon_meto_xc40_recon_n320_n512_mlsnow_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_n320_n216zsl_mlsnow" in name_graphs_out -%}
+#RECON N320 to N216 with only a zero-layer scheme.
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n216zsl_mlsnow_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N320_N216ZSL_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n216zsl_mlsnow_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n320_n216zsl_mlsnow/{{XC40_RECON_N320_N216ZSL_MLSNOW_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n320_n216zsl_mlsnow_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n216zsl_mlsnow_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N320_N216ZSL_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 3GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n216zsl_mlsnow_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n320_n216zsl_mlsnow_1x4/
+            DIR1 = ../recon_meto_xc40_recon_n320_n216zsl_mlsnow_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_n320_n320sl7_mlsnow" in name_graphs_out -%}
+#RECON N320 Interpolating to 7 snow layers
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n320sl7_mlsnow_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N320_N320SL7_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n320sl7_mlsnow_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n320_n320sl7_mlsnow/{{XC40_RECON_N320_N320SL7_MLSNOW_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n320_n320sl7_mlsnow_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n320_n320sl7_mlsnow_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N320_N320SL7_MLSNOW
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+            execution time limit = PT9M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n320_n320sl7_mlsnow_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n320_n320sl7_mlsnow_1x4/
+            DIR1 = ../recon_meto_xc40_recon_n320_n320sl7_mlsnow_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_n216_eg_interp_all_fields_basic" in name_graphs_out -%}
+#RECON N216 interpolation of all fields (basic)
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+            execution time limit = PT9M
+
+     # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n216_eg_interp_all_fields_basic_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_recon_n216_eg_interp_all_fields_basic/{{XC40_RECON_N216_EG_INTERP_ALL_FIELDS_BASIC_KGO}}
+            DIR1=../recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_1x4/
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   [[recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+            execution time limit = PT9M
+
+ # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n216_eg_interp_all_fields_basic_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_1x4/
+            DIR1=../recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_n216_eg_interp_all_fields_basic_nogrib" in name_graphs_out -%}
+#RECON N216 interpolation of all fields (basic) (as above), but using an
+# executable compiled without the GRIB_API macro
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_nogrib_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        script = "{{TASK_RUN_RECON}} --verbose {{ RECON_XC40_CCE_SAFE_OMP_NOGRIB }}"
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+            execution time limit = PT9M
+
+     # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n216_eg_interp_all_fields_basic_nogrib_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_recon_n216_eg_interp_all_fields_basic/{{XC40_RECON_N216_EG_INTERP_ALL_FIELDS_BASIC_KGO}}
+            DIR1=../recon_meto_xc40_recon_n216_eg_interp_all_fields_basic_nogrib_1x4/
+            KGO=0
+
+{%- endif %}
+
+
+
+{% if "meto_xc40_recon_n216_eg_select_fields_from_namelist" in name_graphs_out -%}
+#RECON N216 select output fields using array from namelist
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n216_eg_select_fields_from_namelist_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=filter-dump
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 1GB
+        [[[job]]]
+            execution time limit = PT9M
+
+     # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n216_eg_select_fields_from_namelist_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_recon_n216_eg_select_fields_from_namelist/{{XC40_RECON_N216_EG_INTERP_ALL_FIELDS_BASIC_KGO}}
+            DIR1=../recon_meto_xc40_recon_n216_eg_select_fields_from_namelist_1x4/
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+   [[recon_meto_xc40_recon_n216_eg_select_fields_from_namelist_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_N216_EG_INTERP_ALL_FIELDS_BASIC
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS=filter-dump
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 1GB
+        [[[job]]]
+            execution time limit = PT9M
+
+ # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n216_eg_select_fields_from_namelist_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0=../recon_meto_xc40_recon_n216_eg_select_fields_from_namelist_1x4/
+            DIR1=../recon_meto_xc40_recon_n216_eg_select_fields_from_namelist_4x1/
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "meto_xc40_recon_n108_nd_interp_all_fields" in name_graphs_out -%}
+#RECON N108 area weighted interpolation of all fields (rebalance)
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n108_nd_interp_all_fields_1x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x1, RECON_N108_ND_INTERP_ALL_FIELDS
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT11M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n108_nd_interp_all_fields_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0={{KGO_XC40_ROOT_DIR}}/xc40_recon_n108_nd_interp_all_fields/{{XC40_RECON_N108_ND_INTERP_ALL_FIELDS_KGO}}
+            DIR1=../recon_meto_xc40_recon_n108_nd_interp_all_fields_1x1/
+            KGO=0
+
+{%- endif %}
+
+
+{% if "meto_xc40_recon_n108_nd_var_area_weight" in name_graphs_out -%}
+#RECON N48 ND RECON VAR AREA WEIGHTED INTERP XC40
+
+   # Reconfiguration
+    [[recon_meto_xc40_recon_n108_nd_var_area_weight_1x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_1, METO_XC40_PARALLEL_THREADS_1, RECON_N108_ND_VAR_AREA_WEIGHT, RECON_MPI, RECON_1x1
+        script = "{{TASK_RUN_RECON}} --verbose {{ RECON_SERIAL_XC40_CCE_SAFE_OMP }}"
+        [[[directives]]]
+           -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT10M
+ 
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n108_nd_var_area_weight_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n108_nd_var_area_weight/{{XC40_RECON_N108_ND_VAR_AREA_WEIGHT_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n108_nd_var_area_weight_1x1
+            KGO=0
+
+{%- endif %}
+
+
+{% if "meto_xc40_recon_n512_nd_grib1" in name_graphs_out -%}
+# RECON GRIB1 N512 New Dyn XC40
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_n512_nd_grib1_4x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x2, RECON_N512_ND_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib1
+        [[[directives]]]
+            -l mem = 38GB
+        [[[job]]]
+            execution time limit = PT33M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n512_nd_grib1_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n512_nd_grib1/{{XC40_RECON_N512_ND_GRIB1_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n512_nd_grib1_4x2
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # reconfiguration Run 2x4
+    [[recon_meto_xc40_recon_n512_nd_grib1_2x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, RECON_N512_ND_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib1
+        [[[directives]]]
+            -l mem = 38GB
+        [[[job]]]
+            execution time limit = PT33M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n512_nd_grib1_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n512_nd_grib1_4x2
+            DIR1 = ../recon_meto_xc40_recon_n512_nd_grib1_2x4
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "meto_xc40_recon_n512_nd_grib2" in name_graphs_out -%}
+# RECON GRIB2 N512 New Dyn XC40
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_n512_nd_grib2_4x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x2, RECON_N512_ND_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib2
+        [[[directives]]]
+            -l mem = 38GB
+        [[[job]]]
+            execution time limit = PT33M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n512_nd_grib2_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n512_nd_grib2/{{XC40_RECON_N512_ND_GRIB2_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n512_nd_grib2_4x2
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # reconfiguration Run 2x4
+    [[recon_meto_xc40_recon_n512_nd_grib2_2x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, RECON_N512_ND_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib2
+        [[[directives]]]
+            -l mem = 38GB
+        [[[job]]]
+            execution time limit = PT33M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n512_nd_grib2_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n512_nd_grib2_4x2
+            DIR1 = ../recon_meto_xc40_recon_n512_nd_grib2_2x4
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "meto_xc40_recon_n512_eg_grib1" in name_graphs_out -%}
+# RECON GRIB1 N512 Endgame XC40
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_n512_eg_grib1_4x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x2, RECON_N512_EG_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib1
+        [[[directives]]]
+            -l mem = 38GB
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n512_eg_grib1_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n512_eg_grib1/{{XC40_RECON_N512_EG_GRIB1_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n512_eg_grib1_4x2
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # reconfiguration Run 2x4
+    [[recon_meto_xc40_recon_n512_eg_grib1_2x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, RECON_N512_EG_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib1
+        [[[directives]]]
+            -l mem = 38GB
+        [[[job]]]
+            execution time limit = PT38M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n512_eg_grib1_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n512_eg_grib1_4x2
+            DIR1 = ../recon_meto_xc40_recon_n512_eg_grib1_2x4
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "meto_xc40_recon_n512_eg_grib2" in name_graphs_out -%}
+# RECON GRIB2 N512 Endgame XC40
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_n512_eg_grib2_4x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x2, RECON_N512_EG_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib2
+        [[[directives]]]
+            -l mem = 38GB
+        [[[job]]]
+            execution time limit = PT49M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n512_eg_grib2_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n512_eg_grib2/{{XC40_RECON_N512_EG_GRIB2_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n512_eg_grib2_4x2
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # reconfiguration Run 2x4
+    [[recon_meto_xc40_recon_n512_eg_grib2_2x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, RECON_N512_EG_GRIB
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = grib2
+        [[[directives]]]
+            -l mem = 38GB
+        [[[job]]]
+            execution time limit = PT49M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n512_eg_grib2_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n512_eg_grib2_4x2
+            DIR1 = ../recon_meto_xc40_recon_n512_eg_grib2_2x4
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_n96_nd_init_prog_ancil" in name_graphs_out -%}
+# RECON N48 ND initialise prognostics, add river routing
+# and configure ancils XC40
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_n96_nd_init_prog_ancil_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N96_ND_INIT_PROG_ANCIL
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n96_nd_init_prog_ancil_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n96_nd_init_prog_ancil/{{XC40_RECON_N96_ND_INIT_PROG_ANCIL_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n96_nd_init_prog_ancil_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # reconfiguration Run 2x2
+    [[recon_meto_xc40_recon_n96_nd_init_prog_ancil_2x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, RECON_N96_ND_INIT_PROG_ANCIL
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 4GB
+        [[[job]]]
+            execution time limit = PT5M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n96_nd_init_prog_ancil_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n96_nd_init_prog_ancil_1x4
+            DIR1 = ../recon_meto_xc40_recon_n96_nd_init_prog_ancil_2x2
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+{% if "meto_xc40_recon_LAM_fix_to_var_res" in name_graphs_out -%}
+# RECON ND LAM fix resolution to LAM variable resolution EG
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_LAM_fix_to_var_res_2x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconeuro4
+        [[[directives]]]
+            -l mem = 8GB
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_LAM_fix_to_var_res_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_LAM_fix_to_var_res/{{XC40_RECON_LAM_FIX_TO_VAR_RES_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_LAM_fix_to_var_res_2x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # reconfiguration Run 4x2
+    [[recon_meto_xc40_recon_LAM_fix_to_var_res_4x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x2, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconeuro4
+        [[[directives]]]
+            -l mem = 8GB
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_LAM_fix_to_var_res_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_LAM_fix_to_var_res_2x4
+            DIR1 = ../recon_meto_xc40_recon_LAM_fix_to_var_res_4x2
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_LAM_fix_to_fix_res" in name_graphs_out -%}
+# RECON ND LAM fix resolution to LAM fixed resolution EG
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_LAM_fix_to_fix_res_2x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_SEUKF_TKEBL
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconeuro4
+        [[[directives]]]
+            -l mem = 10GB
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_LAM_fix_to_fix_res_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_LAM_fix_to_fix_res/{{XC40_RECON_LAM_FIX_TO_FIX_RES_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_LAM_fix_to_fix_res_2x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # reconfiguration Run 4x2
+    [[recon_meto_xc40_recon_LAM_fix_to_fix_res_4x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x2, UM_SEUKF_TKEBL
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconeuro4
+        [[[directives]]]
+            -l mem = 10GB
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_LAM_fix_to_fix_res_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_LAM_fix_to_fix_res_2x4
+            DIR1 = ../recon_meto_xc40_recon_LAM_fix_to_fix_res_4x2
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_LAM_var_to_fix_res" in name_graphs_out -%}
+# RECON ND LAM fix resolution to LAM fixed resolution EG
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_LAM_var_to_fix_res_2x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_SEUKF_TKEBL
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconukv
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_LAM_var_to_fix_res_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_LAM_var_to_fix_res/{{XC40_RECON_LAM_VAR_TO_FIX_RES_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_LAM_var_to_fix_res_2x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # reconfiguration Run 4x2
+    [[recon_meto_xc40_recon_LAM_var_to_fix_res_4x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x2, UM_SEUKF_TKEBL
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconukv
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_LAM_var_to_fix_res_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_LAM_var_to_fix_res_2x4
+            DIR1 = ../recon_meto_xc40_recon_LAM_var_to_fix_res_4x2
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_LAM_var_to_var_res" in name_graphs_out -%}
+# RECON LAM variable resolution EG to LAM variable resolution EG
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_LAM_var_to_var_res_2x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x4, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconukv
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_LAM_var_to_var_res_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_LAM_var_to_var_res/{{XC40_RECON_LAM_VAR_TO_VAR_RES_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_LAM_var_to_var_res_2x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # reconfiguration Run 4x2
+    [[recon_meto_xc40_recon_LAM_var_to_var_res_4x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_8, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x2, UM_SEUKV_EG
+        [[[environment]]]
+            ASTART=atmos.astart
+            ROSE_APP_OPT_CONF_KEYS=reconukv
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT16M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_LAM_var_to_var_res_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_LAM_var_to_var_res_2x4
+            DIR1 = ../recon_meto_xc40_recon_LAM_var_to_var_res_4x2
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+
+
+{% if "meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear" in name_graphs_out -%}
+# RECON N48 ND create 2D cca, transplant data into dump and bilinear interp
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N48_ND_2D_CCA_TRANS_BILINEAR
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT10M
+
+    [[recon_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_specify_nl_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_N48_ND_2D_CCA_TRANS_BILINEAR
+        [[[environment]]]
+            ROSE_APP_OPT_CONF_KEYS = specify-nl
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_n48_nd_2D_CCA_trans_bilinear/{{XC40_RECON_N48_ND_2D_CCA_TRANS_BILINEAR_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_1x4
+            KGO=0
+        [[[directives]]]
+            -l mem = 5GB
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # Reconfiguration Run 2x2
+    [[recon_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_2x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, RECON_N48_ND_2D_CCA_TRANS_BILINEAR
+        [[[directives]]]
+            -l mem = 5GB
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_1x4
+            DIR1 = ../recon_meto_xc40_recon_n48_nd_2D_CCA_trans_bilinear_2x2
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_lam_from_grib_cutout" in name_graphs_out -%}
+# RECON nearest neighbour selection to cutout subdomain
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_lam_from_grib_cutout_2x2]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_2x2, RECON_LAM_FROM_GRIB_CUTOUT
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 16GB
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_lam_from_grib_cutout_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_lam_from_grib_cutout/{{XC40_RECON_LAM_FROM_GRIB_CUTOUT_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_lam_from_grib_cutout_2x2
+            KGO=0
+        [[[directives]]]
+            -l mem = 5GB
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # Reconfiguration Run 1x4
+    [[recon_meto_xc40_recon_lam_from_grib_cutout_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_LAM_FROM_GRIB_CUTOUT
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 16GB
+        [[[job]]]
+            execution time limit = PT10M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_lam_from_grib_cutout_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_lam_from_grib_cutout_2x2
+            DIR1 = ../recon_meto_xc40_recon_lam_from_grib_cutout_1x4
+            KGO=
+        [[[directives]]]
+            -l mem = 5GB
+
+{%- endif %}
+
+{%- endif %}
+
+{% if "meto_xc40_recon_nearest_neighbour_nz" in name_graphs_out -%}
+# RECON nearest neighbour selection to cutout subdomain
+
+    # Reconfiguration
+    [[recon_meto_xc40_recon_nearest_neighbour_nz_1x4]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_1x4, RECON_NEAREST_NEIGHBOUR
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 18GB
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_nearest_neighbour_nz_kgo]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = {{KGO_XC40_ROOT_DIR}}/xc40_recon_nearest_neighbour_nz/{{XC40_RECON_NEAREST_NEIGHBOUR_NZ_KGO}}
+            DIR1 = ../recon_meto_xc40_recon_nearest_neighbour_nz_1x4
+            KGO=0
+
+{%- if INTEGRATION_TESTING == true %}
+
+    # Reconfiguration Run 4x1
+    [[recon_meto_xc40_recon_nearest_neighbour_nz_4x1]]
+        inherit = METO_XC40_RECON_STANDALONE, METO_XC40_CORES_4, METO_XC40_PARALLEL_THREADS_1, RECON_MPI, RECON_4x1, RECON_NEAREST_NEIGHBOUR
+        [[[environment]]]
+            ASTART=atmos.astart
+        [[[directives]]]
+            -l mem = 18GB
+        [[[job]]]
+            execution time limit = PT26M
+
+    # Comparison tasks
+    [[rose_ana_meto_xc40_recon_nearest_neighbour_nz_proc]]
+        inherit = METO_XC40_ROSE_ANA_COMPARISON, METO_XC40_RECON_STANDALONE, METO_XC40, ROSE_ANA_RECON
+        [[[environment]]]
+            DIR0 = ../recon_meto_xc40_recon_nearest_neighbour_nz_1x4
+            DIR1 = ../recon_meto_xc40_recon_nearest_neighbour_nz_4x1
+            KGO=
+
+{%- endif %}
+
+{%- endif %}
+
+

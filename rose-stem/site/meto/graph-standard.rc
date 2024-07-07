@@ -1,0 +1,10 @@
+%include 'site/meto/graph-standard-xc40.rc'
+%include 'site/meto/graph-standard-misc.rc'
+%include 'site/meto/graph-standard-linux-common.rc'
+
+{%- set name_graphs = name_graphs_xc40 %}
+{%- do name_graphs.update(name_graphs_misc.items()) %}
+{%- do name_graphs.update(name_graphs_linux_common.items()) %}
+
+%include 'site/meto/graph-standard-linux.rc'
+{%- do name_graphs.update(name_graphs_linux.items()) %}

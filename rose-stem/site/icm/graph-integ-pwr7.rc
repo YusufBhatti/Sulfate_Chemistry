@@ -1,0 +1,11 @@
+{%- set integ_graphs_boreasz = {
+    "boreasz_n48_omp_noios" : "",
+    "boreasz_n48_omp_ios" : "",
+    "boreasz_seukv_eg_omp_noios" : "",
+    "boreasz_createbc_calcs" : "",
+    "boreasz_install" : "",
+    "boreasz_fcm_make" : "" ,
+    "boreasz_fcm_make_um_debug" : "" ,
+    "boreasz_fcm_make_um_debug_omp" : "" ,
+    }
+-%}
